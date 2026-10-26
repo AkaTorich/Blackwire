@@ -544,7 +544,7 @@ pub fn neofetch(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
         (String::new(), format!("{}@{}", user, m.hostname)),
         (String::new(), "─".repeat(user.len() + m.hostname.len() + 1)),
         ("ОС".to_string(), m.os.clone()),
-        ("Вид".to_string(), m.kind.title().to_string()),
+        ("Вид".to_string(), m.device_type.clone().unwrap_or_else(||m.kind.title().to_string())),
         ("Ядро".to_string(), "6.1.0-bw".to_string()),
         ("Работает".to_string(), GameClock::format_duration(st.uptime)),
         ("Оболочка".to_string(), "bwsh 1.0".to_string()),
@@ -590,6 +590,7 @@ pub fn achievements(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let (have, total) = crate::achievements::count(ctx.world);
     let mut out = CmdOutput::ok();
     out.push_kind(format!("Достижения: {} из {}", have, total), OutKind::Heading);
+    for (id,a) in crate::plugins::catalog::entries(ctx.world,"achievements"){out.push(format!("[{}] {} — {}",if ctx.world.achievements.unlocked.contains(&id){"x"}else{" "},a.name,a.desc));}
     for (a, unlocked) in rows {
         if unlocked {
             out.lines.push(OutLine::new(format!("  [x] {} — {}", a.name, a.desc), OutKind::Accent));

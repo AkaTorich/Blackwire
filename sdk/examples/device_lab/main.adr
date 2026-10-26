@@ -1,0 +1,42 @@
+# Собственный тип устройства, служба и уязвимости типа и отдельного экземпляра.
+def load(event):
+    world = plugin.world()
+    template = plugin.template("camera")
+    template["kind"] = "camera"
+    template["org"] = null
+    template["router"] = null
+    template["domain"] = null
+    template["lan_ip"] = null
+    template["os"] = "LabOS 1.0"
+    template["logs"] = []
+    template["mail"] = []
+    template["custom_vulns"] = []
+    template["services"] = [{"port": 9080, "name": "lab_control", "version": "1.0", "running": true, "banner": "Lab Camera Control", "pages": []}]
+    kind = plugin.device_type("smart_camera", template)
+    plugin.vulnerability("camera_access", {"device_type": kind, "service": "lab_control", "version_prefix": "1.", "access": "shell"})
+    plugin.vulnerability("camera_kernel", {"device_type": kind, "local": true, "version_prefix": "LabOS 1.", "access": "root"})
+
+def create(event):
+    world = plugin.world()
+    n = plugin.get("created", 0) + 1
+    ip = f"198.18.{n // 250}.{n % 250 + 1}"
+    host = f"lab-camera-{n}"
+    mid = plugin.spawn("device_lab:smart_camera", {"hostname": host, "ip": ip, "up": true})
+    plugin.user(mid, "operator", "lab123", false)
+    plugin.write(mid, "/etc/lab/device.txt", f"Камера {n}: тестовое устройство SDK")
+    plugin.vulnerability(f"single_device_{n}", {"machine": mid, "service": "lab_control", "version_prefix": "1.0", "access": "info"})
+    # Узел сразу появляется на игровой карте.
+    world = plugin.world()
+    world["player"]["known_machines"].append(mid)
+    plugin.apply({"player": world["player"]})
+    plugin.set("created", n)
+    print(f"Создано устройство {host}: {ip}, id={mid}")
+    print(f"probe {ip} — две уязвимости только этого типа и одна этого экземпляра")
+    print(f"exploit -s lab_control {ip} — вход, затем privesc")
+
+def tick(event):
+    plugin.set("ticks", plugin.get("ticks", 0) + 1)
+
+def info(event):
+    print("Создано устройств:", plugin.get("created", 0))
+    print("Тактов мира:", plugin.get("ticks", 0))

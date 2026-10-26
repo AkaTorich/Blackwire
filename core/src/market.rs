@@ -129,6 +129,7 @@ pub fn item(id: &str) -> Option<&'static MarketItem> {
 
 /// Купить скрипт: списать ₵ и положить файл в `~/scripts`.
 pub fn buy(world: &mut World, id: &str) -> Result<String, String> {
+    if let Some(result)=crate::plugins::catalog::buy(world,"market",id){return result;}
     let it = item(id).ok_or_else(|| format!("нет такого скрипта: {}", id))?;
     if world.market.bought.contains(id) {
         // перекупка не нужна, но переустановим файл бесплатно
@@ -163,6 +164,7 @@ pub fn market_html(world: &World) -> String {
         let mark = if owned { " — <i>куплено</i>" } else { "" };
         s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name, it.id, it.price, it.desc, mark));
     }
+    s.push_str(&crate::plugins::catalog::html(world,"market"));
     s.push_str("</ul></main>");
     s
 }

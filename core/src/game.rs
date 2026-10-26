@@ -40,6 +40,7 @@ pub struct NetMap {
 }
 
 pub struct Game {
+    pub plugins: crate::plugins::Runtime,
     pub world: World,
     pub sessions: HashMap<u32, Session>,
     next_session: u32,
@@ -51,7 +52,7 @@ pub struct Game {
 
 impl Game {
     pub fn new(world: World) -> Game {
-        Game { world, sessions: HashMap::new(), next_session: 1, pending_ui: Vec::new(), pending_scripts: Vec::new() }
+        Game { plugins: Default::default(), world, sessions: HashMap::new(), next_session: 1, pending_ui: Vec::new(), pending_scripts: Vec::new() }
     }
 
     /// Загрузить игру из JSON мира.
@@ -64,7 +65,13 @@ impl Game {
     }
 
     pub fn tick(&mut self, dt_ms: u64) {
+        let stamp = crate::plugins::events::Stamp::new(&self.world);
+        let before = self.world.missions.active;
         self.world.tick(dt_ms);
+        self.plugin_timers();
+        self.plugin_event("on_tick", serde_json::json!({"dt_ms": dt_ms}));
+        let _ = before;
+        self.plugin_changes(stamp);
     }
 
     /// Пароль своей учётной записи.
@@ -89,6 +96,7 @@ impl Game {
     }
 
     pub fn close_session(&mut self, id: u32) {
+        self.pending_scripts.retain(|p|p.session!=id);
         if self.sessions.remove(&id).is_some() {
             for m in &mut self.world.machines {
                 m.procs.remove_session_scripts(id);
@@ -97,6 +105,8 @@ impl Game {
     }
 
     pub fn exec(&mut self, session: u32, line: &str) -> ShellResult {
+        if let Some(result) = self.plugin_command(session, line) { return result; }
+        let stamp=crate::plugins::events::Stamp::new(&self.world);
         let s = match self.sessions.get_mut(&session) {
             Some(s) => s,
             None => {
@@ -108,14 +118,18 @@ impl Game {
         };
         let res = shell::exec(&mut self.world, s, line);
         self.pending_scripts.append(&mut s.pending_scripts);
+        self.plugin_changes(stamp);
+        self.plugin_event("on_command", serde_json::json!({"line": line, "session": session}));
         res
     }
 
     pub fn complete(&self, session: u32, line: &str) -> Vec<String> {
-        match self.sessions.get(&session) {
+        let mut extra: Vec<String> = self.plugins.loaded.values().filter(|p|p.error.is_none() && !self.world.plugins.disabled.contains(&p.manifest.id)).flat_map(|p|p.manifest.commands.keys()).filter(|c|c.starts_with(line)).cloned().collect();
+        let mut result = match self.sessions.get(&session) {
             Some(s) => shell::complete(&self.world, s, line),
             None => Vec::new(),
-        }
+        };
+        result.append(&mut extra);result.sort();result.dedup();result
     }
 
     pub fn prompt(&self, session: u32) -> Prompt {
@@ -299,13 +313,15 @@ impl Game {
     pub fn fs_write(&mut self, session: Option<u32>, path: &str, text: &str) -> Result<(), String> {
         let (mid, user) = self.target(session);
         let p = self.fs_path(session, path);
-        self.world.machine_mut(mid).fs.write(&p, text, &user).map_err(|e| e.to_string())
+        self.world.machine_mut(mid).fs.write(&p, text, &user).map_err(|e| e.to_string())?;
+        self.plugin_event("on_file",serde_json::json!({"operation":"write","machine":mid,"path":p}));Ok(())
     }
 
     pub fn fs_mkdir(&mut self, session: Option<u32>, path: &str) -> Result<(), String> {
         let (mid, user) = self.target(session);
         let p = self.fs_path(session, path);
-        self.world.machine_mut(mid).fs.mkdir(&p, &user, true).map_err(|e| e.to_string())
+        self.world.machine_mut(mid).fs.mkdir(&p, &user, true).map_err(|e| e.to_string())?;
+        self.plugin_event("on_file",serde_json::json!({"operation":"mkdir","machine":mid,"path":p}));Ok(())
     }
 
     pub fn fs_delete(&mut self, session: Option<u32>, path: &str) -> Result<(), String> {
@@ -352,7 +368,7 @@ impl Game {
                 id: m.id,
                 hostname: m.hostname.clone(),
                 ip: m.ip.clone(),
-                kind: format!("{:?}", m.kind).to_lowercase(),
+                kind: m.device_type.clone().unwrap_or_else(||format!("{:?}", m.kind).to_lowercase()),
                 known: self.world.is_known(m.id),
                 up: m.up,
                 x: m.x,
@@ -517,6 +533,7 @@ impl Game {
         sent.read = true;
         sent.folder = MailFolder::Sent;
         self.world.machines[0].push_mail(sent);
+        self.plugin_event("on_mail",serde_json::json!({"to":to,"subject":subject,"body":body,"direction":"sent"}));
         Ok(())
     }
 }

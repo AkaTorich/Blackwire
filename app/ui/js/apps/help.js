@@ -2,6 +2,8 @@
 /* Справка: оглавление слева, Markdown справа, поиск с подсветкой, якоря по заголовкам. */
 (function () {
   var BOOKS = [
+    { id: 'game', title: 'Руководство игрока', icon: 'file-code', load: function () { return BW.game_doc(); } },
+    { id: 'sdk', title: 'SDK плагинов', icon: 'plugins', load: function () { return BW.plugins_doc(); } },
     { id: 'lang', title: 'Язык Adder', icon: 'file-code', load: function () { return BW.lang_doc(); } },
     { id: 'shell', title: 'Команды терминала', icon: 'terminal', load: function () { return BW.shell_doc(); } }
   ];

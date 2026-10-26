@@ -200,6 +200,7 @@ pub async fn start_desktop(app: AppHandle, st: State<'_, AppState>) -> Result<()
 
 #[tauri::command]
 pub async fn quit(app: AppHandle, st: State<'_, AppState>) -> Result<(), String> {
+    if let Ok(mut g)=st.game(){g.plugin_event("on_unload",serde_json::json!({}));}
     let _ = st.save();
     app.exit(0);
     Ok(())

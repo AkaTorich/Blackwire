@@ -1,0 +1,11 @@
+{
+  "started": true,
+  "debt": 3000,
+  "rate_per_day": 2.0,
+  "accrued": 0.001388888888888889,
+  "last_tick": 1931223602,
+  "paid_total": 0,
+  "cleared": false,
+  "creditor": "Сольвей Финанс",
+  "creditor_mail": "credit@solvey-finance.net"
+}

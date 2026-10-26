@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Новое состояние (добавляю я в общих файлах — помощники не трогают)</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page061.html">Назад</a> | <a href="page063.html">Далее</a></div><h2>Новое состояние (добавляю я в общих файлах — помощники не трогают)</h2>
+<p><code>world.rs</code>, <code>Player</code>:</p>
+<pre>pub owned: Vec&lt;MachineId&gt;,          // машины, где получен доступ (shell или root)
+pub found_creds: Vec&lt;FoundCred&gt;,    // найденные логины
+pub heat: f32,                      // подозрение к игроку, 0..100
+pub heat_peak: f32,                 // пик (для статистики)
+pub traced: bool,                   // игрока запеленговали (heat дошёл до 100)</pre>
+<p><code>machine.rs</code> (новый тип):</p>
+<pre>#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct FoundCred { pub machine: MachineId, pub user: String, pub password: String, pub note: String }</pre>
+<p><code>services.rs</code>, <code>Vuln</code> расширяю и таблицу <code>VULNS</code> тоже (добавляю столбцы доступа и области):</p>
+<pre>pub struct Vuln {
+    pub service: String, pub version_prefix: String, pub name: String, pub effect: String,
+    pub access: String,   // &quot;creds&quot; | &quot;shell&quot; | &quot;root&quot; | &quot;read:/путь&quot; | &quot;info&quot;
+    pub scope: String,    // &quot;remote&quot; | &quot;local&quot;
+}</pre></body></html>

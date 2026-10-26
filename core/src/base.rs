@@ -90,6 +90,7 @@ pub fn rent(world: &mut World) -> Result<RentedRelay, String> {
     let x = world.rng.range(5, 95) as f32 / 100.0;
     let y = world.rng.range(5, 95) as f32 / 100.0;
     let m = Machine {
+        device_type: None, custom_vulns: Vec::new(),
         id,
         hostname: host.clone(),
         ip: ip.clone(),

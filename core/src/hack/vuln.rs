@@ -56,7 +56,7 @@ pub fn scan_vulns(m: &Machine) -> Vec<VulnInfo> {
 
 /// Удалённые слабые места — по запущенным службам и их версиям.
 pub fn remote_vulns(m: &Machine) -> Vec<VulnInfo> {
-    let mut out = Vec::new();
+    let mut out: Vec<_> = m.custom_vulns.iter().filter(|v| !v.local && m.services.iter().any(|s|s.running && s.port == v.port && s.name == v.service && s.version == v.version)).cloned().collect();
     for s in &m.services {
         if !s.running {
             continue;
@@ -82,7 +82,7 @@ pub fn remote_vulns(m: &Machine) -> Vec<VulnInfo> {
 /// совпало, но машина заброшена (есть удалённая уязвимость) — всё равно
 /// считаем повышение прав возможным.
 pub fn local_vulns(m: &Machine) -> Vec<VulnInfo> {
-    let mut out = Vec::new();
+    let mut out: Vec<_> = m.custom_vulns.iter().filter(|v|v.local && v.version == m.os).cloned().collect();
     for v in services::known_vulns() {
         if v.scope == "local" && v.service == "kernel" && m.os.starts_with(&v.version_prefix) {
             out.push(VulnInfo {

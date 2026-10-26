@@ -1,0 +1,1 @@
+{"id":"district","name":"Район Линия-7","version":"1.0.0","api":1,"entry":"main.adr","permissions":["content","sys","shell"],"events":{"on_load":"load","on_tick":"tick","on_ui":"ui","on_purchase":"purchase","custom.news":"news"},"commands":{"district_create":"create","district_open":"open_window","district_status":"status"}}

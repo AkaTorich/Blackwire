@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Терминал и сеансы</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page004.html">Назад</a> | <a href="page006.html">Далее</a></div><h2>Терминал и сеансы</h2>
+<p>Каждый терминал имеет текущую машину, пользователя, папку и цепочку подключений. При подключении ssh текущая машина меняется; exit возвращает на предыдущую, а на своей машине закрывает терминал.</p>
+<p>Примеры:</p>
+<pre>pwd
+ls -la
+cat readme.txt
+cd scripts
+adder hello.adr
+help ssh</pre>
+<p>Оболочка поддерживает кавычки, переменные окружения, псевдонимы, подстановку имён файлов, конвейеры и перенаправления. Например, <code>cat файл | grep строка</code> отбирает нужные строки, <code>echo текст &gt; файл</code> записывает текст. Tab помогает дополнять имена. История сохраняется для текущего сеанса.</p>
+<p>Обычные команды описаны в отдельном разделе «Команды терминала»: он сформирован непосредственно движком. Команды плагинов API 1 выполняются отдельно, без конвейера и перенаправления.</p></body></html>

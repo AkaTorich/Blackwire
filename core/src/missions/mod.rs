@@ -369,7 +369,9 @@ pub fn board_html(world: &World) -> String {
             s.push_str("</li>");
         }
     }
-    s.push_str("</ol></main>");
+    s.push_str("</ol><h2>Задания расширений</h2><ul>");
+    for q in world.plugins.quests.values(){fn esc(s:&str)->String{s.replace('&',"&amp;").replace('<',"&lt;").replace('>',"&gt;")}s.push_str(&format!("<li><b>{}</b> — {} · {} ₵<br>{}</li>",esc(&q.title),if q.done{"выполнено"}else{"ожидает"},q.reward,esc(&q.objective)));}
+    s.push_str("</ul></main>");
     s
 }
 

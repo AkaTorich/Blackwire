@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Типы устройств</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page028.html">Назад</a> | <a href="page030.html">Далее</a></div><h2>Типы устройств</h2>
+<table>
+<tr><th>Вызов</th><th>Назначение</th></tr>
+<tr><td>plugin.template(base_kind)</td><td>готовый шаблон настоящего генератора игры</td></tr>
+<tr><td>plugin.device_type(key, template)</td><td>зарегистрировать собственный тип; возвращает <code>plugin_id:key</code></td></tr>
+<tr><td>plugin.spawn(type_id, properties)</td><td>создать экземпляр; возвращает новый числовой id</td></tr>
+<tr><td>plugin.machine(id)</td><td>копия одной машины</td></tr>
+<tr><td>plugin.update_machine(id, properties)</td><td>частичное изменение машины с проверкой связей</td></tr>
+<tr><td>plugin.user(id, name, password, admin=false)</td><td>добавить игровую учётную запись и домашнюю папку</td></tr>
+<tr><td>plugin.write(id, path, text)</td><td>авторская запись в виртуальный файл; создаёт родительские папки</td></tr>
+</table>
+<p>Базовые виды: <code>player</code>, <code>home_pc</code>, <code>router</code>, <code>gateway</code>, <code>server</code>, <code>workstation</code>, <code>database</code>, <code>file_server</code>, <code>mail</code>, <code>web</code>, <code>camera</code>, <code>badge</code>, <code>atm</code>, <code>medical_device</code>, <code>dns</code>, <code>isp</code>, <code>honeypot</code>.</p>
+<p>Собственный тип — отдельный <code>device_type</code> с любым содержимым на основе базового поведения. Например, датчик, промышленный контроллер или спутниковый модем получают своё имя типа, ОС, оборудование, службы, файлы, пользователей и уязвимости. Особое поведение реализуется Adder-обработчиками. Новые нативные графические примитивы или инструкции интерпретатора требуют изменения самого движка.</p>
+<pre>def load(event):
+    template = plugin.template(&quot;camera&quot;)
+    template[&quot;os&quot;] = &quot;SensorOS 1.0&quot;
+    template[&quot;org&quot;] = null
+    template[&quot;router&quot;] = null
+    template[&quot;services&quot;] = [{&quot;port&quot;: 9000, &quot;name&quot;: &quot;sensor&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Sensor control&quot;, &quot;pages&quot;: []}]
+    plugin.device_type(&quot;sensor&quot;, template)
+
+def create(event):
+    mid = plugin.spawn(&quot;my_plugin:sensor&quot;, {&quot;hostname&quot;: &quot;sensor-1&quot;, &quot;ip&quot;: &quot;198.18.10.1&quot;, &quot;lan_ip&quot;: null, &quot;domain&quot;: null, &quot;up&quot;: true})
+    plugin.user(mid, &quot;operator&quot;, &quot;sensor123&quot;, false)
+    plugin.write(mid, &quot;/etc/sensor/config.txt&quot;, &quot;mode=normal\n&quot;)</pre>
+<p><code>id</code> выдаётся автоматически, hostname и IP должны быть уникальны. Для внутреннего устройства укажи <code>lan_ip</code>, <code>router</code>, организацию и маршрут. Добавь id в <code>player.known_machines</code>, если оно должно сразу появиться на карте. Строка device_type отображается в карточке карты и neofetch; прочие правила поведения продолжают учитывать базовый kind.</p></body></html>

@@ -14,6 +14,8 @@
 
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod cmd_plugins;
+mod sdk_qa;
 mod checks;
 mod cmd_fs;
 mod cmd_game;
@@ -46,6 +48,18 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             // запуск и настройки
+            sdk_qa::sdk_ui_report,
+            sdk_qa::sdk_ui_status,
+            cmd_plugins::plugins_panel,
+            cmd_plugins::plugins_ui,
+            cmd_plugins::plugins_doc,
+            cmd_plugins::game_doc,
+            cmd_plugins::plugins_list,
+            cmd_plugins::plugins_reload,
+            cmd_plugins::plugins_enable,
+            cmd_plugins::plugins_run,
+            cmd_plugins::plugins_folder,
+            cmd_plugins::plugins_example,
             cmd_game::boot,
             cmd_game::new_game,
             cmd_game::load_game,

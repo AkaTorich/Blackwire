@@ -15,7 +15,9 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
+    "targets": [
+      "nsis"
+    ],
     "category": "Game",
     "shortDescription": "Blackwire — игра про взлом с настоящими окнами",
     "icon": [
@@ -28,8 +30,16 @@
     "windows": {
       "nsis": {
         "installMode": "currentUser",
-        "languages": ["Russian", "English"]
+        "languages": [
+          "Russian",
+          "English"
+        ]
       }
+    },
+    "resources": {
+      "../manual/Blackwire.chm": "Blackwire.chm",
+      "../sdk/": "sdk/",
+      "../README.md": "README.md"
     }
   }
 }

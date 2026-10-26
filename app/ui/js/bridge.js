@@ -207,6 +207,9 @@ var BW = (function () {
 
   /* ---------- обёртки команд (ключи — camelCase, как ждёт Rust) ---------- */
   var COMMANDS = {
+    plugins_doc: [], game_doc: [],
+    plugins_panel: ["id"], plugins_ui: ["id", "action", "values"],
+    plugins_list: [], plugins_reload: [], plugins_enable: ["id", "enabled"], plugins_run: ["command"], plugins_folder: [], plugins_example: ["name"],
     boot: [], new_game: ['handle', 'seed', 'password'], load_game: [], save_game: [], login: ['password'],
     save_slots: [], save_to_slot: ['name'], load_slot: ['name'], delete_slot: ['name'],
     scenario_targets: [], scenario_list: [], scenario_save: ['scenario'], scenario_delete: ['name'],

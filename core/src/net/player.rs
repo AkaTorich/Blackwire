@@ -77,6 +77,8 @@ pub fn build_player(
     }
 
     let mut m = Machine {
+
+        device_type: None, custom_vulns: Vec::new(),
         id,
         hostname,
         ip,
@@ -134,6 +136,8 @@ pub fn build_router(
     }
 
     let mut m = Machine {
+
+        device_type: None, custom_vulns: Vec::new(),
         id,
         hostname,
         ip,

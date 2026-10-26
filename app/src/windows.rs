@@ -35,6 +35,8 @@ fn app_title(app: &str) -> &'static str {
         "monitor" => "Монитор",
         "map" => "Карта сети",
         "mail" => "Почта",
+        "plugin_panel" => "Приложение плагина",
+        "plugins" => "Плагины",
         "settings" => "Настройки",
         "help" => "Справка",
         "finale" => "hello-world",

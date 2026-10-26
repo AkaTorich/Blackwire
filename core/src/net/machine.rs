@@ -130,6 +130,8 @@ pub struct FoundCred {
 /// так что все `ip` в мире различны.
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Machine {
+    #[serde(default)] pub device_type: Option<String>,
+    #[serde(default)] pub custom_vulns: Vec<crate::hack::VulnInfo>,
     pub id: MachineId,
     pub hostname: String,
     pub ip: String,

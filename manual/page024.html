@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Первый плагин</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page023.html">Назад</a> | <a href="page025.html">Далее</a></div><h2>Первый плагин</h2>
+<p>Папка <code>my_counter</code>:</p>
+<pre>{
+  &quot;id&quot;: &quot;my_counter&quot;,
+  &quot;name&quot;: &quot;Мой счётчик&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;api&quot;: 1,
+  &quot;entry&quot;: &quot;main.adr&quot;,
+  &quot;events&quot;: {&quot;on_tick&quot;: &quot;tick&quot;},
+  &quot;commands&quot;: {&quot;counter_show&quot;: &quot;show&quot;}
+}</pre>
+<p>Файл <code>main.adr</code>:</p>
+<pre>def tick(event):
+    plugin.set(&quot;ticks&quot;, plugin.get(&quot;ticks&quot;, 0) + 1)
+
+def show(event):
+    print(&quot;Тактов мира:&quot;, plugin.get(&quot;ticks&quot;, 0))</pre>
+<p>Нажми «Перечитать», затем <code>counter_show</code>. Значение сохраняется вместе с игрой.</p></body></html>

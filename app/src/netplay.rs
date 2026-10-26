@@ -193,6 +193,12 @@ fn spawn_client_reader(app: AppHandle, stream: TcpStream, stop: Arc<AtomicBool>)
                 Err(_) => continue,
             };
             let st = app.state::<AppState>();
+            if v["t"]==serde_json::json!("plugin") && !name.is_empty() && line.len()<=16384 {
+                let mut packet=v.clone();packet["from"]=serde_json::json!(name);
+                if let Ok(net)=st.net.lock(){for client in &net.clients{write_line(client,&packet.to_string());}}
+                if let Ok(mut game)=st.game(){game.plugin_network_receive(packet);}
+                continue;
+            }
             let Ok(mut net) = st.net.lock() else { break };
             match v.get("t").and_then(|t| t.as_str()) {
                 Some("join") => {
@@ -254,6 +260,7 @@ fn spawn_host_reader(app: AppHandle, stream: TcpStream, stop: Arc<AtomicBool>) {
                 Ok(v) => v,
                 Err(_) => continue,
             };
+            if v["t"]==serde_json::json!("plugin") && line.len()<=16384{let st=app.state::<AppState>();if let Ok(mut game)=st.game(){game.plugin_network_receive(v);};continue;}
             if v.get("t").and_then(|t| t.as_str()) == Some("state") {
                 if let Some(snap) = v.get("snap").and_then(|s| serde_json::from_value::<Snapshot>(s.clone()).ok()) {
                     let st = app.state::<AppState>();
@@ -448,6 +455,7 @@ pub fn net_leave(st: State<'_, AppState>) {
 /// Раз в секунду: посчитать свой прогресс по целям и отправить хосту (или
 /// применить у себя, если мы хост). Зовётся из `ticker`.
 pub fn pump(app: &AppHandle, st: &AppState) {
+    pump_plugins(st);
     // снять нужное под коротким замком сети
     let (role, playing, mode, targets, my_name, host_stream) = {
         let Ok(net) = st.net.lock() else { return };
@@ -518,4 +526,11 @@ pub fn pump(app: &AppHandle, st: &AppState) {
             }
         }
     }
+}
+
+/// Канал плагинов использует уже установленную партию, без новых портов.
+fn pump_plugins(st:&AppState){
+    let (role,name,state,clients,host)=match st.net.lock(){Ok(n)=>(n.role,n.my_name.clone(),serde_json::json!({"role":n.role,"snap":n.snap}),n.clients.clone(),n.host_stream.clone()),Err(_)=>return};
+    let packets=match st.game(){Ok(mut g)=>{g.plugins.network=state;std::mem::take(&mut g.plugins.outbox)},Err(_)=>return};
+    for mut packet in packets{packet["from"]=serde_json::json!(name);let line=packet.to_string();match role{Role::Host=>{for client in &clients{write_line(client,&line);}},Role::Client=>{if let Some(host)=&host{write_line(host,&line);}},Role::None=>{}}}
 }

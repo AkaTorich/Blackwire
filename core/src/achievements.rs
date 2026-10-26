@@ -84,5 +84,5 @@ pub fn rows(world: &World) -> Vec<(&'static Ach, bool)> {
 }
 
 pub fn count(world: &World) -> (usize, usize) {
-    (world.achievements.unlocked.len(), ACHIEVEMENTS.len())
+    (world.achievements.unlocked.len(), ACHIEVEMENTS.len()+crate::plugins::catalog::entries(world,"achievements").len())
 }

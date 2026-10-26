@@ -1,0 +1,13 @@
+{
+  "id": 22,
+  "name": "Архив Линия-7 №1",
+  "kind": "media",
+  "domain": "line1.city",
+  "gateway": 110,
+  "subnet": "10.250.1.",
+  "members": [
+    110,
+    111
+  ],
+  "description": "Независимый городской архив"
+}

@@ -143,6 +143,7 @@ pub fn pay(world: &mut World, amount: i64) -> Result<(i64, i64), String> {
 
 /// Купить улучшение по id.
 pub fn buy(world: &mut World, id: &str) -> Result<String, String> {
+    if let Some(result)=crate::plugins::catalog::buy(world,"shop",id){return result;}
     let item = shop::item(id).ok_or_else(|| format!("нет такого товара: {}", id))?;
     if world.player.upgrades.contains(id) {
         return Err(format!("«{}» уже куплено", item.name));
@@ -177,6 +178,7 @@ pub fn shop_html(world: &World) -> String {
         let mark = if owned { " — <i>куплено</i>" } else { "" };
         s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name, it.id, it.price, it.desc, mark));
     }
+    s.push_str(&crate::plugins::catalog::html(world,"shop"));
     s.push_str("</ul></main>");
     s
 }

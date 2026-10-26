@@ -81,6 +81,7 @@ pub struct Interpreter {
     pub globals: Rc<RefCell<Env>>,
     pub args: Vec<String>,
     steps: u64,
+    step_limit: u64,
     depth: u32,
     stack_base: usize,
     stack_bottom: Option<usize>,
@@ -104,6 +105,7 @@ impl Interpreter {
             globals,
             args,
             steps: 0,
+            step_limit: u64::MAX,
             depth: 0,
             stack_base: 0,
             stack_bottom: None,
@@ -115,6 +117,8 @@ impl Interpreter {
 
     /// Сколько байт стека машины можно занять, когда границу стека потока узнать нельзя
     /// (не на Windows). В потоке с большим стеком поднимает достижимую глубину рекурсии.
+    pub fn set_step_limit(&mut self, limit: u64) { self.steps = 0; self.step_limit = limit; }
+
     pub fn set_stack_budget(&mut self, bytes: usize) {
         self.stack_budget = bytes;
     }
@@ -135,6 +139,7 @@ impl Interpreter {
     /// Один шаг исполнения; раз в `STOP_CHECK_EVERY` шагов — вопрос хосту.
     pub fn tick(&mut self, line: u32, host: &mut dyn Host) -> R<()> {
         self.steps += 1;
+        if self.steps > self.step_limit { return Err(Exc::Interrupted(line)); }
         if self.steps % STOP_CHECK_EVERY == 0 && host.should_stop() {
             return Err(Exc::Interrupted(line));
         }

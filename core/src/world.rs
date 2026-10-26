@@ -278,6 +278,8 @@ pub fn is_private_ip(ip: &str) -> bool {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(default)]
 pub struct World {
+    #[serde(skip)] pub plugin_events: Vec<(String,serde_json::Value)>,
+    pub plugins: crate::plugins::SavedPlugins,
     pub seed: u64,
     pub clock: GameClock,
     /// machines[0] — компьютер игрока.
@@ -331,6 +333,8 @@ pub struct World {
 impl Default for World {
     fn default() -> Self {
         World {
+            plugins: Default::default(),
+            plugin_events: Vec::new(),
             seed: 0,
             clock: GameClock::new(),
             machines: Vec::new(),
@@ -782,6 +786,7 @@ fn fallback_player_machine(handle: &str, password: &str) -> Machine {
     let mut procs = crate::procs::ProcTable::new();
     procs.spawn_daemon("sshd", "root", 6);
     Machine {
+        device_type: None, custom_vulns: Vec::new(),
         id: 0,
         hostname: format!("{}-pc", handle),
         ip: "87.240.12.44".to_string(),

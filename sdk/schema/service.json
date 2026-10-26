@@ -1,0 +1,8 @@
+{
+  "port": 9080,
+  "name": "lab_control",
+  "version": "1.0",
+  "running": true,
+  "banner": "Lab Camera Control",
+  "pages": []
+}

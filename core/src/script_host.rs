@@ -44,7 +44,8 @@ fn whoami(game: &Game, session: u32) -> (MachineId, String) {
 /// Вызов игровой функции по полному имени.
 pub fn call(game: &mut Game, session: u32, pid: u32, name: &str, args: Vec<Value>) -> R {
     let (module, func) = name.split_once('.').ok_or_else(|| format!("неизвестная функция: {}", name))?;
-    match module {
+    let stamp=crate::plugins::events::Stamp::new(&game.world);
+    let result = match module {
         "sys" => call_sys(game, session, pid, func, &args),
         "fs" => call_fs(game, session, func, &args),
         "net" => call_net(game, session, func, &args),
@@ -54,7 +55,10 @@ pub fn call(game: &mut Game, session: u32, pid: u32, name: &str, args: Vec<Value
             _ => Err(format!("нет функции time.{}", func)),
         },
         _ => Err(format!("неизвестный модуль: {}", module)),
-    }
+    };
+    game.plugin_changes(stamp);
+    if module=="fs" && !["read","list","exists","is_dir"].contains(&func) && result.is_ok(){game.plugin_event("on_file",json!({"operation":func,"args":args,"session":session}));}
+    result
 }
 
 // ---------------------------------------------------------------- sys

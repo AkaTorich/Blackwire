@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Службы, сайты, организации и почта</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page030.html">Назад</a> | <a href="page032.html">Далее</a></div><h2>Службы, сайты, организации и почта</h2>
+<table>
+<tr><th>Вызов</th><th>Формат</th></tr>
+<tr><td>plugin.service(machine, spec)</td><td>port, name, version, running, banner, pages; заменяет службу на этом порту</td></tr>
+<tr><td>plugin.page(machine, port, spec)</td><td>path, title, html; добавляет/заменяет страницу существующей службы</td></tr>
+<tr><td>plugin.org(spec)</td><td>name, kind, domain, gateway, subnet, members, description; id выдаётся автоматически</td></tr>
+<tr><td>plugin.mail(machine, spec)</td><td>from, subject, body, необязательный to; входящее письмо на указанной машине</td></tr>
+<tr><td>plugin.log(machine, kind, text)</td><td>login, login_failed, logout, exec, file_change, service, net, warn</td></tr>
+<tr><td>plugin.news(text)</td><td>новость в обычной городской ленте</td></tr>
+</table>
+<p>Создавай сначала машины без организации, затем организацию с их id в members. <code>plugin.org</code> обновляет поле org у перечисленных машин. Маршрутизация задаётся router и lan_ip. Вид организации берётся из штатных corporation, bank, hospital, security_center, cyber_police, isp, university, hosting, government, media, shop, home, honeypot, underground.</p>
+<p>Сайт открывается настоящим игровым браузером. HTML страницы проходит через существующий рендерер браузера игры; это контент виртуальной сети. Для собственных интерактивных инструментов используй окна плагина.</p></body></html>

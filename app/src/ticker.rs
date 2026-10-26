@@ -19,7 +19,7 @@ pub fn start(app: AppHandle) {
                 let st = app.state::<AppState>();
                 let payload = {
                     let Ok(mut g) = st.game() else { continue };
-                    g.world.tick(1000);
+                    g.tick(1000);
                     let surveil = g.poll_surveillance();
                     let mission = g.poll_missions().or_else(|| g.poll_finance()).or_else(|| g.poll_gigs()).or_else(|| g.poll_defense()).or_else(|| g.poll_base()).or_else(|| g.poll_achievement()).or_else(|| g.poll_scenario());
                     let ending = g.poll_ending();

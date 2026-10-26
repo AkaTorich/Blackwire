@@ -110,7 +110,8 @@ pub fn start_from_args(app: &AppHandle) -> Result<bool, Box<dyn std::error::Erro
         opens.push(("terminal".into(), None));
     }
     for (app_id, arg) in opens {
-        windows::create_app_window(app, &st, &app_id, arg.as_deref(), Some(mon))?;
+        let label=windows::create_app_window(app, &st, &app_id, arg.as_deref(), Some(mon))?;
+        if args.iter().any(|a|a=="--sdk-ui-test")&&args.iter().any(|a|a=="--data-dir")&&["plugins","plugin_panel"].contains(&app_id.as_str()){crate::sdk_qa::inject(app,label); }
     }
     // проверочная сетевая игра: `--duel host[:team]` или `--duel join:адрес`
     if let Some(spec) = duel {

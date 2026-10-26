@@ -9,6 +9,7 @@
     { id: 'mail', label: 'Почта' },
     { id: 'monitor', label: 'Монитор' },
     { id: 'map', label: 'Карта сети' },
+    { id: 'plugins', label: 'Плагины' },
     { id: 'scenario', label: 'Редактор сценариев' },
     { id: 'duel', label: 'Сетевая игра' },
     { id: 'settings', label: 'Настройки' },

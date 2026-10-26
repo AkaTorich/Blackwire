@@ -1,0 +1,23 @@
+{
+  "handle": "sdk_test",
+  "money": 0,
+  "known_machines": [
+    1,
+    3,
+    6,
+    99,
+    110,
+    111,
+    112
+  ],
+  "scanned": [],
+  "notes": [],
+  "flags": {},
+  "owned": [],
+  "found_creds": [],
+  "heat": 0.0,
+  "heat_peak": 0.0,
+  "traced": false,
+  "upgrades": [],
+  "harvested": []
+}

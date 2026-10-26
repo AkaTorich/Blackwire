@@ -122,6 +122,8 @@ pub fn build(spec: MachineSpec, rng: &mut Rng) -> Machine {
     }
 
     let mut m = Machine {
+
+        device_type: None, custom_vulns: Vec::new(),
         id,
         hostname: hostname.clone(),
         ip,

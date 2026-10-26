@@ -14,6 +14,7 @@ pub fn missions(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
         out.push_kind("Заданий пока нет. Загляни на http://gate.hw/board", OutKind::Dim);
         return out;
     }
+    for q in ctx.world.plugins.quests.values(){out.push(format!("[{}] {} — {} ({} ₵)",if q.done{"x"}else{" "},q.title,q.objective,q.reward));}
     out.push_kind("Задания hello-world:", OutKind::Heading);
     for (i, r) in rows.iter().enumerate() {
         let (mark, kind) = match r.status {

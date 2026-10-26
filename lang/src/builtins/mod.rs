@@ -20,7 +20,7 @@ use crate::interp::{Env, Interpreter, R};
 use crate::value::{Builtin, BuiltinFn, Call, Value};
 
 /// Игровые модули: любой атрибут — функция хоста `модуль.имя`.
-pub const GAME_MODULES: &[&str] = &["sys", "fs", "net", "shell"];
+pub const GAME_MODULES: &[&str] = &["sys", "fs", "net", "shell", "plugin"];
 /// Модули, реализованные внутри языка.
 pub const LOCAL_MODULES: &[&str] = &["math", "json", "time", "random"];
 

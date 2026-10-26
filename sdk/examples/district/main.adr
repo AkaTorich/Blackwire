@@ -1,0 +1,96 @@
+# Полный пример: сеть организации, устройства, сайт, задание, магазин, маркет и окно.
+def panel():
+    n = plugin.get("districts", 0)
+    plugin.window("control", {"title": "Район Линия-7", "text": "Каждое нажатие создаёт новую сеть организации: шлюз и сервер с собственной службой и уязвимостью.", "rows": [["Создано районов", n], ["Вход в сервер", "через шлюз организации"]], "buttons": [{"id": "create", "label": "Создать район"}, {"id": "status", "label": "Проверить задания"}]})
+
+def load(event):
+    gateway = plugin.template("gateway")
+    gateway["os"] = "LineOS 1.0"
+    gateway["org"] = null
+    gateway["router"] = null
+    gateway["domain"] = null
+    gateway["lan_ip"] = null
+    gateway["custom_vulns"] = []
+    gateway["services"] = [{"port": 2222, "name": "line_gate", "version": "1.0", "running": true, "banner": "Line gateway", "pages": []}, {"port": 80, "name": "http", "version": "1.0", "running": true, "banner": "Line portal", "pages": []}]
+    kind = plugin.device_type("gateway", gateway)
+    plugin.vulnerability("gate_entry", {"device_type": kind, "service": "line_gate", "version_prefix": "1.", "access": "shell"})
+    server = plugin.template("server")
+    server["os"] = "LineServer 1.0"
+    server["org"] = null
+    server["router"] = null
+    server["domain"] = null
+    server["custom_vulns"] = []
+    server["services"] = [{"port": 7777, "name": "line_archive", "version": "2.0", "running": true, "banner": "Line archive", "pages": []}]
+    kind = plugin.device_type("archive", server)
+    plugin.vulnerability("archive_leak", {"device_type": kind, "service": "line_archive", "version_prefix": "2.", "access": "root", "handler": "archive_effect"})
+    plugin.catalog("shop", "memory", {"name": "Память Линия-7", "desc": "Добавляет 1024 МБ памяти компьютеру игрока", "price": 50})
+    plugin.catalog("market", "report", {"name": "Отчёт по узлам", "desc": "Показывает собственный адрес и доступные средства", "price": 10, "file": "line_report.adr", "code": "print(sys.hostname(), net.my_ip(), sys.money())\n"})
+    plugin.catalog("achievements", "archivist", {"name": "Архивист Линии-7", "desc": "Получить доступ к серверу нового района"})
+    if not plugin.get("timer_started", false):
+        plugin.timer("city_news", 60, "custom.news", {}, 60)
+        plugin.set("timer_started", true)
+    panel()
+
+def create(event):
+    n = plugin.get("districts", 0) + 1
+    if n > 100:
+        raise "В этом примере предусмотрено до 100 районов"
+    ip = f"198.19.{n}.1"
+    lan = f"10.250.{n}."
+    gate = plugin.spawn("district:gateway", {"hostname": f"line-gate-{n}", "ip": ip, "lan_ip": lan + "1", "up": true})
+    plugin.user(gate, "operator", "line123", false)
+    server = plugin.spawn("district:archive", {"hostname": f"line-archive-{n}", "ip": lan + "2", "lan_ip": lan + "2", "router": gate, "up": true})
+    plugin.user(server, "archivist", "archive123", false)
+    plugin.org({"name": f"Архив Линия-7 №{n}", "kind": "media", "domain": f"line{n}.city", "gateway": gate, "subnet": lan, "members": [gate, server], "description": "Независимый городской архив"})
+    plugin.page(gate, 80, {"path": "/", "title": "Линия-7", "html": f"<h1>Архив Линия-7</h1><p>Внутренний архив: {lan}2, служба line_archive.</p>"})
+    plugin.write(server, "/srv/line/report.txt", f"Документы района {n}: архив открыт")
+    quest = plugin.quest(f"archive_{n}", {"title": f"Архив района {n}", "objective": f"Получи доступ к line-archive-{n}", "reward": 150})
+    targets = plugin.get("targets", [])
+    targets.append({"machine": server, "quest": quest})
+    plugin.set("targets", targets)
+    world = plugin.world()
+    world["player"]["known_machines"].extend([gate, server])
+    plugin.apply({"player": world["player"]})
+    plugin.mail(0, {"from": "line@hw", "subject": f"Район {n}: задание", "body": f"Открой http://{ip}/. Вход: exploit -s line_gate {ip}; затем exploit -s line_archive {lan}2. Награда: 150."})
+    plugin.news(f"Открылся независимый архив района {n}.")
+    plugin.set("districts", n)
+    panel()
+    print(f"Создан район {n}: шлюз {ip}, архив {lan}2")
+
+def archive_effect(event):
+    plugin.write(event["target"], "/srv/line/access.txt", "Доступ к архиву через уязвимость зарегистрирован")
+    plugin.log(event["target"], "warn", "Контроль архива перехвачен через уязвимость Линии-7")
+
+def tick(event):
+    world = plugin.world()
+    for target in plugin.get("targets", []):
+        if target["machine"] in world["player"]["owned"]:
+            if plugin.quest_complete(target["quest"]):
+                plugin.unlock("district:archivist")
+
+def purchase(event):
+    if event["id"] == "district:memory" and not plugin.get("memory_applied", false):
+        world = plugin.world()
+        mid = world["machines"][0]["id"]
+        plugin.update_machine(mid, {"ram_mb": world["machines"][0]["ram_mb"] + 1024})
+        plugin.set("memory_applied", true)
+
+def news(event):
+    if plugin.get("districts", 0) > 0:
+        plugin.news("Архивы Линии-7 продолжают принимать городские документы.")
+
+def ui(event):
+    if event["action"] == "create":
+        create(event)
+    else:
+        status(event)
+
+def open_window(event):
+    plugin.open("district:control")
+
+def status(event):
+    world = plugin.world()
+    for key, quest in world["plugins"]["quests"].items():
+        if key.startswith("district:"):
+            mark = "выполнено" if quest["done"] else "ожидает"
+            print(quest["title"], mark, quest["reward"])

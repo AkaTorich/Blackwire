@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Собственные уязвимости</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page029.html">Назад</a> | <a href="page031.html">Далее</a></div><h2>Собственные уязвимости</h2>
+<p><code>plugin.vulnerability(key, spec)</code> регистрирует правило и возвращает namespaced id. Правило применяется к существующим устройствам и при появлении/изменении новых. Оно участвует в обычных <code>probe</code>, <code>net.vulns</code>, <code>exploit</code> и локальном повышении прав.</p>
+<table>
+<tr><th>Поле spec</th><th>Назначение</th></tr>
+<tr><td>device_type</td><td>необязательно; только этот тип устройства</td></tr>
+<tr><td>machine</td><td>необязательно; только этот числовой id устройства</td></tr>
+<tr><td>service</td><td>имя удалённой службы</td></tr>
+<tr><td>version_prefix</td><td>префикс версии службы; для local — префикс ОС; пусто означает все версии</td></tr>
+<tr><td>access</td><td>creds, shell, root, info или read:/абсолютный/путь</td></tr>
+<tr><td>local</td><td>true для локальной уязвимости ядра, false по умолчанию</td></tr>
+<tr><td>handler</td><td>необязательно; имя Adder-функции дополнительных последствий успешного удалённого exploit</td></tr>
+</table>
+<p>Если указаны и device_type, и machine, должны совпасть оба условия. Для любого устройства можно зарегистрировать отдельные уязвимости. Для удалённой уязвимости служба должна работать и совпадать по имени/версии. Обновлённая версия службы перестаёт подходить старому правилу.</p>
+<pre>plugin.vulnerability(&quot;sensor_default_login&quot;, {
+    &quot;device_type&quot;: &quot;my_plugin:sensor&quot;,
+    &quot;service&quot;: &quot;sensor&quot;,
+    &quot;version_prefix&quot;: &quot;1.&quot;,
+    &quot;access&quot;: &quot;shell&quot;
+})
+plugin.vulnerability(&quot;sensor_42_overload&quot;, {
+    &quot;machine&quot;: 42,
+    &quot;service&quot;: &quot;sensor&quot;,
+    &quot;version_prefix&quot;: &quot;1.0&quot;,
+    &quot;access&quot;: &quot;info&quot;,
+    &quot;handler&quot;: &quot;overload&quot;
+})
+
+def overload(event):
+    plugin.update_machine(event[&quot;target&quot;], {&quot;up&quot;: false})
+    plugin.news(&quot;Один из датчиков перестал отвечать.&quot;)</pre>
+<p>Когда у одной службы несколько уязвимостей, можно выбрать конкретную: <code>exploit -s my_plugin:sensor_42_overload адрес</code>. Без выбора движок использует первую подходящую. Уязвимости проходят через обычные игровые файрволы, маршруты и следы. Локальные правила используются <code>privesc</code> и требуют access=root; handler относится к удалённому exploit.</p></body></html>

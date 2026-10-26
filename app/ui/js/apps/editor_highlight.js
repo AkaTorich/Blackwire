@@ -9,7 +9,7 @@ const EditorHighlight = (function () {
   const CONSTS = new Set(['true', 'false', 'null']);
   const BUILTINS = new Set(('print input len str int float bool list dict range type abs min max sum round ' +
     'sorted reversed enumerate zip any all chr ord hex bin oct repr sleep exit isinstance').split(' '));
-  const MODULES = new Set('sys fs net shell math json time random'.split(' '));
+  const MODULES = new Set('sys fs net shell plugin math json time random'.split(' '));
   const OPCHARS = '+-*/%=<>!&|^~:';
   const NUM = /0[xX][0-9a-fA-F_]+|\d[\d_]*(?:\.\d[\d_]*)?(?:[eE][+-]?\d+)?/y;
   const PLAIN_EXT = { txt: 1, log: 1, conf: 1, ini: 1, csv: 1, cfg: 1, md: 1, json: 1 };

@@ -66,6 +66,7 @@ pub fn pay(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn shop(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let mut out = CmdOutput::ok();
     out.push_kind("Барахолка — улучшения за ₵:", OutKind::Heading);
+    for (id,it) in crate::plugins::catalog::entries(ctx.world,"shop"){out.push(format!("{}  {} ₵  {} — {}",id,it.price,it.name,it.desc));}
     for it in money::shop::ITEMS {
         let owned = ctx.world.player.upgrades.contains(it.id);
         let kind = if owned { OutKind::Dim } else { OutKind::Normal };
@@ -111,6 +112,7 @@ pub fn market(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     }
     let mut out = CmdOutput::ok();
     out.push_kind("Маркет скриптов (сеть hw):", OutKind::Heading);
+    for (id,it) in crate::plugins::catalog::entries(ctx.world,"market"){out.push(format!("{}  {} ₵  {} — {}",id,it.price,it.name,it.desc));}
     for it in crate::market::MARKET {
         let owned = ctx.world.market.bought.contains(it.id);
         let mark = if owned { "  [куплено]" } else { "" };

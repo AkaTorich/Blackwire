@@ -1,0 +1,2100 @@
+{
+  "device_type": "device_lab:smart_camera",
+  "custom_vulns": [
+    {
+      "service": "lab_control",
+      "port": 9080,
+      "version": "1.0",
+      "name": "device_lab:camera_access",
+      "access": "Shell",
+      "local": false
+    },
+    {
+      "service": "kernel",
+      "port": 0,
+      "version": "LabOS 1.0",
+      "name": "device_lab:camera_kernel",
+      "access": "Root",
+      "local": true
+    },
+    {
+      "service": "lab_control",
+      "port": 9080,
+      "version": "1.0",
+      "name": "device_lab:single_device_1",
+      "access": "Info",
+      "local": false
+    }
+  ],
+  "id": 112,
+  "hostname": "lab-camera-1",
+  "ip": "198.18.0.2",
+  "lan_ip": null,
+  "domain": null,
+  "os": "LabOS 1.0",
+  "cpu": "ARM Cortex-A7",
+  "ram_mb": 128,
+  "disk_mb": 256,
+  "fs": {
+    "root": {
+      "meta": {
+        "owner": "root",
+        "mode": 493,
+        "modified": 1928631600
+      },
+      "kind": {
+        "Dir": {
+          "children": {
+            "bin": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "bash": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              98,
+                              97,
+                              115,
+                              104,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "cat": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              97,
+                              116,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "chmod": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              104,
+                              109,
+                              111,
+                              100,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "chown": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              104,
+                              111,
+                              119,
+                              110,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "cp": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              112,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "curl": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              117,
+                              114,
+                              108,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "date": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              100,
+                              97,
+                              116,
+                              101,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "echo": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              101,
+                              99,
+                              104,
+                              111,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "find": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              102,
+                              105,
+                              110,
+                              100,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "grep": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              103,
+                              114,
+                              101,
+                              112,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "head": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              104,
+                              101,
+                              97,
+                              100,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "kill": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              107,
+                              105,
+                              108,
+                              108,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "login": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              108,
+                              111,
+                              103,
+                              105,
+                              110,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ls": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              108,
+                              115,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "mkdir": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              109,
+                              107,
+                              100,
+                              105,
+                              114,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "mv": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              109,
+                              118,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ping": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              112,
+                              105,
+                              110,
+                              103,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ps": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              112,
+                              115,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "rm": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              114,
+                              109,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "scp": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              99,
+                              112,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "sh": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              104,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "sort": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              111,
+                              114,
+                              116,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ssh": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              115,
+                              104,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "su": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              117,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "sudo": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              117,
+                              100,
+                              111,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "tail": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              116,
+                              97,
+                              105,
+                              108,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "tar": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              116,
+                              97,
+                              114,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "uname": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              117,
+                              110,
+                              97,
+                              109,
+                              101,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "wc": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              119,
+                              99,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "wget": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              119,
+                              103,
+                              101,
+                              116,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "dev": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "null": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 438,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": []
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "etc": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "camera_config.ini": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "[camera]\nname=template\nresolution=1280x720\nfps=15\nnight_mode=off\nrtsp_port=554\nrecord=true\n"
+                          }
+                        }
+                      }
+                    },
+                    "crontab": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "# m h dom mon dow user command\n0 3 * * * root /sbin/syslogd --rotate\n"
+                          }
+                        }
+                      }
+                    },
+                    "hostname": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "localhost\n"
+                          }
+                        }
+                      }
+                    },
+                    "hosts": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n"
+                          }
+                        }
+                      }
+                    },
+                    "lab": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            "device.txt": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 420,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Text": "Камера 1: тестовое устройство SDK"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "motd": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "Добро пожаловать. Несанкционированный доступ преследуется.\n"
+                          }
+                        }
+                      }
+                    },
+                    "os-release": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "NAME=\"Blackwire OS\"\nVERSION=\"1.0\"\nID=blackwire\nPRETTY_NAME=\"Blackwire OS 1.0\"\n"
+                          }
+                        }
+                      }
+                    },
+                    "passwd": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "root:x:0:0:root:/root:/bin/sh\nroot:x:1000:1000:root:/home/root:/bin/sh\n"
+                          }
+                        }
+                      }
+                    },
+                    "resolv.conf": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 420,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "nameserver 10.0.0.1\n"
+                          }
+                        }
+                      }
+                    },
+                    "shadow": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 384,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": "root:*:22350:0:99999:7:::\n"
+                          }
+                        }
+                      }
+                    },
+                    "ssh": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            "sshd_config": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 420,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Text": "Port 22\nPermitRootLogin yes\nPasswordAuthentication yes\n"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "home": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "operator": {
+                      "meta": {
+                        "owner": "operator",
+                        "mode": 488,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            ".bash_history": {
+                              "meta": {
+                                "owner": "operator",
+                                "mode": 384,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Text": ""
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "opt": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {}
+                }
+              }
+            },
+            "root": {
+              "meta": {
+                "owner": "root",
+                "mode": 448,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    ".bash_history": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 384,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Text": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "sbin": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "cron": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              99,
+                              114,
+                              111,
+                              110,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ifconfig": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              105,
+                              102,
+                              99,
+                              111,
+                              110,
+                              102,
+                              105,
+                              103,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "init": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              105,
+                              110,
+                              105,
+                              116,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "reboot": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              114,
+                              101,
+                              98,
+                              111,
+                              111,
+                              116,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "route": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              114,
+                              111,
+                              117,
+                              116,
+                              101,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "shutdown": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              104,
+                              117,
+                              116,
+                              100,
+                              111,
+                              119,
+                              110,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "sshd": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              115,
+                              104,
+                              100,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "syslogd": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "File": {
+                          "data": {
+                            "Binary": [
+                              127,
+                              69,
+                              76,
+                              70,
+                              2,
+                              1,
+                              1,
+                              0,
+                              115,
+                              121,
+                              115,
+                              108,
+                              111,
+                              103,
+                              100,
+                              0,
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "tmp": {
+              "meta": {
+                "owner": "root",
+                "mode": 511,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {}
+                }
+              }
+            },
+            "usr": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "bin": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            "adder": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      97,
+                                      100,
+                                      100,
+                                      101,
+                                      114,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "diff": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      100,
+                                      105,
+                                      102,
+                                      102,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "free": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      102,
+                                      114,
+                                      101,
+                                      101,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "nmap": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      110,
+                                      109,
+                                      97,
+                                      112,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "nslookup": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      110,
+                                      115,
+                                      108,
+                                      111,
+                                      111,
+                                      107,
+                                      117,
+                                      112,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "top": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      116,
+                                      111,
+                                      112,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "traceroute": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      116,
+                                      114,
+                                      97,
+                                      99,
+                                      101,
+                                      114,
+                                      111,
+                                      117,
+                                      116,
+                                      101,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "tree": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      116,
+                                      114,
+                                      101,
+                                      101,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "whois": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Binary": [
+                                      127,
+                                      69,
+                                      76,
+                                      70,
+                                      2,
+                                      1,
+                                      1,
+                                      0,
+                                      119,
+                                      104,
+                                      111,
+                                      105,
+                                      115,
+                                      0,
+                                      0,
+                                      0,
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "share": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            "doc": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 493,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "Dir": {
+                                  "children": {
+                                    "readme.txt": {
+                                      "meta": {
+                                        "owner": "root",
+                                        "mode": 420,
+                                        "modified": 1928631600
+                                      },
+                                      "kind": {
+                                        "File": {
+                                          "data": {
+                                            "Text": "Blackwire OS. Справка по командам: help, man <команда>, <команда> --help.\n"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "var": {
+              "meta": {
+                "owner": "root",
+                "mode": 493,
+                "modified": 1928631600
+              },
+              "kind": {
+                "Dir": {
+                  "children": {
+                    "log": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 493,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {
+                            "auth.log": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 416,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Text": ""
+                                  }
+                                }
+                              }
+                            },
+                            "system.log": {
+                              "meta": {
+                                "owner": "root",
+                                "mode": 420,
+                                "modified": 1928631600
+                              },
+                              "kind": {
+                                "File": {
+                                  "data": {
+                                    "Text": "boot: система запущена\n"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "tmp": {
+                      "meta": {
+                        "owner": "root",
+                        "mode": 511,
+                        "modified": 1928631600
+                      },
+                      "kind": {
+                        "Dir": {
+                          "children": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "clock": 1931223602
+  },
+  "users": {
+    "users": [
+      {
+        "name": "root",
+        "password": "Mindcf863&",
+        "uid": 0,
+        "home": "/root",
+        "shell": "/bin/sh",
+        "is_admin": true
+      },
+      {
+        "name": "operator",
+        "password": "lab123",
+        "uid": 1000,
+        "home": "/home/operator",
+        "shell": "/bin/sh",
+        "is_admin": false
+      }
+    ],
+    "next_uid": 1001
+  },
+  "procs": {
+    "next_pid": 6,
+    "procs": [
+      {
+        "pid": 1,
+        "name": "init",
+        "user": "root",
+        "cpu": 0.2340833,
+        "base_cpu": 0.3,
+        "mem_mb": 4,
+        "started": 0,
+        "kind": {
+          "type": "system"
+        },
+        "killed": false
+      },
+      {
+        "pid": 2,
+        "name": "kworker",
+        "user": "root",
+        "cpu": 0.48565066,
+        "base_cpu": 0.8,
+        "mem_mb": 2,
+        "started": 0,
+        "kind": {
+          "type": "system"
+        },
+        "killed": false
+      },
+      {
+        "pid": 3,
+        "name": "telnetd",
+        "user": "root",
+        "cpu": 0.16606791,
+        "base_cpu": 0.23125,
+        "mem_mb": 2,
+        "started": 1931223600,
+        "kind": {
+          "type": "daemon"
+        },
+        "killed": false
+      },
+      {
+        "pid": 4,
+        "name": "httpd",
+        "user": "root",
+        "cpu": 0.6940284,
+        "base_cpu": 0.825,
+        "mem_mb": 40,
+        "started": 1931223600,
+        "kind": {
+          "type": "daemon"
+        },
+        "killed": false
+      },
+      {
+        "pid": 5,
+        "name": "mosquitto",
+        "user": "root",
+        "cpu": 0.19400814,
+        "base_cpu": 0.278125,
+        "mem_mb": 5,
+        "started": 1931223600,
+        "kind": {
+          "type": "daemon"
+        },
+        "killed": false
+      }
+    ],
+    "clock": 1931223602
+  },
+  "services": [
+    {
+      "port": 9080,
+      "name": "lab_control",
+      "version": "1.0",
+      "running": true,
+      "banner": "Lab Camera Control",
+      "pages": []
+    }
+  ],
+  "logs": [],
+  "mail": [],
+  "kind": "camera",
+  "org": null,
+  "router": null,
+  "up": true,
+  "x": 0.5,
+  "y": 0.5
+}

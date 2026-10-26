@@ -33,6 +33,7 @@ pub struct AppState {
     pub slots_dir: PathBuf,
     /// Папка своих сценариев (из редактора сценариев).
     pub scenarios_dir: PathBuf,
+    pub plugins_dir: PathBuf,
     pub next_win: AtomicU32,
     /// Монитор, на котором стоит подложка рабочего стола (по одному окну на монитор).
     pub desktops: Mutex<HashMap<u32, String>>,
@@ -44,7 +45,10 @@ pub struct AppState {
 
 impl AppState {
     pub fn new(app: &tauri::AppHandle) -> Result<AppState, Box<dyn std::error::Error>> {
-        let dir = app.path().app_data_dir()?;
+        let args:Vec<_>=std::env::args().collect();
+        let dir = if let Some(i)=args.iter().position(|a|a=="--data-dir"){
+            let value=args.get(i+1).ok_or("после --data-dir нужен путь")?;let path=PathBuf::from(value);if !path.is_absolute(){return Err("--data-dir должен быть абсолютным".into());}path
+        }else{app.path().app_data_dir()?};
         std::fs::create_dir_all(&dir)?;
         let slots_dir = dir.join("slots");
         std::fs::create_dir_all(&slots_dir)?;
@@ -57,6 +61,7 @@ impl AppState {
             save_path: dir.join("save.json"),
             slots_dir,
             scenarios_dir,
+            plugins_dir: dir.join("plugins"),
             next_win: AtomicU32::new(1),
             desktops: Mutex::new(HashMap::new()),
             forced_size: Mutex::new(None),
@@ -77,7 +82,9 @@ impl AppState {
         self.game.lock().map(|g| g.is_some()).unwrap_or(false)
     }
 
-    pub fn set_game(&self, game: Game) {
+    pub fn set_game(&self, mut game: Game) {
+        let _ = std::fs::create_dir_all(&self.plugins_dir);
+        game.load_plugins(&self.plugins_dir);
         if let Ok(mut g) = self.game.lock() {
             *g = Some(game);
         }
@@ -94,7 +101,8 @@ impl AppState {
     }
 
     pub fn save(&self) -> Result<(), String> {
-        let g = self.game()?;
+        let mut g = self.game()?;
+        g.plugin_event("on_save",serde_json::json!({}));
         let text = g.world.to_json();
         std::fs::write(&self.save_path, text).map_err(|e| format!("не удалось сохранить игру: {e}"))
     }
