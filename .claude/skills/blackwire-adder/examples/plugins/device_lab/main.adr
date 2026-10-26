@@ -13,8 +13,10 @@ def load(event):
     template["custom_vulns"] = []
     template["services"] = [{"port": 9080, "name": "lab_control", "version": "1.0", "running": true, "banner": "Lab Camera Control", "pages": []}]
     kind = plugin.device_type("smart_camera", template)
-    plugin.vulnerability("camera_access", {"device_type": kind, "service": "lab_control", "version_prefix": "1.", "access": "shell"})
-    plugin.vulnerability("camera_kernel", {"device_type": kind, "local": true, "version_prefix": "LabOS 1.", "access": "root"})
+    plugin.vulnerability("camera_access", {"device_type": kind, "service": "lab_control", "version_prefix": "1.", "access": "shell", "exploit": {"kind": "overflow", "difficulty": 3, "hint": "Камера хранит адрес служебного обработчика рядом с кадром запроса.", "market": "device_lab:camera_exploit"}})
+    plugin.vulnerability("camera_kernel", {"device_type": kind, "local": true, "version_prefix": "LabOS 1.", "access": "root", "exploit": {"kind": "race", "difficulty": 2, "hint": "Подмени ресурс после проверки, до его использования."}})
+
+    plugin.catalog("market", "camera_exploit", {"name": "Camera Payload", "price": 180, "desc": "Эксплоит переполнения камер LabOS. Исходник можно редактировать.", "file": "camera_payload.adr", "code": plugin.asset("camera_payload.adr")})
 
 def create(event):
     world = plugin.world()
@@ -31,8 +33,11 @@ def create(event):
     plugin.apply({"player": world["player"]})
     plugin.set("created", n)
     print(f"Создано устройство {host}: {ip}, id={mid}")
-    print(f"probe {ip} — две уязвимости только этого типа и одна этого экземпляра")
-    print(f"exploit -s lab_control {ip} — вход, затем privesc")
+    print(f"probe {ip} — удалённые уязвимости типа и экземпляра; локальную исследуй после входа")
+    print(f"research -h 3 {ip} device_lab:camera_access — подсказки и параметры")
+    print(f"exploit new ~/scripts/camera.adr {ip} device_lab:camera_access — свой код")
+    print("Готовый: market buy device_lab:camera_exploit; затем exploit -f ~/scripts/camera_payload.adr -s device_lab:camera_access " + ip)
+    print("После входа исследуй device_lab:camera_kernel для локального эксплоита")
 
 def tick(event):
     plugin.set("ticks", plugin.get("ticks", 0) + 1)

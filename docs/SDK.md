@@ -83,7 +83,7 @@ def show(event):
 | on_load | загрузка, перечитывание или включение пакета; пустой словарь |
 | on_tick | вызов Game.tick; dt_ms — прошедшие миллисекунды |
 | on_command | завершение встроенной команды игрока; line, session |
-| on_hack | успешный результат игрового exploit; target, target_host, vuln (объект; имя в vuln["name"]), outcome, source_ip, monitored, heat_added |
+| on_hack | успешный удалённый или локальный игровой взлом; target, target_host, vuln (объект; имя в vuln["name"]), outcome, source_ip, monitored, heat_added |
 | on_mail | новое входящее письмо после шага мира: direction=inbox, mail; отправка через Game.mail_send: direction=sent, to, subject, body |
 | on_mission_done | продвижение сюжетной цепочки; before, active |
 | on_gig_done | изменение числа выполненных подработок; before, done |
@@ -197,7 +197,34 @@ def overload(event):
     plugin.news("Один из датчиков перестал отвечать.")
 ```
 
-Когда у одной службы несколько уязвимостей, можно выбрать конкретную: `exploit -s my_plugin:sensor_42_overload адрес`. Без выбора движок использует первую подходящую. Уязвимости проходят через обычные игровые файрволы, маршруты и следы. Локальные правила используются `privesc` и требуют access=root; handler относится к удалённому exploit.
+Уязвимости плагина эксплуатируются собственным или купленным Adder-кодом так же, как штатные. Одна команда без payload доступ не выдаёт. Исследование: `research адрес my_plugin:sensor_42_overload`; заготовка: `exploit new ~/scripts/sensor.adr адрес my_plugin:sensor_42_overload`; запуск: `exploit -f ~/scripts/sensor.adr -s my_plugin:sensor_42_overload адрес`.
+
+В описание уязвимости можно добавить:
+```python
+"exploit": {
+    "kind": "overflow",
+    "difficulty": 3,
+    "hint": "Проверь границу кадра и адрес служебного обработчика.",
+    "market": "my_plugin:sensor_exploit"
+}
+```
+kind: overflow, traversal, auth_replay, query, format, protocol, race, command_chain. difficulty: 1..5. hint — подсказка внутри игры, market — id совместимого товара. Без exploit механика выбирается по службе и типу доступа, поэтому старые объявления контента продолжают работать. Если авторский товар отсутствует, подсказка предлагает совместимый штатный инструмент.
+
+`net.research(адрес, id)` возвращает профиль с layout, fingerprint и hints. Игрок составляет payload; `net.probe(адрес, id, payload)` проверяет его, `net.exploit(адрес, id, payload)` применяет. Для локального root нужна оболочка на цели и `net.privesc(payload, id)`. У каждой машины и версии свой fingerprint; старый payload на другой цели не сработает. Профили воспроизводятся после сохранения и загрузки.
+
+Успешные удалённые и локальные взломы вызывают on_hack и handler конкретной уязвимости. Пробная проверка и отклонённый payload обработчик успеха не вызывают. Сохраняются обычные маршруты, файрволы, журналирование и подозрение.
+
+Продажа собственного эксплоита:
+```python
+plugin.catalog("market", "sensor_exploit", {
+    "name": "Sensor Payload",
+    "desc": "Эксплоит переполнения датчика; исходник можно редактировать",
+    "price": 180,
+    "file": "sensor_payload.adr",
+    "code": plugin.asset("sensor_payload.adr")
+})
+```
+Добавь исходник в assets манифеста. `market buy my_plugin:sensor_exploit` устанавливает редактируемый файл в `~/scripts`. Существующий файл с таким именем не перезаписывается. Полный пример с устройством, подсказкой, условиями и покупкой — sdk/examples/device_lab.
 
 ## Службы, сайты, организации и почта
 

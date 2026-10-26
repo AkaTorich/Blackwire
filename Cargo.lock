@@ -126,7 +126,7 @@ dependencies = [
 
 [[package]]
 name = "blackwire"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "blackwire-core",
  "blackwire-lang",
@@ -138,7 +138,7 @@ dependencies = [
 
 [[package]]
 name = "blackwire-core"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "blackwire-lang",
  "serde",
@@ -147,7 +147,7 @@ dependencies = [
 
 [[package]]
 name = "blackwire-lang"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "serde",
  "serde_json",

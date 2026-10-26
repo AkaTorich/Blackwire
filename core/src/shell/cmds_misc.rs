@@ -42,7 +42,22 @@ fn read_script(ctx: &Ctx<'_>, arg: &str) -> Result<(String, String), String> {
     let path = ctx.path(arg);
     let user = ctx.user();
     if !ctx.fs().exists(&path) {
-        return Err(format!("adder: нет такого файла: {}", arg));
+        // Personal Adder tools travel with the player through the SSH chain.
+        // Existing remote files still use remote permissions and take precedence.
+        if ctx.mid() != ctx.world.machines[0].id {
+            let handle = &ctx.world.player.handle;
+            let home = ctx.world.machines[0].users.home_of(handle);
+            let prefix = format!("{}/scripts/", home);
+            let personal = if let Some(rest) = arg.strip_prefix("~/scripts/") {
+                crate::vfs::resolve(&format!("{}/scripts", home), rest)
+            } else { path.clone() };
+            if personal.starts_with(&prefix) && personal.ends_with(".adr") {
+                if let Ok(source) = ctx.world.machines[0].fs.read(&personal, handle) {
+                    return Ok((personal, source));
+                }
+            }
+        }
+        return Err(format!("adder: нет такого файла: {}. Купленные инструменты: ~/scripts/", arg));
     }
     if ctx.fs().is_dir(&path) {
         return Err(format!("adder: это каталог: {}", arg));

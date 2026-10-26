@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s farm_irrigation_controllers:records_entry 198.22.19.1`
+`research -h 3 198.22.19.1 farm_irrigation_controllers:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.19.1 farm_irrigation_controllers:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s farm_irrigation_controllers:records_entry 198.22.19.1`
 
 Прочитай `/srv/records/zones.csv` на последнем узле — там сохранённая запись.
 

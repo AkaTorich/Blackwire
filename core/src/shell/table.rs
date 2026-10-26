@@ -157,9 +157,10 @@ pub static COMMANDS: &[CmdInfo] = &[
     cmd!("route", Net, "route", "таблица маршрутов", cmds_net::route),
     // ---- взлом
     cmd!("probe", Hack, "probe адрес", "разведка: службы, слабые места, пользователи", cmds_hack::probe),
-    cmd!("exploit", Hack, "exploit [-s служба] адрес", "воспользоваться слабым местом службы", cmds_hack::exploit),
+    cmd!("research", Hack, "research [-h 1..4] адрес [id]", "исследование уязвимости и подсказки для своего эксплоита", cmds_hack::research),
+    cmd!("exploit", Hack, "exploit -f файл.adr [-s id] адрес | exploit new файл.adr адрес [id]", "создать или запустить собственный эксплоит на Adder", cmds_hack::exploit),
     cmd!("crack", Hack, "crack [-w словарь] пользователь@адрес", "подобрать пароль по словарю", cmds_hack::crack),
-    cmd!("privesc", Hack, "privesc", "повысить права на текущей машине до root", cmds_hack::privesc),
+    cmd!("privesc", Hack, "privesc файл.adr [id]", "запустить собственный локальный эксплоит", cmds_hack::privesc),
     cmd!("clearlogs", Hack, "clearlogs [шаблон]", "убрать следы из журналов (нужны права)", cmds_hack::clearlogs),
     cmd!("wipe", Hack, "wipe [шаблон]", "убрать следы из журналов (то же, что clearlogs)", cmds_hack::clearlogs),
     cmd!("proxy", Hack, "proxy", "цепочка подключений и выходной адрес", cmds_hack::proxy),

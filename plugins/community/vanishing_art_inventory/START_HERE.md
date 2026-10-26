@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s vanishing_art_inventory:gateway_entry 198.22.51.1`
+`research -h 3 198.22.51.1 vanishing_art_inventory:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.51.1 vanishing_art_inventory:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s vanishing_art_inventory:gateway_entry 198.22.51.1`
 
 Прочитай `/srv/records/art-inventory.csv` на последнем узле — там сохранённая запись.
 

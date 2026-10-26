@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s cinema_ticket_gates:records_entry 198.22.16.1`
+`research -h 3 198.22.16.1 cinema_ticket_gates:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.16.1 cinema_ticket_gates:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s cinema_ticket_gates:records_entry 198.22.16.1`
 
 Прочитай `/srv/records/admissions.csv` на последнем узле — там сохранённая запись.
 

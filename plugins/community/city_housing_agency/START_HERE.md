@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s city_housing_agency:gateway_entry 198.22.33.1`
+`research -h 3 198.22.33.1 city_housing_agency:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.33.1 city_housing_agency:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s city_housing_agency:gateway_entry 198.22.33.1`
 
 Прочитай `/srv/records/allocation-ledger.csv` на последнем узле — там сохранённая запись.
 

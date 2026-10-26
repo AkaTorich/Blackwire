@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s counterfeit_payroll_trail:gateway_entry 198.22.42.1`
+`research -h 3 198.22.42.1 counterfeit_payroll_trail:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.42.1 counterfeit_payroll_trail:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s counterfeit_payroll_trail:gateway_entry 198.22.42.1`
 
 Прочитай `/srv/records/salary-adjustments.csv` на последнем узле — там сохранённая запись.
 

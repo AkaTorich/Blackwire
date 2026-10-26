@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s tampered_election_kiosks:gateway_entry 198.22.52.1`
+`research -h 3 198.22.52.1 tampered_election_kiosks:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.52.1 tampered_election_kiosks:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s tampered_election_kiosks:gateway_entry 198.22.52.1`
 
 Прочитай `/srv/records/maintenance-audit.csv` на последнем узле — там сохранённая запись.
 

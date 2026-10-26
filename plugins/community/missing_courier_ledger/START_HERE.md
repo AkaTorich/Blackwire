@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s missing_courier_ledger:gateway_entry 198.22.41.1`
+`research -h 3 198.22.41.1 missing_courier_ledger:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.41.1 missing_courier_ledger:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s missing_courier_ledger:gateway_entry 198.22.41.1`
 
 Прочитай `/srv/records/handoff-ledger.csv` на последнем узле — там сохранённая запись.
 

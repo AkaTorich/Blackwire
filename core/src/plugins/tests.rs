@@ -1,4 +1,21 @@
 use super::*;
+struct PlayerExploitHost<'a> { game: &'a mut Game, sid: u32 }
+impl blackwire_lang::Host for PlayerExploitHost<'_> {
+ fn print(&mut self, _: &str) {}
+ fn input(&mut self, _: &str) -> Result<String, blackwire_lang::LangError> { unreachable!() }
+ fn call(&mut self, name: &str, args: Vec<blackwire_lang::Value>) -> Result<blackwire_lang::Value, blackwire_lang::LangError> {
+  crate::script_host::call(self.game,self.sid,0,name,args.iter().map(blackwire_lang::Value::to_json).collect()).map(|v|blackwire_lang::Value::from_json(&v)).map_err(|e|blackwire_lang::LangError::runtime(0,e))
+ }
+ fn should_stop(&self)->bool { false }
+ fn sleep(&mut self,_:u64) {}
+}
+fn player_exploit(game:&mut Game,sid:u32,address:&str,selector:&str) {
+ let p=crate::script_host::call(game,sid,0,"net.research",vec![json!(address),json!(selector)]).unwrap();
+ let tool=crate::market::item(&format!("exp_{}",p["kind"].as_str().unwrap())).unwrap();
+ let result=blackwire_lang::run(tool.code,&mut PlayerExploitHost{game,sid},vec![tool.file.into(),address.into(),selector.into()]).unwrap();
+ assert_ne!(result.to_json(),json!(1));
+}
+
 fn game()->Game{Game::new(crate::World::new(42,"sdk_test",""))}
 fn install(g:&mut Game,id:&str,source:&str,events:&[(&str,&str)],commands:&[(&str,&str)],permissions:&[&str]){
     let manifest=Manifest{id:id.into(),name:id.into(),version:"1.0".into(),api:1,entry:"main.adr".into(),libraries:Vec::new(),assets:Vec::new(),requires:Vec::new(),permissions:permissions.iter().map(|s|s.to_string()).collect(),events:events.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect(),commands:commands.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect()};
@@ -7,7 +24,7 @@ fn install(g:&mut Game,id:&str,source:&str,events:&[(&str,&str)],commands:&[(&st
 #[test]
 fn device_types_and_per_device_vulnerabilities_work_in_real_game(){
  let mut g=game();let manifest:Manifest=serde_json::from_str(include_str!("../../../sdk/examples/device_lab/plugin.json")).unwrap();
- g.plugins.loaded.insert(manifest.id.clone(),Plugin{manifest,source:include_str!("../../../sdk/examples/device_lab/main.adr").into(),assets:Default::default(),error:None});
+ g.plugins.loaded.insert(manifest.id.clone(),Plugin{manifest,source:include_str!("../../../sdk/examples/device_lab/main.adr").into(),assets:[("camera_payload.adr".into(),include_str!("../../../sdk/examples/device_lab/camera_payload.adr").into())].into_iter().collect(),error:None});
  g.plugin_event("on_load",json!({}));assert!(g.plugins.loaded["device_lab"].error.is_none(),"{:?}",g.plugin_list());
  let s=g.open_session();let r=g.exec(s,"lab_create");assert!(!r.lines.iter().any(|l|l.kind==crate::OutKind::Error),"{:?}",r);
  let m=g.world.machines.last().unwrap();let id=m.id;let ip=m.ip.clone();
@@ -15,9 +32,9 @@ fn device_types_and_per_device_vulnerabilities_work_in_real_game(){
  assert_eq!(crate::hack::remote_vulns(m).len(),2);assert!(!crate::hack::local_vulns(m).is_empty());
  assert!(!crate::hack::remote_vulns(&g.world.machines[0]).iter().any(|v|v.name.starts_with("device_lab:")));
  let probe=g.exec(s,&format!("probe {ip}"));assert!(probe.lines.iter().any(|l|l.text.contains("device_lab:camera_access")),"{:?}",probe);
- let result=crate::hack::exploit(&mut g.world,g.sessions.get_mut(&s).unwrap(),id,Some("lab_control")).unwrap();
- assert!(matches!(result.outcome,crate::hack::ExploitOutcome::Shell{..}));
- let elevated=crate::hack::privesc(&mut g.world,g.sessions.get_mut(&s).unwrap()).unwrap();assert!(elevated.ok);
+ player_exploit(&mut g,s,&ip,"device_lab:camera_access");
+ assert_eq!(g.sessions[&s].machine_id(),id);
+ player_exploit(&mut g,s,&ip,"device_lab:camera_kernel");assert_eq!(g.sessions[&s].user(),"root");
  let saved=g.save_json();let restored=Game::from_json(&saved).unwrap();assert_eq!(restored.world.machines.last().unwrap().device_type.as_deref(),Some("device_lab:smart_camera"));
  assert_eq!(restored.world.plugins.data["device_lab"]["created"],json!(1));
 }
@@ -77,7 +94,7 @@ fn full_district_integrates_topology_web_mail_missions_economy_and_vuln_callback
  let out=g.exec(sid,"district_create");assert!(!out.lines.iter().any(|l|l.kind==crate::OutKind::Error),"{:?}",out);
  assert_eq!(g.world.machines.len(),n+2);assert!(g.world.orgs.iter().any(|o|o.domain=="line1.city"));
  let page=g.http("http://198.19.1.1/");assert_eq!(page.status,200);assert!(page.body.contains("Линия-7"));assert!(g.world.machines[0].mail.iter().any(|m|m.subject=="Район 1: задание"));
- g.exec(sid,"exploit -s line_gate 198.19.1.1");g.exec(sid,"exploit -s line_archive 10.250.1.2");
+ player_exploit(&mut g,sid,"198.19.1.1","line_gate");player_exploit(&mut g,sid,"10.250.1.2","line_archive");
  assert_eq!(g.sessions[&sid].user(),"root");let server=g.world.find_by_hostname("line-archive-1").unwrap();assert!(g.world.machine(server).fs.read_text("/srv/line/access.txt").unwrap().contains("зарегистрирован"));
  let before=g.world.player.money;g.tick(1000);assert_eq!(g.world.player.money,before+150);assert!(g.world.plugins.quests["district:archive_1"].done);assert!(g.world.achievements.unlocked.contains("district:archivist"));
  g.tick(1000);assert_eq!(g.world.player.money,before+150); // reward cannot be farmed

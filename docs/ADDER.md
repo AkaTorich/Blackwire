@@ -124,10 +124,12 @@ exit()                 # завершить скрипт; exit(1) — с код�
 - `net.http(url)` → `{status, title, body}` — запрос к веб-службе машины
 
 **net** — взлом (над машиной, адрес которой передан; «откуда» — текущий hop цепочки)
-- `net.vulns(ip)` → список `{service, port, name, access, local}` — слабые места машины (access: creds/shell/read:/путь/root/info)
-- `net.exploit(ip[, служба])` → `{ok, access, user, password, path, data, host, monitored}`; shell сам добавляет hop, creds кладёт логин
+- `net.vulns(ip)` → список `{id, kind, version, service, port, name, access, local}`. Локальные уязвимости видны на текущей машине; их id используют research и privesc.
+- `net.research(ip, id)` → `{id, name, service, port, version, local, kind, difficulty, fingerprint, layout, hints, fields, market, next}`. Выбирает конкретную уязвимость по id, имени или уникальной службе. Локальная исследуется после входа на машину.
+- `net.probe(ip, id, payload)` → `{ok, applied:false, feedback, hint, id, kind}`. Проверяет payload, оставляет след и объясняет отказ; доступ не выдаёт.
+- `net.exploit(ip, id, payload)` → `{ok, access, user, password, path, data, host, monitored}`; при отказе `{ok:false, feedback, hint, id, kind}`. Без payload автоматического взлома нет. fingerprint должен совпасть с исследованной целью. Shell добавляет hop, creds сохраняет логин.
 - `net.crack(ip, user[, словарь])` → пароль (str) или null; словарь по умолчанию `~/wordlist.txt`
-- `net.privesc()` → true/false — повысить права до root на текущей машине
+- `net.privesc(payload, id)` → `{ok, access, host, feedback}`; неверный payload даёт отказ с feedback. Требует локальную уязвимость текущей машины и уже полученную оболочку.
 - `net.clear_logs([шаблон])` → число убранных записей (−1 — нет прав) — замести следы на текущей машине
 - `net.heat()` → число 0..100 — подозрение к игроку; `net.owned()` → имена взломанных машин
 - `net.watch()` → `{stage, progress, raids, locked, lead}` — слежка: стадия расследования, его ведущий орган, рейд/блокировка

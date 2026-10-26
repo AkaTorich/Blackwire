@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s diverted_relief_supplies:gateway_entry 198.22.50.1`
+`research -h 3 198.22.50.1 diverted_relief_supplies:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.50.1 diverted_relief_supplies:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s diverted_relief_supplies:gateway_entry 198.22.50.1`
 
 Прочитай `/srv/records/relief-consignments.csv` на последнем узле — там сохранённая запись.
 

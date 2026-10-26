@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s storm_relay_outage:records_entry 198.22.91.1`
+`research -h 3 198.22.91.1 storm_relay_outage:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.91.1 storm_relay_outage:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s storm_relay_outage:records_entry 198.22.91.1`
 
 Прочитай `/srv/records/storm-status.txt` на последнем узле — там сохранённая запись.
 

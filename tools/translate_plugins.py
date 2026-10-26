@@ -173,7 +173,10 @@ def write_start_here(
         "",
         "## Если хочешь готовое решение",
         "",
-        f"`exploit -s {pid}:{key}_entry {first_ip}`",
+        f"`research -h 3 {first_ip} {pid}:{key}_entry`",
+        f"Свой код: `exploit new ~/scripts/my_exploit.adr {first_ip} {pid}:{key}_entry`.",
+        "Готовый инструмент: `market buy exp_overflow`.",
+        f"`exploit -f ~/scripts/exp_overflow.adr -s {pid}:{key}_entry {first_ip}`",
         "",
     ]
     if plugin.get("nodes"):

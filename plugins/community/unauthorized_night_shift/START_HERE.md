@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s unauthorized_night_shift:gateway_entry 198.22.55.1`
+`research -h 3 198.22.55.1 unauthorized_night_shift:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.55.1 unauthorized_night_shift:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s unauthorized_night_shift:gateway_entry 198.22.55.1`
 
 Прочитай `/srv/records/shift-roster.csv` на последнем узле — там сохранённая запись.
 

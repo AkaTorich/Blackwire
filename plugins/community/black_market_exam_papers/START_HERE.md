@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s black_market_exam_papers:gateway_entry 198.22.48.1`
+`research -h 3 198.22.48.1 black_market_exam_papers:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.48.1 black_market_exam_papers:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s black_market_exam_papers:gateway_entry 198.22.48.1`
 
 Прочитай `/srv/records/exam-custody.csv` на последнем узле — там сохранённая запись.
 

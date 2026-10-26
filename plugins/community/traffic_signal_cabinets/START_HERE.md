@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s traffic_signal_cabinets:records_entry 198.22.20.1`
+`research -h 3 198.22.20.1 traffic_signal_cabinets:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.20.1 traffic_signal_cabinets:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s traffic_signal_cabinets:records_entry 198.22.20.1`
 
 Прочитай `/srv/records/phases.csv` на последнем узле — там сохранённая запись.
 

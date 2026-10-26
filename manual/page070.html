@@ -1,44 +1,11 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: устройства — main.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page069.html">Назад</a> | <a href="page071.html">Далее</a></div><h1>Пример: устройства — main.adr</h1>
-<pre># Собственный тип устройства, служба и уязвимости типа и отдельного экземпляра.
-def load(event):
-    world = plugin.world()
-    template = plugin.template(&quot;camera&quot;)
-    template[&quot;kind&quot;] = &quot;camera&quot;
-    template[&quot;org&quot;] = null
-    template[&quot;router&quot;] = null
-    template[&quot;domain&quot;] = null
-    template[&quot;lan_ip&quot;] = null
-    template[&quot;os&quot;] = &quot;LabOS 1.0&quot;
-    template[&quot;logs&quot;] = []
-    template[&quot;mail&quot;] = []
-    template[&quot;custom_vulns&quot;] = []
-    template[&quot;services&quot;] = [{&quot;port&quot;: 9080, &quot;name&quot;: &quot;lab_control&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Lab Camera Control&quot;, &quot;pages&quot;: []}]
-    kind = plugin.device_type(&quot;smart_camera&quot;, template)
-    plugin.vulnerability(&quot;camera_access&quot;, {&quot;device_type&quot;: kind, &quot;service&quot;: &quot;lab_control&quot;, &quot;version_prefix&quot;: &quot;1.&quot;, &quot;access&quot;: &quot;shell&quot;})
-    plugin.vulnerability(&quot;camera_kernel&quot;, {&quot;device_type&quot;: kind, &quot;local&quot;: true, &quot;version_prefix&quot;: &quot;LabOS 1.&quot;, &quot;access&quot;: &quot;root&quot;})
-
-def create(event):
-    world = plugin.world()
-    n = plugin.get(&quot;created&quot;, 0) + 1
-    ip = f&quot;198.18.{n // 250}.{n % 250 + 1}&quot;
-    host = f&quot;lab-camera-{n}&quot;
-    mid = plugin.spawn(&quot;device_lab:smart_camera&quot;, {&quot;hostname&quot;: host, &quot;ip&quot;: ip, &quot;up&quot;: true})
-    plugin.user(mid, &quot;operator&quot;, &quot;lab123&quot;, false)
-    plugin.write(mid, &quot;/etc/lab/device.txt&quot;, f&quot;Камера {n}: тестовое устройство SDK&quot;)
-    plugin.vulnerability(f&quot;single_device_{n}&quot;, {&quot;machine&quot;: mid, &quot;service&quot;: &quot;lab_control&quot;, &quot;version_prefix&quot;: &quot;1.0&quot;, &quot;access&quot;: &quot;info&quot;})
-    # Узел сразу появляется на игровой карте.
-    world = plugin.world()
-    world[&quot;player&quot;][&quot;known_machines&quot;].append(mid)
-    plugin.apply({&quot;player&quot;: world[&quot;player&quot;]})
-    plugin.set(&quot;created&quot;, n)
-    print(f&quot;Создано устройство {host}: {ip}, id={mid}&quot;)
-    print(f&quot;probe {ip} — две уязвимости только этого типа и одна этого экземпляра&quot;)
-    print(f&quot;exploit -s lab_control {ip} — вход, затем privesc&quot;)
-
-def tick(event):
-    plugin.set(&quot;ticks&quot;, plugin.get(&quot;ticks&quot;, 0) + 1)
-
-def info(event):
-    print(&quot;Создано устройств:&quot;, plugin.get(&quot;created&quot;, 0))
-    print(&quot;Тактов мира:&quot;, plugin.get(&quot;ticks&quot;, 0))
-</pre></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Легенда Blackwire (слова хозяина, 25.10.2026)</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page069.html">Назад</a> | <a href="page071.html">Далее</a></div><h1>Легенда Blackwire (слова хозяина, 25.10.2026)</h1>
+<p><strong>Игрок.</strong> В прошлом — сотрудник крупной корпорации. Взял кредит, не смог погасить; банк забрал половину имущества из дома. Остался домашний компьютер, старый маршрутизатор и долг. С этого начинается игра: пустой стол, письма в почте.</p>
+<p><strong>Группа hello-world.</strong> Хакерская группа, годами сидевшая в тени. После крупного взлома вернулась — показать, что у них ещё остались силы, и что они готовы вступиться за простых изгоев тоталитарного общества.</p>
+<p><strong>Вход в историю.</strong> В почте игрок находит письмо с загадочной ссылкой — она ведёт в скрытую сеть сайтов группы (домены <code>.hw</code>, шлюз <code>gate.hw</code>). Ссылка с одноразовым кодом приглашения открывает страницу, где группа объясняет, кто они, и даёт первое испытание. Дальше игроку предстоит пройти через задания группы (второй этап — содержание).</p>
+<p><strong>Что из этого в первом этапе (экосистема компьютера):</strong></p>
+<ul><li>почтовый ящик игрока с начальными письмами: банк (долг, изъятие имущества), бывший работодатель (увольнение), провайдер,</li></ul>
+<p>  спам, письмо hello-world со ссылкой <code>http://gate.hw/invite/&lt;код&gt;</code>;</p>
+<ul><li>организация hello-world в генераторе (OrgKind::Underground) со скрытой сетью сайтов: <code>gate.hw</code> (<code>/</code>, <code>/invite/&lt;код&gt;</code>, <code>/manifesto</code>,</li></ul>
+<p>  <code>/board</code> — доска заданий, пока заглушка), почтовый адрес группы;</p>
+<ul><li>приложение «Почта» (входящие, отправленные, чтение, ответ, письмо, ссылки открываются в браузере);</li><li>браузер открывает сайты организаций и скрытой сети.</li></ul>
+<p><strong>Второй этап:</strong> задания группы (цепочка миссий с проверкой условий), ответные письма, развитие сюжета, уязвимости и взломы, слежка центров безопасности и киберполиции, деньги и долг.</p></body></html>

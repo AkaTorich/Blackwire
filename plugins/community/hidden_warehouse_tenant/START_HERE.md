@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s hidden_warehouse_tenant:gateway_entry 198.22.56.1`
+`research -h 3 198.22.56.1 hidden_warehouse_tenant:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.56.1 hidden_warehouse_tenant:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s hidden_warehouse_tenant:gateway_entry 198.22.56.1`
 
 Прочитай `/srv/records/warehouse-leases.csv` на последнем узле — там сохранённая запись.
 

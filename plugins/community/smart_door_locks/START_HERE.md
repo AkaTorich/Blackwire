@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s smart_door_locks:records_entry 198.22.4.1`
+`research -h 3 198.22.4.1 smart_door_locks:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.4.1 smart_door_locks:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s smart_door_locks:records_entry 198.22.4.1`
 
 Прочитай `/srv/records/access.log` на последнем узле — там сохранённая запись.
 

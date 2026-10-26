@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s regional_data_center:gateway_entry 198.22.27.1`
+`research -h 3 198.22.27.1 regional_data_center:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.27.1 regional_data_center:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s regional_data_center:gateway_entry 198.22.27.1`
 
 Прочитай `/srv/records/rack-allocation.csv` на последнем узле — там сохранённая запись.
 

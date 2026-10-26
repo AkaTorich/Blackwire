@@ -132,6 +132,7 @@ pub fn call(game:&mut Game,owner:&str,name:&str,args:&[Value])->Result<Value,Str
             if let Some(t)=spec.get("device_type").and_then(Value::as_str){if !game.world.plugins.device_types.contains_key(t){return Err("тип устройства не найден".into());}}
             if let Some(mid)=spec.get("machine").and_then(Value::as_u64){if mid>u32::MAX as u64 || !game.world.has_machine(mid as u32){return Err("устройство не найдено".into());}}
             if let Some(h)=spec.get("handler"){if !h.as_str().map(super::ident).unwrap_or(false){return Err("неверное имя обработчика уязвимости".into());}}
+            if let Some(exploit) = spec.get("exploit") { crate::hack::payload::validate_spec(exploit)?; }
             spec["name"]=json!(key);
             game.world.plugins.vulnerabilities.insert(key.clone(),spec);refresh(game)?;Ok(json!(key))
         }

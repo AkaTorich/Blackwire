@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s erased_visitor_records:gateway_entry 198.22.46.1`
+`research -h 3 198.22.46.1 erased_visitor_records:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.46.1 erased_visitor_records:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s erased_visitor_records:gateway_entry 198.22.46.1`
 
 Прочитай `/srv/records/visitor-records.csv` на последнем узле — там сохранённая запись.
 

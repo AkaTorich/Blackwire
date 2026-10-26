@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s rolling_backup_leak:records_entry 198.22.92.1`
+`research -h 3 198.22.92.1 rolling_backup_leak:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.92.1 rolling_backup_leak:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s rolling_backup_leak:records_entry 198.22.92.1`
 
 Прочитай `/srv/records/backup-rotation.csv` на последнем узле — там сохранённая запись.
 

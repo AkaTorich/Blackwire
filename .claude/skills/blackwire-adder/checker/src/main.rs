@@ -15,7 +15,7 @@ use serde_json::json;
 fn stub(name: &str) -> Option<serde_json::Value> {
     Some(match name {
         "sys.hostname" | "sys.whoami" | "sys.cwd" | "sys.env" | "fs.read" | "net.my_ip" => json!(""),
-        "sys.is_root" | "fs.exists" | "fs.is_dir" | "net.connect" | "net.privesc" => json!(false),
+        "sys.is_root" | "fs.exists" | "fs.is_dir" | "net.connect" => json!(false),
         "sys.users" | "sys.procs" | "sys.missions" | "fs.list" | "net.scan" | "net.hops" | "net.vulns"
         | "net.owned" => json!([]),
         "sys.uptime" | "sys.money" | "sys.debt" | "sys.pid" | "net.heat" | "net.clear_logs" | "time.now" => json!(0),
@@ -23,7 +23,9 @@ fn stub(name: &str) -> Option<serde_json::Value> {
         | "fs.delete" | "fs.move" | "fs.copy" | "fs.chmod" | "fs.chown" | "net.disconnect" | "net.resolve"
         | "net.ping" | "net.crack" => json!(null),
         "net.http" => json!({"status": 200, "title": "", "body": ""}),
-        "net.exploit" => json!({"ok": false, "access": "", "user": "", "password": "", "path": "", "data": "", "host": "", "monitored": false}),
+        "net.exploit" | "net.privesc" => json!({"ok": false, "access": "", "user": "", "password": "", "path": "", "data": "", "host": "", "monitored": false}),
+        "net.research" => json!({"id":"","name":"","service":"","port":0,"version":"","local":false,"kind":"","difficulty":1,"fingerprint":"","layout":{},"hints":[],"fields":[],"market":"","next":""}),
+        "net.probe" => json!({"ok":false,"applied":false,"feedback":"проверка только на заглушке","hint":"","id":"","kind":""}),
         "net.watch" => json!({"stage": "", "progress": 0, "raids": 0, "locked": false, "lead": ""}),
         "net.proxy" => json!({"chain": [], "exit_ip": "", "hidden": false, "monitored": false}),
         "shell.exec" => json!({"out": "", "ok": true}),

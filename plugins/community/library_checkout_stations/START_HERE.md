@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s library_checkout_stations:records_entry 198.22.12.1`
+`research -h 3 198.22.12.1 library_checkout_stations:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.12.1 library_checkout_stations:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s library_checkout_stations:records_entry 198.22.12.1`
 
 Прочитай `/srv/records/loans.csv` на последнем узле — там сохранённая запись.
 

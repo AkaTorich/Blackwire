@@ -51,7 +51,7 @@ def create(event):
     world = plugin.world()
     world["player"]["known_machines"].extend([gate, server])
     plugin.apply({"player": world["player"]})
-    plugin.mail(0, {"from": "line@hw", "subject": f"Район {n}: задание", "body": f"Открой http://{ip}/. Вход: exploit -s line_gate {ip}; затем exploit -s line_archive {lan}2. Награда: 150."})
+    plugin.mail(0, {"from": "line@hw", "subject": f"Район {n}: задание", "body": f"Открой http://{ip}/. Исследуй research {ip} district:gate_entry; создай свой код через exploit new или купи market buy exp_overflow. Затем исследуй службу line_archive на {lan}2. Награда: 150."})
     plugin.news(f"Открылся независимый архив района {n}.")
     plugin.set("districts", n)
     panel()

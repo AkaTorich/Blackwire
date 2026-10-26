@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s stolen_prototype_logs:gateway_entry 198.22.43.1`
+`research -h 3 198.22.43.1 stolen_prototype_logs:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.43.1 stolen_prototype_logs:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s stolen_prototype_logs:gateway_entry 198.22.43.1`
 
 Прочитай `/srv/records/bench-access.log` на последнем узле — там сохранённая запись.
 

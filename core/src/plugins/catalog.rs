@@ -20,7 +20,10 @@ pub fn buy(world:&mut World,kind:&str,id:&str)->Option<Result<String,String>>{
             let home=world.machines[0].users.home_of(&world.player.handle);
             let dir=format!("{home}/scripts");let user=world.player.handle.clone();
             world.machines[0].fs.mkdir_all(&dir,&user).map_err(|e|e.to_string())?;
-            world.machines[0].fs.write_text(&format!("{dir}/{}",item.file),&item.code,&user).map_err(|e|e.to_string())?;
+            let path = format!("{dir}/{}",item.file);
+            if world.machines[0].fs.exists(&path) { return Err(format!("файл {} уже существует; сначала переименуй его", path)); }
+            world.machines[0].fs.write_text(&path,&item.code,&user).map_err(|e|e.to_string())?;
+            world.machines[0].fs.set_mode(&path,0o755).map_err(|e|e.to_string())?;
             world.market.bought.insert(id.into());
         }else{world.player.upgrades.insert(id.into());}
         world.player.money-=item.price;Ok(format!("Куплено: {} ({} ₵)",item.name,item.price))

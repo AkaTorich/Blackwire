@@ -24,6 +24,14 @@ pub struct MarketState {
 }
 
 pub const MARKET: &[MarketItem] = &[
+    MarketItem { id: "exp_overflow", name: "Buffer Forge", price: 550, file: "exp_overflow.adr", desc: "переполнение буфера; вычисляет размер кадра и адрес входа", code: include_str!("hack/exploits/overflow.adr") },
+    MarketItem { id: "exp_traversal", name: "Path Walker", price: 300, file: "exp_traversal.adr", desc: "обход виртуальных путей к файлу уязвимой службы", code: include_str!("hack/exploits/traversal.adr") },
+    MarketItem { id: "exp_auth_replay", name: "Challenge Replay", price: 450, file: "exp_auth_replay.adr", desc: "игровой повтор авторизации по слабой контрольной сумме", code: include_str!("hack/exploits/auth_replay.adr") },
+    MarketItem { id: "exp_query", name: "Vault Query", price: 500, file: "exp_query.adr", desc: "обход фильтра в запросах игровой базы", code: include_str!("hack/exploits/query.adr") },
+    MarketItem { id: "exp_format", name: "Stack Reader", price: 400, file: "exp_format.adr", desc: "чтение записи через ошибку формата", code: include_str!("hack/exploits/format.adr") },
+    MarketItem { id: "exp_protocol", name: "Protocol Weaver", price: 350, file: "exp_protocol.adr", desc: "составляет кадры протокола в нужном порядке", code: include_str!("hack/exploits/protocol.adr") },
+    MarketItem { id: "exp_race", name: "Race Runner", price: 700, file: "exp_race.adr", desc: "локальные и удалённые гонки проверки и использования", code: include_str!("hack/exploits/race.adr") },
+    MarketItem { id: "exp_command_chain", name: "Command Stitch", price: 600, file: "exp_command_chain.adr", desc: "цепочки команд уязвимого игрового разборщика", code: include_str!("hack/exploits/command_chain.adr") },
     MarketItem {
         id: "netscan",
         name: "Сканер сети",
@@ -132,33 +140,40 @@ pub fn buy(world: &mut World, id: &str) -> Result<String, String> {
     if let Some(result)=crate::plugins::catalog::buy(world,"market",id){return result;}
     let it = item(id).ok_or_else(|| format!("нет такого скрипта: {}", id))?;
     if world.market.bought.contains(id) {
-        // перекупка не нужна, но переустановим файл бесплатно
-        write_script(world, it);
-        return Ok(format!("{} уже куплен — переустановлен в ~/scripts/{}", it.name, it.file));
+        // Edited purchased sources belong to the player; never overwrite them.
+        let path = format!("{}/scripts/{}", world.machines[0].users.home_of(&world.player.handle), it.file);
+        if world.machines[0].fs.exists(&path) {
+            return Ok(format!("{} уже куплен: ~/scripts/{}. Исходник можно открыть в редакторе.", it.name, it.file));
+        }
+        write_script(world, it)?;
+        return Ok(format!("{} уже куплен — восстановлен в ~/scripts/{}", it.name, it.file));
     }
     if world.player.money < it.price {
         return Err(format!("не хватает: нужно {} ₵, есть {} ₵", it.price, world.player.money));
     }
+    write_script(world, it)?;
     world.player.money -= it.price;
     world.market.bought.insert(id.to_string());
-    write_script(world, it);
-    Ok(format!("Куплено: {} (−{} ₵) → ~/scripts/{}. Запуск: adder scripts/{}", it.name, it.price, it.file, it.file))
+    Ok(format!("Куплено: {} (−{} ₵) → ~/scripts/{}. Запуск: adder ~/scripts/{} адрес id. Купленные инструменты доступны и в SSH-цепочке.", it.name, it.price, it.file, it.file))
 }
 
-fn write_script(world: &mut World, it: &MarketItem) {
+fn write_script(world: &mut World, it: &MarketItem) -> Result<(), String> {
     let handle = world.player.handle.clone();
     let home = world.machines[0].users.home_of(&handle);
     let dir = format!("{}/scripts", home);
-    let _ = world.machines[0].fs.mkdir_all(&dir, &handle);
+    world.machines[0].fs.mkdir_all(&dir, &handle).map_err(|e| e.to_string())?;
     let path = format!("{}/{}", dir, it.file);
-    let _ = world.machines[0].fs.write_text(&path, it.code, &handle);
-    let _ = world.machines[0].fs.set_mode(&path, 0o755);
+    if world.machines[0].fs.exists(&path) { return Err(format!("Файл {} уже существует; переименуй его перед покупкой.", path)); }
+    world.machines[0].fs.write_text(&path, it.code, &handle).map_err(|e| e.to_string())?;
+    world.machines[0].fs.set_mode(&path, 0o755).map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 /// Страница маркета (HTML) — узлы `gate.hw/market` и `market.hw`.
 pub fn market_html(world: &World) -> String {
     let mut s = String::from("<header><h1>Маркет</h1></header><nav><a href=\"/board\">Доска</a> <a href=\"/shop\">Барахолка</a></nav><main>");
     s.push_str(&format!("<p>На счету: <b>{} ₵</b></p><p><small>Купить в терминале: <code>market buy id</code>. Скрипт ляжет в ~/scripts.</small></p><ul>", world.player.money));
+    s.push_str("<p><b>Собственные эксплоиты:</b> <code>probe адрес</code> → <code>research адрес id</code> → <code>exploit new ~/scripts/my_exploit.adr адрес id</code>. Подсказки доступны через <code>research -h 3 адрес id</code>. Купленный эксплоит можно редактировать; он проверяет совместимость и не обходит защиту цели.</p>");
     for it in MARKET {
         let owned = world.market.bought.contains(it.id);
         let mark = if owned { " — <i>куплено</i>" } else { "" };

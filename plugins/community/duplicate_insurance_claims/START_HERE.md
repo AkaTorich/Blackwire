@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s duplicate_insurance_claims:gateway_entry 198.22.47.1`
+`research -h 3 198.22.47.1 duplicate_insurance_claims:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.47.1 duplicate_insurance_claims:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s duplicate_insurance_claims:gateway_entry 198.22.47.1`
 
 Прочитай `/srv/records/claim-pairs.csv` на последнем узле — там сохранённая запись.
 

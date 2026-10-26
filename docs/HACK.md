@@ -1,152 +1,77 @@
-# Взлом — механики второго этапа (договор)
+# Blackwire — механика игровых эксплоитов
 
-Всё происходит только в выдуманной игровой сети. «Взлом» — это игровые действия над машинами `blackwire_core`:
-найти слабое место по версии службы, получить доступ, подняться до root, пройти через чужие машины, замести следы.
-Настоящих атак здесь нет — это числа и строки в модели мира.
+Вся механика работает над вымышленными машинами World и сеансами Session. Сеть, адреса, файлы и payload относятся к модели игры. Adder не обращается к сокетам или процессам операционной системы пользователя.
 
-Модуль `core/src/hack/` — вся логика; работает над `&mut World` и `&mut Session` (текущий hop сеанса — «откуда» идёт действие).
-Команды оболочки (`shell/cmds_hack.rs`) и функции языка (`script_host.rs`) только зовут этот модуль и рисуют вывод.
+## Путь игрока
 
-## Новое состояние (добавляю я в общих файлах — помощники не трогают)
+1. `probe адрес` показывает работающие службы, версии, id уязвимостей и механику.
+2. `research адрес id` раскрывает параметры конкретной цели и первую подсказку; `research -h 3 адрес id` — подробные подсказки.
+3. `exploit new ~/scripts/mine.adr адрес id` создаёт заготовку и открывает игровой редактор.
+4. Игрок пишет алгоритм, строящий словарь payload по исследованным данным.
+5. `net.probe(адрес, id, payload)` проверяет payload без выдачи доступа; feedback объясняет ошибку.
+6. `net.exploit(адрес, id, payload)` применяет подходящий удалённый payload. Для локального используется `net.privesc(payload, id)`.
 
-`world.rs`, `Player`:
-```rust
-pub owned: Vec<MachineId>,          // машины, где получен доступ (shell или root)
-pub found_creds: Vec<FoundCred>,    // найденные логины
-pub heat: f32,                      // подозрение к игроку, 0..100
-pub heat_peak: f32,                 // пик (для статистики)
-pub traced: bool,                   // игрока запеленговали (heat дошёл до 100)
-```
-`machine.rs` (новый тип):
-```rust
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct FoundCred { pub machine: MachineId, pub user: String, pub password: String, pub note: String }
-```
-`services.rs`, `Vuln` расширяю и таблицу `VULNS` тоже (добавляю столбцы доступа и области):
-```rust
-pub struct Vuln {
-    pub service: String, pub version_prefix: String, pub name: String, pub effect: String,
-    pub access: String,   // "creds" | "shell" | "root" | "read:/путь" | "info"
-    pub scope: String,    // "remote" | "local"
-}
-```
+Запуск исходника: `exploit -f ~/scripts/mine.adr -s id адрес` или `adder ~/scripts/mine.adr адрес id`. Локальный: `privesc ~/scripts/mine.adr id`, после получения оболочки на цели. Команды exploit/privesc без файла и net.exploit/net.privesc без payload доступ не выдают.
 
-## API модуля `hack` (помощник A реализует ЭТИ сигнатуры точно, не меняя их)
+## Исследование и подсказки
 
-`core/src/hack/mod.rs`: `pub mod vuln; pub mod exploit; pub mod crack; pub mod privesc; pub mod tracks; pub mod proxy;`
-и `pub use` всех публичных типов/функций ниже. Все структуры — `#[derive(Serialize, Deserialize, Clone, Debug)]`.
+net.vulns возвращает id, kind, service, port, version, name, access, local. Локальные слабые места нельзя исследовать с чужой машины. research выбирает точный id, полное имя либо службу, если она однозначна. При нескольких совпадениях требуется уточнение.
 
-### vuln.rs — классификация
-```rust
-pub enum VulnAccess { Creds, Shell, Root, Read(String), Info }  // из строки Vuln.access
-pub struct VulnInfo { pub service: String, pub port: u16, pub version: String, pub name: String, pub access: VulnAccess, pub local: bool }
-pub fn scan_vulns(m: &Machine) -> Vec<VulnInfo>;     // все уязвимости машины (по её службам и таблице VULNS)
-pub fn remote_vulns(m: &Machine) -> Vec<VulnInfo>;   // scope=remote
-pub fn local_vulns(m: &Machine) -> Vec<VulnInfo>;    // scope=local (для privesc)
-pub fn access_from_str(s: &str) -> VulnAccess;
-```
+Профиль содержит fingerprint устройства и версии, layout с данными цели, fields с полями payload, hints с подсказками, market с id совместимого инструмента. В payload обязателен fingerprint. Профиль детерминирован по seed, устройству и уязвимой версии: сохранение/загрузка не меняют задачу, другая машина или версия требует нового исследования.
 
-### exploit.rs — получить доступ к удалённой машине с текущего hop'а
-```rust
-pub enum ExploitOutcome {
-    Creds { user: String, password: String },  // узнали логин (сохранить в found_creds)
-    Shell { user: String },                     // прямой вход: push_hop как этот пользователь, машина → owned
-    Read { path: String, data: String },        // утечка файла
-    Nothing,                                     // подходящей уязвимости нет
-}
-pub struct ExploitReport {
-    pub target: MachineId, pub target_host: String,
-    pub vuln: Option<VulnInfo>, pub outcome: ExploitOutcome,
-    pub source_ip: String,     // адрес, который увидела цель (текущий hop)
-    pub monitored: bool,       // цель под наблюдением (SOC/киберполиция/высокая care/служба monitor)
-    pub heat_added: f32,
-}
-// Атакует target службой service (None — выбрать первую удачную удалённую уязвимость).
-// Внутри: находит remote-уязвимость; Creds → кладёт в found_creds; Shell → session.push_hop + owned;
-// Read → читает файл; пишет в журнал цели попытку (LogKind::Warn, с source_ip); если monitored — поднимает heat.
-pub fn exploit(world: &mut World, session: &mut Session, target: MachineId, service: Option<&str>) -> Result<ExploitReport, String>;
-```
+В игре доступны help research, help exploit, окно справки, заготовка с TODO в редакторе и кнопки «Подсказки» у плагинов. Правильный готовый payload не возвращается исследованием: его строит код игрока или купленный Adder-инструмент.
 
-### crack.rs — подбор пароля по словарю (ssh)
-```rust
-pub struct CrackReport {
-    pub target: MachineId, pub target_host: String, pub user: String,
-    pub tried: usize,                 // сколько слов перебрано до результата
-    pub found: Option<String>,        // найденный пароль или None
-    pub attempts: Vec<String>,        // слова по порядку до результата включительно (для анимации прогресса)
-    pub source_ip: String, pub monitored: bool, pub heat_added: f32,
-}
-// Перебирает слова по порядку; совпадение с паролем user'а на target → found. Каждая НЕУДАЧНАЯ попытка пишет
-// LoginFailed в журнал цели (у monitored растёт heat). Успех кладёт логин в found_creds. ssh сам не делает.
-// Требует на target запущенный ssh; иначе Err. wordlist передаётся готовым списком слов (команда читает файл).
-pub fn crack(world: &mut World, session: &Session, target: MachineId, user: &str, wordlist: &[String]) -> Result<CrackReport, String>;
-```
+## Модели уязвимостей
 
-### privesc.rs — локальное повышение прав на текущей машине
-```rust
-pub struct PrivescReport { pub ok: bool, pub vuln: Option<VulnInfo>, pub host: String, pub was_user: String }
-// На машине текущего hop'а: если есть local-уязвимость и пользователь не root — делает текущего пользователя root
-// (session.current_mut().user = "root"), машина → owned. Нет уязвимости или уже root → ok=false (не ошибка).
-pub fn privesc(world: &mut World, session: &mut Session) -> Result<PrivescReport, String>;
-```
+| kind | Параметры исследования | Работа эксплоита |
+| --- | --- | --- |
+| overflow | frame_words, word_size, code_base, entry_offset, canary | Вычислить длину заполнения и адрес; сформировать buffer из букв A и суффикса `адрес и canary через вертикальные разделители` |
+| traversal | mounts, target_file | Выйти через все вложенные каталоги с ../ и добавить путь к файлу без начальной / |
+| auth_replay | account, challenge, salt, modulus | Вычислить взвешенную сумму символов строки challenge:salt по модулю modulus; отправить user и response |
+| query | table, columns | Составить игровой запрос FIND с правильными таблицей, полями и обходом фильтра |
+| format | stack_depth, argument_base, region_base, record_offset | Вычислить позицию аргумента и адрес записи; собрать позиционный format |
+| protocol | nonce, capabilities | Собрать кадры HELLO, MODE и OPEN в нужном порядке |
+| race | resource, window_ms | Составить расписание check → replace → use внутри игрового окна гонки |
+| command_chain | command, parser, channel, nonce | Выбрать разделитель разборщика и составить цепочку с игровым bw-open |
 
-### tracks.rs — следы, чистка журналов, подозрение
-```rust
-pub struct ClearReport { pub machine: MachineId, pub host: String, pub removed: usize, pub denied: bool }
-// На машине текущего hop'а (нужен root или владелец): убирает записи журнала и строки /var/log/*.log,
-// содержащие pattern (None → след игрока: его прежние адреса-источники и строки входа/ошибок с них).
-// denied=true без прав. Чистка снижает улики → уменьшает вклад этой машины в heat.
-pub fn clear_logs(world: &mut World, session: &Session, pattern: Option<&str>) -> Result<ClearReport, String>;
+Подробные правила формата возвращаются через research -h 3; для авторской подсказки используй -h 4. Payload ограничен 64 КиБ. Гонка проверяет виртуальные метки времени, реальное ожидание не требуется.
 
-pub fn source_ip(world: &World, session: &Session) -> String;  // адрес текущего hop'а (что видит цель)
-pub fn is_monitored(world: &World, target: MachineId) -> bool;  // SOC/киберполиция/care=paranoid/служба monitor
-pub fn add_heat(world: &mut World, amount: f32);               // с ограничением 0..100, обновляет heat_peak, ставит traced при 100
-pub fn heat(world: &World) -> f32;
-pub fn decay(world: &mut World, dt_secs: u64);                 // heat медленно падает со временем (зовётся из World::tick)
-pub fn evidence(world: &World) -> Vec<(MachineId, usize)>;     // машины и число записей, где засветился реальный адрес игрока
-```
-Модель подозрения: действие из реального адреса игрока (цепочка длиной 1) против monitored-цели добавляет heat ощутимо;
-через прокси-цепочку (hops>1) реальный адрес цель не видит — heat растёт только если сам прокси-hop уже «засвечен»
-у наблюдателя. Чистка журналов на hop'е убирает его улики. heat=100 → traced=true (последствия — мягко: уведомление и
-письмо-предупреждение, heat сбрасывается к 60; полные последствия — позже).
+Все штатные уязвимости имеют модель. Пользовательские типы устройств и уязвимости получают её по службе/доступу либо явно через exploit.kind в SDK.
 
-### proxy.rs — цепочка подключений
-```rust
-pub struct ProxyInfo {
-    pub chain: Vec<(MachineId, String)>,  // (машина, пользователь) по hop'ам, [0] — своя
-    pub exit_ip: String, pub exit_host: String,
-    pub hidden: bool,                      // цепочка длиннее 1 — реальный адрес скрыт
-    pub monitored_hops: Vec<MachineId>,    // hop'ы под наблюдением (риск)
-}
-pub fn proxy_info(world: &World, session: &Session) -> ProxyInfo;
-```
+## Покупка и изменение исходников
 
-## Команды оболочки (помощник B, новый файл `shell/cmds_hack.rs`, группа `Group::Hack`)
+Маркет продаёт восемь совместимых инструментов exp_overflow, exp_traversal, exp_auth_replay, exp_query, exp_format, exp_protocol, exp_race и exp_command_chain. Исследование показывает подходящий id.
 
-Функции `pub fn ИМЯ(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput` — имена ниже (их впишу в table.rs):
-- `exploit` — `exploit [-s служба] адрес`: `hack::exploit`; удачу печатает строками с задержками 200–500 мс; при Shell
-  показывает новый hop, при Creds — логин, при Read — файл; при monitored — предупреждение о следе и росте подозрения.
-- `crack` — `crack [-w словарь] пользователь@адрес` (или `crack адрес пользователь`): читает словарь (по умолчанию
-  `~/wordlist.txt`), зовёт `hack::crack`, печатает прогресс по `attempts` с задержкой ~90 мс на слово, итог — пароль/неудача.
-- `probe` — `probe адрес`: тихая разведка: скан служб + `scan_vulns` (список слабых мест) + список пользователей.
-- `privesc` — `privesc`: `hack::privesc`; успех — «вы root на <host>».
-- `clearlogs` (алиас `wipe`) — `clearlogs [шаблон]`: `hack::clear_logs`; без прав — отказ.
-- `proxy` — `proxy`: `hack::proxy_info`; цепочка, выходной адрес, скрыт ли реальный, какие hop'ы под наблюдением.
-- `heat` — `heat`: уровень подозрения (0..100), traced, список улик (`hack::evidence`).
+`market buy exp_overflow` списывает игровые деньги и устанавливает `~/scripts/exp_overflow.adr`. Исходник открыт в редакторе. При несоответствии механики инструмент сообщает нужный товар и прекращает попытку. Он сам исследует текущую версию и строит payload; защита и ограничения действуют так же, как для своего кода.
 
-Вывод по-русски, аккуратными строками; опасные действия помечать видом строки `Warn`/`Error`. Подсказка Tab для адреса —
-как у `ssh` (известные ip). Группа `Group::Hack` с заголовком «Взлом» — добавлю в `table.rs` я.
+Купленные личные скрипты доступны из SSH-цепочки через ~/scripts/. Существующий файл на удалённой машине имеет приоритет и читается с правами текущего пользователя. Для личных инструментов используется только собственный каталог scripts компьютера игрока. Существующие файлы и изменённые покупки не перезаписываются. Удалённую купленную копию штатного товара можно восстановить повторной покупкой без оплаты.
 
-## Функции языка Adder (добавляю я в script_host.rs и ADDER.md)
+Плагины могут продавать собственный исходник через plugin.catalog("market", ...). Его id можно связать с уязвимостью через exploit.market. Работающий пример: sdk/examples/device_lab.
 
-- `net.vulns(addr)` → список `{service, port, name, access, local}`
-- `net.exploit(addr[, service])` → `{ok, access, user, password, path, data, host, monitored}` (ok=false — Nothing)
-- `net.crack(addr, user[, wordlist_path])` → пароль (str) или null; по умолчанию словарь `~/wordlist.txt`
-- `net.privesc()` → true/false
-- `net.clear_logs([pattern])` → число убранных записей (−1 — отказано)
-- `net.heat()` → число; `net.owned()` → список имён машин; `net.proxy()` → `{chain, exit_ip, hidden, monitored}`
+## Последствия и ограничения
+
+Исследование учитывает маршрут, доступность службы и файрвол. Пробы и отклонённые попытки пишутся в игровой журнал, на наблюдаемых целях увеличивают подозрение и могут выдать приманку. Сработавший payload применяет только доступ уязвимости: creds, shell, root, read либо info.
+
+Shell добавляет hop текущего сеанса; найденные логины сохраняются в found_creds; read возвращает только результат конкретной уязвимости. Неправильный payload не меняет владельца, права и цепочку подключений. Успешный локальный и удалённый взлом создаёт on_hack для обработчиков SDK; проверка payload такого события не создаёт.
+
+Рейд блокирует удалённые атаки и пробы, но оставляет локальное восстановление. Локальный payload требует текущего сеанса на машине. Остановленная/обновлённая служба, неверная версия, чужой fingerprint и неправильный id отклоняются.
+
+SSH по известному паролю и crack по игровому словарю остаются отдельными механиками авторизации. clearlogs/wipe очищает следы с учётом прав, proxy показывает цепочку и источник, heat/trace — риск расследования.
+
+## Устройство ядра
+
+- hack/vuln.rs: обнаружение штатных и авторских уязвимостей.
+- hack/payload.rs: стабильные id, выбор цели, профиль исследования, восемь валидаторов и подсказки.
+- script_host.rs: net.research, net.probe, net.exploit и net.privesc; до изменения прав проверяет payload.
+- hack/exploit.rs и hack/privesc.rs: применение выбранного эффекта. Внутренние Rust-функции без payload нужны для моделирования и старых тестов ядра; игровой интерфейс их напрямую не предоставляет.
+- shell/cmds_hack.rs: исследование, создание исходника и постановка Adder-скрипта в обычную очередь исполнения.
+- market.rs, hack/exploits/*.adr: покупка и настоящий исходный код восьми инструментов.
+- plugins/content.rs: правила exploit.kind/difficulty/hint/market; plugins/catalog.rs: продажа авторских инструментов.
+
+Новых обязательных полей в сохранении не требуется. Определения авторских профилей хранятся в существующем словаре уязвимостей плагинов. Пакеты API 1 продолжают объявлять контент прежним способом; скрипты, использовавшие автоматический net.exploit без payload, нужно перевести на новый API.
 
 ## Проверка
 
-`cargo test -p blackwire-core` (новый `core/tests/hack.rs`). В игре — снимками: `exploit`, `crack`, `probe`, `privesc`,
-`clearlogs`, `proxy`, `heat` в терминале; скрипт на Adder, который сканирует, подбирает пароль и входит.
+player_exploits.rs исполняет настоящие купленные Adder-файлы через очередь Game и проверяет все штатные уязвимости, каждую модель, локальное повышение прав, отказ старого автоматического вызова, ошибочные payload, подсказки, сохранение/загрузку и защиту изменённых исходников.
+
+Тесты SDK и community_plugins.rs используют те же Adder-эксплоиты для прохождения заданий. Сто плагинов проверяются последовательно, каждый в отдельном мире. Совместный нагрузочный прогон на пользовательском компьютере не запускается.

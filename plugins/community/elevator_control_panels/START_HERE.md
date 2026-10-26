@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s elevator_control_panels:records_entry 198.22.14.1`
+`research -h 3 198.22.14.1 elevator_control_panels:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.14.1 elevator_control_panels:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s elevator_control_panels:records_entry 198.22.14.1`
 
 Прочитай `/srv/records/visits.log` на последнем узле — там сохранённая запись.
 

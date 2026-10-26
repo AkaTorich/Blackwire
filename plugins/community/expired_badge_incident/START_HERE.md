@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s expired_badge_incident:records_entry 198.22.93.1`
+`research -h 3 198.22.93.1 expired_badge_incident:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.93.1 expired_badge_incident:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s expired_badge_incident:records_entry 198.22.93.1`
 
 Прочитай `/srv/records/badge-status.csv` на последнем узле — там сохранённая запись.
 

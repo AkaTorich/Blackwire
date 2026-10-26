@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s swapped_construction_bids:gateway_entry 198.22.57.1`
+`research -h 3 198.22.57.1 swapped_construction_bids:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.57.1 swapped_construction_bids:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s swapped_construction_bids:gateway_entry 198.22.57.1`
 
 Прочитай `/srv/records/bid-history.csv` на последнем узле — там сохранённая запись.
 

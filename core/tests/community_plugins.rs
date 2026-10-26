@@ -33,6 +33,16 @@ impl Host for RealHost<'_> {
     fn sleep(&mut self, _: u64) {}
 }
 
+fn attack(game: &mut Game, sid: u32, address: &str, selector: &str) {
+    let profile = blackwire_core::script_host::call(game, sid, 0, "net.research", vec![json!(address), json!(selector)]).unwrap();
+    let tool = blackwire_core::market::item(&format!("exp_{}", profile["kind"].as_str().unwrap())).unwrap();
+    let mut host = RealHost {game, sid, output: vec![]};
+    let result = blackwire_lang::run(tool.code, &mut host, vec![tool.file.into(), address.into(), selector.into()]);
+    assert!(result.is_ok(), "{selector}: {:?}, {:?}", result, host.output);
+    assert_ne!(result.unwrap().to_json(), json!(1), "{selector}: {:?}", host.output);
+    clean(host.game, selector);
+}
+
 #[test]
 fn every_plugin_works_independently_and_survives_save_reload() {
     let entries = catalog();
@@ -74,7 +84,7 @@ fn every_plugin_works_independently_and_survives_save_reload() {
                     assert!(!blackwire_core::hack::defense::firewall_up(&game.world, mid), "{id}: firewall still up");
                 }
                 let service = format!("{id}:{}_entry", node["key"].as_str().unwrap());
-                command(&mut game, sid, &format!("exploit -s {service} {}", node["ip"].as_str().unwrap()));
+                attack(&mut game, sid, node["ip"].as_str().unwrap(), &service);
             }
             let quest = format!("{id}:mission");
             assert!(game.world.plugins.quests[&quest].done, "{id}: quest not complete");
@@ -83,8 +93,7 @@ fn every_plugin_works_independently_and_survives_save_reload() {
             game.close_session(sid);
             let repeat = game.open_session();
             for node in nodes {
-                command(&mut game, repeat, &format!("exploit -s {id}:{}_entry {}",
-                    node["key"].as_str().unwrap(), node["ip"].as_str().unwrap()));
+                attack(&mut game, repeat, node["ip"].as_str().unwrap(), &format!("{id}:{}_entry", node["key"].as_str().unwrap()));
             }
             assert_eq!(game.world.player.money, paid, "{id}: repeated reward");
             game.close_session(repeat);

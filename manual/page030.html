@@ -28,4 +28,23 @@ plugin.vulnerability(&quot;sensor_42_overload&quot;, {
 def overload(event):
     plugin.update_machine(event[&quot;target&quot;], {&quot;up&quot;: false})
     plugin.news(&quot;Один из датчиков перестал отвечать.&quot;)</pre>
-<p>Когда у одной службы несколько уязвимостей, можно выбрать конкретную: <code>exploit -s my_plugin:sensor_42_overload адрес</code>. Без выбора движок использует первую подходящую. Уязвимости проходят через обычные игровые файрволы, маршруты и следы. Локальные правила используются <code>privesc</code> и требуют access=root; handler относится к удалённому exploit.</p></body></html>
+<p>Уязвимости плагина эксплуатируются собственным или купленным Adder-кодом так же, как штатные. Одна команда без payload доступ не выдаёт. Исследование: <code>research адрес my_plugin:sensor_42_overload</code>; заготовка: <code>exploit new ~/scripts/sensor.adr адрес my_plugin:sensor_42_overload</code>; запуск: <code>exploit -f ~/scripts/sensor.adr -s my_plugin:sensor_42_overload адрес</code>.</p>
+<p>В описание уязвимости можно добавить:</p>
+<pre>&quot;exploit&quot;: {
+    &quot;kind&quot;: &quot;overflow&quot;,
+    &quot;difficulty&quot;: 3,
+    &quot;hint&quot;: &quot;Проверь границу кадра и адрес служебного обработчика.&quot;,
+    &quot;market&quot;: &quot;my_plugin:sensor_exploit&quot;
+}</pre>
+<p>kind: overflow, traversal, auth_replay, query, format, protocol, race, command_chain. difficulty: 1..5. hint — подсказка внутри игры, market — id совместимого товара. Без exploit механика выбирается по службе и типу доступа, поэтому старые объявления контента продолжают работать. Если авторский товар отсутствует, подсказка предлагает совместимый штатный инструмент.</p>
+<p><code>net.research(адрес, id)</code> возвращает профиль с layout, fingerprint и hints. Игрок составляет payload; <code>net.probe(адрес, id, payload)</code> проверяет его, <code>net.exploit(адрес, id, payload)</code> применяет. Для локального root нужна оболочка на цели и <code>net.privesc(payload, id)</code>. У каждой машины и версии свой fingerprint; старый payload на другой цели не сработает. Профили воспроизводятся после сохранения и загрузки.</p>
+<p>Успешные удалённые и локальные взломы вызывают on_hack и handler конкретной уязвимости. Пробная проверка и отклонённый payload обработчик успеха не вызывают. Сохраняются обычные маршруты, файрволы, журналирование и подозрение.</p>
+<p>Продажа собственного эксплоита:</p>
+<pre>plugin.catalog(&quot;market&quot;, &quot;sensor_exploit&quot;, {
+    &quot;name&quot;: &quot;Sensor Payload&quot;,
+    &quot;desc&quot;: &quot;Эксплоит переполнения датчика; исходник можно редактировать&quot;,
+    &quot;price&quot;: 180,
+    &quot;file&quot;: &quot;sensor_payload.adr&quot;,
+    &quot;code&quot;: plugin.asset(&quot;sensor_payload.adr&quot;)
+})</pre>
+<p>Добавь исходник в assets манифеста. <code>market buy my_plugin:sensor_exploit</code> устанавливает редактируемый файл в <code>~/scripts</code>. Существующий файл с таким именем не перезаписывается. Полный пример с устройством, подсказкой, условиями и покупкой — sdk/examples/device_lab.</p></body></html>

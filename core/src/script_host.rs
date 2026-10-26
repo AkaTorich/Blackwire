@@ -295,23 +295,46 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             let page = game.world.http(mid, &url);
             Ok(json!({ "status": page.status, "title": page.title, "body": page.body }))
         }
+        "research" | "probe" => {
+            let addr = arg_str(args, 0, "адрес")?;
+            let selector = args.get(1).and_then(Value::as_str);
+            let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
+            let sess = game.sessions.get(&session).ok_or("нет сеанса")?;
+            let v = crate::hack::payload::select(&game.world, sess, id, selector)?;
+            crate::hack::payload::ensure_reachable(&game.world, sess, id, &v)?;
+            if func == "probe" {
+                let payload = args.get(2).ok_or("net.probe(адрес, id, payload): нужен payload")?;
+                return crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, true);
+            }
+            let result = crate::hack::payload::profile(&game.world, id, &v);
+            game.world.mark_scanned(id);
+            Ok(result)
+        }
         // ---- взлом (второй этап)
         "vulns" => {
             let addr = arg_str(args, 0, "адрес")?;
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             game.world.mark_scanned(id);
-            let list: Vec<Value> = crate::hack::scan_vulns(game.world.machine(id))
+            let sess = game.sessions.get(&session).ok_or("нет сеанса")?;
+            let list: Vec<Value> = crate::hack::payload::available(&game.world, sess, id)
                 .iter()
-                .map(|v| json!({ "service": v.service, "port": v.port, "name": v.name, "access": access_str(&v.access), "local": v.local }))
+                .filter(|v| !v.local || mid == id)
+                .map(|v| json!({ "id": crate::hack::payload::id(v), "kind": crate::hack::payload::kind(&game.world, v),
+                    "version": v.version, "service": v.service, "port": v.port, "name": v.name, "access": access_str(&v.access), "local": v.local }))
                 .collect();
             Ok(Value::Array(list))
         }
         "exploit" => {
             let addr = arg_str(args, 0, "адрес")?;
-            let service = args.get(1).and_then(|v| v.as_str()).map(|s| s.to_string());
+            let selector = arg_str(args, 1, "id уязвимости")?;
+            let payload = args.get(2).ok_or("Автоматический взлом отключён: net.exploit(адрес, id, payload). Начни с research и exploit new; готовые инструменты — market.")?;
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             let sess = game.sessions.get_mut(&session).ok_or_else(|| "нет сеанса".to_string())?;
-            let r = crate::hack::exploit(&mut game.world, sess, id, service.as_deref())?;
+            let v = crate::hack::payload::select(&game.world, sess, id, Some(&selector))?;
+            if v.local { return Err("для локальной уязвимости используй net.privesc(payload, id)".into()); }
+            let check = crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, false)?;
+            if check["ok"] != json!(true) { return Ok(check); }
+            let r = crate::hack::exploit::exploit_selected(&mut game.world, sess, id, v)?;
             use crate::hack::ExploitOutcome;
             let out = match &r.outcome {
                 ExploitOutcome::Creds { user, password } => json!({ "ok": true, "access": "creds", "user": user, "password": password, "host": r.target_host, "monitored": r.monitored }),
@@ -336,8 +359,15 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
         }
         "privesc" => {
             let sess = game.sessions.get_mut(&session).ok_or_else(|| "нет сеанса".to_string())?;
-            let r = crate::hack::privesc(&mut game.world, sess)?;
-            Ok(json!(r.ok))
+            let payload = args.first().ok_or("Нужен локальный payload: net.privesc(payload, id); исследуй текущую машину через research.")?;
+            let selector = arg_str(args, 1, "id локальной уязвимости")?;
+            let id = sess.machine_id();
+            let v = crate::hack::payload::select(&game.world, sess, id, Some(&selector))?;
+            if !v.local { return Err("privesc требует локальную уязвимость текущей машины".into()); }
+            let check = crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, false)?;
+            if check["ok"] != json!(true) { return Ok(check); }
+            let r = crate::hack::privesc::apply_vulnerability(&mut game.world, sess, Some(v))?;
+            Ok(json!({"ok": r.ok, "access": if r.ok {"root"} else {"none"}, "host": r.host, "feedback": if r.ok {"Права повышены до root."} else {"Вы уже root."}}))
         }
         "clear_logs" => {
             let pat = args.first().and_then(|v| v.as_str()).map(|s| s.to_string());

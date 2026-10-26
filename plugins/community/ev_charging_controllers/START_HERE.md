@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s ev_charging_controllers:records_entry 198.22.13.1`
+`research -h 3 198.22.13.1 ev_charging_controllers:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.13.1 ev_charging_controllers:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s ev_charging_controllers:records_entry 198.22.13.1`
 
 Прочитай `/srv/records/sessions.csv` на последнем узле — там сохранённая запись.
 

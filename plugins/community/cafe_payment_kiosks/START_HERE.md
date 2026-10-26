@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s cafe_payment_kiosks:records_entry 198.22.8.1`
+`research -h 3 198.22.8.1 cafe_payment_kiosks:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.8.1 cafe_payment_kiosks:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s cafe_payment_kiosks:records_entry 198.22.8.1`
 
 Прочитай `/srv/records/receipts.csv` на последнем узле — там сохранённая запись.
 

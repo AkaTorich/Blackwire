@@ -41,7 +41,8 @@ pub fn build_player(
     fs.add_user_home(handle);
 
     // Домашние файлы.
-    let _ = fs.write_text(&format!("{}/readme.txt", home), &pd::readme(handle), handle);
+    let readme = pd::readme(handle) + "\nСвои эксплоиты: probe адрес → research адрес id → exploit new ~/scripts/my_exploit.adr адрес id.\nПодсказки: research -h 3 адрес id. Готовые эксплоиты: market, затем market buy exp_<механика>.\n";
+    let _ = fs.write_text(&format!("{}/readme.txt", home), &readme, handle);
     let _ = fs.mkdir_all(&format!("{}/scripts", home), handle);
     let _ = fs.write_text(&format!("{}/scripts/hello.adr", home), pd::script_hello(), handle);
     let _ = fs.write_text(&format!("{}/scripts/scan.adr", home), pd::script_scan(), handle);

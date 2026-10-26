@@ -1,1 +1,21 @@
-{"id":"device_lab","name":"Лаборатория устройств","version":"1.0.0","api":1,"entry":"main.adr","permissions":["content"],"events":{"on_load":"load","on_tick":"tick"},"commands":{"lab_create":"create","lab_info":"info"}}
+{
+  "id": "device_lab",
+  "name": "Лаборатория устройств",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "main.adr",
+  "permissions": [
+    "content"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_tick": "tick"
+  },
+  "commands": {
+    "lab_create": "create",
+    "lab_info": "info"
+  },
+  "assets": [
+    "camera_payload.adr"
+  ]
+}

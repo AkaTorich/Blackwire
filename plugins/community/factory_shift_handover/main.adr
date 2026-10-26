@@ -4,6 +4,13 @@ C = json.loads(plugin.asset("content.json"))
 def panel():
     created = plugin.get("created", false)
     lines = C["story"] + "\n" + C["objective"] + "\nСтарт: " + C["id"] + "_start"
+    if len(C["nodes"]) > 0:
+        first = C["nodes"][0]
+        vulnerability = C["id"] + ":" + first["key"] + "_entry"
+        lines += "\nСвой эксплоит: research " + first["ip"] + " " + vulnerability
+        lines += "\nБольше подсказок: research -h 3 " + first["ip"] + " " + vulnerability
+        lines += "\nЗаготовка: exploit new ~/scripts/my_exploit.adr " + first["ip"] + " " + vulnerability
+        lines += "\nГотовый инструмент: market buy exp_overflow; запуск: exploit -f ~/scripts/exp_overflow.adr -s " + vulnerability + " " + first["ip"]
     rows = [["Контент создан", created], ["Пройдено", plugin.get("completed", false)]]
     for node in C["nodes"]:
         rows.append([node["hostname"], node["ip"]])
@@ -131,6 +138,11 @@ def status(event):
     print("Первая зацепка: http://" + C["nodes"][0]["ip"] + "/")
     print("Запусти probe по каждому доступному адресу. Если файрвол блокирует вход — firewall <адрес>; при промахе повтори и следи за подозрением.")
     print("Пройдено:", plugin.get("completed", false), "| Награда:", C["reward"])
+    first = C["nodes"][0]
+    vulnerability = C["id"] + ":" + first["key"] + "_entry"
+    print("Исследование и подсказки: research -h 3", first["ip"], vulnerability)
+    print("Свой код: exploit new ~/scripts/my_exploit.adr", first["ip"], vulnerability)
+    print("Готовый инструмент: market buy exp_overflow; затем exploit -f ~/scripts/exp_overflow.adr -s", vulnerability, first["ip"])
     print("Запись дела лежит на последнем узле. Внутренние адреса достижимы через шлюз.")
     if C["family"] == "event":
         print("Фаза инцидента:", plugin.get("phase", 0), "/ 3; меняется каждые 15 игровых секунд.")

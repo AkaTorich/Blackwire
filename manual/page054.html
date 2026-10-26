@@ -2,9 +2,10 @@
 <table>
 <tr><th>Команда</th><th>Использование</th><th>Назначение</th></tr>
 <tr><td><code>probe</code></td><td><code>probe адрес</code></td><td>разведка: службы, слабые места, пользователи</td></tr>
-<tr><td><code>exploit</code></td><td><code>exploit [-s служба] адрес</code></td><td>воспользоваться слабым местом службы</td></tr>
+<tr><td><code>research</code></td><td><code>research [-h 1..4] адрес id</code></td><td>параметры уязвимости, подсказки и совместимый товар маркета</td></tr>
+<tr><td><code>exploit</code></td><td><code>exploit -f файл.adr [-s id] адрес</code>; <code>exploit new файл.adr адрес id</code></td><td>запуск своего эксплоита или создание заготовки в редакторе</td></tr>
 <tr><td><code>crack</code></td><td><code>crack [-w словарь] пользователь@адрес</code></td><td>подобрать пароль по словарю</td></tr>
-<tr><td><code>privesc</code></td><td><code>privesc</code></td><td>повысить права на текущей машине до root</td></tr>
+<tr><td><code>privesc</code></td><td><code>privesc файл.adr id</code></td><td>собственный или купленный локальный эксплоит на текущей машине</td></tr>
 <tr><td><code>clearlogs</code></td><td><code>clearlogs [шаблон]</code></td><td>убрать следы из журналов (нужны права)</td></tr>
 <tr><td><code>wipe</code></td><td><code>wipe [шаблон]</code></td><td>убрать следы из журналов (то же, что clearlogs)</td></tr>
 <tr><td><code>proxy</code></td><td><code>proxy</code></td><td>цепочка подключений и выходной адрес</td></tr>

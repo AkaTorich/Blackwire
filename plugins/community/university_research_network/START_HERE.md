@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s university_research_network:gateway_entry 198.22.23.1`
+`research -h 3 198.22.23.1 university_research_network:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.23.1 university_research_network:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s university_research_network:gateway_entry 198.22.23.1`
 
 Прочитай `/srv/records/grant-register.csv` на последнем узле — там сохранённая запись.
 

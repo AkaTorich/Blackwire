@@ -1,98 +1,49 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: район — main.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page071.html">Назад</a> | <a href="page073.html">Далее</a></div><h1>Пример: район — main.adr</h1>
-<pre># Полный пример: сеть организации, устройства, сайт, задание, магазин, маркет и окно.
-def panel():
-    n = plugin.get(&quot;districts&quot;, 0)
-    plugin.window(&quot;control&quot;, {&quot;title&quot;: &quot;Район Линия-7&quot;, &quot;text&quot;: &quot;Каждое нажатие создаёт новую сеть организации: шлюз и сервер с собственной службой и уязвимостью.&quot;, &quot;rows&quot;: [[&quot;Создано районов&quot;, n], [&quot;Вход в сервер&quot;, &quot;через шлюз организации&quot;]], &quot;buttons&quot;: [{&quot;id&quot;: &quot;create&quot;, &quot;label&quot;: &quot;Создать район&quot;}, {&quot;id&quot;: &quot;status&quot;, &quot;label&quot;: &quot;Проверить задания&quot;}]})
-
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: устройства — main.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page071.html">Назад</a> | <a href="page073.html">Далее</a></div><h1>Пример: устройства — main.adr</h1>
+<pre># Собственный тип устройства, служба и уязвимости типа и отдельного экземпляра.
 def load(event):
-    gateway = plugin.template(&quot;gateway&quot;)
-    gateway[&quot;os&quot;] = &quot;LineOS 1.0&quot;
-    gateway[&quot;org&quot;] = null
-    gateway[&quot;router&quot;] = null
-    gateway[&quot;domain&quot;] = null
-    gateway[&quot;lan_ip&quot;] = null
-    gateway[&quot;custom_vulns&quot;] = []
-    gateway[&quot;services&quot;] = [{&quot;port&quot;: 2222, &quot;name&quot;: &quot;line_gate&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Line gateway&quot;, &quot;pages&quot;: []}, {&quot;port&quot;: 80, &quot;name&quot;: &quot;http&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Line portal&quot;, &quot;pages&quot;: []}]
-    kind = plugin.device_type(&quot;gateway&quot;, gateway)
-    plugin.vulnerability(&quot;gate_entry&quot;, {&quot;device_type&quot;: kind, &quot;service&quot;: &quot;line_gate&quot;, &quot;version_prefix&quot;: &quot;1.&quot;, &quot;access&quot;: &quot;shell&quot;})
-    server = plugin.template(&quot;server&quot;)
-    server[&quot;os&quot;] = &quot;LineServer 1.0&quot;
-    server[&quot;org&quot;] = null
-    server[&quot;router&quot;] = null
-    server[&quot;domain&quot;] = null
-    server[&quot;custom_vulns&quot;] = []
-    server[&quot;services&quot;] = [{&quot;port&quot;: 7777, &quot;name&quot;: &quot;line_archive&quot;, &quot;version&quot;: &quot;2.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Line archive&quot;, &quot;pages&quot;: []}]
-    kind = plugin.device_type(&quot;archive&quot;, server)
-    plugin.vulnerability(&quot;archive_leak&quot;, {&quot;device_type&quot;: kind, &quot;service&quot;: &quot;line_archive&quot;, &quot;version_prefix&quot;: &quot;2.&quot;, &quot;access&quot;: &quot;root&quot;, &quot;handler&quot;: &quot;archive_effect&quot;})
-    plugin.catalog(&quot;shop&quot;, &quot;memory&quot;, {&quot;name&quot;: &quot;Память Линия-7&quot;, &quot;desc&quot;: &quot;Добавляет 1024 МБ памяти компьютеру игрока&quot;, &quot;price&quot;: 50})
-    plugin.catalog(&quot;market&quot;, &quot;report&quot;, {&quot;name&quot;: &quot;Отчёт по узлам&quot;, &quot;desc&quot;: &quot;Показывает собственный адрес и доступные средства&quot;, &quot;price&quot;: 10, &quot;file&quot;: &quot;line_report.adr&quot;, &quot;code&quot;: &quot;print(sys.hostname(), net.my_ip(), sys.money())\n&quot;})
-    plugin.catalog(&quot;achievements&quot;, &quot;archivist&quot;, {&quot;name&quot;: &quot;Архивист Линии-7&quot;, &quot;desc&quot;: &quot;Получить доступ к серверу нового района&quot;})
-    if not plugin.get(&quot;timer_started&quot;, false):
-        plugin.timer(&quot;city_news&quot;, 60, &quot;custom.news&quot;, {}, 60)
-        plugin.set(&quot;timer_started&quot;, true)
-    panel()
+    world = plugin.world()
+    template = plugin.template(&quot;camera&quot;)
+    template[&quot;kind&quot;] = &quot;camera&quot;
+    template[&quot;org&quot;] = null
+    template[&quot;router&quot;] = null
+    template[&quot;domain&quot;] = null
+    template[&quot;lan_ip&quot;] = null
+    template[&quot;os&quot;] = &quot;LabOS 1.0&quot;
+    template[&quot;logs&quot;] = []
+    template[&quot;mail&quot;] = []
+    template[&quot;custom_vulns&quot;] = []
+    template[&quot;services&quot;] = [{&quot;port&quot;: 9080, &quot;name&quot;: &quot;lab_control&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Lab Camera Control&quot;, &quot;pages&quot;: []}]
+    kind = plugin.device_type(&quot;smart_camera&quot;, template)
+    plugin.vulnerability(&quot;camera_access&quot;, {&quot;device_type&quot;: kind, &quot;service&quot;: &quot;lab_control&quot;, &quot;version_prefix&quot;: &quot;1.&quot;, &quot;access&quot;: &quot;shell&quot;, &quot;exploit&quot;: {&quot;kind&quot;: &quot;overflow&quot;, &quot;difficulty&quot;: 3, &quot;hint&quot;: &quot;Камера хранит адрес служебного обработчика рядом с кадром запроса.&quot;, &quot;market&quot;: &quot;device_lab:camera_exploit&quot;}})
+    plugin.vulnerability(&quot;camera_kernel&quot;, {&quot;device_type&quot;: kind, &quot;local&quot;: true, &quot;version_prefix&quot;: &quot;LabOS 1.&quot;, &quot;access&quot;: &quot;root&quot;, &quot;exploit&quot;: {&quot;kind&quot;: &quot;race&quot;, &quot;difficulty&quot;: 2, &quot;hint&quot;: &quot;Подмени ресурс после проверки, до его использования.&quot;}})
+
+    plugin.catalog(&quot;market&quot;, &quot;camera_exploit&quot;, {&quot;name&quot;: &quot;Camera Payload&quot;, &quot;price&quot;: 180, &quot;desc&quot;: &quot;Эксплоит переполнения камер LabOS. Исходник можно редактировать.&quot;, &quot;file&quot;: &quot;camera_payload.adr&quot;, &quot;code&quot;: plugin.asset(&quot;camera_payload.adr&quot;)})
 
 def create(event):
-    n = plugin.get(&quot;districts&quot;, 0) + 1
-    if n &gt; 100:
-        raise &quot;В этом примере предусмотрено до 100 районов&quot;
-    ip = f&quot;198.19.{n}.1&quot;
-    lan = f&quot;10.250.{n}.&quot;
-    gate = plugin.spawn(&quot;district:gateway&quot;, {&quot;hostname&quot;: f&quot;line-gate-{n}&quot;, &quot;ip&quot;: ip, &quot;lan_ip&quot;: lan + &quot;1&quot;, &quot;up&quot;: true})
-    plugin.user(gate, &quot;operator&quot;, &quot;line123&quot;, false)
-    server = plugin.spawn(&quot;district:archive&quot;, {&quot;hostname&quot;: f&quot;line-archive-{n}&quot;, &quot;ip&quot;: lan + &quot;2&quot;, &quot;lan_ip&quot;: lan + &quot;2&quot;, &quot;router&quot;: gate, &quot;up&quot;: true})
-    plugin.user(server, &quot;archivist&quot;, &quot;archive123&quot;, false)
-    plugin.org({&quot;name&quot;: f&quot;Архив Линия-7 №{n}&quot;, &quot;kind&quot;: &quot;media&quot;, &quot;domain&quot;: f&quot;line{n}.city&quot;, &quot;gateway&quot;: gate, &quot;subnet&quot;: lan, &quot;members&quot;: [gate, server], &quot;description&quot;: &quot;Независимый городской архив&quot;})
-    plugin.page(gate, 80, {&quot;path&quot;: &quot;/&quot;, &quot;title&quot;: &quot;Линия-7&quot;, &quot;html&quot;: f&quot;&lt;h1&gt;Архив Линия-7&lt;/h1&gt;&lt;p&gt;Внутренний архив: {lan}2, служба line_archive.&lt;/p&gt;&quot;})
-    plugin.write(server, &quot;/srv/line/report.txt&quot;, f&quot;Документы района {n}: архив открыт&quot;)
-    quest = plugin.quest(f&quot;archive_{n}&quot;, {&quot;title&quot;: f&quot;Архив района {n}&quot;, &quot;objective&quot;: f&quot;Получи доступ к line-archive-{n}&quot;, &quot;reward&quot;: 150})
-    targets = plugin.get(&quot;targets&quot;, [])
-    targets.append({&quot;machine&quot;: server, &quot;quest&quot;: quest})
-    plugin.set(&quot;targets&quot;, targets)
     world = plugin.world()
-    world[&quot;player&quot;][&quot;known_machines&quot;].extend([gate, server])
+    n = plugin.get(&quot;created&quot;, 0) + 1
+    ip = f&quot;198.18.{n // 250}.{n % 250 + 1}&quot;
+    host = f&quot;lab-camera-{n}&quot;
+    mid = plugin.spawn(&quot;device_lab:smart_camera&quot;, {&quot;hostname&quot;: host, &quot;ip&quot;: ip, &quot;up&quot;: true})
+    plugin.user(mid, &quot;operator&quot;, &quot;lab123&quot;, false)
+    plugin.write(mid, &quot;/etc/lab/device.txt&quot;, f&quot;Камера {n}: тестовое устройство SDK&quot;)
+    plugin.vulnerability(f&quot;single_device_{n}&quot;, {&quot;machine&quot;: mid, &quot;service&quot;: &quot;lab_control&quot;, &quot;version_prefix&quot;: &quot;1.0&quot;, &quot;access&quot;: &quot;info&quot;})
+    # Узел сразу появляется на игровой карте.
+    world = plugin.world()
+    world[&quot;player&quot;][&quot;known_machines&quot;].append(mid)
     plugin.apply({&quot;player&quot;: world[&quot;player&quot;]})
-    plugin.mail(0, {&quot;from&quot;: &quot;line@hw&quot;, &quot;subject&quot;: f&quot;Район {n}: задание&quot;, &quot;body&quot;: f&quot;Открой http://{ip}/. Вход: exploit -s line_gate {ip}; затем exploit -s line_archive {lan}2. Награда: 150.&quot;})
-    plugin.news(f&quot;Открылся независимый архив района {n}.&quot;)
-    plugin.set(&quot;districts&quot;, n)
-    panel()
-    print(f&quot;Создан район {n}: шлюз {ip}, архив {lan}2&quot;)
-
-def archive_effect(event):
-    plugin.write(event[&quot;target&quot;], &quot;/srv/line/access.txt&quot;, &quot;Доступ к архиву через уязвимость зарегистрирован&quot;)
-    plugin.log(event[&quot;target&quot;], &quot;warn&quot;, &quot;Контроль архива перехвачен через уязвимость Линии-7&quot;)
+    plugin.set(&quot;created&quot;, n)
+    print(f&quot;Создано устройство {host}: {ip}, id={mid}&quot;)
+    print(f&quot;probe {ip} — удалённые уязвимости типа и экземпляра; локальную исследуй после входа&quot;)
+    print(f&quot;research -h 3 {ip} device_lab:camera_access — подсказки и параметры&quot;)
+    print(f&quot;exploit new ~/scripts/camera.adr {ip} device_lab:camera_access — свой код&quot;)
+    print(&quot;Готовый: market buy device_lab:camera_exploit; затем exploit -f ~/scripts/camera_payload.adr -s device_lab:camera_access &quot; + ip)
+    print(&quot;После входа исследуй device_lab:camera_kernel для локального эксплоита&quot;)
 
 def tick(event):
-    world = plugin.world()
-    for target in plugin.get(&quot;targets&quot;, []):
-        if target[&quot;machine&quot;] in world[&quot;player&quot;][&quot;owned&quot;]:
-            if plugin.quest_complete(target[&quot;quest&quot;]):
-                plugin.unlock(&quot;district:archivist&quot;)
+    plugin.set(&quot;ticks&quot;, plugin.get(&quot;ticks&quot;, 0) + 1)
 
-def purchase(event):
-    if event[&quot;id&quot;] == &quot;district:memory&quot; and not plugin.get(&quot;memory_applied&quot;, false):
-        world = plugin.world()
-        mid = world[&quot;machines&quot;][0][&quot;id&quot;]
-        plugin.update_machine(mid, {&quot;ram_mb&quot;: world[&quot;machines&quot;][0][&quot;ram_mb&quot;] + 1024})
-        plugin.set(&quot;memory_applied&quot;, true)
-
-def news(event):
-    if plugin.get(&quot;districts&quot;, 0) &gt; 0:
-        plugin.news(&quot;Архивы Линии-7 продолжают принимать городские документы.&quot;)
-
-def ui(event):
-    if event[&quot;action&quot;] == &quot;create&quot;:
-        create(event)
-    else:
-        status(event)
-
-def open_window(event):
-    plugin.open(&quot;district:control&quot;)
-
-def status(event):
-    world = plugin.world()
-    for key, quest in world[&quot;plugins&quot;][&quot;quests&quot;].items():
-        if key.startswith(&quot;district:&quot;):
-            mark = &quot;выполнено&quot; if quest[&quot;done&quot;] else &quot;ожидает&quot;
-            print(quest[&quot;title&quot;], mark, quest[&quot;reward&quot;])
+def info(event):
+    print(&quot;Создано устройств:&quot;, plugin.get(&quot;created&quot;, 0))
+    print(&quot;Тактов мира:&quot;, plugin.get(&quot;ticks&quot;, 0))
 </pre></body></html>

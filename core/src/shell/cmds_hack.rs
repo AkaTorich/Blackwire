@@ -4,7 +4,7 @@
 
 use super::util::Args;
 use super::{CmdOutput, Ctx};
-use crate::hack::{self, ExploitOutcome, VulnAccess};
+use crate::hack::{self, VulnAccess};
 use crate::net::machine::MachineId;
 use crate::types::{OutKind, OutLine};
 use crate::world::NetError;
@@ -64,7 +64,7 @@ pub fn probe(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let ip = ctx.world.address_for(ctx.mid(), id);
     let (host, services, users, vulns) = {
         let m = ctx.world.machine(id);
-        (m.hostname.clone(), m.services.clone(), m.users.names(), hack::scan_vulns(m))
+        (m.hostname.clone(), m.services.clone(), m.users.names(), hack::payload::available(ctx.world, ctx.session, id))
     };
     let mut out = CmdOutput::ok();
     out.push_kind(format!("Разведка {} ({})", host, ip), OutKind::Accent);
@@ -78,9 +78,10 @@ pub fn probe(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         out.lines.push(OutLine::heading("Слабые места:").after(250));
         for v in &vulns {
             let scope = if v.local { "локально" } else { "по сети" };
-            out.lines.push(OutLine::new(format!("  {:<8} {:<9} {} → {}", v.service, scope, v.name, access_label(&v.access)), OutKind::Warn).after(120));
+            out.lines.push(OutLine::new(format!("  {}  {:<8} {:<9} {} → {} [механика: {}]", hack::payload::id(v), v.service, scope, v.name, access_label(&v.access), hack::payload::kind(ctx.world, v)), OutKind::Warn).after(120));
         }
     }
+    out.lines.push(OutLine::dim("Дальше: research адрес id · exploit new файл.adr адрес id · готовые инструменты: market").after(100));
     out.lines.push(OutLine::heading("Пользователи:").after(200));
     out.lines.push(OutLine::new(format!("  {}", users.join(", ")), OutKind::Normal));
     out
@@ -88,56 +89,54 @@ pub fn probe(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 // ---------------------------------------------------------------- exploit
 
-pub fn exploit(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
-    if let Some(o) = locked_guard(ctx, "exploit") {
-        return o;
-    }
-    let a = Args::parse(args, &["s"]);
-    let target = match a.pos.first() {
-        Some(t) => t.clone(),
-        None => return CmdOutput::err("exploit: использование: exploit [-s служба] адрес"),
+pub fn research(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
+    let a = Args::parse(args, &["h"]);
+    let Some(target) = a.pos.first() else { return CmdOutput::err("research [-h 1..4] адрес [id]: исследовать уязвимость и получить подсказку"); };
+    let id = match resolve(ctx, "research", target) { Ok(id) => id, Err(e) => return e };
+    let v = match hack::payload::select(ctx.world, ctx.session, id, a.pos.get(1).map(String::as_str)) {
+        Ok(v) => v, Err(e) => return CmdOutput::err(e)
     };
-    let service = a.opt("s").map(|s| s.to_string());
-    let id = match resolve(ctx, "exploit", &target) {
-        Ok(id) => id,
-        Err(o) => return o,
-    };
-    let report = match hack::exploit(ctx.world, ctx.session, id, service.as_deref()) {
-        Ok(r) => r,
-        Err(e) => return CmdOutput::err(format!("exploit: {}", e)),
-    };
+    if let Err(e) = hack::payload::ensure_reachable(ctx.world, ctx.session, id, &v) { return CmdOutput::err(e); }
+    let p = hack::payload::profile(ctx.world, id, &v);
+    let level = a.opt("h").and_then(|s| s.parse::<usize>().ok()).unwrap_or(1).clamp(1, 4);
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("Атака {} …", report.target_host), OutKind::Accent);
-    match &report.outcome {
-        ExploitOutcome::Nothing => {
-            out.lines.push(OutLine::warn("Подходящего слабого места не найдено.").after(400));
-            return out;
-        }
-        ExploitOutcome::Creds { user, password } => {
-            if let Some(v) = &report.vuln {
-                out.lines.push(OutLine::dim(format!("Слабое место: {} ({})", v.name, v.service)).after(350));
-            }
-            out.lines.push(OutLine::success(format!("Получен логин: {} / {}", user, password)).after(400));
-            out.lines.push(OutLine::dim("Логин сохранён — список командой creds.").after(150));
-        }
-        ExploitOutcome::Shell { user } => {
-            if let Some(v) = &report.vuln {
-                out.lines.push(OutLine::dim(format!("Слабое место: {} ({})", v.name, v.service)).after(350));
-            }
-            out.lines.push(OutLine::success(format!("Доступ получен: вы {}@{}", user, report.target_host)).after(400));
-        }
-        ExploitOutcome::Read { path, data } => {
-            if let Some(v) = &report.vuln {
-                out.lines.push(OutLine::dim(format!("Слабое место: {} ({})", v.name, v.service)).after(350));
-            }
-            out.lines.push(OutLine::success(format!("Утечка файла: {}", path)).after(400));
-            for l in data.lines().take(40) {
-                out.lines.push(OutLine::new(format!("  {}", l), OutKind::Normal));
-            }
-        }
-    }
-    warn_trace(&mut out, report.monitored, report.heat_added, &report.source_ip);
+    out.push_kind(format!("{} · {} · {}", v.name, v.version, p["kind"].as_str().unwrap()), OutKind::Accent);
+    out.push_kind(format!("id: {}    fingerprint: {}", p["id"].as_str().unwrap(), p["fingerprint"].as_str().unwrap()), OutKind::Dim);
+    out.push_kind(serde_json::to_string_pretty(&p["layout"]).unwrap(), OutKind::Normal);
+    for hint in p["hints"].as_array().unwrap().iter().take(level) { out.push_kind(hint.as_str().unwrap(), OutKind::Warn); }
+    out.push_kind(format!("Следующая подсказка: research -h {} {} {}", (level+1).min(4), target, p["id"].as_str().unwrap()), OutKind::Dim);
+    out.push_kind(format!("Свой код: exploit new ~/scripts/my_exploit.adr {} {}", target, p["id"].as_str().unwrap()), OutKind::Normal);
+    out.push_kind(format!("Готовый инструмент: market buy {}. Совместимость: {}.", p["market"].as_str().unwrap(), p["kind"].as_str().unwrap()), OutKind::Normal);
+    ctx.world.mark_scanned(id);
     out
+}
+
+pub fn exploit(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
+    if args.first().is_some_and(|s| s == "new") {
+        if args.len() < 3 { return CmdOutput::err("exploit new файл.adr адрес [id]: создать заготовку и открыть редактор"); }
+        let path = ctx.path(&args[1]);
+        if !path.ends_with(".adr") { return CmdOutput::err("нужно расширение .adr"); }
+        if ctx.fs().exists(&path) { return CmdOutput::err("файл уже существует; открой его командой edit"); }
+        let id = match resolve(ctx, "exploit new", &args[2]) { Ok(id) => id, Err(e) => return e };
+        let v = match hack::payload::select(ctx.world, ctx.session, id, args.get(3).map(String::as_str)) {
+            Ok(v) => v, Err(e) => return CmdOutput::err(e)
+        };
+        if let Err(e) = hack::payload::ensure_reachable(ctx.world, ctx.session, id, &v) { return CmdOutput::err(e); }
+        let code = hack::payload::starter(&args[2], &hack::payload::id(&v));
+        let user = ctx.user();
+        if let Err(e) = ctx.fs_mut().write_text(&path, &code, &user) { return CmdOutput::err(e.to_string()); }
+        ctx.actions.push(crate::types::UiAction::OpenApp { app: "editor".into(), arg: Some(path.clone()) });
+        return CmdOutput::text(format!("Создана заготовка {}. Заполни payload по подсказкам research; затем exploit -f {} {}.", path, path, args[2]));
+    }
+    if let Some(o) = locked_guard(ctx, "exploit") { return o; }
+    let a = Args::parse(args, &["s", "f"]);
+    let Some(file) = a.opt("f") else {
+        return CmdOutput::err("Автоматический взлом отключён. 1) probe адрес; 2) research адрес id; 3) exploit new ~/scripts/my_exploit.adr адрес id; 4) заполни payload в редакторе; 5) exploit -f ~/scripts/my_exploit.adr адрес. Готовые эксплоиты: market.");
+    };
+    let Some(target) = a.pos.first() else { return CmdOutput::err("exploit -f файл.adr [-s id] адрес"); };
+    let mut run = vec![file.to_string(), target.clone()];
+    if let Some(selector) = a.opt("s") { run.push(selector.to_string()); }
+    super::cmds_misc::adder(ctx, &run)
 }
 
 // ---------------------------------------------------------------- crack
@@ -213,23 +212,11 @@ fn read_wordlist(ctx: &mut Ctx<'_>, path: &str) -> Result<Vec<String>, String> {
 
 // ---------------------------------------------------------------- privesc
 
-pub fn privesc(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
-    let report = match hack::privesc(ctx.world, ctx.session) {
-        Ok(r) => r,
-        Err(e) => return CmdOutput::err(format!("privesc: {}", e)),
-    };
-    let mut out = CmdOutput::ok();
-    if report.ok {
-        if let Some(v) = &report.vuln {
-            out.lines.push(OutLine::dim(format!("Слабое место: {}", v.name)).after(350));
-        }
-        out.lines.push(OutLine::success(format!("Права повышены: вы root@{}", report.host)).after(400));
-    } else if report.was_user == "root" {
-        out.push_kind("Вы уже root.", OutKind::Dim);
-    } else {
-        out.push_kind("Повысить права не удалось: подходящего слабого места нет.", OutKind::Warn);
-    }
-    out
+pub fn privesc(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
+    let Some(file) = args.first() else { return CmdOutput::err("privesc файл.adr [id]: запусти собственный локальный эксплоит. Сначала research текущий_хост id. Готовый: market buy exp_race."); };
+    let mut run = vec![file.clone(), ctx.machine().hostname.clone()];
+    run.extend(args[1..].iter().cloned());
+    super::cmds_misc::adder(ctx, &run)
 }
 
 // ---------------------------------------------------------------- clearlogs

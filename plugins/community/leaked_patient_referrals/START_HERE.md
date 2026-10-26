@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s leaked_patient_referrals:gateway_entry 198.22.53.1`
+`research -h 3 198.22.53.1 leaked_patient_referrals:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.53.1 leaked_patient_referrals:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s leaked_patient_referrals:gateway_entry 198.22.53.1`
 
 Прочитай `/srv/records/referral-access.csv` на последнем узле — там сохранённая запись.
 

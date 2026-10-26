@@ -21,7 +21,7 @@ pub const ITEMS: &[ShopItem] = &[
     ShopItem { id: "rig", name: "Железо", price: 500, desc: "апгрейд процессора и памяти твоей машины" },
     ShopItem { id: "scrubber", name: "Чистильщик", price: 600, desc: "подозрение спадает заметно быстрее" },
     ShopItem { id: "vpn", name: "Туннель", price: 800, desc: "подозрение за атаки растёт вдвое медленнее" },
-    ShopItem { id: "rootkit", name: "Руткит", price: 1000, desc: "privesc (повышение прав) удаётся всегда" },
+    ShopItem { id: "rootkit", name: "Руткит", price: 1000, desc: "локальный эксплоит rootkit.adr; работает и на свежем ядре" },
 ];
 
 pub fn item(id: &str) -> Option<&'static ShopItem> {
@@ -78,7 +78,16 @@ pub fn apply(world: &mut World, id: &str) -> String {
         }
         "scrubber" => "Чистильщик активен: подозрение спадает быстрее.".to_string(),
         "vpn" => "Туннель поднят: следы тише.".to_string(),
-        "rootkit" => "Руткит в деле: privesc теперь всегда проходит.".to_string(),
+        "rootkit" => {
+            let user = world.player.handle.clone();
+            let home = world.machines[0].users.home_of(&user);
+            let path = format!("{}/scripts/rootkit.adr", home);
+            if !world.machines[0].fs.exists(&path) {
+                let _ = world.machines[0].fs.mkdir_all(&format!("{}/scripts", home), &user);
+                let _ = world.machines[0].fs.write_text(&path, include_str!("../hack/exploits/race.adr"), &user);
+            }
+            "Rootkit установлен: privesc ~/scripts/rootkit.adr id. Найди id: probe текущий_хост; подсказки — research.".to_string()
+        },
         _ => String::new(),
     }
 }

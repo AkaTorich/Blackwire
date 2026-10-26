@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s water_quality_sensors:records_entry 198.22.10.1`
+`research -h 3 198.22.10.1 water_quality_sensors:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.10.1 water_quality_sensors:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s water_quality_sensors:records_entry 198.22.10.1`
 
 Прочитай `/srv/records/samples.csv` на последнем узле — там сохранённая запись.
 

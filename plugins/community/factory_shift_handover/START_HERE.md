@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s factory_shift_handover:records_entry 198.22.94.1`
+`research -h 3 198.22.94.1 factory_shift_handover:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.94.1 factory_shift_handover:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s factory_shift_handover:records_entry 198.22.94.1`
 
 Прочитай `/srv/records/handover.log` на последнем узле — там сохранённая запись.
 

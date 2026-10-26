@@ -32,10 +32,25 @@ pub fn privesc(world: &mut World, session: &mut Session) -> Result<PrivescReport
         None if world.player.upgrades.contains("rootkit") => None,
         None => return Ok(PrivescReport { ok: false, vuln: None, host, was_user: was }),
     };
+    apply_vulnerability(world, session, v)
+}
+
+pub fn apply_vulnerability(world: &mut World, session: &mut Session, v: Option<VulnInfo>) -> Result<PrivescReport, String> {
+    let mid = session.machine_id();
+    let host = world.machine(mid).hostname.clone();
+    let was = session.user().to_string();
+    if was == "root" { return Ok(PrivescReport { ok: false, vuln: None, host, was_user: was }); }
     session.current_mut().user = "root".to_string();
     if !world.player.owned.contains(&mid) {
         world.player.owned.push(mid);
     }
     world.log(mid, LogKind::Warn, &format!("повышение прав до root (было: {})", was));
+    if let Some(vuln) = &v {
+        world.plugin_events.push(("on_hack".into(), serde_json::json!({
+            "target": mid, "target_host": host, "vuln": vuln,
+            "outcome": {"Shell": {"user": "root"}},
+            "source_ip": world.machine(mid).ip, "monitored": false, "heat_added": 0.0
+        })));
+    }
     Ok(PrivescReport { ok: true, vuln: v, host, was_user: was })
 }

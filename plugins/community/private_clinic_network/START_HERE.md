@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s private_clinic_network:gateway_entry 198.22.21.1`
+`research -h 3 198.22.21.1 private_clinic_network:gateway_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.21.1 private_clinic_network:gateway_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s private_clinic_network:gateway_entry 198.22.21.1`
 
 Прочитай `/srv/records/patient-audit.csv` на последнем узле — там сохранённая запись.
 

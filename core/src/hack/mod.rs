@@ -11,6 +11,7 @@
 //! - `proxy`   — цепочка подключений и выходной адрес.
 
 pub mod vuln;
+pub mod payload;
 pub mod exploit;
 pub mod crack;
 pub mod privesc;

@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s hotel_keycard_encoders:records_entry 198.22.7.1`
+`research -h 3 198.22.7.1 hotel_keycard_encoders:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.7.1 hotel_keycard_encoders:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s hotel_keycard_encoders:records_entry 198.22.7.1`
 
 Прочитай `/srv/records/keys.csv` на последнем узле — там сохранённая запись.
 

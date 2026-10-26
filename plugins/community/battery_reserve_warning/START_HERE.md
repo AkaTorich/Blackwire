@@ -22,7 +22,13 @@
 
 ## Если хочешь готовое решение
 
-`exploit -s battery_reserve_warning:records_entry 198.22.98.1`
+`research -h 3 198.22.98.1 battery_reserve_warning:records_entry`
+
+Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.98.1 battery_reserve_warning:records_entry`. Заполни payload по подсказкам в игре.
+
+Готовый редактируемый инструмент: `market buy exp_overflow`.
+
+`exploit -f ~/scripts/exp_overflow.adr -s battery_reserve_warning:records_entry 198.22.98.1`
 
 Прочитай `/srv/records/reserve.csv` на последнем узле — там сохранённая запись.
 
