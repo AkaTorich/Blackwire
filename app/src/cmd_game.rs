@@ -200,8 +200,20 @@ pub async fn start_desktop(app: AppHandle, st: State<'_, AppState>) -> Result<()
 
 #[tauri::command]
 pub async fn quit(app: AppHandle, st: State<'_, AppState>) -> Result<(), String> {
-    if let Ok(mut g)=st.game(){g.plugin_event("on_unload",serde_json::json!({}));}
-    let _ = st.save();
+    save_and_quit(&app, &st)
+}
+
+/// Shared exit path for the desktop button and the shutdown command.
+pub fn save_and_quit(app: &AppHandle, st: &AppState) -> Result<(), String> {
+    let has_game = if let Ok(mut g) = st.game() {
+        g.plugin_event("on_unload", serde_json::json!({}));
+        true
+    } else {
+        false
+    };
+    if has_game {
+        st.save()?;
+    }
     app.exit(0);
     Ok(())
 }

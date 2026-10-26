@@ -395,7 +395,7 @@ fn call_shell(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             // окна и уведомления из команды — оболочке Tauri
             for a in res.actions {
                 match a {
-                    UiAction::OpenApp { .. } | UiAction::Notify { .. } => game.pending_ui.push(a),
+                    UiAction::OpenApp { .. } | UiAction::Notify { .. } | UiAction::QuitGame => game.pending_ui.push(a),
                     _ => {}
                 }
             }

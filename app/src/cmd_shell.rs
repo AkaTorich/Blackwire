@@ -30,6 +30,11 @@ pub fn apply_actions(app: &AppHandle, st: &AppState, actions: &[UiAction]) {
             UiAction::Notify { title, text } => {
                 let _ = app.emit("notify", serde_json::json!({ "title": title, "text": text }));
             }
+            UiAction::QuitGame => {
+                if let Err(error) = crate::cmd_game::save_and_quit(app, st) {
+                    let _ = app.emit("notify", serde_json::json!({ "title": "Выход отменён", "text": error }));
+                }
+            }
             _ => {}
         }
     }
@@ -72,7 +77,7 @@ pub async fn shell_exec(app: AppHandle, st: State<'_, AppState>, session_id: u32
     }
     apply_actions(&app, &st, &result.actions);
     // окна уже открыты здесь — терминалу их открывать не надо
-    result.actions.retain(|a| !matches!(a, UiAction::OpenApp { .. }));
+    result.actions.retain(|a| !matches!(a, UiAction::OpenApp { .. } | UiAction::QuitGame));
     flush_pending(&app, &st);
     Ok(result)
 }

@@ -37,9 +37,9 @@ impl Host for RealHost<'_> {
 fn every_plugin_works_independently_and_survives_save_reload() {
     let entries = catalog();
     assert_eq!(entries.len(), 100);
-    for item in &entries {
+    for (index, item) in entries.iter().enumerate() {
         let id = item["id"].as_str().unwrap();
-        eprintln!("Checking {id}");
+        eprintln!("[Plugin {:03}/100] {} — checking", index + 1, item["name"].as_str().unwrap());
         let folder = root().join(id);
         assert!(folder.join("START_HERE.md").is_file(), "{id}: missing guide");
         let mut game = Game::new(World::new(42, "pack_test", ""));
@@ -139,6 +139,7 @@ fn every_plugin_works_independently_and_survives_save_reload() {
         restored.plugin_enable(id, true).unwrap();
         clean(&restored, id);
         assert_eq!(restored.world.machines.len(), machine_count, "{id}: re-enable duplicated content");
+        eprintln!("[Plugin {:03}/100] {} — OK", index + 1, item["name"].as_str().unwrap());
     }
 }
 

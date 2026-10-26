@@ -28,6 +28,17 @@
   var memTotal = 0;
   var windows = [];
   var mailBadge = null;
+  var quitPending = false;
+
+  function quitGame() {
+    if (quitPending) return;
+    quitPending = true;
+    Win.confirm('Сохранить прогресс и выйти из игры?').then(function (ok) {
+      if (ok) return BW.invoke('quit');
+    }).catch(function (e) {
+      Win.toast('Не удалось выйти: ' + String(e), 'err');
+    }).finally(function () { quitPending = false; });
+  }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -65,6 +76,13 @@
       right.appendChild(m);
       meters[k] = { canvas: m.querySelector('canvas'), val: m.querySelector('.meter-val'), data: [] };
     });
+
+    var exitButton = el('button', 'desk-exit', Icons.get('power', 16) + '<span>Выйти</span>');
+    exitButton.type = 'button';
+    exitButton.title = 'Сохранить и выйти из игры';
+    exitButton.setAttribute('aria-label', exitButton.title);
+    exitButton.addEventListener('click', quitGame);
+    right.appendChild(exitButton);
 
     var notify = el('aside', 'desk-notify');
     desk.appendChild(notify);
@@ -138,6 +156,10 @@
     n = parseInt(n, 10) || 0;
     mailBadge.textContent = n > 99 ? '99+' : String(n);
     mailBadge.classList.toggle('hidden', n <= 0);
+  }
+
+  function loadUnread() {
+    return BW.mail_unread_count().then(setUnread, swallow);
   }
 
   /* ---------- уведомления ---------- */
@@ -232,6 +254,7 @@
   function tick(p) {
     if (!p) return;
     setTime(p.time);
+    if (typeof p.mail_unread === 'number') setUnread(p.mail_unread);
     // Rust шлёт процессор в процентах, память — в мегабайтах (mem_total — тоже)
     var cpu = Math.max(0, Math.min(100, +p.cpu || 0));
     var total = +p.mem_total || memTotal || 0;
@@ -283,9 +306,7 @@
         { label: 'Настройки', icon: 'settings', action: function () { Apps.openOrFocus('settings', null); } },
         { label: 'Сменить монитор подложки', icon: 'monitor-screen', children: monItems.length ? monItems : [{ label: 'Один монитор', disabled: true }] },
         null,
-        { label: 'Выйти из игры', icon: 'power', action: function () {
-          Win.confirm('Выйти из игры? Несохранённое пропадёт.').then(function (ok) { if (ok) BW.invoke('quit'); });
-        } }
+        { label: 'Выйти из игры', icon: 'power', action: quitGame }
       ], x, y);
     }, swallow);
   }
@@ -317,8 +338,9 @@
     setInterval(function () { if (!document.hidden) loadWindows(); }, 2000);
     BW.listen('world_tick', tick);
     BW.listen('notify', notify);
-    BW.listen('mail_new', function (p) { setUnread(p && p.count); });
-    BW.mail_unread_count().then(setUnread, swallow);
+    BW.listen('mail_new', loadUnread);
+    BW.listen('mail_changed', loadUnread);
+    loadUnread();
 
     els.desk.addEventListener('contextmenu', function (e) {
       if (e.target.closest('.dock, .desk-top, .desk-notify')) return;

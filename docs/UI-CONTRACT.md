@@ -77,11 +77,11 @@ mail_delete(id) ; mail_unread_count() -> n
 start_desktop()                   // после входа: подложка + первый терминал, окно входа закрывается
 quit()                            // сохранить и выйти
 ```
-События почты: `mail_new {count}` (пришло новое), `mail_changed {}` (отправлено/удалено — обновить списки).
+События почты: `mail_new {count}` (пришло новое), `mail_changed {}` (прочитано/отправлено/удалено — обновить списки и счётчик).
 Приложение `mail` — «Почта» (см. раздел «Приложения»). Легенда и начальные письма — `docs/STORY.md`.
 
 События (`listen`): `theme_changed {settings}`, `script_out`, `script_done`, `script_input_wanted {pid, prompt}`, `notify {title, text}`,
-`windows_changed {windows}`, `world_tick {time, cpu, mem, net_in, net_out}` (раз в секунду), `fs_changed {path}` (чтобы файлы/редактор обновились),
+`windows_changed {windows}`, `world_tick {time, cpu, mem, net_in, net_out, mail_unread}` (раз в секунду), `fs_changed {path}` (чтобы файлы/редактор обновились),
 `open_app {app, arg}` (ядро просит открыть окно — например `edit файл` из терминала; обрабатывает Rust сам, окнам только для сведения).
 
 ## Вид (стиль «Рыба-меч»)

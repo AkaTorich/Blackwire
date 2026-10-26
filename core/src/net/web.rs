@@ -134,3 +134,41 @@ pub fn underground_node(host: &str) -> Vec<WebPage> {
     let html = format!("<header><h1>{}</h1></header><main><p>Доступ по приглашению.</p></main>", host);
     vec![page("/", host, html)]
 }
+
+/// Default router status page, including routers saved before the panel existed.
+/// Explicit web pages supplied by a scenario or plugin take precedence.
+pub fn router_status(machine: &super::machine::Machine) -> WebPage {
+    fn esc(text: &str) -> String {
+        text.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
+            .replace('"', "&quot;").replace('\'', "&#39;")
+    }
+
+    let mut html = format!(
+        "<header><h1>{}</h1><p>Состояние маршрутизатора</p></header><main>\
+         <h2>Устройство и сеть</h2><table>\
+         <tr><th>Система</th><td>{}</td></tr>\
+         <tr><th>Адрес узла</th><td><code>{}</code></td></tr>\
+         <tr><th>Локальный адрес</th><td><code>{}</code></td></tr>\
+         <tr><th>Процессор</th><td>{}</td></tr>\
+         <tr><th>Память</th><td>{} МБ</td></tr></table>\
+         <h2>Службы</h2><table><tr><th>Порт</th><th>Служба</th><th>Версия</th><th>Состояние</th></tr>",
+        esc(&machine.hostname), esc(&machine.os), esc(&machine.ip),
+        esc(machine.lan_ip.as_deref().unwrap_or("не назначен")),
+        esc(&machine.cpu), machine.ram_mb,
+    );
+    for service in &machine.services {
+        html.push_str(&format!(
+            "<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>",
+            service.port, esc(&service.name), esc(&service.version),
+            if service.running { "работает" } else { "остановлена" },
+        ));
+    }
+    html.push_str("</table><h2>Подключение</h2>");
+    if machine.services.iter().any(|s| s.name == "ssh" && s.running) {
+        html.push_str("<p>Для управления устройством подключись через игровой терминал с учётной записью маршрутизатора. Справка: <code>man ssh</code>.</p>");
+    } else {
+        html.push_str("<p>Служба SSH остановлена или отсутствует.</p>");
+    }
+    html.push_str("</main>");
+    page("/", &format!("{} — маршрутизатор", machine.hostname), html)
+}

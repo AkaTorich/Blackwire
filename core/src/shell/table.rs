@@ -131,7 +131,7 @@ pub static COMMANDS: &[CmdInfo] = &[
     cmd!("users", System, "users", "список пользователей", cmds_sys::users),
     cmd!("su", System, "su [пользователь] пароль", "сменить пользователя", cmds_sys::su),
     cmd!("sudo", System, "sudo команда…", "выполнить от root (администраторы)", cmds_sys::sudo),
-    cmd!("shutdown", System, "shutdown", "выключить машину", cmds_sys::shutdown),
+    cmd!("shutdown", System, "shutdown", "сохранить и выйти из игры; по SSH — выключить удалённую машину", cmds_sys::shutdown),
     cmd!("reboot", System, "reboot", "перезагрузить машину", cmds_sys::reboot),
     cmd!("logs", System, "logs [-n N] [-f auth|system]", "журнал машины", cmds_sys::logs),
     cmd!("exit", System, "exit", "отключиться / закрыть терминал", cmds_sys::exit),

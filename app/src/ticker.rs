@@ -33,6 +33,7 @@ pub fn start(app: AppHandle) {
                             "time_text": g.world.clock.format_now(),
                             "cpu": s.cpu, "mem": s.mem_used, "mem_total": s.mem_total,
                             "net_in": s.net_in, "net_out": s.net_out, "uptime": s.uptime,
+                            "mail_unread": unread,
                         }),
                         mail_new,
                         unread,

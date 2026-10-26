@@ -17,7 +17,7 @@ def main():
         folder = ROOT / "plugins/community" / item["id"]
         manifest = json.loads((folder / "plugin.json").read_text(encoding="utf-8"))
         assert manifest["id"] == item["id"] and manifest["name"] == item["name"]
-        assert manifest["version"] == version and manifest["api"] == 1
+        assert manifest["version"] == item["version"] and manifest["api"] == 1
         assert re.fullmatch(r"[A-Za-z0-9 _-]+", manifest["name"]), "Plugin names must be clear English names"
         assert manifest["id"] not in ids and manifest["name"] not in names, "Duplicate plugin identity"
         assert not commands.intersection(manifest["commands"]), "Conflicting commands"

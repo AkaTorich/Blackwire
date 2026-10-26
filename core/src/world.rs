@@ -741,6 +741,11 @@ impl World {
             .or_else(|| if want == "/" { svc.pages.first() } else { None });
         match page {
             Some(p) => HttpPage { status: 200, title: p.title.clone(), body: p.html.clone() },
+            // Render from live state so routers in existing saves work too.
+            None if want == "/" && m.kind == MachineKind::Router && svc.pages.is_empty() => {
+                let p = crate::net::web::router_status(m);
+                HttpPage { status: 200, title: p.title, body: p.html }
+            }
             None => HttpPage {
                 status: 404,
                 title: "Страница не найдена".to_string(),

@@ -149,7 +149,7 @@ pub fn exec(world: &mut World, session: &mut Session, line: &str) -> ShellResult
                 }
                 let (lines, actions) = run_pipeline(world, session, &job.pipeline);
                 res.lines.extend(lines);
-                let stop = actions.iter().any(|a| matches!(a, UiAction::Exit));
+                let stop = actions.iter().any(|a| matches!(a, UiAction::Exit | UiAction::QuitGame));
                 res.actions.extend(actions);
                 if stop {
                     break;
@@ -268,6 +268,9 @@ fn run_pipeline(world: &mut World, session: &mut Session, pipeline: &parse::Pipe
         lines.extend(err_lines);
         lines.extend(out_lines);
         session.last_status = out.status;
+        if actions.iter().any(|a| matches!(a, UiAction::QuitGame)) {
+            break;
+        }
     }
     (lines, actions)
 }

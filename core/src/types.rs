@@ -50,6 +50,8 @@ pub enum UiAction {
     OpenApp { app: String, arg: Option<String> },
     /// Закрыть окно терминала (команда `exit` на своей машине).
     Exit,
+    /// Сохранить мир и выйти из игры (shutdown на компьютере игрока).
+    QuitGame,
     /// Всплывающее уведомление в углу экрана.
     Notify { title: String, text: String },
     /// Скрипт запущен как процесс: интерфейс дальше слушает события `script_out`/`script_done` по pid.

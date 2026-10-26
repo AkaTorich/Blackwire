@@ -1,10 +1,10 @@
 # Blackwire Community Plugins
 
-100 independent Adder plugins for Blackwire 0.1.1, SDK API 1.
+100 independent Adder plugins for Blackwire, SDK API 1.
 
 ## Installation
 
-1. Extract `Blackwire-Plugins-0.1.1.zip`.
+1. Extract `Blackwire-Plugins-<version>.zip`.
 2. In the game open **Plugins → Open folder**.
 3. Copy the desired folders from the archive's `plugins` directory into that folder. All 100 can coexist.
 4. Choose **Reload** in the game.

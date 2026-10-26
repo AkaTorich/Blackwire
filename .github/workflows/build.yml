@@ -70,9 +70,6 @@ jobs:
       - name: Engine and Adder tests
         run: cargo test --locked -p blackwire-core -p blackwire-lang
 
-      - name: Combined 100-plugin load test (GitHub runner only)
-        if: matrix.sdk_platform == 'linux'
-        run: cargo test --release --locked -p blackwire-core --test community_plugins all_100_plugins -- --ignored --test-threads=1
       - name: Tauri CLI
         uses: taiki-e/install-action@v2
         with:

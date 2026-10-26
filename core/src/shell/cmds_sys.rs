@@ -500,8 +500,13 @@ fn power(ctx: &mut Ctx<'_>, reboot: bool) -> CmdOutput {
     if !ctx.is_admin() {
         return CmdOutput::err(format!("{}: нужны права администратора", if reboot { "reboot" } else { "shutdown" }));
     }
-    if ctx.session.at_home() {
+    if ctx.mid() == 0 {
         ctx.log(LogKind::Service, &format!("{}: {}", if reboot { "перезагрузка" } else { "выключение" }, me));
+        if !reboot {
+            out.push_kind("Сохранение прогресса и выход из игры…", OutKind::Warn);
+            ctx.actions.push(UiAction::QuitGame);
+            return out;
+        }
         out.push_kind("Система уходит на перезагрузку…", OutKind::Warn);
         out.lines.push(crate::types::OutLine::dim("[ ок ] остановка служб").after(300));
         out.lines.push(crate::types::OutLine::dim("[ ок ] отключение сети").after(300));

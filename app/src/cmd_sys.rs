@@ -32,8 +32,10 @@ pub fn mail_list(st: State<AppState>, folder: Option<String>) -> Result<Vec<Mail
 }
 
 #[tauri::command]
-pub fn mail_read(st: State<AppState>, id: u32) -> Result<MailMessage, String> {
-    st.game()?.mail_read(id)
+pub fn mail_read(app: AppHandle, st: State<AppState>, id: u32) -> Result<MailMessage, String> {
+    let message = st.game()?.mail_read(id)?;
+    let _ = app.emit("mail_changed", serde_json::json!({}));
+    Ok(message)
 }
 
 #[tauri::command]
