@@ -1,20 +1,14 @@
-# Сборка Blackwire под Windows, Linux и macOS на GitHub Actions.
-# Запуск:
-#   - вручную (вкладка Actions → Build → Run workflow) — соберёт и выложит
-#     установщики как артефакты запуска;
-#   - при пуше тега вида v1.0.0 — ещё и создаст черновик релиза с установщиками
-#     для всех трёх систем.
-# Фронтенд статический (папка ui), node не нужен. Tauri-крейт — в app/.
-
+# Push to main builds installers. Version tags also publish a release with the SDK ZIP.
 name: Build
 
 on:
   push:
+    branches: ['main']
     tags: ['v*']
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -24,34 +18,42 @@ jobs:
       matrix:
         include:
           - platform: windows-latest
+            sdk_platform: windows
             target: ''
             bundles: nsis
             glob: target/release/bundle/nsis/*-setup.exe
           - platform: ubuntu-22.04
+            sdk_platform: linux
             target: ''
             bundles: deb
             glob: target/release/bundle/deb/*.deb
           - platform: macos-latest
+            sdk_platform: macos
             target: universal-apple-darwin
             bundles: dmg
             glob: target/universal-apple-darwin/release/bundle/dmg/*.dmg
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Забрать код
+      - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
 
       - name: Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: Кеш Rust
+      - name: Rust cache
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
 
-      - name: Системные пакеты (Linux)
-        if: matrix.platform == 'ubuntu-22.04'
+      - name: Linux libraries
+        if: matrix.sdk_platform == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -62,27 +64,86 @@ jobs:
             libssl-dev \
             file
 
+      - name: Engine and Adder tests
+        run: cargo test --locked -p blackwire-core -p blackwire-lang
+
       - name: Tauri CLI
         uses: taiki-e/install-action@v2
         with:
           tool: tauri-cli
 
-      - name: Сборка
+      - name: Build game, SDK and installer
         working-directory: app
-        run: cargo tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }}
+        run: cargo tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }} --ci
 
-      - name: Артефакты запуска
+      - name: Verify packaged SDK
+        shell: bash
+        run: |
+          python tools/package_sdk.py verify
+          checker="target/sdk/bin/${{ matrix.sdk_platform }}/plugin-check"
+          if [ "${{ matrix.sdk_platform }}" = windows ]; then checker="$checker.exe"; fi
+          "$checker" target/sdk/examples --command lab_create --command district_create --ticks 65
+
+      - name: Installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: blackwire-${{ matrix.platform }}
+          name: blackwire-${{ matrix.sdk_platform }}
           path: ${{ matrix.glob }}
-          if-no-files-found: warn
+          if-no-files-found: error
 
-      - name: Черновик релиза (по тегу)
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: SDK checker artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-${{ matrix.sdk_platform }}
+          path: target/sdk/bin/
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Verify release version
+        run: |
+          python -c 'import json,os; v=json.load(open("app/tauri.conf.json"))["version"]; assert os.environ["GITHUB_REF_NAME"] == "v"+v'
+
+      - name: Download installers
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blackwire-*
+          path: target/release-installers
+          merge-multiple: true
+
+      - name: Download SDK tools
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sdk-*
+          path: target/sdk-tools
+          merge-multiple: true
+
+      - name: Build and verify SDK ZIP
+        run: python tools/package_sdk.py archive --tools target/sdk-tools
+
+      - name: Publish installers and SDK
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
+          make_latest: true
           name: Blackwire ${{ github.ref_name }}
-          body: 'Установщики для Windows, Linux и macOS — в файлах ниже.'
-          files: ${{ matrix.glob }}
+          body: |
+            Blackwire with Adder Plugin SDK (API 1).
+            Installers for Windows, Linux and macOS include the SDK.
+            Blackwire-SDK-*.zip contains the manuals, CHM help, examples, schemas and checker tools for all three systems.
+          fail_on_unmatched_files: true
+          files: |
+            target/release-installers/*
+            target/release/Blackwire-SDK-*.zip

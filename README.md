@@ -55,6 +55,9 @@
 
 ## Сборка
 
+Для упаковки SDK нужен Python 3.11 или новее. Обычный "cargo tauri build" автоматически собирает проверку плагинов и включает полный SDK в папку sdk установщика. В релизах GitHub SDK также доступен отдельным ZIP; исходники и примеры находятся в этом репозитории.
+
+
 ```powershell
 cargo test --workspace --jobs 2
 cargo build --release -p blackwire --jobs 2        # только exe → target\release\Blackwire.exe
