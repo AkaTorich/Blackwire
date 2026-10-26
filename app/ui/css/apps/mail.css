@@ -1,0 +1,327 @@
+/* Почта — css/apps/mail.css */
+
+.ml {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--font-size, 14px);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* --- панель кнопок --- */
+.ml-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--panel-border);
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.ml-bar-stat {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.82em;
+  color: var(--accent2);
+  white-space: nowrap;
+}
+
+.ml-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 2em;
+  padding: 0 11px;
+  background: transparent;
+  color: var(--fg-dim);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 0.88em;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.ml-btn:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--glow); }
+.ml-btn:active { transform: translateY(1px); }
+.ml-btn:disabled { opacity: 0.35; pointer-events: none; }
+.ml-btn.primary { color: var(--accent); border-color: var(--accent); }
+.ml-btn.primary:hover { background: var(--sel); }
+.ml-btn.on { color: var(--accent); border-color: var(--accent); }
+.ml-btn.small { height: 1.7em; padding: 0 8px; font-size: 0.8em; }
+.ml-btn.spin svg { animation: ml-spin 0.8s linear infinite; }
+@keyframes ml-spin { to { transform: rotate(360deg); } }
+
+/* --- три колонки --- */
+.ml-cols {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.ml-folders {
+  flex: 0 0 clamp(150px, 18%, 220px);
+  background: var(--bg2);
+  border-right: 1px solid var(--panel-border);
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ml-folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 2.2em;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  color: var(--fg-dim);
+  cursor: pointer;
+  min-width: 0;
+}
+.ml-folder:hover { color: var(--fg); background: var(--panel); }
+.ml-folder.cur { color: var(--accent); background: var(--sel); box-shadow: inset 2px 0 0 var(--accent); }
+.ml-folder-icon { display: inline-flex; flex: 0 0 auto; }
+.ml-folder.cur .ml-folder-icon { filter: drop-shadow(0 0 4px var(--glow)); }
+.ml-folder-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.92em; }
+.ml-folder-count {
+  font-family: var(--mono);
+  font-size: 0.78em;
+  color: var(--bg);
+  background: var(--accent2);
+  border-radius: 1em;
+  padding: 0 7px;
+  line-height: 1.5;
+  box-shadow: 0 0 6px var(--accent2);
+  flex: 0 0 auto;
+}
+.ml-folder-count:empty { display: none; }
+
+.ml-listcol {
+  flex: 0 0 clamp(230px, 32%, 380px);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--panel-border);
+  position: relative;
+  min-width: 0;
+}
+.ml-list-head {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.78em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--panel-border);
+}
+.ml-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-border) transparent;
+}
+.ml-list::-webkit-scrollbar, .ml-body::-webkit-scrollbar, .ml-textarea::-webkit-scrollbar { width: 8px; }
+.ml-list::-webkit-scrollbar-thumb, .ml-body::-webkit-scrollbar-thumb, .ml-textarea::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+
+.ml-item {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  padding: 7px 10px 7px 6px;
+  border-bottom: 1px solid var(--panel-border);
+  cursor: default;
+  color: var(--fg-dim);
+}
+.ml-item:hover { background: var(--panel); }
+.ml-item.sel { background: var(--sel); box-shadow: inset 2px 0 0 var(--accent); }
+.ml-item.unread { color: var(--fg); }
+.ml-item-dot {
+  grid-row: 1 / 3;
+  align-self: center;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-left: 3px;
+  background: transparent;
+}
+.ml-item.unread .ml-item-dot { background: var(--accent); box-shadow: 0 0 6px var(--glow); }
+.ml-item-who {
+  font-size: 0.9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.ml-item.unread .ml-item-who { font-weight: 600; color: var(--accent); }
+.ml-item-time {
+  font-family: var(--mono);
+  font-size: 0.75em;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+.ml-item-subj {
+  grid-column: 2 / 4;
+  font-size: 0.9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  margin-top: 2px;
+}
+.ml-item.unread .ml-item-subj { color: var(--fg); }
+
+.ml-list-empty,
+.ml-read-empty {
+  display: none;
+  position: absolute;
+  inset: 2.5em 0 0 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-dim);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+.ml-list-empty.on,
+.ml-read-empty.on { display: flex; }
+
+/* --- правая колонка --- */
+.ml-right {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.ml-read-empty { inset: 0; }
+
+.ml-read {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+.ml-read.on { display: flex; }
+.ml-read-head {
+  flex: 0 0 auto;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--bg2);
+  position: relative;
+}
+.ml-read-subject {
+  font-size: 1.15em;
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--glow);
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 9em;
+  user-select: text;
+}
+.ml-read-meta { display: flex; flex-direction: column; gap: 2px; }
+.ml-meta-row { display: flex; gap: 10px; font-size: 0.88em; min-width: 0; }
+.ml-meta-k { color: var(--fg-dim); flex: 0 0 3.5em; }
+.ml-meta-v {
+  font-family: var(--mono);
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  user-select: text;
+}
+.ml-read-tools { position: absolute; right: 14px; top: 12px; }
+
+.ml-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 18px 24px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+  user-select: text;
+  font-family: var(--sans);
+}
+.ml-body.mono { font-family: var(--mono); font-size: 0.95em; }
+.ml-link { color: var(--accent2); cursor: pointer; border-bottom: 1px solid transparent; }
+.ml-link:hover { border-bottom-color: var(--accent2); text-shadow: 0 0 6px var(--glow); }
+
+/* --- форма письма --- */
+.ml-form {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 18px;
+}
+.ml.compose .ml-form { display: flex; }
+.ml.compose .ml-read,
+.ml.compose .ml-read-empty { display: none; }
+.ml-form-title {
+  font-size: 0.78em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ml-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ml-field-k { color: var(--fg-dim); flex: 0 0 3.5em; font-size: 0.9em; }
+.ml-input,
+.ml-textarea {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg2);
+  color: var(--fg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 0.95em;
+  outline: none;
+}
+.ml-input:focus, .ml-textarea:focus { border-color: var(--accent); box-shadow: 0 0 8px var(--glow); }
+.ml-textarea {
+  flex: 1;
+  min-height: 80px;
+  resize: none;
+  line-height: 1.5;
+}
+.ml-form-err {
+  color: var(--err);
+  font-size: 0.88em;
+  min-height: 1.2em;
+}
+.ml-form-err:empty { display: none; }
+.ml-form-actions { display: flex; gap: 8px; }
+
+/* --- узкое окно: папки сворачиваются в полоску значков --- */
+@media (max-width: 900px) {
+  .ml-folders { flex: 0 0 48px; padding: 8px 4px; }
+  .ml-folder { padding: 0; justify-content: center; position: relative; }
+  .ml-folder-name { display: none; }
+  .ml-folder-count {
+    position: absolute;
+    top: 2px; right: 2px;
+    padding: 0 4px;
+    font-size: 0.65em;
+  }
+  .ml-listcol { flex: 0 0 clamp(200px, 36%, 300px); }
+  .ml-btn span { display: none; }
+  .ml-btn { padding: 0 8px; }
+  .ml-form-actions .ml-btn span { display: inline; }
+}

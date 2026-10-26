@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="swordfish">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackwire</title>
+<script>
+/* Тема и базовые настройки выставляются до загрузки стилей, чтобы окно не мигало чужими цветами. */
+(function () {
+  try {
+    var root = document.documentElement;
+    var theme = localStorage.getItem('bw_theme');
+    if (theme) root.dataset.theme = theme;
+    if (localStorage.getItem('bw_glass') === '0') root.classList.add('no-glass');
+    var fs = parseInt(localStorage.getItem('bw_font'), 10);
+    if (fs >= 10 && fs <= 24) root.style.setProperty('--font-size', fs + 'px');
+    var app = new URLSearchParams(location.search).get('app') || 'desktop';
+    root.dataset.app = app;
+  } catch (e) { /* без localStorage — остаёмся на теме по умолчанию */ }
+})();
+</script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/win.css">
+<link rel="stylesheet" href="css/desktop.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/settings.css">
+<link rel="stylesheet" href="css/help.css">
+<link rel="stylesheet" href="css/apps/terminal.css">
+<link rel="stylesheet" href="css/apps/editor.css">
+<link rel="stylesheet" href="css/apps/files.css">
+<link rel="stylesheet" href="css/apps/browser.css">
+<link rel="stylesheet" href="css/apps/mail.css">
+<link rel="stylesheet" href="css/apps/monitor.css">
+<link rel="stylesheet" href="css/apps/map.css">
+<link rel="stylesheet" href="css/apps/finale.css">
+<link rel="stylesheet" href="css/apps/scenario.css">
+<link rel="stylesheet" href="css/apps/duel.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="js/bridge.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/win.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/markdown.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/apps/desktop.js"></script>
+<script src="js/apps/login.js"></script>
+<script src="js/apps/settings.js"></script>
+<script src="js/apps/help.js"></script>
+<script src="js/apps/terminal.js"></script>
+<script src="js/apps/editor_highlight.js"></script>
+<script src="js/apps/editor.js"></script>
+<script src="js/apps/files.js"></script>
+<script src="js/apps/browser.js"></script>
+<script src="js/apps/mail.js"></script>
+<script src="js/apps/monitor.js"></script>
+<script src="js/apps/map.js"></script>
+<script src="js/apps/finale.js"></script>
+<script src="js/apps/scenario.js"></script>
+<script src="js/apps/duel.js"></script>
+</body>
+</html>

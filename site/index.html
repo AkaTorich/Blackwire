@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLACKWIRE — игра про хакера</title>
+<meta name="description" content="Blackwire — бесплатная игра про хакера с открытым кодом. Настоящие окна, свой язык скриптов, живой мир, сетевая игра.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#02060c; --bg2:#04101c; --panel:rgba(3,18,30,.62);
+  --line:rgba(0,229,255,.28); --line-hi:rgba(0,229,255,.75);
+  --cyan:#00e5ff; --cyan-2:#7ff6ff; --red:#ff2d55; --amber:#ffb020; --green:#2dff9c;
+  --text:#c4f3ff; --dim:#5d8ea3; --dimmer:#2c5466;
+  --mono:'JetBrains Mono',Consolas,monospace; --head:'Exo 2','Segoe UI',sans-serif; --num:'Orbitron','Exo 2',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:radial-gradient(ellipse at 50% 38%, #06192a 0%, var(--bg) 70%) fixed, var(--bg);
+  color:var(--text); font:12px/1.4 var(--mono); overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+
+/* ---- раскладка ---- */
+.app{position:relative; z-index:2; height:100vh; display:grid;
+  grid-template-columns:320px minmax(0,1fr) 340px;
+  grid-template-rows:auto minmax(0,1fr) 34px;
+  grid-template-areas:"top top top" "left map right" "tick tick tick";
+  gap:10px; padding:10px 12px}
+.top{grid-area:top}.left{grid-area:left}.map{grid-area:map}.right{grid-area:right}.ticker{grid-area:tick}
+
+/* ---- панели с угловыми скобками ---- */
+.panel{position:relative;
+  background:
+    linear-gradient(var(--line-hi),var(--line-hi)) left top/14px 1px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) left top/1px 14px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) right top/14px 1px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) right top/1px 14px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) left bottom/14px 1px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) left bottom/1px 14px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) right bottom/14px 1px no-repeat,
+    linear-gradient(var(--line-hi),var(--line-hi)) right bottom/1px 14px no-repeat,
+    var(--panel);
+  outline:1px solid rgba(0,229,255,.10); outline-offset:-1px;
+  box-shadow:inset 0 0 40px rgba(0,229,255,.04), 0 0 24px rgba(0,0,0,.5); min-height:0}
+.panel-head{display:flex;align-items:center;gap:8px;padding:9px 12px 7px;
+  font:600 11px/1 var(--head);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cyan);text-shadow:0 0 8px rgba(0,229,255,.6)}
+.panel-head::before{content:'';width:6px;height:6px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);transform:rotate(45deg);flex:none}
+.panel-head::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.panel-head em{order:3;font:500 11px var(--num);font-style:normal;color:var(--dim);letter-spacing:.05em;text-shadow:none}
+
+/* ---- шапка ---- */
+.top{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:8px 16px;
+  background:linear-gradient(180deg,rgba(0,229,255,.08),rgba(0,229,255,.02));
+  border-top:1px solid var(--line-hi);border-bottom:1px solid var(--line);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px));position:relative}
+.top::after{content:'';position:absolute;left:30%;right:30%;bottom:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 12px var(--cyan)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;position:relative;flex:none}
+.logo i{position:absolute;inset:0;border:1.5px solid var(--cyan);border-radius:50%;border-left-color:transparent;border-right-color:transparent;animation:spin 3s linear infinite;box-shadow:0 0 10px rgba(0,229,255,.4)}
+.logo i:nth-child(2){inset:6px;border-color:var(--cyan-2);border-top-color:transparent;border-bottom-color:transparent;animation-duration:2s;animation-direction:reverse}
+.logo i:nth-child(3){inset:15px;border:none;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 1.4s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
+  text-shadow:0 0 10px rgba(0,229,255,.8),0 0 30px rgba(0,229,255,.35);position:relative;white-space:nowrap}
+.sub{font:600 9.5px/1 var(--head);letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden;opacity:.85}
+.glitch::before{color:var(--red);text-shadow:none;animation:glitch1 4.2s infinite steps(1)}
+.glitch::after{color:var(--cyan);text-shadow:none;animation:glitch2 3.7s infinite steps(1)}
+@keyframes glitch1{0%,91%,100%{clip-path:inset(100% 0 0 0);transform:none}92%{clip-path:inset(10% 0 60% 0);transform:translate(-3px,0)}94%{clip-path:inset(55% 0 20% 0);transform:translate(3px,0)}96%{clip-path:inset(30% 0 45% 0);transform:translate(-2px,0)}}
+@keyframes glitch2{0%,85%,100%{clip-path:inset(100% 0 0 0);transform:none}86%{clip-path:inset(70% 0 5% 0);transform:translate(3px,0)}88%{clip-path:inset(5% 0 75% 0);transform:translate(-3px,0)}}
+
+.kpis{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
+.kpi{min-width:98px;padding:5px 14px 6px;text-align:center;border-left:1px solid var(--line)}
+.kpi:first-child{border-left:none}
+.kpi b{display:block;font:700 23px/1.05 var(--num);color:#eaffff;text-shadow:0 0 12px rgba(0,229,255,.8);font-variant-numeric:tabular-nums}
+.kpi span{font:600 9.5px/1 var(--head);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+
+.clock{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.clock b{font:500 20px/1 var(--num);color:#eaffff;text-shadow:0 0 10px rgba(0,229,255,.7);letter-spacing:.06em}
+.live{display:flex;align-items:center;gap:6px;color:var(--green)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1s steps(2) infinite}
+.live em{font-style:normal;font-family:var(--num);letter-spacing:.2em;font-size:10px}
+@keyframes blink{50%{opacity:.15}}
+
+.actions{display:flex;gap:6px}
+.btn{height:34px;padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,229,255,.06);border:1px solid var(--line);color:var(--cyan);
+  font:700 11px/1 var(--head);letter-spacing:.12em;text-transform:uppercase;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  transition:background .2s,box-shadow .2s}
+.btn:hover{background:rgba(0,229,255,.18);box-shadow:inset 0 0 12px rgba(0,229,255,.4)}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+.btn-dl{color:var(--green);border-color:rgba(45,255,156,.5);background:rgba(45,255,156,.08);animation:glow 1.7s ease-in-out infinite alternate}
+.btn-dl:hover{background:rgba(45,255,156,.2);box-shadow:inset 0 0 12px rgba(45,255,156,.45)}
+@keyframes glow{to{box-shadow:0 0 14px rgba(45,255,156,.45)}}
+
+/* ---- поток событий ---- */
+.left{display:flex;flex-direction:column}
+.feed{list-style:none;margin:0;padding:0 8px 8px;overflow:hidden;flex:1;
+  -webkit-mask-image:linear-gradient(180deg,#000 78%,transparent);mask-image:linear-gradient(180deg,#000 78%,transparent)}
+.ev{--c:var(--cyan);position:relative;padding:6px 8px 6px 11px;margin-bottom:4px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 10%,transparent),transparent 70%);
+  border-left:2px solid var(--c);animation:evIn .5s ease-out}
+@keyframes evIn{from{clip-path:inset(0 100% 0 0);transform:translateX(-10px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.ev .r1{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.ev .t{color:var(--dim);font-size:10.5px}
+.ev .tag{font:700 9.5px/1 var(--head);letter-spacing:.08em;color:#02060c;background:var(--c);padding:2px 5px;box-shadow:0 0 8px var(--c)}
+.ev .ip{color:#eaffff;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.ev .r2{margin-top:3px;color:var(--dim);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev .r2 b{color:var(--text);font-weight:400}
+
+/* ---- центр: карта + герой ---- */
+.map{overflow:hidden}
+.map canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.map-hud{position:absolute;display:flex;flex-direction:column;gap:2px;pointer-events:none;z-index:3}
+.map-hud span{font:600 9px/1 var(--head);letter-spacing:.25em;text-transform:uppercase;color:var(--dimmer)}
+.map-hud b{font:500 11px/1 var(--num);color:var(--dim);letter-spacing:.1em}
+.map-hud.tl{left:16px;top:14px}.map-hud.tr{right:16px;top:14px;align-items:flex-end}
+.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;pointer-events:none}
+.hero .big{font:900 clamp(40px,8vw,92px)/.95 var(--head);letter-spacing:.08em;color:#eafcff;
+  text-shadow:0 0 22px rgba(0,229,255,.75),0 0 60px rgba(0,229,255,.3);position:relative}
+.hero .tagline{margin-top:16px;max-width:520px;color:var(--text);opacity:.9;font:400 14px/1.6 var(--mono)}
+.hero .line{margin-top:12px;font:600 10px/1 var(--head);letter-spacing:.26em;text-transform:uppercase;color:var(--cyan-2);text-shadow:0 0 8px rgba(0,229,255,.5)}
+.hero .cta{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;pointer-events:auto}
+.hero .btn{height:40px;font-size:12px}
+.hero .ossel{margin-top:24px}
+
+/* ---- выбор системы ---- */
+.ossel{display:inline-flex;pointer-events:auto;border:1px solid var(--line);background:rgba(0,229,255,.04);
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.os-opt{position:relative;height:32px;padding:0 18px;cursor:pointer;background:none;border:0;border-left:1px solid var(--line);
+  font:700 11px/1 var(--head);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);transition:color .2s,background .2s}
+.os-opt:first-child{border-left:0}
+.os-opt:hover{color:var(--cyan);background:rgba(0,229,255,.08)}
+.os-opt.on{color:#02060c;background:var(--cyan);box-shadow:0 0 16px rgba(0,229,255,.55)}
+.os-opt.det::after{content:'';position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.os-opt.on.det::after{background:#02060c;box-shadow:none}
+.os-note{margin-top:10px;font:500 10.5px/1.4 var(--num);letter-spacing:.06em;color:var(--dim);text-align:center}
+.dlbox .ossel{display:flex}
+.dlbox .os-opt{flex:1;padding:0 6px}
+.dlbox .os-note{margin-top:0}
+
+/* ---- правая колонка ---- */
+.right{display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--dimmer) transparent}
+.right>.panel{flex:0 0 auto}
+.right .panel-head em{margin-left:auto}
+.bars{padding:2px 12px 10px;display:flex;flex-direction:column;gap:6px}
+.bar{position:relative;height:27px;display:flex;align-items:center;gap:8px;padding:0 10px;overflow:hidden;background:rgba(0,229,255,.03)}
+.bar>i{position:absolute;left:0;top:0;bottom:0;width:0;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--cyan) 30%,transparent),color-mix(in srgb,var(--cyan) 6%,transparent));
+  border-right:2px solid var(--cyan);box-shadow:4px 0 10px -4px var(--cyan);animation:fill 1.3s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes fill{to{width:var(--w,88%)}}
+.bar .ti{position:relative;z-index:1;display:flex;align-items:center;gap:8px;width:100%}
+.bar svg{width:16px;height:16px;stroke:var(--cyan);fill:none;stroke-width:1.6;flex:none}
+.bar .nm{position:relative;font:700 11px/1 var(--head);letter-spacing:.06em;color:#eaffff}
+.bar .ds{position:relative;color:var(--dim);font-size:10px;margin-left:auto;text-align:right;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story{padding:2px 14px 12px;color:var(--text);opacity:.92;font-size:11px;line-height:1.55}
+.story p{margin:7px 0 0}
+.story b{color:var(--cyan-2)}
+.story .sig{font-family:var(--num);color:var(--cyan);letter-spacing:.16em;margin-top:10px}
+.dlbox{padding:6px 14px 16px;display:flex;flex-direction:column;gap:10px}
+.dlbox .btn{height:40px;justify-content:center}
+.dlbox .os{font-family:var(--num);font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-align:center}
+
+/* ---- бегущая строка ---- */
+.ticker{display:flex;align-items:center;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(0,229,255,.1),rgba(0,229,255,.03) 20%,rgba(0,229,255,.03))}
+.ticker-cap{flex:none;padding:0 14px;font:800 10.5px/34px var(--head);letter-spacing:.2em;color:var(--cyan);text-shadow:0 0 8px var(--cyan);background:rgba(0,229,255,.08);border-right:1px solid var(--line)}
+.ticker-view{flex:1;overflow:hidden;height:100%;position:relative}
+.ticker-track{position:absolute;left:0;top:0;height:100%;display:flex;align-items:center;white-space:nowrap;animation:scroll 34s linear infinite}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{padding:0 30px 0 0;font-size:11px;color:var(--dim)}
+.tk b{color:var(--cyan);font-weight:600}.tk span{color:var(--text)}
+
+/* ---- эффекты ---- */
+.fx-grid,.fx-scan,.fx-vignette{position:fixed;inset:0;pointer-events:none}
+.fx-grid{z-index:1;background:
+  linear-gradient(rgba(0,229,255,.035) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(90deg,rgba(0,229,255,.035) 1px,transparent 1px) 0 0/44px 44px}
+.fx-scan{z-index:5;background:repeating-linear-gradient(180deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);overflow:hidden}
+.fx-scan::after{content:'';position:absolute;left:0;right:0;height:22vh;top:0;background:linear-gradient(180deg,transparent,rgba(0,229,255,.045),transparent);transform:translateY(-22vh);animation:scanMove 7s linear infinite}
+@keyframes scanMove{to{transform:translateY(100vh)}}
+.fx-vignette{z-index:6;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.55) 100%)}
+
+/* ---- загрузка ---- */
+.boot{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:radial-gradient(ellipse at center,#041322,#010409 75%);transition:opacity .8s,visibility .8s}
+.boot.done{opacity:0;visibility:hidden}
+.boot-box{width:min(520px,calc(100% - 32px))}
+.boot-title{font:900 30px/1 var(--head);letter-spacing:.3em;color:#eaffff;text-shadow:0 0 18px var(--cyan);margin-bottom:22px;text-align:center}
+.boot ol{list-style:none;margin:0 0 18px;padding:0;min-height:120px;font-size:12px}
+.boot li{display:flex;gap:10px;color:var(--dim);margin:5px 0;animation:evIn .3s ease-out}
+.boot li::before{content:'›';color:var(--cyan)}
+.boot li em{margin-left:auto;font-style:normal;color:var(--amber)}
+.boot li.ok em{color:var(--green)}
+.boot-bar{height:3px;background:rgba(0,229,255,.12)}
+.boot-bar i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:width .4s}
+
+/* ---- узкие окна ---- */
+@media(max-width:1200px){.app{grid-template-columns:280px minmax(0,1fr) 300px}.sub{display:none}}
+@media(max-width:980px){
+  body{overflow:auto}
+  .app{height:auto;grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "map" "right" "left" "tick";grid-template-rows:auto 60vh auto auto 34px}
+  .left{max-height:320px}
+}
+@media(max-width:560px){
+  .top{gap:10px;padding:8px 10px}.kpis{order:5;width:100%;justify-content:space-between}
+  .kpi{min-width:0;flex:1;padding:3px 4px}.kpi b{font-size:16px}.kpi span{font-size:8px;letter-spacing:.08em}
+  h1{font-size:17px}.clock{display:none}.actions{flex:1;justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<div class="fx-grid"></div>
+
+<div class="app">
+  <!-- шапка -->
+  <div class="top">
+    <div class="brand">
+      <div class="logo"><i></i><i></i><i></i></div>
+      <div>
+        <h1 class="glitch" data-text="BLACKWIRE">BLACKWIRE</h1>
+        <div class="sub">игра про хакера · открытый код</div>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>109</b><span>машин</span></div>
+      <div class="kpi"><b>21</b><span>организация</span></div>
+      <div class="kpi"><b>∞</b><span>заданий</span></div>
+      <div class="kpi"><b>12</b><span>тем</span></div>
+    </div>
+    <div class="clock">
+      <b id="clock">00:00:00</b>
+      <span class="live"><i></i><em>OPEN SOURCE</em></span>
+    </div>
+    <div class="actions">
+      <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.0/Blackwire_0.1.0_x64-setup.exe">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Скачать
+      </a>
+      <a class="btn" id="ghTop" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.6a5.1 5.1 0 0 0-1.4-3.5 4.8 4.8 0 0 0-.1-3.5s-1.1-.3-3.6 1.4a12 12 0 0 0-6.4 0C6.7 1.1 5.6 1.4 5.6 1.4a4.8 4.8 0 0 0-.1 3.5A5.1 5.1 0 0 0 4 8.4c0 5 3 6.3 6 6.6a3.4 3.4 0 0 0-.9 2.6V21"/></svg>Код
+      </a>
+    </div>
+  </div>
+
+  <!-- поток событий -->
+  <div class="left panel">
+    <div class="panel-head">поток сети <em id="evn">0</em></div>
+    <ul class="feed" id="feed"></ul>
+  </div>
+
+  <!-- карта + герой -->
+  <div class="map panel">
+    <canvas id="net"></canvas>
+    <div class="map-hud tl"><span>сеть</span><b>109 узлов · 21 орг.</b></div>
+    <div class="map-hud tr"><span>режим</span><b>песочница</b></div>
+    <div class="hero">
+      <div class="big glitch" data-text="BLACKWIRE">BLACKWIRE</div>
+      <div class="tagline">Настоящие окна системы, свой язык скриптов и живой мир из корпораций, банков и скрытых сетей. Ты — в группе, что вступается за изгоев.</div>
+      <div class="line">бесплатно · открытый код · windows · linux · macos</div>
+      <div class="ossel" data-ossel>
+        <button type="button" class="os-opt" data-os="win">Windows</button><button type="button" class="os-opt" data-os="linux">Linux</button><button type="button" class="os-opt" data-os="mac">macOS</button>
+      </div>
+      <div class="cta">
+        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.0/Blackwire_0.1.0_x64-setup.exe">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span data-dl-label>Скачать для Windows</span>
+        </a>
+        <a class="btn" id="ghHero" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.6a5.1 5.1 0 0 0-1.4-3.5 4.8 4.8 0 0 0-.1-3.5s-1.1-.3-3.6 1.4a12 12 0 0 0-6.4 0C6.7 1.1 5.6 1.4 5.6 1.4a4.8 4.8 0 0 0-.1 3.5A5.1 5.1 0 0 0 4 8.4c0 5 3 6.3 6 6.6a3.4 3.4 0 0 0-.9 2.6V21"/></svg>Код на GitHub
+        </a>
+      </div>
+      <div class="os-note" data-dl-note>Windows 10 / 11 · установщик .exe · 2,9 МБ</div>
+    </div>
+  </div>
+
+  <!-- правая колонка -->
+  <div class="right">
+    <div class="panel">
+      <div class="panel-head">возможности <em>6</em></div>
+      <div class="bars">
+        <div class="bar" style="--w:92%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg><span class="nm">Настоящие окна</span><span class="ds">каждое — окно Windows</span></div></div>
+        <div class="bar" style="--w:86%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6M13 4l-2 16"/></svg><span class="nm">Язык Adder</span><span class="ds">свои скрипты в игре</span></div></div>
+        <div class="bar" style="--w:90%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6.7 7.2l3.5 2.8M17.3 7.2l-3.5 2.8M12 12v4"/></svg><span class="nm">Живой мир</span><span class="ds">сотни машин, десятки орг.</span></div></div>
+        <div class="bar" style="--w:88%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="nm">Взлом и слежка</span><span class="ds">эксплойты, прокси, следы</span></div></div>
+        <div class="bar" style="--w:84%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.5 12h7M12 4v3M12 17v3"/></svg><span class="nm">Сетевая игра</span><span class="ds">локалка и интернет</span></div></div>
+        <div class="bar" style="--w:80%"><i></i><div class="ti"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 13.5l2 2 4-4"/></svg><span class="nm">Свои сценарии</span><span class="ds">редактор + достижения</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">о чём</div>
+      <div class="story">
+        <p>Ты был сотрудником корпорации. Кредит, который не осилил, — и банк по бумаге с печатью забрал половину имущества. А потом пришло письмо со странной ссылкой в скрытую сеть.</p>
+        <p>Группа <b>hello-world</b> вернулась из тени — вступиться за изгоев. Делай её задания шаг за шагом к свободе. Долг закрыт, цепочка пройдена — а мир не кончается: играй сколько хочешь.</p>
+        <div class="sig">— hello-world</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">скачать</div>
+      <div class="dlbox">
+        <div class="ossel" data-ossel>
+          <button type="button" class="os-opt" data-os="win">Windows</button><button type="button" class="os-opt" data-os="linux">Linux</button><button type="button" class="os-opt" data-os="mac">macOS</button>
+        </div>
+        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.0/Blackwire_0.1.0_x64-setup.exe">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span data-dl-label>Скачать для Windows</span>
+        </a>
+        <div class="os-note" data-dl-note>Windows 10 / 11 · установщик .exe · 2,9 МБ</div>
+        <a class="btn" id="ghGet" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.6a5.1 5.1 0 0 0-1.4-3.5 4.8 4.8 0 0 0-.1-3.5s-1.1-.3-3.6 1.4a12 12 0 0 0-6.4 0C6.7 1.1 5.6 1.4 5.6 1.4a4.8 4.8 0 0 0-.1 3.5A5.1 5.1 0 0 0 4 8.4c0 5 3 6.3 6 6.6a3.4 3.4 0 0 0-.9 2.6V21"/></svg>Исходный код
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- бегущая строка -->
+  <div class="ticker">
+    <div class="ticker-cap">BLACKWIRE</div>
+    <div class="ticker-view"><div class="ticker-track" id="tick"></div></div>
+  </div>
+</div>
+
+<div class="fx-scan"></div>
+<div class="fx-vignette"></div>
+
+<!-- загрузка -->
+<div class="boot" id="boot">
+  <div class="boot-box">
+    <div class="boot-title">BLACKWIRE</div>
+    <ol id="bootlog"></ol>
+    <div class="boot-bar"><i id="bootbar"></i></div>
+  </div>
+</div>
+
+<script>
+  var REPO = 'https://github.com/AkaTorich/Blackwire';
+
+  // выбор системы для загрузки: сам определяет ОС посетителя, ручной выбор запоминает
+  (function(){
+    var REL = REPO + '/releases/download/v0.1.0/';
+    var BUILDS = {
+      win:   {name:'Windows', file:'Blackwire_0.1.0_x64-setup.exe', note:'Windows 10 / 11 · установщик .exe · 2,9 МБ'},
+      linux: {name:'Linux',   file:'Blackwire_0.1.0_amd64.deb',     note:'Debian / Ubuntu · пакет .deb · 3,6 МБ'},
+      mac:   {name:'macOS',   file:'Blackwire_0.1.0_universal.dmg', note:'Intel и Apple Silicon · образ .dmg · 7,3 МБ'}
+    };
+    function detect(){
+      var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '') + ' ' + navigator.userAgent;
+      if (/Win/i.test(p)) return 'win';
+      if (/Mac|iPhone|iPad|iPod/i.test(p)) return 'mac';
+      if (/Linux|X11|CrOS|Android|BSD/i.test(p)) return 'linux';
+      return 'win';
+    }
+    var detected = detect(), saved = null;
+    try { saved = localStorage.getItem('bw_os'); } catch (e) {}
+    function pick(os, remember){
+      var b = BUILDS[os]; if (!b) return;
+      document.querySelectorAll('[data-os]').forEach(function(x){
+        x.classList.toggle('on', x.dataset.os === os);
+        x.classList.toggle('det', x.dataset.os === detected);
+      });
+      document.querySelectorAll('[data-dl]').forEach(function(a){ a.href = REL + b.file; });
+      document.querySelectorAll('[data-dl-label]').forEach(function(s){ s.textContent = 'Скачать для ' + b.name; });
+      document.querySelectorAll('[data-dl-note]').forEach(function(s){ s.textContent = b.note; });
+      if (remember) { try { localStorage.setItem('bw_os', os); } catch (e) {} }
+    }
+    document.querySelectorAll('[data-os]').forEach(function(x){
+      x.addEventListener('click', function(){ pick(x.dataset.os, true); });
+    });
+    pick(BUILDS[saved] ? saved : detected, false);
+  })();
+  ['ghTop','ghHero','ghGet'].forEach(function(id){var a=document.getElementById(id);if(a)a.href=REPO;});
+
+  // часы
+  (function(){var c=document.getElementById('clock');function t(){var d=new Date();c.textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return(n<10?'0':'')+n;}).join(':');}t();setInterval(t,1000);})();
+
+  // бегущая строка
+  (function(){
+    var items=[
+      ['Настоящие окна','каждое приложение — отдельное окно системы'],
+      ['Язык Adder','пиши инструменты прямо в игре'],
+      ['Живой мир','корпорации, банки, больницы, скрытые сети'],
+      ['Взлом','разведка · эксплойты · прокси · чистка следов'],
+      ['Сетевая игра','вдвоём по локалке или командой через интернет'],
+      ['Свои сценарии','задай цель и награду, сохрани, проходи'],
+      ['Бесплатно','открытый код · один .exe · Windows']
+    ];
+    var html=items.map(function(x){return '<span class="tk"><b>'+x[0]+'</b> — <span>'+x[1]+'</span></span>';}).join('');
+    document.getElementById('tick').innerHTML=html+html;
+  })();
+
+  // поток событий (искусственный)
+  (function(){
+    var feed=document.getElementById('feed'), cnt=document.getElementById('evn'), n=0;
+    var hosts=['bank-core.corp','gate.hw','soc-01.gov','news-portal.net','uni-lab.edu','clinic-db.med','relay-7.hw','shop-03.net','home-pc-44','isp-gw.net'];
+    var acts=[
+      {tag:'SCAN',c:'var(--cyan)',r2:'порты и службы узла'},
+      {tag:'EXPLOIT',c:'var(--amber)',r2:'слабое место службы'},
+      {tag:'ROOT',c:'var(--green)',r2:'доступ получен'},
+      {tag:'PROXY',c:'var(--cyan-2)',r2:'цепочка подключений'},
+      {tag:'WIPE',c:'var(--cyan)',r2:'следы прибраны'},
+      {tag:'TRACE',c:'var(--red)',r2:'слежка: расследование'},
+      {tag:'MISSION',c:'var(--green)',r2:'задание hello-world'}
+    ];
+    function pad(n){return(n<10?'0':'')+n;}
+    function add(){
+      var a=acts[(Math.random()*acts.length)|0], h=hosts[(Math.random()*hosts.length)|0], d=new Date();
+      var li=document.createElement('li'); li.className='ev'; li.style.setProperty('--c',a.c);
+      li.innerHTML='<div class="r1"><span class="t">'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+'</span>'+
+        '<span class="tag" style="background:'+a.c+';box-shadow:0 0 8px '+a.c+'">'+a.tag+'</span>'+
+        '<span class="ip">'+h+'</span></div>'+
+        '<div class="r2"><b>'+a.r2+'</b></div>';
+      feed.insertBefore(li, feed.firstChild);
+      while(feed.children.length>14) feed.removeChild(feed.lastChild);
+      cnt.textContent=(++n);
+    }
+    for(var i=0;i<8;i++) add();
+    setInterval(add, 1400);
+  })();
+
+  // карта сети на холсте
+  (function(){
+    var cv=document.getElementById('net'), ctx=cv.getContext('2d'), DPR=Math.min(2,devicePixelRatio||1);
+    var nodes=[], links=[], pulses=[];
+    function build(){
+      var w=cv.clientWidth, h=cv.clientHeight; cv.width=w*DPR; cv.height=h*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+      nodes=[]; links=[]; var N=Math.max(26, Math.min(54, (w*h/18000)|0));
+      for(var i=0;i<N;i++) nodes.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()<.12?3.2:1.8, hot:Math.random()<.14, ph:Math.random()*6.28});
+      for(var i=0;i<nodes.length;i++){
+        var best=[]; for(var j=0;j<nodes.length;j++){ if(i===j) continue; var dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y; best.push([dx*dx+dy*dy,j]); }
+        best.sort(function(a,b){return a[0]-b[0];});
+        for(var k=0;k<2+((Math.random()*2)|0);k++){ var j=best[k][1]; if(j>i) links.push([i,j]); }
+      }
+    }
+    build(); addEventListener('resize', build);
+    function spawn(){ if(!links.length) return; var l=links[(Math.random()*links.length)|0], red=Math.random()<.18; pulses.push({a:l[0],b:l[1],t:0,sp:0.006+Math.random()*0.01,red:red}); if(pulses.length>60) pulses.shift(); }
+    setInterval(spawn, 160);
+    var tms=0;
+    function frame(){
+      var w=cv.clientWidth, h=cv.clientHeight; tms+=0.016;
+      ctx.clearRect(0,0,w,h);
+      // связи
+      ctx.lineWidth=1;
+      for(var i=0;i<links.length;i++){ var a=nodes[links[i][0]], b=nodes[links[i][1]]; ctx.strokeStyle='rgba(0,229,255,.07)'; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+      // узлы
+      for(var i=0;i<nodes.length;i++){ var nn=nodes[i], pl=0.5+0.5*Math.sin(tms*2+nn.ph);
+        ctx.fillStyle=nn.hot?'rgba(255,45,85,'+(0.5+0.4*pl)+')':'rgba(0,229,255,'+(0.4+0.4*pl)+')';
+        ctx.beginPath(); ctx.arc(nn.x,nn.y,nn.r,0,6.2832); ctx.fill();
+        if(nn.hot||nn.r>3){ ctx.strokeStyle=nn.hot?'rgba(255,45,85,'+(0.3*pl)+')':'rgba(0,229,255,'+(0.25*pl)+')'; ctx.beginPath(); ctx.arc(nn.x,nn.y,nn.r+5+4*pl,0,6.2832); ctx.stroke(); }
+      }
+      // пульсы
+      for(var i=pulses.length-1;i>=0;i--){ var p=pulses[i], a=nodes[p.a], b=nodes[p.b]; p.t+=p.sp; if(p.t>=1){ pulses.splice(i,1); continue; }
+        var x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t, col=p.red?'255,45,85':'127,246,255';
+        ctx.fillStyle='rgba('+col+',.95)'; ctx.beginPath(); ctx.arc(x,y,2.1,0,6.2832); ctx.fill();
+        ctx.fillStyle='rgba('+col+',.25)'; ctx.beginPath(); ctx.arc(x,y,5,0,6.2832); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+
+  // заставка загрузки
+  (function(){
+    var steps=[['инициализация ядра','OK'],['загрузка мира · 109 узлов','OK'],['поднятие сети hello-world','OK'],['связь с группой','OK'],['готово к работе','LIVE']];
+    var ol=document.getElementById('bootlog'), bar=document.getElementById('bootbar'), boot=document.getElementById('boot'), i=0;
+    function next(){
+      if(i<steps.length){
+        var li=document.createElement('li'); if(i===steps.length-1) li.className='ok';
+        li.innerHTML='<span>'+steps[i][0]+'</span><em>'+steps[i][1]+'</em>'; ol.appendChild(li);
+        bar.style.width=Math.round((i+1)/steps.length*100)+'%'; i++;
+        setTimeout(next, 360+Math.random()*260);
+      } else { setTimeout(function(){ boot.classList.add('done'); }, 500); }
+    }
+    setTimeout(next, 300);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+/* Темы Blackwire. Полный набор переменных в каждой. Селектор .theme-preview[data-theme] —
+   для плиток предпросмотра в настройках. Тема без атрибута = swordfish. */
+
+:root,
+:root[data-theme="swordfish"], .theme-preview[data-theme="swordfish"] {
+  --bg: #050a14; --bg2: #0a1426;
+  --panel: rgba(8, 18, 36, .78); --panel-border: rgba(57, 216, 255, .28);
+  --fg: #dff6ff; --fg-dim: #6f93ad;
+  --accent: #39d8ff; --accent2: #9af1ff; --glow: rgba(57, 216, 255, .55);
+  --ok: #4cffa0; --warn: #ffc857; --err: #ff5470;
+  --sel: rgba(57, 216, 255, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .6);
+  --term-bg: rgba(4, 9, 20, var(--term-opacity));
+  --accent-rgb: 57, 216, 255; --fg-rgb: 223, 246, 255; --bg-rgb: 5, 10, 20;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+
+:root[data-theme="ice"], .theme-preview[data-theme="ice"] {
+  --bg: #0b1522; --bg2: #122236;
+  --panel: rgba(16, 30, 48, .8); --panel-border: rgba(160, 220, 255, .3);
+  --fg: #eef7ff; --fg-dim: #8aa8c4;
+  --accent: #8fd8ff; --accent2: #ffffff; --glow: rgba(160, 220, 255, .5);
+  --ok: #7cf5c3; --warn: #ffd27a; --err: #ff7a8a;
+  --sel: rgba(143, 216, 255, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  --term-bg: rgba(9, 17, 28, var(--term-opacity));
+  --accent-rgb: 143, 216, 255; --fg-rgb: 238, 247, 255; --bg-rgb: 11, 21, 34;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 12px;
+}
+
+:root[data-theme="amber"], .theme-preview[data-theme="amber"] {
+  --bg: #0d0c0a; --bg2: #171512;
+  --panel: rgba(24, 21, 17, .82); --panel-border: rgba(255, 179, 71, .3);
+  --fg: #ffe9c9; --fg-dim: #9b8768;
+  --accent: #ffb347; --accent2: #ffd79a; --glow: rgba(255, 179, 71, .5);
+  --ok: #a8e36b; --warn: #ffd166; --err: #ff6b57;
+  --sel: rgba(255, 179, 71, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(12, 10, 8, var(--term-opacity));
+  --accent-rgb: 255, 179, 71; --fg-rgb: 255, 233, 201; --bg-rgb: 13, 12, 10;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 8px;
+}
+
+:root[data-theme="phosphor"], .theme-preview[data-theme="phosphor"] {
+  --bg: #020804; --bg2: #06140a;
+  --panel: rgba(4, 18, 9, .82); --panel-border: rgba(76, 255, 122, .3);
+  --fg: #c8ffd6; --fg-dim: #4f8c62;
+  --accent: #4cff7a; --accent2: #b8ffcb; --glow: rgba(76, 255, 122, .5);
+  --ok: #4cff7a; --warn: #e5ff5a; --err: #ff6a5a;
+  --sel: rgba(76, 255, 122, .22); --shadow: 0 18px 50px rgba(0, 0, 0, .7);
+  --term-bg: rgba(2, 8, 4, var(--term-opacity));
+  --accent-rgb: 76, 255, 122; --fg-rgb: 200, 255, 214; --bg-rgb: 2, 8, 4;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 4px;
+}
+
+:root[data-theme="violet"], .theme-preview[data-theme="violet"] {
+  --bg: #0a0614; --bg2: #150e26;
+  --panel: rgba(20, 12, 38, .8); --panel-border: rgba(181, 124, 255, .3);
+  --fg: #efe6ff; --fg-dim: #8d7bb4;
+  --accent: #b57cff; --accent2: #e3ccff; --glow: rgba(181, 124, 255, .5);
+  --ok: #7cffc4; --warn: #ffcf7a; --err: #ff5f8a;
+  --sel: rgba(181, 124, 255, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(9, 5, 18, var(--term-opacity));
+  --accent-rgb: 181, 124, 255; --fg-rgb: 239, 230, 255; --bg-rgb: 10, 6, 20;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 12px;
+}
+
+:root[data-theme="crimson"], .theme-preview[data-theme="crimson"] {
+  --bg: #0e0407; --bg2: #1b0810;
+  --panel: rgba(28, 8, 16, .82); --panel-border: rgba(255, 77, 109, .3);
+  --fg: #ffe6ec; --fg-dim: #a66a7a;
+  --accent: #ff4d6d; --accent2: #ff9db0; --glow: rgba(255, 77, 109, .5);
+  --ok: #6cf0a8; --warn: #ffb866; --err: #ff3b3b;
+  --sel: rgba(255, 77, 109, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(12, 3, 6, var(--term-opacity));
+  --accent-rgb: 255, 77, 109; --fg-rgb: 255, 230, 236; --bg-rgb: 14, 4, 7;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 8px;
+}
+
+:root[data-theme="paper"], .theme-preview[data-theme="paper"] {
+  --bg: #f3efe6; --bg2: #ebe5d8;
+  --panel: rgba(255, 252, 245, .9); --panel-border: rgba(31, 95, 191, .3);
+  --fg: #1e2430; --fg-dim: #6b7280;
+  --accent: #1f5fbf; --accent2: #0d3d8a; --glow: rgba(31, 95, 191, .3);
+  --ok: #1f8a4c; --warn: #b7791f; --err: #c0392b;
+  --sel: rgba(31, 95, 191, .2); --shadow: 0 14px 40px rgba(40, 30, 10, .25);
+  --term-bg: rgba(250, 247, 240, var(--term-opacity));
+  --accent-rgb: 31, 95, 191; --fg-rgb: 30, 36, 48; --bg-rgb: 243, 239, 230;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 6px;
+}
+
+:root[data-theme="midnight"], .theme-preview[data-theme="midnight"] {
+  --bg: #070b16; --bg2: #0d1426;
+  --panel: rgba(13, 20, 38, .86); --panel-border: rgba(111, 155, 220, .25);
+  --fg: #d6deee; --fg-dim: #6e7fa0;
+  --accent: #6f9bdc; --accent2: #a9c4ee; --glow: rgba(111, 155, 220, .3);
+  --ok: #6fcf97; --warn: #e0b45a; --err: #e06c75;
+  --sel: rgba(111, 155, 220, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .6);
+  --term-bg: rgba(7, 11, 22, var(--term-opacity));
+  --accent-rgb: 111, 155, 220; --fg-rgb: 214, 222, 238; --bg-rgb: 7, 11, 22;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+
+:root[data-theme="steel"], .theme-preview[data-theme="steel"] {
+  --bg: #0f1316; --bg2: #171d22;
+  --panel: rgba(23, 29, 34, .86); --panel-border: rgba(159, 182, 201, .28);
+  --fg: #e6ecf1; --fg-dim: #7f90a0;
+  --accent: #9fb6c9; --accent2: #dbe6ef; --glow: rgba(159, 182, 201, .35);
+  --ok: #8fd3a0; --warn: #e3c072; --err: #e57373;
+  --sel: rgba(159, 182, 201, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .6);
+  --term-bg: rgba(15, 19, 22, var(--term-opacity));
+  --accent-rgb: 159, 182, 201; --fg-rgb: 230, 236, 241; --bg-rgb: 15, 19, 22;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 6px;
+}
+
+:root[data-theme="gold"], .theme-preview[data-theme="gold"] {
+  --bg: #0b0a06; --bg2: #16130a;
+  --panel: rgba(22, 19, 10, .84); --panel-border: rgba(230, 194, 90, .3);
+  --fg: #fff3d6; --fg-dim: #9b8c62;
+  --accent: #e6c25a; --accent2: #fff0b3; --glow: rgba(230, 194, 90, .5);
+  --ok: #a9e06b; --warn: #ffb84d; --err: #ff6a5a;
+  --sel: rgba(230, 194, 90, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(11, 10, 6, var(--term-opacity));
+  --accent-rgb: 230, 194, 90; --fg-rgb: 255, 243, 214; --bg-rgb: 11, 10, 6;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+
+:root[data-theme="aurora"], .theme-preview[data-theme="aurora"] {
+  --bg: #041010; --bg2: #082020;
+  --panel: rgba(6, 26, 26, .8); --panel-border: rgba(90, 255, 200, .28);
+  --fg: #dcfff4; --fg-dim: #5f9a8a;
+  --accent: #5affc8; --accent2: #c2fff0; --glow: rgba(90, 255, 200, .5);
+  --ok: #5affc8; --warn: #ffe06b; --err: #ff6b8b;
+  --sel: rgba(90, 255, 200, .22); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(4, 16, 16, var(--term-opacity));
+  --accent-rgb: 90, 255, 200; --fg-rgb: 220, 255, 244; --bg-rgb: 4, 16, 16;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 14px;
+}
+
+:root[data-theme="ember"], .theme-preview[data-theme="ember"] {
+  --bg: #0c0806; --bg2: #1a100b;
+  --panel: rgba(26, 16, 11, .82); --panel-border: rgba(255, 122, 69, .3);
+  --fg: #ffe9df; --fg-dim: #a07866;
+  --accent: #ff7a45; --accent2: #ffb597; --glow: rgba(255, 122, 69, .5);
+  --ok: #9be07a; --warn: #ffc14d; --err: #ff4d4d;
+  --sel: rgba(255, 122, 69, .25); --shadow: 0 18px 50px rgba(0, 0, 0, .65);
+  --term-bg: rgba(12, 8, 6, var(--term-opacity));
+  --accent-rgb: 255, 122, 69; --fg-rgb: 255, 233, 223; --bg-rgb: 12, 8, 6;
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --radius: 8px;
+}

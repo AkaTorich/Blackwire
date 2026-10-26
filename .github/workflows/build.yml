@@ -1,0 +1,88 @@
+# Сборка Blackwire под Windows, Linux и macOS на GitHub Actions.
+# Запуск:
+#   - вручную (вкладка Actions → Build → Run workflow) — соберёт и выложит
+#     установщики как артефакты запуска;
+#   - при пуше тега вида v1.0.0 — ещё и создаст черновик релиза с установщиками
+#     для всех трёх систем.
+# Фронтенд статический (папка ui), node не нужен. Tauri-крейт — в app/.
+
+name: Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            target: ''
+            bundles: nsis
+            glob: target/release/bundle/nsis/*-setup.exe
+          - platform: ubuntu-22.04
+            target: ''
+            bundles: deb
+            glob: target/release/bundle/deb/*.deb
+          - platform: macos-latest
+            target: universal-apple-darwin
+            bundles: dmg
+            glob: target/universal-apple-darwin/release/bundle/dmg/*.dmg
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Забрать код
+        uses: actions/checkout@v4
+
+      - name: Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Кеш Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: '. -> target'
+
+      - name: Системные пакеты (Linux)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            libssl-dev \
+            file
+
+      - name: Tauri CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: tauri-cli
+
+      - name: Сборка
+        working-directory: app
+        run: cargo tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }}
+
+      - name: Артефакты запуска
+        uses: actions/upload-artifact@v4
+        with:
+          name: blackwire-${{ matrix.platform }}
+          path: ${{ matrix.glob }}
+          if-no-files-found: warn
+
+      - name: Черновик релиза (по тегу)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: Blackwire ${{ github.ref_name }}
+          body: 'Установщики для Windows, Linux и macOS — в файлах ниже.'
+          files: ${{ matrix.glob }}

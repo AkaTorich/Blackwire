@@ -1,0 +1,79 @@
+/* Окно финала: торжественный экран победы поверх анимированного фона. */
+.finale-body {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+.finale-fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.finale-wrap {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px 24px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(var(--bg-rgb), .35), rgba(var(--bg-rgb), .85));
+}
+.finale-logo {
+  font-family: var(--mono);
+  font-size: 34px;
+  letter-spacing: 3px;
+  color: var(--accent2);
+  text-shadow: 0 0 18px rgba(var(--accent-rgb), .7), 0 0 42px rgba(var(--accent-rgb), .35);
+  animation: finale-pulse 3s ease-in-out infinite;
+}
+@keyframes finale-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .78; text-shadow: 0 0 26px rgba(var(--accent-rgb), .9), 0 0 60px rgba(var(--accent-rgb), .45); }
+}
+.finale-sub {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.finale-text {
+  max-width: 560px;
+  color: var(--fg);
+  line-height: 1.55;
+}
+.finale-text p { margin: 8px 0; }
+.finale-text p:empty { height: 6px; margin: 0; }
+.finale-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 8px 22px;
+  margin: 6px 0 4px;
+  width: min(460px, 100%);
+}
+.finale-stat {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: rgba(var(--accent-rgb), .06);
+}
+.finale-k { color: var(--fg-dim); }
+.finale-v { color: var(--accent2); font-family: var(--mono); }
+.finale-btn {
+  margin-top: 10px;
+  padding: 10px 22px;
+  font-size: 14px;
+}
+@media (max-width: 520px) {
+  .finale-logo { font-size: 26px; }
+  .finale-stats { grid-template-columns: 1fr; }
+}

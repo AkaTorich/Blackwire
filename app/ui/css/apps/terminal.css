@@ -1,0 +1,115 @@
+/* Терминал — css/apps/terminal.css */
+
+.term {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: var(--font-size, 14px);
+  line-height: 1.45;
+  color: var(--fg);
+  overflow: hidden;
+}
+
+/* Фон отдельным слоем; --term-bg в темах уже содержит --term-opacity как альфу */
+.term-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--term-bg, var(--bg));
+  pointer-events: none;
+}
+
+.term-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 14px 12px;
+  user-select: text;
+  cursor: text;
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-border) transparent;
+}
+
+.term-scroll::-webkit-scrollbar { width: 8px; }
+.term-scroll::-webkit-scrollbar-track { background: transparent; }
+.term-scroll::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 4px;
+}
+.term-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+.term-row,
+.term-line,
+.term-hops {
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 1.45em;
+}
+
+.k-normal  { color: var(--fg); }
+.k-error   { color: var(--err); }
+.k-dim     { color: var(--fg-dim); }
+.k-accent  { color: var(--accent); }
+.k-success { color: var(--ok); }
+.k-warn    { color: var(--warn); }
+.k-heading {
+  color: var(--accent2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 8px var(--glow);
+  margin-top: 0.25em;
+}
+.k-cmd { color: var(--fg); }
+
+.term-prompt {
+  color: var(--accent);
+  text-shadow: 0 0 6px var(--glow);
+}
+.term-prompt.root { color: var(--err); text-shadow: 0 0 6px var(--err); }
+.term-prompt-script { color: var(--accent2); }
+
+.term-hops {
+  display: none;
+  color: var(--fg-dim);
+  font-size: 0.85em;
+  min-height: 0;
+  letter-spacing: 0.02em;
+}
+.term-hops.on { display: block; }
+
+.term-cursor {
+  display: inline-block;
+  min-width: 0.6em;
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 8px var(--glow);
+  animation: term-blink 1.1s steps(1, end) infinite;
+  white-space: pre;
+}
+
+@keyframes term-blink {
+  50% { background: transparent; color: var(--fg); box-shadow: none; }
+}
+
+/* Окно без фокуса — курсор контуром, без мигания */
+.term.unfocused .term-cursor {
+  animation: none;
+  background: transparent;
+  color: var(--fg);
+  box-shadow: none;
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* Печать или скрипт без запроса ввода — строки ввода нет */
+.term.busy .term-line,
+.term.busy .term-hops { display: none; }
+
+.term-scroll ::selection {
+  background: var(--sel);
+  color: var(--fg);
+}

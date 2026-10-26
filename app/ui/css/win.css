@@ -1,0 +1,133 @@
+/* Рамка окна: окна Tauri прозрачные, фон задаёт .win. Стекло отключается классом .no-glass на html. */
+
+html, body { background: transparent; }
+
+.win {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  background:
+    linear-gradient(160deg, rgba(var(--accent-rgb), .07), transparent 40%),
+    rgba(var(--bg-rgb), var(--win-opacity));
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--accent-rgb), .06),
+    0 0 0 1px rgba(0, 0, 0, .35),
+    0 0 28px rgba(var(--accent-rgb), .08);
+  overflow: hidden;
+  animation: win-in .18s var(--ease) both;
+}
+.win.closing { animation: win-out .12s var(--ease) forwards; }
+.win.maximized { border-radius: 0; }
+
+:root.no-glass .win {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: linear-gradient(160deg, rgba(var(--accent-rgb), .05), transparent 40%), rgba(var(--bg-rgb), var(--win-opacity));
+}
+
+/* ---------- заголовок ---------- */
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--title-h);
+  flex: none;
+  padding: 0 6px 0 12px;
+  border-bottom: 1px solid rgba(var(--accent-rgb), .18);
+  background: linear-gradient(180deg, rgba(var(--accent-rgb), .08), rgba(var(--accent-rgb), .02));
+  position: relative;
+  -webkit-app-region: drag;
+}
+.win-title::after {
+  content: "";
+  position: absolute;
+  left: 10%; right: 10%; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), .7), transparent);
+  pointer-events: none;
+}
+.win-icon {
+  display: inline-flex;
+  color: var(--accent);
+  filter: drop-shadow(0 0 4px var(--glow));
+  flex: none;
+}
+.win-name {
+  flex: 1;
+  min-width: 0;
+  font-size: .92em;
+  letter-spacing: .02em;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.win.modified .win-name { color: var(--accent2); }
+
+.win-btns { display: flex; gap: 2px; flex: none; -webkit-app-region: no-drag; }
+.win-btns button {
+  width: 34px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) * .5);
+  color: var(--fg-dim);
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.win-btns button:hover { background: rgba(var(--accent-rgb), .14); color: var(--accent2); box-shadow: 0 0 10px rgba(var(--accent-rgb), .2); }
+.win-btns button.close:hover { background: rgba(255, 84, 112, .22); color: #fff; box-shadow: 0 0 12px rgba(255, 84, 112, .35); }
+
+/* ---------- тело ---------- */
+.win-body {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Общая панель инструментов приложений */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(var(--accent-rgb), .12);
+  background: rgba(var(--bg-rgb), .25);
+  overflow: hidden;
+}
+.toolbar .spacer { flex: 1; }
+
+/* Строка состояния */
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+  height: 24px;
+  padding: 0 10px;
+  font-size: .8em;
+  color: var(--fg-dim);
+  border-top: 1px solid rgba(var(--accent-rgb), .12);
+  background: rgba(var(--bg-rgb), .3);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.statusbar > * { overflow: hidden; text-overflow: ellipsis; }
+.statusbar .spacer { flex: 1; }
+.statusbar .ok { color: var(--ok); }
+.statusbar .err { color: var(--err); }
+.statusbar .warn { color: var(--warn); }
+
+/* Окна без рамки (рабочий стол, вход) */
+.frameless { height: 100%; }
