@@ -1,0 +1,23 @@
+{
+  "id": "organization_directory",
+  "name": "Organization Directory",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "organization_directory_open": "open_window",
+    "organization_directory_report": "refresh",
+    "organization_directory_export": "export_report"
+  }
+}

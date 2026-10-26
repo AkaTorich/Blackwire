@@ -1,0 +1,23 @@
+{
+  "id": "farm_irrigation_controllers",
+  "name": "Farm Irrigation Controllers",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "farm_irrigation_controllers_open": "open_window",
+    "farm_irrigation_controllers_start": "start",
+    "farm_irrigation_controllers_status": "status"
+  }
+}

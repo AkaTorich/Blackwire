@@ -1,0 +1,10 @@
+{
+  "name": "Quest Progress Board",
+  "family": "utility",
+  "mode": "quests",
+  "story": "Summarize independent plugin quests and rewards.",
+  "id": "quest_progress_board",
+  "number": 67,
+  "version": "0.1.1",
+  "api": 1
+}

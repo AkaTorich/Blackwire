@@ -1,0 +1,23 @@
+{
+  "id": "community_internet_exchange",
+  "name": "Community Internet Exchange",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "community_internet_exchange_open": "open_window",
+    "community_internet_exchange_start": "start",
+    "community_internet_exchange_status": "status"
+  }
+}

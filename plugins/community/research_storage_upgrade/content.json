@@ -1,0 +1,13 @@
+{
+  "name": "Research Storage Upgrade",
+  "family": "economy",
+  "mode": "hardware",
+  "field": "disk_mb",
+  "amount": 16384,
+  "price": 260,
+  "story": "Add 16 GB of virtual disk capacity for research.",
+  "id": "research_storage_upgrade",
+  "number": 82,
+  "version": "0.1.1",
+  "api": 1
+}

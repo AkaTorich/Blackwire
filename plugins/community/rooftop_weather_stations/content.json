@@ -1,0 +1,32 @@
+{
+  "name": "Rooftop Weather Stations",
+  "family": "device",
+  "kind": "server",
+  "service": "weather_feed",
+  "file": "readings.csv",
+  "story": "Wind readings stay identical while independent stations report a storm.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 76,
+  "id": "rooftop_weather_stations",
+  "number": 5,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "server",
+      "hostname": "rooftop-weather-stations-records",
+      "ip": "198.22.5.1",
+      "lan_ip": null,
+      "service": "weather_feed",
+      "port": 7012,
+      "os": "Rooftop Weather Stations OS 1.0",
+      "file": "/srv/records/readings.csv",
+      "text": "Wind readings stay identical while independent stations report a storm.\nRecord owner: rooftop_weather_stations.\nCase reference: BW-005.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_rooftop_weather_stations_1"
+    }
+  ],
+  "subnet": "10.230.5.",
+  "org_kind": "corporation"
+}

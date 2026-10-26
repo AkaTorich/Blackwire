@@ -1,0 +1,23 @@
+{
+  "id": "cashflow_summary_tool",
+  "name": "Cashflow Summary Tool",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "cashflow_summary_tool_open": "open_window",
+    "cashflow_summary_tool_status": "status"
+  }
+}

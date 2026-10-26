@@ -1,0 +1,10 @@
+{
+  "name": "Organization Directory",
+  "family": "utility",
+  "mode": "orgs",
+  "story": "List discovered organizations and their gateways.",
+  "id": "organization_directory",
+  "number": 73,
+  "version": "0.1.1",
+  "api": 1
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Network Route Atlas",
+  "family": "utility",
+  "mode": "routes",
+  "story": "Show gateway relationships and internal addresses.",
+  "id": "network_route_atlas",
+  "number": 65,
+  "version": "0.1.1",
+  "api": 1
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Traffic Signal Cabinets",
+  "family": "device",
+  "kind": "router",
+  "service": "signal_control",
+  "file": "phases.csv",
+  "story": "The maintenance schedule contains an unauthorized priority route.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 136,
+  "id": "traffic_signal_cabinets",
+  "number": 20,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "router",
+      "hostname": "traffic-signal-cabinets-records",
+      "ip": "198.22.20.1",
+      "lan_ip": null,
+      "service": "signal_control",
+      "port": 7057,
+      "os": "Traffic Signal Cabinets OS 1.0",
+      "file": "/srv/records/phases.csv",
+      "text": "The maintenance schedule contains an unauthorized priority route.\nRecord owner: traffic_signal_cabinets.\nCase reference: BW-020.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_traffic_signal_cabinets_1"
+    }
+  ],
+  "subnet": "10.230.20.",
+  "org_kind": "corporation"
+}

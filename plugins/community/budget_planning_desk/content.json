@@ -1,0 +1,10 @@
+{
+  "name": "Budget Planning Desk",
+  "family": "utility",
+  "mode": "budget",
+  "story": "Show cash, loan balance and available upgrade prices.",
+  "id": "budget_planning_desk",
+  "number": 70,
+  "version": "0.1.1",
+  "api": 1
+}

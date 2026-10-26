@@ -1,0 +1,23 @@
+{
+  "id": "device_type_catalog",
+  "name": "Device Type Catalog",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "device_type_catalog_open": "open_window",
+    "device_type_catalog_report": "refresh",
+    "device_type_catalog_export": "export_report"
+  }
+}

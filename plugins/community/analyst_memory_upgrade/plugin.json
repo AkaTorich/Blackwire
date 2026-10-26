@@ -1,0 +1,23 @@
+{
+  "id": "analyst_memory_upgrade",
+  "name": "Analyst Memory Upgrade",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "analyst_memory_upgrade_open": "open_window",
+    "analyst_memory_upgrade_status": "status"
+  }
+}

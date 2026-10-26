@@ -1,0 +1,24 @@
+{
+  "id": "audit_window_countdown",
+  "name": "Audit Window Countdown",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "audit_window_countdown_open": "open_window",
+    "audit_window_countdown_start": "start",
+    "audit_window_countdown_status": "status"
+  }
+}

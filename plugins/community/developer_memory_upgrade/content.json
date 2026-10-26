@@ -1,0 +1,13 @@
+{
+  "name": "Developer Memory Upgrade",
+  "family": "economy",
+  "mode": "hardware",
+  "field": "ram_mb",
+  "amount": 1024,
+  "price": 120,
+  "story": "Add 1 GB of memory for script development.",
+  "id": "developer_memory_upgrade",
+  "number": 77,
+  "version": "0.1.1",
+  "api": 1
+}

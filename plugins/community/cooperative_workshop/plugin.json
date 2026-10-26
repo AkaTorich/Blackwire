@@ -1,0 +1,23 @@
+{
+  "id": "cooperative_workshop",
+  "name": "Cooperative Workshop",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "cooperative_workshop_open": "open_window",
+    "cooperative_workshop_start": "start",
+    "cooperative_workshop_status": "status"
+  }
+}

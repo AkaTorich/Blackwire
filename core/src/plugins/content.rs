@@ -83,7 +83,26 @@ pub fn call(game:&mut Game,owner:&str,name:&str,args:&[Value])->Result<Value,Str
         },
         "plugin.user"=>{let mid=args.first().and_then(Value::as_u64).filter(|n|*n<=u32::MAX as u64).ok_or("нужен id устройства")? as u32;if !game.world.has_machine(mid){return Err("нет устройства".into());}let name=string(args,1)?;if !super::ident(name){return Err("неверное имя пользователя".into());}let password=string(args,2)?;let admin=args.get(3).and_then(Value::as_bool).unwrap_or(false);let m=game.world.machine_mut(mid);m.users.add(name,password,admin);m.fs.add_user_home(name);Ok(Value::Null)},
         "plugin.write"=>{let mid=args.first().and_then(Value::as_u64).filter(|n|*n<=u32::MAX as u64).ok_or("нужен id устройства")? as u32;if !game.world.has_machine(mid){return Err("нет устройства".into());}let path=string(args,1)?;let text=string(args,2)?;let m=game.world.machine_mut(mid);m.fs.mkdir_all(&crate::vfs::dirname(path),"root").map_err(|e|e.to_string())?;m.fs.write_text(path,text,"root").map_err(|e|e.to_string())?;Ok(Value::Null)},
-        "plugin.world"=>serde_json::to_value(&game.world).map_err(|e|e.to_string()),
+        "plugin.world"=>match args.first().and_then(Value::as_str) {
+            None if args.is_empty()=>serde_json::to_value(&game.world).map_err(|e|e.to_string()),
+            Some("overview")=>{
+                let w=&game.world;
+                let machines:Vec<_>=w.machines.iter().map(|m|json!({
+                    "id":m.id,"hostname":m.hostname,"ip":m.ip,"lan_ip":m.lan_ip,
+                    "router":m.router,"kind":m.kind,"os":m.os,"up":m.up,
+                    "ram_mb":m.ram_mb,"disk_mb":m.disk_mb,"services":m.services,
+                    "custom_vulns":m.custom_vulns,
+                    "logs":m.logs.iter().rev().take(4).collect::<Vec<_>>(),
+                    "mail":m.mail.iter().map(|mail|json!({"from":mail.from,"subject":mail.subject,"read":mail.read})).collect::<Vec<_>>()
+                })).collect();
+                let types:serde_json::Map<String,Value>=w.plugins.device_types.iter()
+                    .map(|(key,value)|(key.clone(),json!({"kind":value["kind"],"os":value["os"]}))).collect();
+                Ok(json!({"player":w.player,"machines":machines,"orgs":w.orgs,
+                    "finance":w.finance,"investigation":w.investigation,
+                    "plugins":{"device_types":types,"quests":w.plugins.quests,"catalogs":w.plugins.catalogs}}))
+            },
+            _=>Err("plugin.world: use no arguments or overview".into())
+        },
         "plugin.apply"=>apply(game,args.first().ok_or("нужен словарь изменений")?),
         "plugin.device_type"=>{
             let key=namespace(owner,string(args,0)?);

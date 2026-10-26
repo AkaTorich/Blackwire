@@ -1,0 +1,23 @@
+{
+  "id": "parcel_locker_hubs",
+  "name": "Parcel Locker Hubs",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "parcel_locker_hubs_open": "open_window",
+    "parcel_locker_hubs_start": "start",
+    "parcel_locker_hubs_status": "status"
+  }
+}

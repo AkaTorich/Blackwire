@@ -128,3 +128,17 @@ fn shell_scripts_run_in_persistent_plugin_session_and_stop_on_disable(){
  let mut g=game();install(&mut g,"daemon","def load(e):\n    fs.write(\"/home/sdk_test/background.adr\", \"print(42)\\n\")\n    shell.exec(\"adder /home/sdk_test/background.adr\")\n",&[("on_load","load")],&[],&["shell","fs"]);
  g.plugin_event("on_load",json!({}));assert!(g.plugins.loaded["daemon"].error.is_none());assert_eq!(g.pending_scripts.len(),1);let sid=g.pending_scripts[0].session;assert!(g.sessions.contains_key(&sid));g.plugin_enable("daemon",false).unwrap();assert!(!g.sessions.contains_key(&sid));
 }
+
+#[test]
+fn lightweight_world_overview_preserves_metadata_without_file_systems() {
+ let mut g=game();
+ let view=content::call(&mut g,"test","plugin.world",&[json!("overview")]).unwrap();
+ assert_eq!(view["machines"].as_array().unwrap().len(),g.world.machines.len());
+ assert_eq!(view["player"]["handle"],json!(g.world.player.handle));
+ assert_eq!(view["machines"][0]["hostname"],json!(g.world.machines[0].hostname));
+ assert!(view["machines"][0].get("fs").is_none());
+ assert!(view["machines"][0].get("users").is_none());
+ let full=content::call(&mut g,"test","plugin.world",&[]).unwrap();
+ assert!(full["machines"][0].get("fs").is_some());
+ assert!(content::call(&mut g,"test","plugin.world",&[json!("typo")]).is_err());
+}

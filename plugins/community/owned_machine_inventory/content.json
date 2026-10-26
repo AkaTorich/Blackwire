@@ -1,0 +1,10 @@
+{
+  "name": "Owned Machine Inventory",
+  "family": "utility",
+  "mode": "owned",
+  "story": "List machines already under the player's control.",
+  "id": "owned_machine_inventory",
+  "number": 62,
+  "version": "0.1.1",
+  "api": 1
+}

@@ -1,0 +1,23 @@
+{
+  "id": "hidden_warehouse_tenant",
+  "name": "Hidden Warehouse Tenant",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "hidden_warehouse_tenant_open": "open_window",
+    "hidden_warehouse_tenant_start": "start",
+    "hidden_warehouse_tenant_status": "status"
+  }
+}

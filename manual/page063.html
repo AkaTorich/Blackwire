@@ -1,66 +1,16 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>API модуля `hack` (помощник A реализует ЭТИ сигнатуры точно, не меняя их)</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page062.html">Назад</a> | <a href="page064.html">Далее</a></div><h2>API модуля <code>hack</code> (помощник A реализует ЭТИ сигнатуры точно, не меняя их)</h2>
-<p><code>core/src/hack/mod.rs</code>: <code>pub mod vuln; pub mod exploit; pub mod crack; pub mod privesc; pub mod tracks; pub mod proxy;</code> и <code>pub use</code> всех публичных типов/функций ниже. Все структуры — <code>#[derive(Serialize, Deserialize, Clone, Debug)]</code>.</p>
-<h3>vuln.rs — классификация</h3>
-<pre>pub enum VulnAccess { Creds, Shell, Root, Read(String), Info }  // из строки Vuln.access
-pub struct VulnInfo { pub service: String, pub port: u16, pub version: String, pub name: String, pub access: VulnAccess, pub local: bool }
-pub fn scan_vulns(m: &amp;Machine) -&gt; Vec&lt;VulnInfo&gt;;     // все уязвимости машины (по её службам и таблице VULNS)
-pub fn remote_vulns(m: &amp;Machine) -&gt; Vec&lt;VulnInfo&gt;;   // scope=remote
-pub fn local_vulns(m: &amp;Machine) -&gt; Vec&lt;VulnInfo&gt;;    // scope=local (для privesc)
-pub fn access_from_str(s: &amp;str) -&gt; VulnAccess;</pre>
-<h3>exploit.rs — получить доступ к удалённой машине с текущего hop'а</h3>
-<pre>pub enum ExploitOutcome {
-    Creds { user: String, password: String },  // узнали логин (сохранить в found_creds)
-    Shell { user: String },                     // прямой вход: push_hop как этот пользователь, машина &#8594; owned
-    Read { path: String, data: String },        // утечка файла
-    Nothing,                                     // подходящей уязвимости нет
-}
-pub struct ExploitReport {
-    pub target: MachineId, pub target_host: String,
-    pub vuln: Option&lt;VulnInfo&gt;, pub outcome: ExploitOutcome,
-    pub source_ip: String,     // адрес, который увидела цель (текущий hop)
-    pub monitored: bool,       // цель под наблюдением (SOC/киберполиция/высокая care/служба monitor)
-    pub heat_added: f32,
-}
-// Атакует target службой service (None — выбрать первую удачную удалённую уязвимость).
-// Внутри: находит remote-уязвимость; Creds &#8594; кладёт в found_creds; Shell &#8594; session.push_hop + owned;
-// Read &#8594; читает файл; пишет в журнал цели попытку (LogKind::Warn, с source_ip); если monitored — поднимает heat.
-pub fn exploit(world: &amp;mut World, session: &amp;mut Session, target: MachineId, service: Option&lt;&amp;str&gt;) -&gt; Result&lt;ExploitReport, String&gt;;</pre>
-<h3>crack.rs — подбор пароля по словарю (ssh)</h3>
-<pre>pub struct CrackReport {
-    pub target: MachineId, pub target_host: String, pub user: String,
-    pub tried: usize,                 // сколько слов перебрано до результата
-    pub found: Option&lt;String&gt;,        // найденный пароль или None
-    pub attempts: Vec&lt;String&gt;,        // слова по порядку до результата включительно (для анимации прогресса)
-    pub source_ip: String, pub monitored: bool, pub heat_added: f32,
-}
-// Перебирает слова по порядку; совпадение с паролем user&#x27;а на target &#8594; found. Каждая НЕУДАЧНАЯ попытка пишет
-// LoginFailed в журнал цели (у monitored растёт heat). Успех кладёт логин в found_creds. ssh сам не делает.
-// Требует на target запущенный ssh; иначе Err. wordlist передаётся готовым списком слов (команда читает файл).
-pub fn crack(world: &amp;mut World, session: &amp;Session, target: MachineId, user: &amp;str, wordlist: &amp;[String]) -&gt; Result&lt;CrackReport, String&gt;;</pre>
-<h3>privesc.rs — локальное повышение прав на текущей машине</h3>
-<pre>pub struct PrivescReport { pub ok: bool, pub vuln: Option&lt;VulnInfo&gt;, pub host: String, pub was_user: String }
-// На машине текущего hop&#x27;а: если есть local-уязвимость и пользователь не root — делает текущего пользователя root
-// (session.current_mut().user = &quot;root&quot;), машина &#8594; owned. Нет уязвимости или уже root &#8594; ok=false (не ошибка).
-pub fn privesc(world: &amp;mut World, session: &amp;mut Session) -&gt; Result&lt;PrivescReport, String&gt;;</pre>
-<h3>tracks.rs — следы, чистка журналов, подозрение</h3>
-<pre>pub struct ClearReport { pub machine: MachineId, pub host: String, pub removed: usize, pub denied: bool }
-// На машине текущего hop&#x27;а (нужен root или владелец): убирает записи журнала и строки /var/log/*.log,
-// содержащие pattern (None &#8594; след игрока: его прежние адреса-источники и строки входа/ошибок с них).
-// denied=true без прав. Чистка снижает улики &#8594; уменьшает вклад этой машины в heat.
-pub fn clear_logs(world: &amp;mut World, session: &amp;Session, pattern: Option&lt;&amp;str&gt;) -&gt; Result&lt;ClearReport, String&gt;;
-
-pub fn source_ip(world: &amp;World, session: &amp;Session) -&gt; String;  // адрес текущего hop&#x27;а (что видит цель)
-pub fn is_monitored(world: &amp;World, target: MachineId) -&gt; bool;  // SOC/киберполиция/care=paranoid/служба monitor
-pub fn add_heat(world: &amp;mut World, amount: f32);               // с ограничением 0..100, обновляет heat_peak, ставит traced при 100
-pub fn heat(world: &amp;World) -&gt; f32;
-pub fn decay(world: &amp;mut World, dt_secs: u64);                 // heat медленно падает со временем (зовётся из World::tick)
-pub fn evidence(world: &amp;World) -&gt; Vec&lt;(MachineId, usize)&gt;;     // машины и число записей, где засветился реальный адрес игрока</pre>
-<p>Модель подозрения: действие из реального адреса игрока (цепочка длиной 1) против monitored-цели добавляет heat ощутимо; через прокси-цепочку (hops&gt;1) реальный адрес цель не видит — heat растёт только если сам прокси-hop уже «засвечен» у наблюдателя. Чистка журналов на hop'е убирает его улики. heat=100 &#8594; traced=true (последствия — мягко: уведомление и письмо-предупреждение, heat сбрасывается к 60; полные последствия — позже).</p>
-<h3>proxy.rs — цепочка подключений</h3>
-<pre>pub struct ProxyInfo {
-    pub chain: Vec&lt;(MachineId, String)&gt;,  // (машина, пользователь) по hop&#x27;ам, [0] — своя
-    pub exit_ip: String, pub exit_host: String,
-    pub hidden: bool,                      // цепочка длиннее 1 — реальный адрес скрыт
-    pub monitored_hops: Vec&lt;MachineId&gt;,    // hop&#x27;ы под наблюдением (риск)
-}
-pub fn proxy_info(world: &amp;World, session: &amp;Session) -&gt; ProxyInfo;</pre></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Новое состояние (добавляю я в общих файлах — помощники не трогают)</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page062.html">Назад</a> | <a href="page064.html">Далее</a></div><h2>Новое состояние (добавляю я в общих файлах — помощники не трогают)</h2>
+<p><code>world.rs</code>, <code>Player</code>:</p>
+<pre>pub owned: Vec&lt;MachineId&gt;,          // машины, где получен доступ (shell или root)
+pub found_creds: Vec&lt;FoundCred&gt;,    // найденные логины
+pub heat: f32,                      // подозрение к игроку, 0..100
+pub heat_peak: f32,                 // пик (для статистики)
+pub traced: bool,                   // игрока запеленговали (heat дошёл до 100)</pre>
+<p><code>machine.rs</code> (новый тип):</p>
+<pre>#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct FoundCred { pub machine: MachineId, pub user: String, pub password: String, pub note: String }</pre>
+<p><code>services.rs</code>, <code>Vuln</code> расширяю и таблицу <code>VULNS</code> тоже (добавляю столбцы доступа и области):</p>
+<pre>pub struct Vuln {
+    pub service: String, pub version_prefix: String, pub name: String, pub effect: String,
+    pub access: String,   // &quot;creds&quot; | &quot;shell&quot; | &quot;root&quot; | &quot;read:/путь&quot; | &quot;info&quot;
+    pub scope: String,    // &quot;remote&quot; | &quot;local&quot;
+}</pre></body></html>

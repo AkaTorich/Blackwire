@@ -1,0 +1,24 @@
+{
+  "id": "battery_reserve_warning",
+  "name": "Battery Reserve Warning",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "battery_reserve_warning_open": "open_window",
+    "battery_reserve_warning_start": "start",
+    "battery_reserve_warning_status": "status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "hotel_keycard_encoders",
+  "name": "Hotel Keycard Encoders",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "hotel_keycard_encoders_open": "open_window",
+    "hotel_keycard_encoders_start": "start",
+    "hotel_keycard_encoders_status": "status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "municipal_power_office",
+  "name": "Municipal Power Office",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "municipal_power_office_open": "open_window",
+    "municipal_power_office_start": "start",
+    "municipal_power_office_status": "status"
+  }
+}

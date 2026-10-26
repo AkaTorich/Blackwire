@@ -1,0 +1,13 @@
+{
+  "name": "Route Trace Tool",
+  "family": "economy",
+  "mode": "market",
+  "file": "route_trace.adr",
+  "code": "for hop in net.hops():\n    print(hop)\nprint(\"Exit:\", net.proxy()[\"exit_ip\"])\n",
+  "price": 20,
+  "story": "Report the current connection chain and proxy exit.",
+  "id": "route_trace_tool",
+  "number": 85,
+  "version": "0.1.1",
+  "api": 1
+}

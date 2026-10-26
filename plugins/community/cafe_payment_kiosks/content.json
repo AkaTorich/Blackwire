@@ -1,0 +1,32 @@
+{
+  "name": "Cafe Payment Kiosks",
+  "family": "device",
+  "kind": "atm",
+  "service": "cafe_pay",
+  "file": "receipts.csv",
+  "story": "Receipt 184 contains a refund to a decommissioned till.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 88,
+  "id": "cafe_payment_kiosks",
+  "number": 8,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "atm",
+      "hostname": "cafe-payment-kiosks-records",
+      "ip": "198.22.8.1",
+      "lan_ip": null,
+      "service": "cafe_pay",
+      "port": 7021,
+      "os": "Cafe Payment Kiosks OS 1.0",
+      "file": "/srv/records/receipts.csv",
+      "text": "Receipt 184 contains a refund to a decommissioned till.\nRecord owner: cafe_payment_kiosks.\nCase reference: BW-008.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_cafe_payment_kiosks_1"
+    }
+  ],
+  "subnet": "10.230.8.",
+  "org_kind": "corporation"
+}

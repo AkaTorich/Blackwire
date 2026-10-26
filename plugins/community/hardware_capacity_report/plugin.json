@@ -1,0 +1,23 @@
+{
+  "id": "hardware_capacity_report",
+  "name": "Hardware Capacity Report",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "hardware_capacity_report_open": "open_window",
+    "hardware_capacity_report_report": "refresh",
+    "hardware_capacity_report_export": "export_report"
+  }
+}

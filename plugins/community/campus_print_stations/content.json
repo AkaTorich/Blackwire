@@ -1,0 +1,32 @@
+{
+  "name": "Campus Print Stations",
+  "family": "device",
+  "kind": "workstation",
+  "service": "print_spool",
+  "file": "queue.csv",
+  "story": "A confidential exam remained in the shared print queue.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 128,
+  "id": "campus_print_stations",
+  "number": 18,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "workstation",
+      "hostname": "campus-print-stations-records",
+      "ip": "198.22.18.1",
+      "lan_ip": null,
+      "service": "print_spool",
+      "port": 7051,
+      "os": "Campus Print Stations OS 1.0",
+      "file": "/srv/records/queue.csv",
+      "text": "A confidential exam remained in the shared print queue.\nRecord owner: campus_print_stations.\nCase reference: BW-018.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_campus_print_stations_1"
+    }
+  ],
+  "subnet": "10.230.18.",
+  "org_kind": "corporation"
+}

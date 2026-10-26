@@ -1,0 +1,46 @@
+{
+  "name": "Unauthorized Night Shift",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "shift_archive",
+  "file": "shift-roster.csv",
+  "story": "Three badge holders entered during a shift that staffing records say never existed.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 260,
+  "id": "unauthorized_night_shift",
+  "number": 55,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "unauthorized-night-shift-gateway",
+      "ip": "198.22.55.1",
+      "lan_ip": "10.230.55.1",
+      "service": "shift_archive_gate",
+      "port": 7162,
+      "os": "Unauthorized Night Shift OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Three badge holders entered during a shift that staffing records say never existed.\nInternal destination: 10.230.55.2, service shift_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_unauthorized_night_shift_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "unauthorized-night-shift-records",
+      "ip": "10.230.55.2",
+      "lan_ip": "10.230.55.2",
+      "service": "shift_archive",
+      "port": 7163,
+      "os": "Unauthorized Night Shift OS 1.0",
+      "file": "/srv/records/shift-roster.csv",
+      "text": "Three badge holders entered during a shift that staffing records say never existed.\nRecord owner: unauthorized_night_shift.\nCase reference: BW-055.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_unauthorized_night_shift_2"
+    }
+  ],
+  "subnet": "10.230.55."
+}

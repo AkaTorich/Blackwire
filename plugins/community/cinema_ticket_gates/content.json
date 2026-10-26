@@ -1,0 +1,32 @@
+{
+  "name": "Cinema Ticket Gates",
+  "family": "device",
+  "kind": "badge",
+  "service": "ticket_gate",
+  "file": "admissions.csv",
+  "story": "A reseller issued duplicate passes for an already full screening.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 120,
+  "id": "cinema_ticket_gates",
+  "number": 16,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "cinema-ticket-gates-records",
+      "ip": "198.22.16.1",
+      "lan_ip": null,
+      "service": "ticket_gate",
+      "port": 7045,
+      "os": "Cinema Ticket Gates OS 1.0",
+      "file": "/srv/records/admissions.csv",
+      "text": "A reseller issued duplicate passes for an already full screening.\nRecord owner: cinema_ticket_gates.\nCase reference: BW-016.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_cinema_ticket_gates_1"
+    }
+  ],
+  "subnet": "10.230.16.",
+  "org_kind": "corporation"
+}

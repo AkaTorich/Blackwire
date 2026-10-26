@@ -1,0 +1,60 @@
+{
+  "name": "Independent Newsroom",
+  "family": "network",
+  "org_kind": "media",
+  "kind": "database",
+  "service": "editorial_vault",
+  "file": "editorial-notes.txt",
+  "story": "An editor needs the original notes behind a silently changed public report.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 168,
+  "id": "independent_newsroom",
+  "number": 24,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "independent-newsroom-gateway",
+      "ip": "198.22.24.1",
+      "lan_ip": "10.230.24.1",
+      "service": "editorial_vault_gate",
+      "port": 7069,
+      "os": "Independent Newsroom OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "An editor needs the original notes behind a silently changed public report.\nInternal destination: 10.230.24.3, service editorial_vault.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_independent_newsroom_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "independent-newsroom-operations",
+      "ip": "10.230.24.2",
+      "lan_ip": "10.230.24.2",
+      "service": "editorial_vault_ops",
+      "port": 7070,
+      "os": "Independent Newsroom OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Independent Newsroom: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.24.3.",
+      "access": "shell",
+      "password": "bw_independent_newsroom_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "independent-newsroom-records",
+      "ip": "10.230.24.3",
+      "lan_ip": "10.230.24.3",
+      "service": "editorial_vault",
+      "port": 7071,
+      "os": "Independent Newsroom OS 1.0",
+      "file": "/srv/records/editorial-notes.txt",
+      "text": "An editor needs the original notes behind a silently changed public report.\nRecord owner: independent_newsroom.\nCase reference: BW-024.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_independent_newsroom_3"
+    }
+  ],
+  "subnet": "10.230.24."
+}

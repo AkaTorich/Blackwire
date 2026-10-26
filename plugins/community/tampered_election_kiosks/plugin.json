@@ -1,0 +1,23 @@
+{
+  "id": "tampered_election_kiosks",
+  "name": "Tampered Election Kiosks",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "tampered_election_kiosks_open": "open_window",
+    "tampered_election_kiosks_start": "start",
+    "tampered_election_kiosks_status": "status"
+  }
+}

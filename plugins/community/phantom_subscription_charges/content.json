@@ -1,0 +1,46 @@
+{
+  "name": "Phantom Subscription Charges",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "billing_archive",
+  "file": "subscription-ledger.csv",
+  "story": "Dormant accounts are charged for a service absent from the public price list.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 275,
+  "id": "phantom_subscription_charges",
+  "number": 58,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "phantom-subscription-charges-gateway",
+      "ip": "198.22.58.1",
+      "lan_ip": "10.230.58.1",
+      "service": "billing_archive_gate",
+      "port": 7171,
+      "os": "Phantom Subscription Charges OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Dormant accounts are charged for a service absent from the public price list.\nInternal destination: 10.230.58.2, service billing_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_phantom_subscription_charges_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "phantom-subscription-charges-records",
+      "ip": "10.230.58.2",
+      "lan_ip": "10.230.58.2",
+      "service": "billing_archive",
+      "port": 7172,
+      "os": "Phantom Subscription Charges OS 1.0",
+      "file": "/srv/records/subscription-ledger.csv",
+      "text": "Dormant accounts are charged for a service absent from the public price list.\nRecord owner: phantom_subscription_charges.\nCase reference: BW-058.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_phantom_subscription_charges_2"
+    }
+  ],
+  "subnet": "10.230.58."
+}

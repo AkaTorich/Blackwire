@@ -1,0 +1,23 @@
+{
+  "id": "session_notes_exporter",
+  "name": "Session Notes Exporter",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "session_notes_exporter_open": "open_window",
+    "session_notes_exporter_report": "refresh",
+    "session_notes_exporter_export": "export_report"
+  }
+}

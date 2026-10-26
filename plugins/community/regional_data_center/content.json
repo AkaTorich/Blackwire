@@ -1,0 +1,60 @@
+{
+  "name": "Regional Data Center",
+  "family": "network",
+  "org_kind": "hosting",
+  "kind": "database",
+  "service": "tenant_archive",
+  "file": "rack-allocation.csv",
+  "story": "Rack allocation logs show an unlisted tenant using reserved capacity.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 186,
+  "id": "regional_data_center",
+  "number": 27,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "regional-data-center-gateway",
+      "ip": "198.22.27.1",
+      "lan_ip": "10.230.27.1",
+      "service": "tenant_archive_gate",
+      "port": 7078,
+      "os": "Regional Data Center OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Rack allocation logs show an unlisted tenant using reserved capacity.\nInternal destination: 10.230.27.3, service tenant_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_regional_data_center_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "regional-data-center-operations",
+      "ip": "10.230.27.2",
+      "lan_ip": "10.230.27.2",
+      "service": "tenant_archive_ops",
+      "port": 7079,
+      "os": "Regional Data Center OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Regional Data Center: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.27.3.",
+      "access": "shell",
+      "password": "bw_regional_data_center_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "regional-data-center-records",
+      "ip": "10.230.27.3",
+      "lan_ip": "10.230.27.3",
+      "service": "tenant_archive",
+      "port": 7080,
+      "os": "Regional Data Center OS 1.0",
+      "file": "/srv/records/rack-allocation.csv",
+      "text": "Rack allocation logs show an unlisted tenant using reserved capacity.\nRecord owner: regional_data_center.\nCase reference: BW-027.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_regional_data_center_3"
+    }
+  ],
+  "subnet": "10.230.27."
+}

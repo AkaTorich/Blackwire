@@ -1,0 +1,60 @@
+{
+  "name": "Freight Port Network",
+  "family": "network",
+  "org_kind": "corporation",
+  "kind": "database",
+  "service": "cargo_registry",
+  "file": "cargo-manifest.csv",
+  "story": "Dock records disagree with the container inventory held in the dispatch archive.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 156,
+  "id": "freight_port_network",
+  "number": 22,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "freight-port-network-gateway",
+      "ip": "198.22.22.1",
+      "lan_ip": "10.230.22.1",
+      "service": "cargo_registry_gate",
+      "port": 7063,
+      "os": "Freight Port Network OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Dock records disagree with the container inventory held in the dispatch archive.\nInternal destination: 10.230.22.3, service cargo_registry.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_freight_port_network_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "freight-port-network-operations",
+      "ip": "10.230.22.2",
+      "lan_ip": "10.230.22.2",
+      "service": "cargo_registry_ops",
+      "port": 7064,
+      "os": "Freight Port Network OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Freight Port Network: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.22.3.",
+      "access": "shell",
+      "password": "bw_freight_port_network_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "freight-port-network-records",
+      "ip": "10.230.22.3",
+      "lan_ip": "10.230.22.3",
+      "service": "cargo_registry",
+      "port": 7065,
+      "os": "Freight Port Network OS 1.0",
+      "file": "/srv/records/cargo-manifest.csv",
+      "text": "Dock records disagree with the container inventory held in the dispatch archive.\nRecord owner: freight_port_network.\nCase reference: BW-022.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_freight_port_network_3"
+    }
+  ],
+  "subnet": "10.230.22."
+}

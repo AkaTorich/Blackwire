@@ -1,0 +1,23 @@
+{
+  "id": "deleted_research_attribution",
+  "name": "Deleted Research Attribution",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "deleted_research_attribution_open": "open_window",
+    "deleted_research_attribution_start": "start",
+    "deleted_research_attribution_status": "status"
+  }
+}

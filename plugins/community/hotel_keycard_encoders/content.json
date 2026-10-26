@@ -1,0 +1,32 @@
+{
+  "name": "Hotel Keycard Encoders",
+  "family": "device",
+  "kind": "badge",
+  "service": "key_issue",
+  "file": "keys.csv",
+  "story": "The encoder issued a master key during an unstaffed night shift.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 84,
+  "id": "hotel_keycard_encoders",
+  "number": 7,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "hotel-keycard-encoders-records",
+      "ip": "198.22.7.1",
+      "lan_ip": null,
+      "service": "key_issue",
+      "port": 7018,
+      "os": "Hotel Keycard Encoders OS 1.0",
+      "file": "/srv/records/keys.csv",
+      "text": "The encoder issued a master key during an unstaffed night shift.\nRecord owner: hotel_keycard_encoders.\nCase reference: BW-007.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_hotel_keycard_encoders_1"
+    }
+  ],
+  "subnet": "10.230.7.",
+  "org_kind": "corporation"
+}

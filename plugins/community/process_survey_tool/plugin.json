@@ -1,0 +1,23 @@
+{
+  "id": "process_survey_tool",
+  "name": "Process Survey Tool",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "process_survey_tool_open": "open_window",
+    "process_survey_tool_status": "status"
+  }
+}

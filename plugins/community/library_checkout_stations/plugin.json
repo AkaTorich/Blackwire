@@ -1,0 +1,23 @@
+{
+  "id": "library_checkout_stations",
+  "name": "Library Checkout Stations",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "library_checkout_stations_open": "open_window",
+    "library_checkout_stations_start": "start",
+    "library_checkout_stations_status": "status"
+  }
+}

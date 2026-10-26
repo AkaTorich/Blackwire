@@ -1,0 +1,13 @@
+{
+  "name": "Pocket Memory Upgrade",
+  "family": "economy",
+  "mode": "hardware",
+  "field": "ram_mb",
+  "amount": 256,
+  "price": 35,
+  "story": "Add 256 MB of memory for lightweight terminal work.",
+  "id": "pocket_memory_upgrade",
+  "number": 76,
+  "version": "0.1.1",
+  "api": 1
+}

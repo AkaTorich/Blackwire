@@ -1,0 +1,10 @@
+{
+  "name": "Known Host Inventory",
+  "family": "utility",
+  "mode": "known",
+  "story": "List discovered hosts and their live status.",
+  "id": "known_host_inventory",
+  "number": 61,
+  "version": "0.1.1",
+  "api": 1
+}

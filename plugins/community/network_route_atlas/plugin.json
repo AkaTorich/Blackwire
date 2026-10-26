@@ -1,0 +1,23 @@
+{
+  "id": "network_route_atlas",
+  "name": "Network Route Atlas",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "network_route_atlas_open": "open_window",
+    "network_route_atlas_report": "refresh",
+    "network_route_atlas_export": "export_report"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "mission_checklist_tool",
+  "name": "Mission Checklist Tool",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "mission_checklist_tool_open": "open_window",
+    "mission_checklist_tool_status": "status"
+  }
+}

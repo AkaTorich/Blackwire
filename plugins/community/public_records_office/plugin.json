@@ -1,0 +1,23 @@
+{
+  "id": "public_records_office",
+  "name": "Public Records Office",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "public_records_office_open": "open_window",
+    "public_records_office_start": "start",
+    "public_records_office_status": "status"
+  }
+}

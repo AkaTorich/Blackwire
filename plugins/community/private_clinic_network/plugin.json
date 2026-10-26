@@ -1,0 +1,23 @@
+{
+  "id": "private_clinic_network",
+  "name": "Private Clinic Network",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "private_clinic_network_open": "open_window",
+    "private_clinic_network_start": "start",
+    "private_clinic_network_status": "status"
+  }
+}

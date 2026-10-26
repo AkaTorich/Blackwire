@@ -1,0 +1,13 @@
+{
+  "name": "Host Identity Tool",
+  "family": "economy",
+  "mode": "market",
+  "file": "host_identity.adr",
+  "code": "print(\"Host:\", sys.hostname())\nprint(\"Address:\", net.my_ip())\nprint(\"User:\", sys.whoami())\nprint(\"Root:\", sys.is_root())\n",
+  "price": 15,
+  "story": "Report the current host, address and access level.",
+  "id": "host_identity_tool",
+  "number": 84,
+  "version": "0.1.1",
+  "api": 1
+}

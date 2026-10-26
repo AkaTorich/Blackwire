@@ -1,0 +1,23 @@
+{
+  "id": "ev_charging_controllers",
+  "name": "EV Charging Controllers",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "ev_charging_controllers_open": "open_window",
+    "ev_charging_controllers_start": "start",
+    "ev_charging_controllers_status": "status"
+  }
+}

@@ -1,0 +1,98 @@
+C = json.loads(plugin.asset("content.json"))
+
+def report():
+    world = plugin.world("overview")
+    player = world["player"]
+    known = player["known_machines"]
+    owned = player["owned"]
+    rows = []
+    mode = C["mode"]
+    for machine in world["machines"]:
+        visible = machine["id"] in known or machine["id"] == 0
+        if mode == "known" and visible:
+            rows.append([machine["hostname"], machine["ip"], machine["up"]])
+        elif mode == "owned" and machine["id"] in owned:
+            rows.append([machine["hostname"], machine["ip"], machine["os"]])
+        elif mode == "services" and visible:
+            for service in machine["services"]:
+                if service["running"]:
+                    rows.append([machine["hostname"], service["port"], service["name"], service["version"]])
+        elif mode == "vulns" and visible:
+            for vuln in machine["custom_vulns"]:
+                rows.append([machine["hostname"], vuln["name"], str(vuln["access"])])
+        elif mode == "routes" and visible:
+            rows.append([machine["hostname"], machine["ip"], machine["router"], machine["lan_ip"]])
+        elif mode == "hardware" and visible:
+            rows.append([machine["hostname"], str(machine["ram_mb"]) + " MB RAM", str(machine["disk_mb"]) + " MB disk"])
+        elif mode == "logs" and (machine["id"] in owned or machine["id"] == 0):
+            for entry in machine["logs"][-4:]:
+                rows.append([machine["hostname"], json.dumps(entry)])
+        elif mode == "mail" and machine["id"] == 0:
+            for mail in machine["mail"]:
+                if not mail["read"]:
+                    rows.append([mail["from"], mail["subject"]])
+    if mode == "types":
+        for key, template in world["plugins"]["device_types"].items():
+            rows.append([key, template["os"], template["kind"]])
+    elif mode == "quests":
+        for key, quest in world["plugins"]["quests"].items():
+            rows.append([quest["title"], quest["done"], quest["reward"]])
+    elif mode == "budget":
+        rows.append(["Cash", player["money"]])
+        rows.append(["Finance", json.dumps(world["finance"])])
+        for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
+            rows.append([key, item["price"]])
+    elif mode == "investigation":
+        for key, value in world["investigation"].items():
+            rows.append([key, str(value)])
+    elif mode == "orgs":
+        for org in world["orgs"]:
+            if org["gateway"] in known:
+                rows.append([org["name"], org["domain"], org["gateway"]])
+    elif mode == "notes":
+        for note in player["notes"]:
+            rows.append([str(note)])
+    elif mode == "upgrades":
+        for item in player["upgrades"]:
+            rows.append(["Owned", item])
+        for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
+            rows.append(["Shop", key, item["name"], item["price"]])
+    return rows
+
+def panel(rows):
+    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nUse Refresh to read the current world. Export writes a report to your in-game home directory.", "rows": rows[:100], "buttons": [{"id": "refresh", "label": "Refresh"}, {"id": "export", "label": "Export report"}]})
+
+def load(event):
+    panel([])
+
+def refresh(event):
+    rows = report()
+    panel(rows)
+    print(C["name"], "|", len(rows), "rows")
+    for row in rows[:20]:
+        print(json.dumps(row))
+    if len(rows) == 0:
+        print("No matching records yet. Discover hosts or progress in the game, then refresh.")
+    return rows
+
+def export_report(event):
+    rows = report()
+    world = plugin.world("overview")
+    path = "/home/" + world["player"]["handle"] + "/reports/" + C["id"] + ".txt"
+    text = C["name"] + "\n" + C["story"] + "\n"
+    for row in rows:
+        text = text + json.dumps(row) + "\n"
+    plugin.write(0, path, text)
+    plugin.set("last_export", path)
+    panel(rows)
+    print("In-game report:", path)
+
+def open_window(event):
+    panel(report())
+    plugin.open(C["id"] + ":guide")
+
+def ui(event):
+    if event["action"] == "export":
+        export_report(event)
+    else:
+        refresh(event)

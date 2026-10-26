@@ -1,0 +1,33 @@
+{
+  "name": "Maintenance Credential Rollover",
+  "family": "event",
+  "kind": "gateway",
+  "service": "maintenance_hub",
+  "file": "credential-notice.txt",
+  "story": "A service gateway rotates its maintenance credentials at the end of a shift.",
+  "mode": "rollover",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 172,
+  "id": "maintenance_credential_rollover",
+  "number": 100,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "gateway",
+      "hostname": "maintenance-credential-rollover-records",
+      "ip": "198.22.100.1",
+      "lan_ip": null,
+      "service": "maintenance_hub",
+      "port": 7297,
+      "os": "Maintenance Credential Rollover OS 1.0",
+      "file": "/srv/records/credential-notice.txt",
+      "text": "A service gateway rotates its maintenance credentials at the end of a shift.\nRecord owner: maintenance_credential_rollover.\nCase reference: BW-100.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_maintenance_credential_rollover_1"
+    }
+  ],
+  "subnet": "10.230.100.",
+  "org_kind": "corporation"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "cafe_payment_kiosks",
+  "name": "Cafe Payment Kiosks",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "cafe_payment_kiosks_open": "open_window",
+    "cafe_payment_kiosks_start": "start",
+    "cafe_payment_kiosks_status": "status"
+  }
+}

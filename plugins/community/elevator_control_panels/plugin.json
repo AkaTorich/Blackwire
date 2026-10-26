@@ -1,0 +1,23 @@
+{
+  "id": "elevator_control_panels",
+  "name": "Elevator Control Panels",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "elevator_control_panels_open": "open_window",
+    "elevator_control_panels_start": "start",
+    "elevator_control_panels_status": "status"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "Cooperative Workshop",
+  "family": "network",
+  "org_kind": "home",
+  "kind": "database",
+  "service": "workshop_archive",
+  "file": "tool-register.csv",
+  "story": "The shared tool ledger records equipment that never reached the workshop.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 246,
+  "id": "cooperative_workshop",
+  "number": 37,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "cooperative-workshop-gateway",
+      "ip": "198.22.37.1",
+      "lan_ip": "10.230.37.1",
+      "service": "workshop_archive_gate",
+      "port": 7108,
+      "os": "Cooperative Workshop OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The shared tool ledger records equipment that never reached the workshop.\nInternal destination: 10.230.37.3, service workshop_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_cooperative_workshop_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "cooperative-workshop-operations",
+      "ip": "10.230.37.2",
+      "lan_ip": "10.230.37.2",
+      "service": "workshop_archive_ops",
+      "port": 7109,
+      "os": "Cooperative Workshop OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Cooperative Workshop: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.37.3.",
+      "access": "shell",
+      "password": "bw_cooperative_workshop_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "cooperative-workshop-records",
+      "ip": "10.230.37.3",
+      "lan_ip": "10.230.37.3",
+      "service": "workshop_archive",
+      "port": 7110,
+      "os": "Cooperative Workshop OS 1.0",
+      "file": "/srv/records/tool-register.csv",
+      "text": "The shared tool ledger records equipment that never reached the workshop.\nRecord owner: cooperative_workshop.\nCase reference: BW-037.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_cooperative_workshop_3"
+    }
+  ],
+  "subnet": "10.230.37."
+}

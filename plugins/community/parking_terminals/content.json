@@ -1,0 +1,32 @@
+{
+  "name": "Parking Terminals",
+  "family": "device",
+  "kind": "badge",
+  "service": "parking_pay",
+  "file": "tickets.csv",
+  "story": "Space B17 was billed twice; reconcile the terminal transaction log.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 64,
+  "id": "parking_terminals",
+  "number": 2,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "parking-terminals-records",
+      "ip": "198.22.2.1",
+      "lan_ip": null,
+      "service": "parking_pay",
+      "port": 7003,
+      "os": "Parking Terminals OS 1.0",
+      "file": "/srv/records/tickets.csv",
+      "text": "Space B17 was billed twice; reconcile the terminal transaction log.\nRecord owner: parking_terminals.\nCase reference: BW-002.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_parking_terminals_1"
+    }
+  ],
+  "subnet": "10.230.2.",
+  "org_kind": "corporation"
+}

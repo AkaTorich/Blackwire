@@ -1,0 +1,23 @@
+{
+  "id": "smart_door_locks",
+  "name": "Smart Door Locks",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "smart_door_locks_open": "open_window",
+    "smart_door_locks_start": "start",
+    "smart_door_locks_status": "status"
+  }
+}

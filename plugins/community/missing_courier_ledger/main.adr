@@ -1,0 +1,147 @@
+# Standalone content pack. All actions affect the fictional Blackwire world.
+C = json.loads(plugin.asset("content.json"))
+
+def panel():
+    created = plugin.get("created", false)
+    lines = C["story"] + "\n" + C["objective"] + "\nStart: " + C["id"] + "_start"
+    rows = [["Content created", created], ["Completed", plugin.get("completed", false)]]
+    for node in C["nodes"]:
+        rows.append([node["hostname"], node["ip"]])
+    if C["family"] == "event":
+        rows.append(["Incident phase", plugin.get("phase", 0)])
+    plugin.window("guide", {"title": C["name"], "text": lines, "rows": rows, "buttons": [{"id": "start", "label": "Start"}, {"id": "status", "label": "Show hints"}]})
+
+def load(event):
+    for node in C["nodes"]:
+        template = plugin.template(node["kind"])
+        template["os"] = node["os"]
+        template["org"] = null
+        template["router"] = null
+        template["domain"] = null
+        template["lan_ip"] = null
+        template["logs"] = []
+        template["mail"] = []
+        template["custom_vulns"] = []
+        template["services"] = [{"port": node["port"], "name": node["service"], "version": "1.0", "running": true, "banner": C["name"] + " / " + node["key"], "pages": []}, {"port": 80, "name": "http", "version": "1.0", "running": true, "banner": C["name"], "pages": []}]
+        kind = plugin.device_type(node["key"], template)
+        plugin.vulnerability(node["key"] + "_entry", {"device_type": kind, "service": node["service"], "version_prefix": "1.", "access": node["access"], "handler": "hacked"})
+        plugin.vulnerability(node["key"] + "_kernel", {"device_type": kind, "local": true, "version_prefix": node["os"], "access": "root"})
+    plugin.catalog("achievements", "resolved", {"name": C["name"] + " Resolved", "desc": C["objective"]})
+    panel()
+
+def start(event):
+    if plugin.get("created", false):
+        status(event)
+        return
+    ids = []
+    for node in C["nodes"]:
+        props = {"hostname": node["hostname"], "ip": node["ip"], "lan_ip": node["lan_ip"], "up": true}
+        if len(ids) > 0:
+            props["router"] = ids[0]
+        mid = plugin.spawn(C["id"] + ":" + node["key"], props)
+        ids.append(mid)
+        plugin.user(mid, "operator", node["password"], false)
+        plugin.write(mid, node["file"], node["text"])
+        plugin.write(mid, "/etc/maintenance-note.txt", "Maintenance service: " + node["service"] + "\nRecord: " + node["file"])
+        plugin.vulnerability(node["key"] + "_record_leak", {"machine": mid, "service": node["service"], "version_prefix": "1.0", "access": "read:" + node["file"]})
+        plugin.page(mid, 80, {"path": "/", "title": C["name"], "html": "<h1>" + C["name"] + "</h1><p>" + node["text"] + "</p>"})
+    if len(ids) > 1:
+        plugin.org({"name": C["name"], "kind": C["org_kind"], "domain": C["id"].replace("_", "-") + ".hw", "gateway": ids[0], "subnet": C["subnet"], "members": ids, "description": C["story"]})
+    plugin.quest("mission", {"title": C["name"], "objective": C["objective"], "reward": C["reward"]})
+    world = plugin.world("overview")
+    world["player"]["known_machines"].extend(ids)
+    plugin.apply({"player": world["player"]})
+    plugin.set("machines", ids)
+    plugin.set("created", true)
+    plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": first lead", "body": C["story"] + "\nOpen http://" + C["nodes"][0]["ip"] + "/ for the first lead.\nHints: " + C["id"] + "_status"})
+    if C["family"] == "event":
+        plugin.set("phase", 0)
+        plugin.timer("incident", 15, "custom.incident", {}, 15)
+    panel()
+    status(event)
+
+def hacked(event):
+    ids = plugin.get("machines", [])
+    if event["target"] not in ids:
+        return
+    valid = false
+    for node in C["nodes"]:
+        if event["vuln"]["name"] == C["id"] + ":" + node["key"] + "_entry":
+            valid = true
+    if not valid:
+        return
+    seen = plugin.get("accessed", [])
+    if event["target"] not in seen:
+        seen.append(event["target"])
+    plugin.set("accessed", seen)
+    complete = ids[-1] in seen
+    if C["family"] == "case":
+        complete = len(seen) == len(ids)
+    if complete and plugin.quest_complete(C["id"] + ":mission"):
+        plugin.set("completed", true)
+        plugin.unlock(C["id"] + ":resolved")
+        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": resolved", "body": "The access objective is complete. Read the preserved records on the target for the case details. Your reward has been paid once."})
+    panel()
+
+def pulse(event):
+    ids = plugin.get("machines", [])
+    if len(ids) == 0:
+        return
+    phase = plugin.get("phase", 0) + 1
+    plugin.set("phase", phase)
+    mid = ids[0]
+    node = C["nodes"][0]
+    mode = C["mode"]
+    if mode == "outage":
+        plugin.update_machine(mid, {"up": phase != 2})
+    elif mode == "service" or mode == "window":
+        machine = plugin.machine(mid)
+        for service in machine["services"]:
+            if service["name"] == node["service"]:
+                service["running"] = phase != 2
+                plugin.service(mid, service)
+    elif mode == "credential" or mode == "rollover":
+        if phase == 2:
+            plugin.user(mid, "operator", node["password"] + "_rotated", false)
+    elif mode == "handover":
+        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": shift " + str(phase), "body": "The handover record has advanced to phase " + str(phase) + ". Review " + node["file"]})
+    value = "Incident phase: " + str(phase)
+    if mode == "queue":
+        value = "Queued parcels: " + str(phase * 18)
+    elif mode == "battery":
+        value = "Reserve percent: " + str(100 - phase * 15)
+    elif mode == "telemetry":
+        value = "Signal quality percent: " + str(95 - phase * 12)
+    elif mode == "rotate":
+        value = "Backup generation: " + str(phase)
+    plugin.write(mid, node["file"], node["text"] + "\n" + value)
+    plugin.log(mid, "warn", C["name"] + " / " + value)
+    plugin.news(C["name"] + ": " + value)
+    if phase >= 3:
+        plugin.cancel_timer("incident")
+    panel()
+
+def status(event):
+    print(C["name"])
+    print(C["story"])
+    print("Objective:", C["objective"])
+    if not plugin.get("created", false):
+        print("Start with:", C["id"] + "_start")
+        return
+    print("First lead: http://" + C["nodes"][0]["ip"] + "/")
+    print("Use probe on each reachable target. If a firewall blocks entry, run firewall <address>; retry if needed and watch your heat.")
+    print("Progress:", plugin.get("completed", false), "| Reward:", C["reward"])
+    print("The final host contains the evidence record. Use the gateway for private addresses.")
+    if C["family"] == "event":
+        print("Incident phase:", plugin.get("phase", 0), "/ 3; changes occur every 15 game seconds.")
+    panel()
+
+def open_window(event):
+    panel()
+    plugin.open(C["id"] + ":guide")
+
+def ui(event):
+    if event["action"] == "start":
+        start(event)
+    else:
+        status(event)

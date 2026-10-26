@@ -1,0 +1,23 @@
+{
+  "id": "campus_print_stations",
+  "name": "Campus Print Stations",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "campus_print_stations_open": "open_window",
+    "campus_print_stations_start": "start",
+    "campus_print_stations_status": "status"
+  }
+}

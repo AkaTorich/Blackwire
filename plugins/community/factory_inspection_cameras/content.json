@@ -1,0 +1,32 @@
+{
+  "name": "Factory Inspection Cameras",
+  "family": "device",
+  "kind": "camera",
+  "service": "quality_stream",
+  "file": "rejects.csv",
+  "story": "Rejected batch K12 was relabeled as accepted after inspection.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 116,
+  "id": "factory_inspection_cameras",
+  "number": 15,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "camera",
+      "hostname": "factory-inspection-cameras-records",
+      "ip": "198.22.15.1",
+      "lan_ip": null,
+      "service": "quality_stream",
+      "port": 7042,
+      "os": "Factory Inspection Cameras OS 1.0",
+      "file": "/srv/records/rejects.csv",
+      "text": "Rejected batch K12 was relabeled as accepted after inspection.\nRecord owner: factory_inspection_cameras.\nCase reference: BW-015.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_factory_inspection_cameras_1"
+    }
+  ],
+  "subnet": "10.230.15.",
+  "org_kind": "corporation"
+}

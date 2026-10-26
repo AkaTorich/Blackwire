@@ -1,0 +1,23 @@
+{
+  "id": "unauthorized_night_shift",
+  "name": "Unauthorized Night Shift",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "unauthorized_night_shift_open": "open_window",
+    "unauthorized_night_shift_start": "start",
+    "unauthorized_night_shift_status": "status"
+  }
+}

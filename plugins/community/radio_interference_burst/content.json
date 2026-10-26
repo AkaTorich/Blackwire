@@ -1,0 +1,33 @@
+{
+  "name": "Radio Interference Burst",
+  "family": "event",
+  "kind": "server",
+  "service": "radio_control",
+  "file": "signal-quality.csv",
+  "story": "A radio controller reports a short interference burst and a failed relay test.",
+  "mode": "telemetry",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 132,
+  "id": "radio_interference_burst",
+  "number": 95,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "server",
+      "hostname": "radio-interference-burst-records",
+      "ip": "198.22.95.1",
+      "lan_ip": null,
+      "service": "radio_control",
+      "port": 7282,
+      "os": "Radio Interference Burst OS 1.0",
+      "file": "/srv/records/signal-quality.csv",
+      "text": "A radio controller reports a short interference burst and a failed relay test.\nRecord owner: radio_interference_burst.\nCase reference: BW-095.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_radio_interference_burst_1"
+    }
+  ],
+  "subnet": "10.230.95.",
+  "org_kind": "corporation"
+}

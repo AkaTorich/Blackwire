@@ -1,0 +1,60 @@
+{
+  "name": "Credit Union Branch",
+  "family": "network",
+  "org_kind": "bank",
+  "kind": "database",
+  "service": "loan_archive",
+  "file": "loan-ledger.csv",
+  "story": "An internal ledger contains a loan approved after its signatory left the bank.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 174,
+  "id": "credit_union_branch",
+  "number": 25,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "credit-union-branch-gateway",
+      "ip": "198.22.25.1",
+      "lan_ip": "10.230.25.1",
+      "service": "loan_archive_gate",
+      "port": 7072,
+      "os": "Credit Union Branch OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "An internal ledger contains a loan approved after its signatory left the bank.\nInternal destination: 10.230.25.3, service loan_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_credit_union_branch_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "credit-union-branch-operations",
+      "ip": "10.230.25.2",
+      "lan_ip": "10.230.25.2",
+      "service": "loan_archive_ops",
+      "port": 7073,
+      "os": "Credit Union Branch OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Credit Union Branch: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.25.3.",
+      "access": "shell",
+      "password": "bw_credit_union_branch_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "credit-union-branch-records",
+      "ip": "10.230.25.3",
+      "lan_ip": "10.230.25.3",
+      "service": "loan_archive",
+      "port": 7074,
+      "os": "Credit Union Branch OS 1.0",
+      "file": "/srv/records/loan-ledger.csv",
+      "text": "An internal ledger contains a loan approved after its signatory left the bank.\nRecord owner: credit_union_branch.\nCase reference: BW-025.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_credit_union_branch_3"
+    }
+  ],
+  "subnet": "10.230.25."
+}

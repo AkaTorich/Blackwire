@@ -1,0 +1,46 @@
+{
+  "name": "Erased Visitor Records",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "visitor_archive",
+  "file": "visitor-records.csv",
+  "story": "The front desk and access controller disagree about an after-hours visitor.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 215,
+  "id": "erased_visitor_records",
+  "number": 46,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "erased-visitor-records-gateway",
+      "ip": "198.22.46.1",
+      "lan_ip": "10.230.46.1",
+      "service": "visitor_archive_gate",
+      "port": 7135,
+      "os": "Erased Visitor Records OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The front desk and access controller disagree about an after-hours visitor.\nInternal destination: 10.230.46.2, service visitor_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_erased_visitor_records_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "erased-visitor-records-records",
+      "ip": "10.230.46.2",
+      "lan_ip": "10.230.46.2",
+      "service": "visitor_archive",
+      "port": 7136,
+      "os": "Erased Visitor Records OS 1.0",
+      "file": "/srv/records/visitor-records.csv",
+      "text": "The front desk and access controller disagree about an after-hours visitor.\nRecord owner: erased_visitor_records.\nCase reference: BW-046.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_erased_visitor_records_2"
+    }
+  ],
+  "subnet": "10.230.46."
+}

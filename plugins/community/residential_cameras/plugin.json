@@ -1,0 +1,23 @@
+{
+  "id": "residential_cameras",
+  "name": "Residential Cameras",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "residential_cameras_open": "open_window",
+    "residential_cameras_start": "start",
+    "residential_cameras_status": "status"
+  }
+}

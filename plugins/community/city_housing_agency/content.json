@@ -1,0 +1,60 @@
+{
+  "name": "City Housing Agency",
+  "family": "network",
+  "org_kind": "government",
+  "kind": "database",
+  "service": "housing_archive",
+  "file": "allocation-ledger.csv",
+  "story": "An apartment allocation was reassigned without a board decision.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 222,
+  "id": "city_housing_agency",
+  "number": 33,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "city-housing-agency-gateway",
+      "ip": "198.22.33.1",
+      "lan_ip": "10.230.33.1",
+      "service": "housing_archive_gate",
+      "port": 7096,
+      "os": "City Housing Agency OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "An apartment allocation was reassigned without a board decision.\nInternal destination: 10.230.33.3, service housing_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_city_housing_agency_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "city-housing-agency-operations",
+      "ip": "10.230.33.2",
+      "lan_ip": "10.230.33.2",
+      "service": "housing_archive_ops",
+      "port": 7097,
+      "os": "City Housing Agency OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "City Housing Agency: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.33.3.",
+      "access": "shell",
+      "password": "bw_city_housing_agency_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "city-housing-agency-records",
+      "ip": "10.230.33.3",
+      "lan_ip": "10.230.33.3",
+      "service": "housing_archive",
+      "port": 7098,
+      "os": "City Housing Agency OS 1.0",
+      "file": "/srv/records/allocation-ledger.csv",
+      "text": "An apartment allocation was reassigned without a board decision.\nRecord owner: city_housing_agency.\nCase reference: BW-033.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_city_housing_agency_3"
+    }
+  ],
+  "subnet": "10.230.33."
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Cold Chain Alarm",
+  "family": "event",
+  "kind": "medical_device",
+  "service": "cold_monitor",
+  "file": "cold-chain.csv",
+  "story": "A simulated refrigerator alarm appears while its monitoring endpoint goes silent.",
+  "mode": "service",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 140,
+  "id": "cold_chain_alarm",
+  "number": 96,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "medical_device",
+      "hostname": "cold-chain-alarm-records",
+      "ip": "198.22.96.1",
+      "lan_ip": null,
+      "service": "cold_monitor",
+      "port": 7285,
+      "os": "Cold Chain Alarm OS 1.0",
+      "file": "/srv/records/cold-chain.csv",
+      "text": "A simulated refrigerator alarm appears while its monitoring endpoint goes silent.\nRecord owner: cold_chain_alarm.\nCase reference: BW-096.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_cold_chain_alarm_1"
+    }
+  ],
+  "subnet": "10.230.96.",
+  "org_kind": "corporation"
+}

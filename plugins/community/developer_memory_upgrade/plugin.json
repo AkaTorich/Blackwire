@@ -1,0 +1,23 @@
+{
+  "id": "developer_memory_upgrade",
+  "name": "Developer Memory Upgrade",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "developer_memory_upgrade_open": "open_window",
+    "developer_memory_upgrade_status": "status"
+  }
+}

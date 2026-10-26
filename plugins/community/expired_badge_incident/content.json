@@ -1,0 +1,33 @@
+{
+  "name": "Expired Badge Incident",
+  "family": "event",
+  "kind": "badge",
+  "service": "badge_control",
+  "file": "badge-status.csv",
+  "story": "A temporary badge remains active after its shift expires.",
+  "mode": "credential",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 116,
+  "id": "expired_badge_incident",
+  "number": 93,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "expired-badge-incident-records",
+      "ip": "198.22.93.1",
+      "lan_ip": null,
+      "service": "badge_control",
+      "port": 7276,
+      "os": "Expired Badge Incident OS 1.0",
+      "file": "/srv/records/badge-status.csv",
+      "text": "A temporary badge remains active after its shift expires.\nRecord owner: expired_badge_incident.\nCase reference: BW-093.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_expired_badge_incident_1"
+    }
+  ],
+  "subnet": "10.230.93.",
+  "org_kind": "corporation"
+}

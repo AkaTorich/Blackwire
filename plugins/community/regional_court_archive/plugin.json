@@ -1,0 +1,23 @@
+{
+  "id": "regional_court_archive",
+  "name": "Regional Court Archive",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "regional_court_archive_open": "open_window",
+    "regional_court_archive_start": "start",
+    "regional_court_archive_status": "status"
+  }
+}

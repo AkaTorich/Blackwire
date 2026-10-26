@@ -83,7 +83,7 @@ def show(event):
 | on_load | загрузка, перечитывание или включение пакета; пустой словарь |
 | on_tick | вызов Game.tick; dt_ms — прошедшие миллисекунды |
 | on_command | завершение встроенной команды игрока; line, session |
-| on_hack | успешный результат игрового exploit; target, target_host, vuln, outcome, source_ip, monitored, heat_added |
+| on_hack | успешный результат игрового exploit; target, target_host, vuln (объект; имя в vuln["name"]), outcome, source_ip, monitored, heat_added |
 | on_mail | новое входящее письмо после шага мира: direction=inbox, mail; отправка через Game.mail_send: direction=sent, to, subject, body |
 | on_mission_done | продвижение сюжетной цепочки; before, active |
 | on_gig_done | изменение числа выполненных подработок; before, done |
@@ -112,7 +112,7 @@ def show(event):
 | plugin.get(key, default=null) | значение своего сохранённого ключа |
 | plugin.set(key, value) | сохранить значение; ключ до 128 символов, данные одного плагина до 64 КБ |
 | plugin.asset(path) | строка объявленного текстового ресурса |
-| plugin.world() | копия всего сериализуемого состояния мира |
+| plugin.world() / plugin.world("overview") | полное состояние мира / облегчённые данные для отчётов |
 | plugin.apply(patch) | атомарно заменить указанные разделы игрового состояния после проверки |
 | plugin.random(lo, hi) | целое из [lo, hi), генератор мира; границы в пределах ±10^9 |
 
@@ -302,3 +302,11 @@ Adder-check остаётся проверкой обычных скриптов 
 `district`: генерирует шлюз и внутренний архив, организацию, подсеть, сайт, файлы, учётные записи, письмо и задание; добавляет улучшение в магазин, скрипт в маркет и достижение; создаёт своё окно и повторяющиеся новости; обработчик уязвимости записывает последствия в виртуальный мир. Команды district_create, district_open, district_status.
 
 Исходники обоих пакетов входят в SDK и руководство. Они показывают реальные форматы текущего API.
+
+## Облегчённые отчёты
+
+Для панелей состояния используй `plugin.world("overview")`. Он возвращает разделы player, orgs, finance, investigation и список machines с полями id, hostname, ip, lan_ip, router, kind, os, up, ram_mb, disk_mb, services, custom_vulns, четырьмя последними записями logs и заголовками mail (from, subject, read). Раздел plugins содержит quests, catalogs и device_types только с kind и os.
+
+Этот режим не копирует виртуальные файловые системы, базы пользователей и полные шаблоны устройств. Для одной полной машины используй `plugin.machine(id)`. Вызов `plugin.world()` без аргументов по-прежнему возвращает полное состояние для редактирования. Неизвестный режим вызывает ошибку.
+
+Поле `event["vuln"]` события on_hack — объект описания найденной уязвимости. Для проверки её имени сравнивай `event["vuln"]["name"]` с полным именем вида `plugin_id:rule_id`.

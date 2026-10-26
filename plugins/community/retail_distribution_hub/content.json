@@ -1,0 +1,60 @@
+{
+  "name": "Retail Distribution Hub",
+  "family": "network",
+  "org_kind": "shop",
+  "kind": "database",
+  "service": "supply_archive",
+  "file": "supply-ledger.csv",
+  "story": "The warehouse system marks returned goods as new stock.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 204,
+  "id": "retail_distribution_hub",
+  "number": 30,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "retail-distribution-hub-gateway",
+      "ip": "198.22.30.1",
+      "lan_ip": "10.230.30.1",
+      "service": "supply_archive_gate",
+      "port": 7087,
+      "os": "Retail Distribution Hub OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The warehouse system marks returned goods as new stock.\nInternal destination: 10.230.30.3, service supply_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_retail_distribution_hub_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "retail-distribution-hub-operations",
+      "ip": "10.230.30.2",
+      "lan_ip": "10.230.30.2",
+      "service": "supply_archive_ops",
+      "port": 7088,
+      "os": "Retail Distribution Hub OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Retail Distribution Hub: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.30.3.",
+      "access": "shell",
+      "password": "bw_retail_distribution_hub_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "retail-distribution-hub-records",
+      "ip": "10.230.30.3",
+      "lan_ip": "10.230.30.3",
+      "service": "supply_archive",
+      "port": 7089,
+      "os": "Retail Distribution Hub OS 1.0",
+      "file": "/srv/records/supply-ledger.csv",
+      "text": "The warehouse system marks returned goods as new stock.\nRecord owner: retail_distribution_hub.\nCase reference: BW-030.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_retail_distribution_hub_3"
+    }
+  ],
+  "subnet": "10.230.30."
+}

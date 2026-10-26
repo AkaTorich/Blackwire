@@ -1,0 +1,23 @@
+{
+  "id": "railway_dispatch_network",
+  "name": "Railway Dispatch Network",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "railway_dispatch_network_open": "open_window",
+    "railway_dispatch_network_start": "start",
+    "railway_dispatch_network_status": "status"
+  }
+}

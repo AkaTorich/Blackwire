@@ -1,0 +1,33 @@
+{
+  "name": "Audit Window Countdown",
+  "family": "event",
+  "kind": "database",
+  "service": "audit_window",
+  "file": "audit-window.txt",
+  "story": "A temporary audit service is available during a short scheduled inspection.",
+  "mode": "window",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 164,
+  "id": "audit_window_countdown",
+  "number": 99,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "audit-window-countdown-records",
+      "ip": "198.22.99.1",
+      "lan_ip": null,
+      "service": "audit_window",
+      "port": 7294,
+      "os": "Audit Window Countdown OS 1.0",
+      "file": "/srv/records/audit-window.txt",
+      "text": "A temporary audit service is available during a short scheduled inspection.\nRecord owner: audit_window_countdown.\nCase reference: BW-099.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_audit_window_countdown_1"
+    }
+  ],
+  "subnet": "10.230.99.",
+  "org_kind": "corporation"
+}

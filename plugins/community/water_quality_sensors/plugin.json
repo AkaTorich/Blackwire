@@ -1,0 +1,23 @@
+{
+  "id": "water_quality_sensors",
+  "name": "Water Quality Sensors",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "water_quality_sensors_open": "open_window",
+    "water_quality_sensors_start": "start",
+    "water_quality_sensors_status": "status"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Mission Checklist Tool",
+  "family": "economy",
+  "mode": "market",
+  "file": "mission_checklist.adr",
+  "code": "for task in sys.missions():\n    print(task[\"code\"], task[\"title\"], task[\"status\"])\n",
+  "price": 30,
+  "story": "Print the active mission checklist.",
+  "id": "mission_checklist_tool",
+  "number": 87,
+  "version": "0.1.1",
+  "api": 1
+}

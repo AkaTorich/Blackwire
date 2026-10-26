@@ -1,0 +1,46 @@
+{
+  "name": "Unlisted Server Rack",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "rack_store",
+  "file": "capacity-report.csv",
+  "story": "Power readings reveal an occupied rack missing from the inventory.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 285,
+  "id": "unlisted_server_rack",
+  "number": 60,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "unlisted-server-rack-gateway",
+      "ip": "198.22.60.1",
+      "lan_ip": "10.230.60.1",
+      "service": "rack_store_gate",
+      "port": 7177,
+      "os": "Unlisted Server Rack OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Power readings reveal an occupied rack missing from the inventory.\nInternal destination: 10.230.60.2, service rack_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_unlisted_server_rack_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "unlisted-server-rack-records",
+      "ip": "10.230.60.2",
+      "lan_ip": "10.230.60.2",
+      "service": "rack_store",
+      "port": 7178,
+      "os": "Unlisted Server Rack OS 1.0",
+      "file": "/srv/records/capacity-report.csv",
+      "text": "Power readings reveal an occupied rack missing from the inventory.\nRecord owner: unlisted_server_rack.\nCase reference: BW-060.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_unlisted_server_rack_2"
+    }
+  ],
+  "subnet": "10.230.60."
+}

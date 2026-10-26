@@ -1,0 +1,60 @@
+{
+  "name": "Municipal Power Office",
+  "family": "network",
+  "org_kind": "government",
+  "kind": "database",
+  "service": "power_archive",
+  "file": "outage-report.csv",
+  "story": "A planned outage was removed from the internal maintenance calendar.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 210,
+  "id": "municipal_power_office",
+  "number": 31,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "municipal-power-office-gateway",
+      "ip": "198.22.31.1",
+      "lan_ip": "10.230.31.1",
+      "service": "power_archive_gate",
+      "port": 7090,
+      "os": "Municipal Power Office OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A planned outage was removed from the internal maintenance calendar.\nInternal destination: 10.230.31.3, service power_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_municipal_power_office_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "municipal-power-office-operations",
+      "ip": "10.230.31.2",
+      "lan_ip": "10.230.31.2",
+      "service": "power_archive_ops",
+      "port": 7091,
+      "os": "Municipal Power Office OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Municipal Power Office: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.31.3.",
+      "access": "shell",
+      "password": "bw_municipal_power_office_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "municipal-power-office-records",
+      "ip": "10.230.31.3",
+      "lan_ip": "10.230.31.3",
+      "service": "power_archive",
+      "port": 7092,
+      "os": "Municipal Power Office OS 1.0",
+      "file": "/srv/records/outage-report.csv",
+      "text": "A planned outage was removed from the internal maintenance calendar.\nRecord owner: municipal_power_office.\nCase reference: BW-031.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_municipal_power_office_3"
+    }
+  ],
+  "subnet": "10.230.31."
+}

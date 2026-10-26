@@ -1,0 +1,46 @@
+{
+  "name": "Missing Courier Ledger",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "courier_records",
+  "file": "handoff-ledger.csv",
+  "story": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 190,
+  "id": "missing_courier_ledger",
+  "number": 41,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "missing-courier-ledger-gateway",
+      "ip": "198.22.41.1",
+      "lan_ip": "10.230.41.1",
+      "service": "courier_records_gate",
+      "port": 7120,
+      "os": "Missing Courier Ledger OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.\nInternal destination: 10.230.41.2, service courier_records.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_missing_courier_ledger_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "missing-courier-ledger-records",
+      "ip": "10.230.41.2",
+      "lan_ip": "10.230.41.2",
+      "service": "courier_records",
+      "port": 7121,
+      "os": "Missing Courier Ledger OS 1.0",
+      "file": "/srv/records/handoff-ledger.csv",
+      "text": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.\nRecord owner: missing_courier_ledger.\nCase reference: BW-041.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_missing_courier_ledger_2"
+    }
+  ],
+  "subnet": "10.230.41."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Process Survey Tool",
+  "family": "economy",
+  "mode": "market",
+  "file": "process_survey.adr",
+  "code": "for proc in sys.procs():\n    print(proc[\"pid\"], proc[\"name\"], proc[\"user\"], proc[\"cpu\"], proc[\"mem\"])\n",
+  "price": 35,
+  "story": "Print process ownership, CPU use and memory use.",
+  "id": "process_survey_tool",
+  "number": 88,
+  "version": "0.1.1",
+  "api": 1
+}

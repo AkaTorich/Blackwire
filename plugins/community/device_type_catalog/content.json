@@ -1,0 +1,10 @@
+{
+  "name": "Device Type Catalog",
+  "family": "utility",
+  "mode": "types",
+  "story": "List registered plugin device types and firmware.",
+  "id": "device_type_catalog",
+  "number": 66,
+  "version": "0.1.1",
+  "api": 1
+}

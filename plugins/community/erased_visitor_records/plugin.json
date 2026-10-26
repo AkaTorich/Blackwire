@@ -1,0 +1,23 @@
+{
+  "id": "erased_visitor_records",
+  "name": "Erased Visitor Records",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "erased_visitor_records_open": "open_window",
+    "erased_visitor_records_start": "start",
+    "erased_visitor_records_status": "status"
+  }
+}

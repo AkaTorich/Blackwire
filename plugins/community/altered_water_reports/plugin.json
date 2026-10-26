@@ -1,0 +1,23 @@
+{
+  "id": "altered_water_reports",
+  "name": "Altered Water Reports",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "altered_water_reports_open": "open_window",
+    "altered_water_reports_start": "start",
+    "altered_water_reports_status": "status"
+  }
+}

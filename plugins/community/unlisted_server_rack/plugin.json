@@ -1,0 +1,23 @@
+{
+  "id": "unlisted_server_rack",
+  "name": "Unlisted Server Rack",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "unlisted_server_rack_open": "open_window",
+    "unlisted_server_rack_start": "start",
+    "unlisted_server_rack_status": "status"
+  }
+}

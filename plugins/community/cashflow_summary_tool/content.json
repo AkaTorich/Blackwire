@@ -1,0 +1,13 @@
+{
+  "name": "Cashflow Summary Tool",
+  "family": "economy",
+  "mode": "market",
+  "file": "cashflow_summary.adr",
+  "code": "print(\"Cash:\", sys.money())\nprint(\"Debt:\", sys.debt())\nprint(\"Net:\", sys.money() - sys.debt())\n",
+  "price": 25,
+  "story": "Report available funds and outstanding debt.",
+  "id": "cashflow_summary_tool",
+  "number": 86,
+  "version": "0.1.1",
+  "api": 1
+}

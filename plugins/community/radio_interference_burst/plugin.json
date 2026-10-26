@@ -1,0 +1,24 @@
+{
+  "id": "radio_interference_burst",
+  "name": "Radio Interference Burst",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "radio_interference_burst_open": "open_window",
+    "radio_interference_burst_start": "start",
+    "radio_interference_burst_status": "status"
+  }
+}

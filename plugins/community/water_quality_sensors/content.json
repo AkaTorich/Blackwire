@@ -1,0 +1,32 @@
+{
+  "name": "Water Quality Sensors",
+  "family": "device",
+  "kind": "medical_device",
+  "service": "water_telemetry",
+  "file": "samples.csv",
+  "story": "Three sample batches disagree with the signed calibration record.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 96,
+  "id": "water_quality_sensors",
+  "number": 10,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "medical_device",
+      "hostname": "water-quality-sensors-records",
+      "ip": "198.22.10.1",
+      "lan_ip": null,
+      "service": "water_telemetry",
+      "port": 7027,
+      "os": "Water Quality Sensors OS 1.0",
+      "file": "/srv/records/samples.csv",
+      "text": "Three sample batches disagree with the signed calibration record.\nRecord owner: water_quality_sensors.\nCase reference: BW-010.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_water_quality_sensors_1"
+    }
+  ],
+  "subnet": "10.230.10.",
+  "org_kind": "corporation"
+}

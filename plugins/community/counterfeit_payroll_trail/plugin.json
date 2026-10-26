@@ -1,0 +1,23 @@
+{
+  "id": "counterfeit_payroll_trail",
+  "name": "Counterfeit Payroll Trail",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "counterfeit_payroll_trail_open": "open_window",
+    "counterfeit_payroll_trail_start": "start",
+    "counterfeit_payroll_trail_status": "status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "mail_triage_desk",
+  "name": "Mail Triage Desk",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "mail_triage_desk_open": "open_window",
+    "mail_triage_desk_report": "refresh",
+    "mail_triage_desk_export": "export_report"
+  }
+}

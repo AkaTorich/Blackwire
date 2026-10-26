@@ -1,0 +1,32 @@
+{
+  "name": "Parcel Locker Hubs",
+  "family": "device",
+  "kind": "badge",
+  "service": "parcel_dispatch",
+  "file": "deliveries.csv",
+  "story": "Locker 42 opened twice for the same pickup code.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 100,
+  "id": "parcel_locker_hubs",
+  "number": 11,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "parcel-locker-hubs-records",
+      "ip": "198.22.11.1",
+      "lan_ip": null,
+      "service": "parcel_dispatch",
+      "port": 7030,
+      "os": "Parcel Locker Hubs OS 1.0",
+      "file": "/srv/records/deliveries.csv",
+      "text": "Locker 42 opened twice for the same pickup code.\nRecord owner: parcel_locker_hubs.\nCase reference: BW-011.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_parcel_locker_hubs_1"
+    }
+  ],
+  "subnet": "10.230.11.",
+  "org_kind": "corporation"
+}

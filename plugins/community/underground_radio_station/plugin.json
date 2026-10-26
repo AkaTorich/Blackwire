@@ -1,0 +1,23 @@
+{
+  "id": "underground_radio_station",
+  "name": "Underground Radio Station",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "underground_radio_station_open": "open_window",
+    "underground_radio_station_start": "start",
+    "underground_radio_station_status": "status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "medical_refrigeration_units",
+  "name": "Medical Refrigeration Units",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "medical_refrigeration_units_open": "open_window",
+    "medical_refrigeration_units_start": "start",
+    "medical_refrigeration_units_status": "status"
+  }
+}

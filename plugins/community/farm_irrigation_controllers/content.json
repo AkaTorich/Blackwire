@@ -1,0 +1,32 @@
+{
+  "name": "Farm Irrigation Controllers",
+  "family": "device",
+  "kind": "server",
+  "service": "irrigation_bus",
+  "file": "zones.csv",
+  "story": "Zone 6 waters continuously despite the published irrigation schedule.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 132,
+  "id": "farm_irrigation_controllers",
+  "number": 19,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "server",
+      "hostname": "farm-irrigation-controllers-records",
+      "ip": "198.22.19.1",
+      "lan_ip": null,
+      "service": "irrigation_bus",
+      "port": 7054,
+      "os": "Farm Irrigation Controllers OS 1.0",
+      "file": "/srv/records/zones.csv",
+      "text": "Zone 6 waters continuously despite the published irrigation schedule.\nRecord owner: farm_irrigation_controllers.\nCase reference: BW-019.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_farm_irrigation_controllers_1"
+    }
+  ],
+  "subnet": "10.230.19.",
+  "org_kind": "corporation"
+}

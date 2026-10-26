@@ -1,0 +1,10 @@
+{
+  "name": "Mail Triage Desk",
+  "family": "utility",
+  "mode": "mail",
+  "story": "Summarize unread mail on the player's computer.",
+  "id": "mail_triage_desk",
+  "number": 68,
+  "version": "0.1.1",
+  "api": 1
+}

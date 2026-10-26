@@ -1,0 +1,32 @@
+{
+  "name": "Elevator Control Panels",
+  "family": "device",
+  "kind": "badge",
+  "service": "lift_service",
+  "file": "visits.log",
+  "story": "The service panel recorded an unscheduled stop on the closed floor.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 112,
+  "id": "elevator_control_panels",
+  "number": 14,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "elevator-control-panels-records",
+      "ip": "198.22.14.1",
+      "lan_ip": null,
+      "service": "lift_service",
+      "port": 7039,
+      "os": "Elevator Control Panels OS 1.0",
+      "file": "/srv/records/visits.log",
+      "text": "The service panel recorded an unscheduled stop on the closed floor.\nRecord owner: elevator_control_panels.\nCase reference: BW-014.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_elevator_control_panels_1"
+    }
+  ],
+  "subnet": "10.230.14.",
+  "org_kind": "corporation"
+}

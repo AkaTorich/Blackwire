@@ -1,0 +1,46 @@
+{
+  "name": "Ghost Shipping Orders",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "shipping_store",
+  "file": "ghost-orders.csv",
+  "story": "Containers were billed to an address that no customer account owns.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 210,
+  "id": "ghost_shipping_orders",
+  "number": 45,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "ghost-shipping-orders-gateway",
+      "ip": "198.22.45.1",
+      "lan_ip": "10.230.45.1",
+      "service": "shipping_store_gate",
+      "port": 7132,
+      "os": "Ghost Shipping Orders OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Containers were billed to an address that no customer account owns.\nInternal destination: 10.230.45.2, service shipping_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_ghost_shipping_orders_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "ghost-shipping-orders-records",
+      "ip": "10.230.45.2",
+      "lan_ip": "10.230.45.2",
+      "service": "shipping_store",
+      "port": 7133,
+      "os": "Ghost Shipping Orders OS 1.0",
+      "file": "/srv/records/ghost-orders.csv",
+      "text": "Containers were billed to an address that no customer account owns.\nRecord owner: ghost_shipping_orders.\nCase reference: BW-045.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_ghost_shipping_orders_2"
+    }
+  ],
+  "subnet": "10.230.45."
+}

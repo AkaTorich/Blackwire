@@ -1,0 +1,23 @@
+{
+  "id": "incident_log_viewer",
+  "name": "Incident Log Viewer",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "incident_log_viewer_open": "open_window",
+    "incident_log_viewer_report": "refresh",
+    "incident_log_viewer_export": "export_report"
+  }
+}

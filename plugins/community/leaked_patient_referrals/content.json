@@ -1,0 +1,46 @@
+{
+  "name": "Leaked Patient Referrals",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "referral_store",
+  "file": "referral-access.csv",
+  "story": "An anonymized referral index was exported outside its scheduled reporting window.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 250,
+  "id": "leaked_patient_referrals",
+  "number": 53,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "leaked-patient-referrals-gateway",
+      "ip": "198.22.53.1",
+      "lan_ip": "10.230.53.1",
+      "service": "referral_store_gate",
+      "port": 7156,
+      "os": "Leaked Patient Referrals OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "An anonymized referral index was exported outside its scheduled reporting window.\nInternal destination: 10.230.53.2, service referral_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_leaked_patient_referrals_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "leaked-patient-referrals-records",
+      "ip": "10.230.53.2",
+      "lan_ip": "10.230.53.2",
+      "service": "referral_store",
+      "port": 7157,
+      "os": "Leaked Patient Referrals OS 1.0",
+      "file": "/srv/records/referral-access.csv",
+      "text": "An anonymized referral index was exported outside its scheduled reporting window.\nRecord owner: leaked_patient_referrals.\nCase reference: BW-053.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_leaked_patient_referrals_2"
+    }
+  ],
+  "subnet": "10.230.53."
+}

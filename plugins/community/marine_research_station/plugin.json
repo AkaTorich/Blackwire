@@ -1,0 +1,23 @@
+{
+  "id": "marine_research_station",
+  "name": "Marine Research Station",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "marine_research_station_open": "open_window",
+    "marine_research_station_start": "start",
+    "marine_research_station_status": "status"
+  }
+}

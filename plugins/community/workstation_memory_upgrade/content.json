@@ -1,0 +1,13 @@
+{
+  "name": "Workstation Memory Upgrade",
+  "family": "economy",
+  "mode": "hardware",
+  "field": "ram_mb",
+  "amount": 2048,
+  "price": 230,
+  "story": "Add 2 GB of memory for parallel game workloads.",
+  "id": "workstation_memory_upgrade",
+  "number": 78,
+  "version": "0.1.1",
+  "api": 1
+}

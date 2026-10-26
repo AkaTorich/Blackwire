@@ -1,0 +1,60 @@
+{
+  "name": "University Research Network",
+  "family": "network",
+  "org_kind": "university",
+  "kind": "database",
+  "service": "research_store",
+  "file": "grant-register.csv",
+  "story": "A laboratory grant was redirected through a retired research project.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 162,
+  "id": "university_research_network",
+  "number": 23,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "university-research-network-gateway",
+      "ip": "198.22.23.1",
+      "lan_ip": "10.230.23.1",
+      "service": "research_store_gate",
+      "port": 7066,
+      "os": "University Research Network OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A laboratory grant was redirected through a retired research project.\nInternal destination: 10.230.23.3, service research_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_university_research_network_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "university-research-network-operations",
+      "ip": "10.230.23.2",
+      "lan_ip": "10.230.23.2",
+      "service": "research_store_ops",
+      "port": 7067,
+      "os": "University Research Network OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "University Research Network: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.23.3.",
+      "access": "shell",
+      "password": "bw_university_research_network_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "university-research-network-records",
+      "ip": "10.230.23.3",
+      "lan_ip": "10.230.23.3",
+      "service": "research_store",
+      "port": 7068,
+      "os": "University Research Network OS 1.0",
+      "file": "/srv/records/grant-register.csv",
+      "text": "A laboratory grant was redirected through a retired research project.\nRecord owner: university_research_network.\nCase reference: BW-023.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_university_research_network_3"
+    }
+  ],
+  "subnet": "10.230.23."
+}

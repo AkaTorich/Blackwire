@@ -1,0 +1,23 @@
+{
+  "id": "research_storage_upgrade",
+  "name": "Research Storage Upgrade",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "research_storage_upgrade_open": "open_window",
+    "research_storage_upgrade_status": "status"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Parcel Queue Surge",
+  "family": "event",
+  "kind": "server",
+  "service": "parcel_queue",
+  "file": "queue-depth.csv",
+  "story": "A parcel router accumulates delayed pickups during an intake surge.",
+  "mode": "queue",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 148,
+  "id": "parcel_queue_surge",
+  "number": 97,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "server",
+      "hostname": "parcel-queue-surge-records",
+      "ip": "198.22.97.1",
+      "lan_ip": null,
+      "service": "parcel_queue",
+      "port": 7288,
+      "os": "Parcel Queue Surge OS 1.0",
+      "file": "/srv/records/queue-depth.csv",
+      "text": "A parcel router accumulates delayed pickups during an intake surge.\nRecord owner: parcel_queue_surge.\nCase reference: BW-097.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_parcel_queue_surge_1"
+    }
+  ],
+  "subnet": "10.230.97.",
+  "org_kind": "corporation"
+}

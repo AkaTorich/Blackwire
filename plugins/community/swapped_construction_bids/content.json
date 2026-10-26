@@ -1,0 +1,46 @@
+{
+  "name": "Swapped Construction Bids",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "bid_store",
+  "file": "bid-history.csv",
+  "story": "The submitted bid differs from the revision kept by the review committee.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 270,
+  "id": "swapped_construction_bids",
+  "number": 57,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "swapped-construction-bids-gateway",
+      "ip": "198.22.57.1",
+      "lan_ip": "10.230.57.1",
+      "service": "bid_store_gate",
+      "port": 7168,
+      "os": "Swapped Construction Bids OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The submitted bid differs from the revision kept by the review committee.\nInternal destination: 10.230.57.2, service bid_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_swapped_construction_bids_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "swapped-construction-bids-records",
+      "ip": "10.230.57.2",
+      "lan_ip": "10.230.57.2",
+      "service": "bid_store",
+      "port": 7169,
+      "os": "Swapped Construction Bids OS 1.0",
+      "file": "/srv/records/bid-history.csv",
+      "text": "The submitted bid differs from the revision kept by the review committee.\nRecord owner: swapped_construction_bids.\nCase reference: BW-057.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_swapped_construction_bids_2"
+    }
+  ],
+  "subnet": "10.230.57."
+}

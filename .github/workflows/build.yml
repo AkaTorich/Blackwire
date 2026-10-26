@@ -67,6 +67,9 @@ jobs:
       - name: Engine and Adder tests
         run: cargo test --locked -p blackwire-core -p blackwire-lang
 
+      - name: Combined 100-plugin load test (GitHub runner only)
+        if: matrix.sdk_platform == 'linux'
+        run: cargo test --release --locked -p blackwire-core --test community_plugins all_100_plugins -- --ignored --test-threads=1
       - name: Tauri CLI
         uses: taiki-e/install-action@v2
         with:
@@ -131,7 +134,9 @@ jobs:
           merge-multiple: true
 
       - name: Build and verify SDK ZIP
-        run: python tools/package_sdk.py archive --tools target/sdk-tools
+        run: |
+          python tools/package_sdk.py archive --tools target/sdk-tools
+          python tools/package_plugins.py
 
       - name: Publish installers and SDK
         uses: softprops/action-gh-release@v2
@@ -143,7 +148,9 @@ jobs:
             Blackwire with Adder Plugin SDK (API 1).
             Installers for Windows, Linux and macOS include the SDK.
             Blackwire-SDK-*.zip contains the manuals, CHM help, examples, schemas and checker tools for all three systems.
+            Blackwire-Plugins-*.zip contains 100 standalone Adder plugins with English names and individual START_HERE guides.
           fail_on_unmatched_files: true
           files: |
             target/release-installers/*
             target/release/Blackwire-SDK-*.zip
+            target/release/Blackwire-Plugins-*.zip

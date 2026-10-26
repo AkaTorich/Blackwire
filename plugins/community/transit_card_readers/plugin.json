@@ -1,0 +1,23 @@
+{
+  "id": "transit_card_readers",
+  "name": "Transit Card Readers",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "transit_card_readers_open": "open_window",
+    "transit_card_readers_start": "start",
+    "transit_card_readers_status": "status"
+  }
+}

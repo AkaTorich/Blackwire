@@ -1,0 +1,24 @@
+{
+  "id": "maintenance_credential_rollover",
+  "name": "Maintenance Credential Rollover",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "maintenance_credential_rollover_open": "open_window",
+    "maintenance_credential_rollover_start": "start",
+    "maintenance_credential_rollover_status": "status"
+  }
+}

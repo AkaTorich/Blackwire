@@ -1,0 +1,23 @@
+{
+  "id": "phantom_subscription_charges",
+  "name": "Phantom Subscription Charges",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "phantom_subscription_charges_open": "open_window",
+    "phantom_subscription_charges_start": "start",
+    "phantom_subscription_charges_status": "status"
+  }
+}

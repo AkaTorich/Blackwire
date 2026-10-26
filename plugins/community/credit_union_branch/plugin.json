@@ -1,0 +1,23 @@
+{
+  "id": "credit_union_branch",
+  "name": "Credit Union Branch",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "credit_union_branch_open": "open_window",
+    "credit_union_branch_start": "start",
+    "credit_union_branch_status": "status"
+  }
+}

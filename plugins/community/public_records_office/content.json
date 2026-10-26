@@ -1,0 +1,60 @@
+{
+  "name": "Public Records Office",
+  "family": "network",
+  "org_kind": "government",
+  "kind": "database",
+  "service": "records_store",
+  "file": "permit-register.csv",
+  "story": "The public permit portal omits an amendment stored on the internal records host.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 180,
+  "id": "public_records_office",
+  "number": 26,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "public-records-office-gateway",
+      "ip": "198.22.26.1",
+      "lan_ip": "10.230.26.1",
+      "service": "records_store_gate",
+      "port": 7075,
+      "os": "Public Records Office OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The public permit portal omits an amendment stored on the internal records host.\nInternal destination: 10.230.26.3, service records_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_public_records_office_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "public-records-office-operations",
+      "ip": "10.230.26.2",
+      "lan_ip": "10.230.26.2",
+      "service": "records_store_ops",
+      "port": 7076,
+      "os": "Public Records Office OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Public Records Office: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.26.3.",
+      "access": "shell",
+      "password": "bw_public_records_office_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "public-records-office-records",
+      "ip": "10.230.26.3",
+      "lan_ip": "10.230.26.3",
+      "service": "records_store",
+      "port": 7077,
+      "os": "Public Records Office OS 1.0",
+      "file": "/srv/records/permit-register.csv",
+      "text": "The public permit portal omits an amendment stored on the internal records host.\nRecord owner: public_records_office.\nCase reference: BW-026.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_public_records_office_3"
+    }
+  ],
+  "subnet": "10.230.26."
+}

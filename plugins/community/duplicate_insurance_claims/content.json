@@ -1,0 +1,46 @@
+{
+  "name": "Duplicate Insurance Claims",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "claims_store",
+  "file": "claim-pairs.csv",
+  "story": "Two claims reference the same inspection photo and different incident dates.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 220,
+  "id": "duplicate_insurance_claims",
+  "number": 47,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "duplicate-insurance-claims-gateway",
+      "ip": "198.22.47.1",
+      "lan_ip": "10.230.47.1",
+      "service": "claims_store_gate",
+      "port": 7138,
+      "os": "Duplicate Insurance Claims OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Two claims reference the same inspection photo and different incident dates.\nInternal destination: 10.230.47.2, service claims_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_duplicate_insurance_claims_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "duplicate-insurance-claims-records",
+      "ip": "10.230.47.2",
+      "lan_ip": "10.230.47.2",
+      "service": "claims_store",
+      "port": 7139,
+      "os": "Duplicate Insurance Claims OS 1.0",
+      "file": "/srv/records/claim-pairs.csv",
+      "text": "Two claims reference the same inspection photo and different incident dates.\nRecord owner: duplicate_insurance_claims.\nCase reference: BW-047.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_duplicate_insurance_claims_2"
+    }
+  ],
+  "subnet": "10.230.47."
+}

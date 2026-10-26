@@ -1,0 +1,10 @@
+{
+  "name": "Service Exposure Map",
+  "family": "utility",
+  "mode": "services",
+  "story": "Inspect running services on discovered machines.",
+  "id": "service_exposure_map",
+  "number": 63,
+  "version": "0.1.1",
+  "api": 1
+}

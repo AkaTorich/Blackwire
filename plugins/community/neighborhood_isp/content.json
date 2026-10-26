@@ -1,0 +1,60 @@
+{
+  "name": "Neighborhood ISP",
+  "family": "network",
+  "org_kind": "isp",
+  "kind": "database",
+  "service": "subscriber_store",
+  "file": "routing-ledger.txt",
+  "story": "The subscriber archive records a private route absent from the provider map.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 192,
+  "id": "neighborhood_isp",
+  "number": 28,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "neighborhood-isp-gateway",
+      "ip": "198.22.28.1",
+      "lan_ip": "10.230.28.1",
+      "service": "subscriber_store_gate",
+      "port": 7081,
+      "os": "Neighborhood ISP OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The subscriber archive records a private route absent from the provider map.\nInternal destination: 10.230.28.3, service subscriber_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_neighborhood_isp_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "neighborhood-isp-operations",
+      "ip": "10.230.28.2",
+      "lan_ip": "10.230.28.2",
+      "service": "subscriber_store_ops",
+      "port": 7082,
+      "os": "Neighborhood ISP OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Neighborhood ISP: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.28.3.",
+      "access": "shell",
+      "password": "bw_neighborhood_isp_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "neighborhood-isp-records",
+      "ip": "10.230.28.3",
+      "lan_ip": "10.230.28.3",
+      "service": "subscriber_store",
+      "port": 7083,
+      "os": "Neighborhood ISP OS 1.0",
+      "file": "/srv/records/routing-ledger.txt",
+      "text": "The subscriber archive records a private route absent from the provider map.\nRecord owner: neighborhood_isp.\nCase reference: BW-028.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_neighborhood_isp_3"
+    }
+  ],
+  "subnet": "10.230.28."
+}

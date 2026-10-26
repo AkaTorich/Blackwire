@@ -1,0 +1,23 @@
+{
+  "id": "university_research_network",
+  "name": "University Research Network",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "university_research_network_open": "open_window",
+    "university_research_network_start": "start",
+    "university_research_network_status": "status"
+  }
+}

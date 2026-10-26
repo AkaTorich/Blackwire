@@ -7,7 +7,7 @@
 <tr><td>plugin.get(key, default=null)</td><td>значение своего сохранённого ключа</td></tr>
 <tr><td>plugin.set(key, value)</td><td>сохранить значение; ключ до 128 символов, данные одного плагина до 64 КБ</td></tr>
 <tr><td>plugin.asset(path)</td><td>строка объявленного текстового ресурса</td></tr>
-<tr><td>plugin.world()</td><td>копия всего сериализуемого состояния мира</td></tr>
+<tr><td>plugin.world() / plugin.world("overview")</td><td>полное состояние мира / облегчённые данные для отчётов</td></tr>
 <tr><td>plugin.apply(patch)</td><td>атомарно заменить указанные разделы игрового состояния после проверки</td></tr>
 <tr><td>plugin.random(lo, hi)</td><td>целое из [lo, hi), генератор мира; границы в пределах ±10^9</td></tr>
 </table>

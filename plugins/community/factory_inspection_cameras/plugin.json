@@ -1,0 +1,23 @@
+{
+  "id": "factory_inspection_cameras",
+  "name": "Factory Inspection Cameras",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "factory_inspection_cameras_open": "open_window",
+    "factory_inspection_cameras_start": "start",
+    "factory_inspection_cameras_status": "status"
+  }
+}

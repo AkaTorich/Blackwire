@@ -1,0 +1,23 @@
+{
+  "id": "host_identity_tool",
+  "name": "Host Identity Tool",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "on_purchase": "purchased"
+  },
+  "commands": {
+    "host_identity_tool_open": "open_window",
+    "host_identity_tool_status": "status"
+  }
+}

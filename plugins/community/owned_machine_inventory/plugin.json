@@ -1,0 +1,23 @@
+{
+  "id": "owned_machine_inventory",
+  "name": "Owned Machine Inventory",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "owned_machine_inventory_open": "open_window",
+    "owned_machine_inventory_report": "refresh",
+    "owned_machine_inventory_export": "export_report"
+  }
+}

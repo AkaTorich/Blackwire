@@ -1,0 +1,60 @@
+{
+  "name": "Marine Research Station",
+  "family": "network",
+  "org_kind": "university",
+  "kind": "database",
+  "service": "marine_archive",
+  "file": "buoy-survey.csv",
+  "story": "A survey vessel's route conflicts with the downloaded buoy readings.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 258,
+  "id": "marine_research_station",
+  "number": 39,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "marine-research-station-gateway",
+      "ip": "198.22.39.1",
+      "lan_ip": "10.230.39.1",
+      "service": "marine_archive_gate",
+      "port": 7114,
+      "os": "Marine Research Station OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A survey vessel's route conflicts with the downloaded buoy readings.\nInternal destination: 10.230.39.3, service marine_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_marine_research_station_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "marine-research-station-operations",
+      "ip": "10.230.39.2",
+      "lan_ip": "10.230.39.2",
+      "service": "marine_archive_ops",
+      "port": 7115,
+      "os": "Marine Research Station OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Marine Research Station: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.39.3.",
+      "access": "shell",
+      "password": "bw_marine_research_station_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "marine-research-station-records",
+      "ip": "10.230.39.3",
+      "lan_ip": "10.230.39.3",
+      "service": "marine_archive",
+      "port": 7116,
+      "os": "Marine Research Station OS 1.0",
+      "file": "/srv/records/buoy-survey.csv",
+      "text": "A survey vessel's route conflicts with the downloaded buoy readings.\nRecord owner: marine_research_station.\nCase reference: BW-039.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_marine_research_station_3"
+    }
+  ],
+  "subnet": "10.230.39."
+}

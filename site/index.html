@@ -240,7 +240,7 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
       <span class="live"><i></i><em>OPEN SOURCE</em></span>
     </div>
     <div class="actions">
-      <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.1/Blackwire_0.1.1_x64-setup.exe">
+      <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/latest">
         <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Скачать
       </a>
       <a class="btn" id="ghTop" href="#" target="_blank" rel="noopener">
@@ -268,7 +268,7 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
         <button type="button" class="os-opt" data-os="win">Windows</button><button type="button" class="os-opt" data-os="linux">Linux</button><button type="button" class="os-opt" data-os="mac">macOS</button>
       </div>
       <div class="cta">
-        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.1/Blackwire_0.1.1_x64-setup.exe">
+        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/latest">
           <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span data-dl-label>Скачать для Windows</span>
         </a>
         <a class="btn" id="ghHero" href="#" target="_blank" rel="noopener">
@@ -306,7 +306,7 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
         <div class="ossel" data-ossel>
           <button type="button" class="os-opt" data-os="win">Windows</button><button type="button" class="os-opt" data-os="linux">Linux</button><button type="button" class="os-opt" data-os="mac">macOS</button>
         </div>
-        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/download/v0.1.1/Blackwire_0.1.1_x64-setup.exe">
+        <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/latest">
           <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span data-dl-label>Скачать для Windows</span>
         </a>
         <div class="os-note" data-dl-note>Windows 10 / 11 · установщик .exe</div>
@@ -341,11 +341,11 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
 
   // выбор системы для загрузки: сам определяет ОС посетителя, ручной выбор запоминает
   (function(){
-    var REL = REPO + '/releases/download/v0.1.1/';
+    var RELEASE_PAGE = REPO + '/releases/latest';
     var BUILDS = {
-      win:   {name:'Windows', file:'Blackwire_0.1.1_x64-setup.exe', note:'Windows 10 / 11 · установщик .exe'},
-      linux: {name:'Linux',   file:'Blackwire_0.1.1_amd64.deb',     note:'Debian / Ubuntu · пакет .deb'},
-      mac:   {name:'macOS',   file:'Blackwire_0.1.1_universal.dmg', note:'Intel и Apple Silicon · образ .dmg'}
+      win:   {name:'Windows', note:'Windows 10 / 11 · установщик .exe'},
+      linux: {name:'Linux',   note:'Debian / Ubuntu · пакет .deb'},
+      mac:   {name:'macOS',   note:'Intel и Apple Silicon · образ .dmg'}
     };
     function detect(){
       var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '') + ' ' + navigator.userAgent;
@@ -354,15 +354,15 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
       if (/Linux|X11|CrOS|Android|BSD/i.test(p)) return 'linux';
       return 'win';
     }
-    var detected = detect(), saved = null;
+    var detected = detect(), saved = null, selected = detected;
     try { saved = localStorage.getItem('bw_os'); } catch (e) {}
     function pick(os, remember){
-      var b = BUILDS[os]; if (!b) return;
+      var b = BUILDS[os]; if (!b) return; selected = os;
       document.querySelectorAll('[data-os]').forEach(function(x){
         x.classList.toggle('on', x.dataset.os === os);
         x.classList.toggle('det', x.dataset.os === detected);
       });
-      document.querySelectorAll('[data-dl]').forEach(function(a){ a.href = REL + b.file; });
+      document.querySelectorAll('[data-dl]').forEach(function(a){ a.href = b.url || RELEASE_PAGE; });
       document.querySelectorAll('[data-dl-label]').forEach(function(s){ s.textContent = 'Скачать для ' + b.name; });
       document.querySelectorAll('[data-dl-note]').forEach(function(s){ s.textContent = b.note; });
       if (remember) { try { localStorage.setItem('bw_os', os); } catch (e) {} }
@@ -371,6 +371,30 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
       x.addEventListener('click', function(){ pick(x.dataset.os, true); });
     });
     pick(BUILDS[saved] ? saved : detected, false);
+
+    // Resolve the latest published installers so download links do not age with a release.
+    fetch('https://api.github.com/repos/AkaTorich/Blackwire/releases/latest', {
+      cache: 'no-store',
+      headers: {Accept: 'application/vnd.github+json'}
+    }).then(function(response) {
+      if (!response.ok) throw new Error('Release lookup unavailable');
+      return response.json();
+    }).then(function(release) {
+      var patterns = {win: /_x64-setup\.exe$/i, linux: /_amd64\.deb$/i, mac: /_universal\.dmg$/i};
+      Object.keys(BUILDS).forEach(function(os) {
+        var asset = (release.assets || []).find(function(item) {
+          return patterns[os].test(item.name) && item.browser_download_url.indexOf(REPO + '/releases/download/') === 0;
+        });
+        if (asset) {
+          BUILDS[os].url = asset.browser_download_url;
+          BUILDS[os].note += ' · ' + release.tag_name + ' · ' + (asset.size / 1048576).toFixed(1) + ' МБ';
+        }
+      });
+      pick(selected, false);
+    }).catch(function() {
+      // The static latest-release page remains a valid fallback.
+    });
+
   })();
   ['ghTop','ghHero','ghGet'].forEach(function(id){var a=document.getElementById(id);if(a)a.href=REPO;});
 

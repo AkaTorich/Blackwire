@@ -1,0 +1,32 @@
+{
+  "name": "Medical Refrigeration Units",
+  "family": "device",
+  "kind": "medical_device",
+  "service": "cold_chain",
+  "file": "temperatures.csv",
+  "story": "The overnight temperature alarm was acknowledged before it was raised.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 124,
+  "id": "medical_refrigeration_units",
+  "number": 17,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "medical_device",
+      "hostname": "medical-refrigeration-units-records",
+      "ip": "198.22.17.1",
+      "lan_ip": null,
+      "service": "cold_chain",
+      "port": 7048,
+      "os": "Medical Refrigeration Units OS 1.0",
+      "file": "/srv/records/temperatures.csv",
+      "text": "The overnight temperature alarm was acknowledged before it was raised.\nRecord owner: medical_refrigeration_units.\nCase reference: BW-017.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_medical_refrigeration_units_1"
+    }
+  ],
+  "subnet": "10.230.17.",
+  "org_kind": "corporation"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "leaked_patient_referrals",
+  "name": "Leaked Patient Referrals",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "leaked_patient_referrals_open": "open_window",
+    "leaked_patient_referrals_start": "start",
+    "leaked_patient_referrals_status": "status"
+  }
+}

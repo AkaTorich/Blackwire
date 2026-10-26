@@ -1,0 +1,10 @@
+{
+  "name": "Hardware Capacity Report",
+  "family": "utility",
+  "mode": "hardware",
+  "story": "Compare memory and storage on discovered machines.",
+  "id": "hardware_capacity_report",
+  "number": 69,
+  "version": "0.1.1",
+  "api": 1
+}

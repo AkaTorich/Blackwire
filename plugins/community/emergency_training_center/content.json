@@ -1,0 +1,60 @@
+{
+  "name": "Emergency Training Center",
+  "family": "network",
+  "org_kind": "hospital",
+  "kind": "database",
+  "service": "training_archive",
+  "file": "drill-record.csv",
+  "story": "A simulation alarm was copied into the official incident register.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 228,
+  "id": "emergency_training_center",
+  "number": 34,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "emergency-training-center-gateway",
+      "ip": "198.22.34.1",
+      "lan_ip": "10.230.34.1",
+      "service": "training_archive_gate",
+      "port": 7099,
+      "os": "Emergency Training Center OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A simulation alarm was copied into the official incident register.\nInternal destination: 10.230.34.3, service training_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_emergency_training_center_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "emergency-training-center-operations",
+      "ip": "10.230.34.2",
+      "lan_ip": "10.230.34.2",
+      "service": "training_archive_ops",
+      "port": 7100,
+      "os": "Emergency Training Center OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Emergency Training Center: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.34.3.",
+      "access": "shell",
+      "password": "bw_emergency_training_center_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "emergency-training-center-records",
+      "ip": "10.230.34.3",
+      "lan_ip": "10.230.34.3",
+      "service": "training_archive",
+      "port": 7101,
+      "os": "Emergency Training Center OS 1.0",
+      "file": "/srv/records/drill-record.csv",
+      "text": "A simulation alarm was copied into the official incident register.\nRecord owner: emergency_training_center.\nCase reference: BW-034.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_emergency_training_center_3"
+    }
+  ],
+  "subnet": "10.230.34."
+}

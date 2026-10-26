@@ -1,0 +1,10 @@
+{
+  "name": "Incident Log Viewer",
+  "family": "utility",
+  "mode": "logs",
+  "story": "Review recent logs on owned machines.",
+  "id": "incident_log_viewer",
+  "number": 72,
+  "version": "0.1.1",
+  "api": 1
+}

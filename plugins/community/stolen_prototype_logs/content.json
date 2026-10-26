@@ -1,0 +1,46 @@
+{
+  "name": "Stolen Prototype Logs",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "prototype_store",
+  "file": "bench-access.log",
+  "story": "The prototype bench was used after the inventory team sealed the laboratory.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 200,
+  "id": "stolen_prototype_logs",
+  "number": 43,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "stolen-prototype-logs-gateway",
+      "ip": "198.22.43.1",
+      "lan_ip": "10.230.43.1",
+      "service": "prototype_store_gate",
+      "port": 7126,
+      "os": "Stolen Prototype Logs OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The prototype bench was used after the inventory team sealed the laboratory.\nInternal destination: 10.230.43.2, service prototype_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_stolen_prototype_logs_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "stolen-prototype-logs-records",
+      "ip": "10.230.43.2",
+      "lan_ip": "10.230.43.2",
+      "service": "prototype_store",
+      "port": 7127,
+      "os": "Stolen Prototype Logs OS 1.0",
+      "file": "/srv/records/bench-access.log",
+      "text": "The prototype bench was used after the inventory team sealed the laboratory.\nRecord owner: stolen_prototype_logs.\nCase reference: BW-043.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_stolen_prototype_logs_2"
+    }
+  ],
+  "subnet": "10.230.43."
+}

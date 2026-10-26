@@ -1,0 +1,23 @@
+{
+  "id": "diverted_relief_supplies",
+  "name": "Diverted Relief Supplies",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "diverted_relief_supplies_open": "open_window",
+    "diverted_relief_supplies_start": "start",
+    "diverted_relief_supplies_status": "status"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Battery Reserve Warning",
+  "family": "event",
+  "kind": "server",
+  "service": "battery_monitor",
+  "file": "reserve.csv",
+  "story": "A backup battery controller reports a declining reserve during a grid drill.",
+  "mode": "battery",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 156,
+  "id": "battery_reserve_warning",
+  "number": 98,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "server",
+      "hostname": "battery-reserve-warning-records",
+      "ip": "198.22.98.1",
+      "lan_ip": null,
+      "service": "battery_monitor",
+      "port": 7291,
+      "os": "Battery Reserve Warning OS 1.0",
+      "file": "/srv/records/reserve.csv",
+      "text": "A backup battery controller reports a declining reserve during a grid drill.\nRecord owner: battery_reserve_warning.\nCase reference: BW-098.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_battery_reserve_warning_1"
+    }
+  ],
+  "subnet": "10.230.98.",
+  "org_kind": "corporation"
+}

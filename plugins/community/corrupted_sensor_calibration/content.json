@@ -1,0 +1,46 @@
+{
+  "name": "Corrupted Sensor Calibration",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "sensor_archive",
+  "file": "calibration-chain.csv",
+  "story": "Sensor measurements are plausible but their calibration signatures do not agree.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 255,
+  "id": "corrupted_sensor_calibration",
+  "number": 54,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "corrupted-sensor-calibration-gateway",
+      "ip": "198.22.54.1",
+      "lan_ip": "10.230.54.1",
+      "service": "sensor_archive_gate",
+      "port": 7159,
+      "os": "Corrupted Sensor Calibration OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Sensor measurements are plausible but their calibration signatures do not agree.\nInternal destination: 10.230.54.2, service sensor_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_corrupted_sensor_calibration_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "corrupted-sensor-calibration-records",
+      "ip": "10.230.54.2",
+      "lan_ip": "10.230.54.2",
+      "service": "sensor_archive",
+      "port": 7160,
+      "os": "Corrupted Sensor Calibration OS 1.0",
+      "file": "/srv/records/calibration-chain.csv",
+      "text": "Sensor measurements are plausible but their calibration signatures do not agree.\nRecord owner: corrupted_sensor_calibration.\nCase reference: BW-054.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_corrupted_sensor_calibration_2"
+    }
+  ],
+  "subnet": "10.230.54."
+}

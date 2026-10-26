@@ -1,0 +1,23 @@
+{
+  "id": "solar_inverters",
+  "name": "Solar Inverters",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "solar_inverters_open": "open_window",
+    "solar_inverters_start": "start",
+    "solar_inverters_status": "status"
+  }
+}

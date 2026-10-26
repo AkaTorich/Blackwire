@@ -1,0 +1,60 @@
+{
+  "name": "Community Internet Exchange",
+  "family": "network",
+  "org_kind": "isp",
+  "kind": "database",
+  "service": "exchange_archive",
+  "file": "peering-register.csv",
+  "story": "A hidden peer uses an obsolete exchange agreement.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 240,
+  "id": "community_internet_exchange",
+  "number": 36,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "community-internet-exchange-gateway",
+      "ip": "198.22.36.1",
+      "lan_ip": "10.230.36.1",
+      "service": "exchange_archive_gate",
+      "port": 7105,
+      "os": "Community Internet Exchange OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A hidden peer uses an obsolete exchange agreement.\nInternal destination: 10.230.36.3, service exchange_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_community_internet_exchange_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "community-internet-exchange-operations",
+      "ip": "10.230.36.2",
+      "lan_ip": "10.230.36.2",
+      "service": "exchange_archive_ops",
+      "port": 7106,
+      "os": "Community Internet Exchange OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Community Internet Exchange: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.36.3.",
+      "access": "shell",
+      "password": "bw_community_internet_exchange_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "community-internet-exchange-records",
+      "ip": "10.230.36.3",
+      "lan_ip": "10.230.36.3",
+      "service": "exchange_archive",
+      "port": 7107,
+      "os": "Community Internet Exchange OS 1.0",
+      "file": "/srv/records/peering-register.csv",
+      "text": "A hidden peer uses an obsolete exchange agreement.\nRecord owner: community_internet_exchange.\nCase reference: BW-036.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_community_internet_exchange_3"
+    }
+  ],
+  "subnet": "10.230.36."
+}

@@ -1,0 +1,46 @@
+{
+  "name": "Tampered Election Kiosks",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "kiosk_records",
+  "file": "maintenance-audit.csv",
+  "story": "A fictional city kiosk reports maintenance performed by a retired service account.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 245,
+  "id": "tampered_election_kiosks",
+  "number": 52,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "tampered-election-kiosks-gateway",
+      "ip": "198.22.52.1",
+      "lan_ip": "10.230.52.1",
+      "service": "kiosk_records_gate",
+      "port": 7153,
+      "os": "Tampered Election Kiosks OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A fictional city kiosk reports maintenance performed by a retired service account.\nInternal destination: 10.230.52.2, service kiosk_records.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_tampered_election_kiosks_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "tampered-election-kiosks-records",
+      "ip": "10.230.52.2",
+      "lan_ip": "10.230.52.2",
+      "service": "kiosk_records",
+      "port": 7154,
+      "os": "Tampered Election Kiosks OS 1.0",
+      "file": "/srv/records/maintenance-audit.csv",
+      "text": "A fictional city kiosk reports maintenance performed by a retired service account.\nRecord owner: tampered_election_kiosks.\nCase reference: BW-052.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_tampered_election_kiosks_2"
+    }
+  ],
+  "subnet": "10.230.52."
+}

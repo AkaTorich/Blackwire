@@ -1,0 +1,24 @@
+{
+  "id": "rolling_backup_leak",
+  "name": "Rolling Backup Leak",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "rolling_backup_leak_open": "open_window",
+    "rolling_backup_leak_start": "start",
+    "rolling_backup_leak_status": "status"
+  }
+}

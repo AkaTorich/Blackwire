@@ -1,0 +1,23 @@
+{
+  "id": "stolen_prototype_logs",
+  "name": "Stolen Prototype Logs",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "stolen_prototype_logs_open": "open_window",
+    "stolen_prototype_logs_start": "start",
+    "stolen_prototype_logs_status": "status"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "Diverted Relief Supplies",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "relief_archive",
+  "file": "relief-consignments.csv",
+  "story": "Relief parcels were marked delivered before reaching the regional depot.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 235,
+  "id": "diverted_relief_supplies",
+  "number": 50,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "diverted-relief-supplies-gateway",
+      "ip": "198.22.50.1",
+      "lan_ip": "10.230.50.1",
+      "service": "relief_archive_gate",
+      "port": 7147,
+      "os": "Diverted Relief Supplies OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Relief parcels were marked delivered before reaching the regional depot.\nInternal destination: 10.230.50.2, service relief_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_diverted_relief_supplies_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "diverted-relief-supplies-records",
+      "ip": "10.230.50.2",
+      "lan_ip": "10.230.50.2",
+      "service": "relief_archive",
+      "port": 7148,
+      "os": "Diverted Relief Supplies OS 1.0",
+      "file": "/srv/records/relief-consignments.csv",
+      "text": "Relief parcels were marked delivered before reaching the regional depot.\nRecord owner: diverted_relief_supplies.\nCase reference: BW-050.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_diverted_relief_supplies_2"
+    }
+  ],
+  "subnet": "10.230.50."
+}

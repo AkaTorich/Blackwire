@@ -1,0 +1,24 @@
+{
+  "id": "factory_shift_handover",
+  "name": "Factory Shift Handover",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui",
+    "custom.incident": "pulse"
+  },
+  "commands": {
+    "factory_shift_handover_open": "open_window",
+    "factory_shift_handover_start": "start",
+    "factory_shift_handover_status": "status"
+  }
+}

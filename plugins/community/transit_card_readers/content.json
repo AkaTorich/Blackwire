@@ -1,0 +1,32 @@
+{
+  "name": "Transit Card Readers",
+  "family": "device",
+  "kind": "badge",
+  "service": "fare_sync",
+  "file": "journeys.csv",
+  "story": "A maintenance card appears on three buses at the same timestamp.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 68,
+  "id": "transit_card_readers",
+  "number": 3,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "badge",
+      "hostname": "transit-card-readers-records",
+      "ip": "198.22.3.1",
+      "lan_ip": null,
+      "service": "fare_sync",
+      "port": 7006,
+      "os": "Transit Card Readers OS 1.0",
+      "file": "/srv/records/journeys.csv",
+      "text": "A maintenance card appears on three buses at the same timestamp.\nRecord owner: transit_card_readers.\nCase reference: BW-003.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_transit_card_readers_1"
+    }
+  ],
+  "subnet": "10.230.3.",
+  "org_kind": "corporation"
+}

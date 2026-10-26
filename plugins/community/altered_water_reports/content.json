@@ -1,0 +1,46 @@
+{
+  "name": "Altered Water Reports",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "water_records",
+  "file": "sample-chain.csv",
+  "story": "The signed laboratory results differ from the values on the public dashboard.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 205,
+  "id": "altered_water_reports",
+  "number": 44,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "altered-water-reports-gateway",
+      "ip": "198.22.44.1",
+      "lan_ip": "10.230.44.1",
+      "service": "water_records_gate",
+      "port": 7129,
+      "os": "Altered Water Reports OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "The signed laboratory results differ from the values on the public dashboard.\nInternal destination: 10.230.44.2, service water_records.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_altered_water_reports_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "altered-water-reports-records",
+      "ip": "10.230.44.2",
+      "lan_ip": "10.230.44.2",
+      "service": "water_records",
+      "port": 7130,
+      "os": "Altered Water Reports OS 1.0",
+      "file": "/srv/records/sample-chain.csv",
+      "text": "The signed laboratory results differ from the values on the public dashboard.\nRecord owner: altered_water_reports.\nCase reference: BW-044.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_altered_water_reports_2"
+    }
+  ],
+  "subnet": "10.230.44."
+}

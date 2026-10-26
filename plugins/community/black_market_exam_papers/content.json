@@ -1,0 +1,46 @@
+{
+  "name": "Black Market Exam Papers",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "exam_archive",
+  "file": "exam-custody.csv",
+  "story": "Exam custody records show an unauthorized print request before release.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 225,
+  "id": "black_market_exam_papers",
+  "number": 48,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "black-market-exam-papers-gateway",
+      "ip": "198.22.48.1",
+      "lan_ip": "10.230.48.1",
+      "service": "exam_archive_gate",
+      "port": 7141,
+      "os": "Black Market Exam Papers OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "Exam custody records show an unauthorized print request before release.\nInternal destination: 10.230.48.2, service exam_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_black_market_exam_papers_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "black-market-exam-papers-records",
+      "ip": "10.230.48.2",
+      "lan_ip": "10.230.48.2",
+      "service": "exam_archive",
+      "port": 7142,
+      "os": "Black Market Exam Papers OS 1.0",
+      "file": "/srv/records/exam-custody.csv",
+      "text": "Exam custody records show an unauthorized print request before release.\nRecord owner: black_market_exam_papers.\nCase reference: BW-048.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_black_market_exam_papers_2"
+    }
+  ],
+  "subnet": "10.230.48."
+}

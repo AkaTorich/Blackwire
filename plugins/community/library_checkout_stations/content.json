@@ -1,0 +1,32 @@
+{
+  "name": "Library Checkout Stations",
+  "family": "device",
+  "kind": "workstation",
+  "service": "loan_sync",
+  "file": "loans.csv",
+  "story": "A restricted atlas was checked out using an expired staff account.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 104,
+  "id": "library_checkout_stations",
+  "number": 12,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "workstation",
+      "hostname": "library-checkout-stations-records",
+      "ip": "198.22.12.1",
+      "lan_ip": null,
+      "service": "loan_sync",
+      "port": 7033,
+      "os": "Library Checkout Stations OS 1.0",
+      "file": "/srv/records/loans.csv",
+      "text": "A restricted atlas was checked out using an expired staff account.\nRecord owner: library_checkout_stations.\nCase reference: BW-012.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_library_checkout_stations_1"
+    }
+  ],
+  "subnet": "10.230.12.",
+  "org_kind": "corporation"
+}

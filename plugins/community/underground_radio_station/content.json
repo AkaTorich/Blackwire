@@ -1,0 +1,60 @@
+{
+  "name": "Underground Radio Station",
+  "family": "network",
+  "org_kind": "underground",
+  "kind": "database",
+  "service": "radio_archive",
+  "file": "broadcast-ledger.txt",
+  "story": "A broadcast was replaced while the station controller was unattended.",
+  "objective": "Traverse the gateway and recover the internal archive.",
+  "reward": 264,
+  "id": "underground_radio_station",
+  "number": 40,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "underground-radio-station-gateway",
+      "ip": "198.22.40.1",
+      "lan_ip": "10.230.40.1",
+      "service": "radio_archive_gate",
+      "port": 7117,
+      "os": "Underground Radio Station OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A broadcast was replaced while the station controller was unattended.\nInternal destination: 10.230.40.3, service radio_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_underground_radio_station_1"
+    },
+    {
+      "key": "operations",
+      "kind": "workstation",
+      "hostname": "underground-radio-station-operations",
+      "ip": "10.230.40.2",
+      "lan_ip": "10.230.40.2",
+      "service": "radio_archive_ops",
+      "port": 7118,
+      "os": "Underground Radio Station OS 1.0",
+      "file": "/srv/records/operations.log",
+      "text": "Underground Radio Station: operational log.\nScheduled maintenance: 03:10.\nRecords host: 10.230.40.3.",
+      "access": "shell",
+      "password": "bw_underground_radio_station_2"
+    },
+    {
+      "key": "records",
+      "kind": "database",
+      "hostname": "underground-radio-station-records",
+      "ip": "10.230.40.3",
+      "lan_ip": "10.230.40.3",
+      "service": "radio_archive",
+      "port": 7119,
+      "os": "Underground Radio Station OS 1.0",
+      "file": "/srv/records/broadcast-ledger.txt",
+      "text": "A broadcast was replaced while the station controller was unattended.\nRecord owner: underground_radio_station.\nCase reference: BW-040.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_underground_radio_station_3"
+    }
+  ],
+  "subnet": "10.230.40."
+}

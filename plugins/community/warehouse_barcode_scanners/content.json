@@ -1,0 +1,32 @@
+{
+  "name": "Warehouse Barcode Scanners",
+  "family": "device",
+  "kind": "workstation",
+  "service": "stock_sync",
+  "file": "scans.csv",
+  "story": "Pallet CR-204 moved to a loading dock without an outbound scan.",
+  "objective": "Audit the controller and recover its operational record.",
+  "reward": 80,
+  "id": "warehouse_barcode_scanners",
+  "number": 6,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "workstation",
+      "hostname": "warehouse-barcode-scanners-records",
+      "ip": "198.22.6.1",
+      "lan_ip": null,
+      "service": "stock_sync",
+      "port": 7015,
+      "os": "Warehouse Barcode Scanners OS 1.0",
+      "file": "/srv/records/scans.csv",
+      "text": "Pallet CR-204 moved to a loading dock without an outbound scan.\nRecord owner: warehouse_barcode_scanners.\nCase reference: BW-006.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_warehouse_barcode_scanners_1"
+    }
+  ],
+  "subnet": "10.230.6.",
+  "org_kind": "corporation"
+}

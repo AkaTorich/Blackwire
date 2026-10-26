@@ -1,0 +1,10 @@
+{
+  "name": "Investigation Status Desk",
+  "family": "utility",
+  "mode": "investigation",
+  "story": "Display the current in-game investigation state.",
+  "id": "investigation_status_desk",
+  "number": 71,
+  "version": "0.1.1",
+  "api": 1
+}

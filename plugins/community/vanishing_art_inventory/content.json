@@ -1,0 +1,46 @@
+{
+  "name": "Vanishing Art Inventory",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "media",
+  "service": "art_store",
+  "file": "art-inventory.csv",
+  "story": "A gallery's private inventory contains a replacement with a copied catalog number.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 240,
+  "id": "vanishing_art_inventory",
+  "number": 51,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "vanishing-art-inventory-gateway",
+      "ip": "198.22.51.1",
+      "lan_ip": "10.230.51.1",
+      "service": "art_store_gate",
+      "port": 7150,
+      "os": "Vanishing Art Inventory OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A gallery's private inventory contains a replacement with a copied catalog number.\nInternal destination: 10.230.51.2, service art_store.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_vanishing_art_inventory_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "vanishing-art-inventory-records",
+      "ip": "10.230.51.2",
+      "lan_ip": "10.230.51.2",
+      "service": "art_store",
+      "port": 7151,
+      "os": "Vanishing Art Inventory OS 1.0",
+      "file": "/srv/records/art-inventory.csv",
+      "text": "A gallery's private inventory contains a replacement with a copied catalog number.\nRecord owner: vanishing_art_inventory.\nCase reference: BW-051.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_vanishing_art_inventory_2"
+    }
+  ],
+  "subnet": "10.230.51."
+}

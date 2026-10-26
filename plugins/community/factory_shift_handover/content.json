@@ -1,0 +1,33 @@
+{
+  "name": "Factory Shift Handover",
+  "family": "event",
+  "kind": "workstation",
+  "service": "shift_control",
+  "file": "handover.log",
+  "story": "An unattended control desk receives the next shift's maintenance handover.",
+  "mode": "handover",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 124,
+  "id": "factory_shift_handover",
+  "number": 94,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "workstation",
+      "hostname": "factory-shift-handover-records",
+      "ip": "198.22.94.1",
+      "lan_ip": null,
+      "service": "shift_control",
+      "port": 7279,
+      "os": "Factory Shift Handover OS 1.0",
+      "file": "/srv/records/handover.log",
+      "text": "An unattended control desk receives the next shift's maintenance handover.\nRecord owner: factory_shift_handover.\nCase reference: BW-094.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_factory_shift_handover_1"
+    }
+  ],
+  "subnet": "10.230.94.",
+  "org_kind": "corporation"
+}

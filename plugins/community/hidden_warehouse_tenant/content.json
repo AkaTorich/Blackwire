@@ -1,0 +1,46 @@
+{
+  "name": "Hidden Warehouse Tenant",
+  "family": "case",
+  "kind": "file_server",
+  "org_kind": "corporation",
+  "service": "lease_archive",
+  "file": "warehouse-leases.csv",
+  "story": "A sealed storage room receives power under a nonexistent lease.",
+  "objective": "Follow both evidence hosts and establish the custody trail.",
+  "reward": 265,
+  "id": "hidden_warehouse_tenant",
+  "number": 56,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "gateway",
+      "kind": "gateway",
+      "hostname": "hidden-warehouse-tenant-gateway",
+      "ip": "198.22.56.1",
+      "lan_ip": "10.230.56.1",
+      "service": "lease_archive_gate",
+      "port": 7165,
+      "os": "Hidden Warehouse Tenant OS 1.0",
+      "file": "/srv/records/routing-note.txt",
+      "text": "A sealed storage room receives power under a nonexistent lease.\nInternal destination: 10.230.56.2, service lease_archive.\nUse the gateway to reach the internal network.",
+      "access": "shell",
+      "password": "bw_hidden_warehouse_tenant_1"
+    },
+    {
+      "key": "records",
+      "kind": "file_server",
+      "hostname": "hidden-warehouse-tenant-records",
+      "ip": "10.230.56.2",
+      "lan_ip": "10.230.56.2",
+      "service": "lease_archive",
+      "port": 7166,
+      "os": "Hidden Warehouse Tenant OS 1.0",
+      "file": "/srv/records/warehouse-leases.csv",
+      "text": "A sealed storage room receives power under a nonexistent lease.\nRecord owner: hidden_warehouse_tenant.\nCase reference: BW-056.\nStatus: preserved for in-game review.",
+      "access": "root",
+      "password": "bw_hidden_warehouse_tenant_2"
+    }
+  ],
+  "subnet": "10.230.56."
+}

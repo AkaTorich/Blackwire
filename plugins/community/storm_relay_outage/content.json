@@ -1,0 +1,33 @@
+{
+  "name": "Storm Relay Outage",
+  "family": "event",
+  "kind": "router",
+  "service": "storm_relay",
+  "file": "storm-status.txt",
+  "story": "A coastal relay loses its uplink as a simulated storm approaches.",
+  "mode": "outage",
+  "objective": "Recover the incident record and follow the timed incident log.",
+  "reward": 100,
+  "id": "storm_relay_outage",
+  "number": 91,
+  "version": "0.1.1",
+  "api": 1,
+  "nodes": [
+    {
+      "key": "records",
+      "kind": "router",
+      "hostname": "storm-relay-outage-records",
+      "ip": "198.22.91.1",
+      "lan_ip": null,
+      "service": "storm_relay",
+      "port": 7270,
+      "os": "Storm Relay Outage OS 1.0",
+      "file": "/srv/records/storm-status.txt",
+      "text": "A coastal relay loses its uplink as a simulated storm approaches.\nRecord owner: storm_relay_outage.\nCase reference: BW-091.\nStatus: preserved for in-game review.",
+      "access": "shell",
+      "password": "bw_storm_relay_outage_1"
+    }
+  ],
+  "subnet": "10.230.91.",
+  "org_kind": "corporation"
+}

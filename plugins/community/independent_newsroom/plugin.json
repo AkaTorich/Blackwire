@@ -1,0 +1,23 @@
+{
+  "id": "independent_newsroom",
+  "name": "Independent Newsroom",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "independent_newsroom_open": "open_window",
+    "independent_newsroom_start": "start",
+    "independent_newsroom_status": "status"
+  }
+}

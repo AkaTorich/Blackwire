@@ -1,0 +1,23 @@
+{
+  "id": "quest_progress_board",
+  "name": "Quest Progress Board",
+  "version": "0.1.1",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "content.json"
+  ],
+  "permissions": [
+    "content",
+    "sys"
+  ],
+  "events": {
+    "on_load": "load",
+    "on_ui": "ui"
+  },
+  "commands": {
+    "quest_progress_board_open": "open_window",
+    "quest_progress_board_report": "refresh",
+    "quest_progress_board_export": "export_report"
+  }
+}
