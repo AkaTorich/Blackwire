@@ -19,6 +19,8 @@ class SdkCacheTests(unittest.TestCase):
                 root = Path(temp).resolve()
                 stage = root / "target/sdk"
                 stage.mkdir(parents=True)
+                legacy_examples = stage / "examples/exploits"
+                legacy_examples.mkdir(parents=True)
                 readme = root / "README-source.md"
                 readme.write_text("current SDK docs", encoding="utf-8")
                 binary = root / "checker"
@@ -38,6 +40,7 @@ class SdkCacheTests(unittest.TestCase):
                         sdk.prepare(args)
                     sdk.prepare(args)
                     sdk.verify(stage)
+                    self.assertFalse(legacy_examples.exists(), "stale empty folders must not become invalid plugins")
                     self.assertEqual((stage/"README.md").read_text(encoding="utf-8"), "current SDK docs")
                     self.assertEqual((stage/"bin"/system/sdk.TOOLS[system]).read_bytes(), b"test binary")
 

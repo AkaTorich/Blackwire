@@ -118,6 +118,11 @@ def prepare(args):
         dest = STAGE / name
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, dest)
+    # Empty cached example folders would be mistaken for plugins by the loader.
+    for directory in sorted((p for p in STAGE.rglob("*") if p.is_dir()),
+                            key=lambda p: len(p.parts), reverse=True):
+        if not any(directory.iterdir()):
+            directory.rmdir()
     (STAGE / "manifest.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     verify(STAGE)
     print(f"SDK {version()}: {len(files)} files staged for {system}")
