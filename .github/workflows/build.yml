@@ -1,9 +1,8 @@
-# Push to main builds installers. Version tags also publish a release with the SDK ZIP.
+# A version tag starts one build and publishes installers, SDK and plugins.
 name: Build
 
 on:
   push:
-    branches: ['main']
     tags: ['v*']
   workflow_dispatch:
 
