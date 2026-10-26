@@ -1,7 +1,7 @@
 //! Автоматическая проверка UI плагинов из тестового запуска.
 //!
 //! Разрешена только при явно отдельном профиле, чтобы сохранение игрока не
-//! затрагивалось: нужны одновременно флаги `--sdk-ui-test` и `--data-dir`.
+//! затрагивалось: нужны `--data-dir` и один из флагов `--sdk-ui-test` / `--exit-ui-test`.
 //! Результат самопроверки окно отправляет через `sdk_ui_report`, а скрипт
 //! проверки — `tools/sdk-ui-test.js`, подкладывается в окно при его запуске.
 
@@ -12,7 +12,7 @@ use crate::state::AppState;
 /// Истина, если игра запущена с проверочными флагами.
 fn allowed() -> Result<(), String> {
     let args: Vec<String> = std::env::args().collect();
-    let has_test = args.iter().any(|a| a == "--sdk-ui-test");
+    let has_test = args.iter().any(|a| a == "--sdk-ui-test" || a == "--exit-ui-test");
     let has_dir = args.iter().any(|a| a == "--data-dir");
     if has_test && has_dir {
         Ok(())
@@ -22,7 +22,7 @@ fn allowed() -> Result<(), String> {
 }
 
 const MAX_REPORT: usize = 65_536;
-const STAGES: &[&str] = &["manager", "panel"];
+const STAGES: &[&str] = &["manager", "panel", "exit"];
 
 /// Записать отчёт самопроверки окна.
 #[tauri::command]
@@ -65,6 +65,17 @@ pub fn inject(app: &AppHandle, label: String) {
         std::thread::sleep(std::time::Duration::from_millis(1500));
         if let Some(win) = app.get_webview_window(&label) {
             let _ = win.eval(include_str!("../../tools/sdk-ui-test.js"));
+        }
+    });
+}
+
+/// Check the actual desktop button and save-and-exit command in an isolated profile.
+pub fn inject_exit(app: &AppHandle, label: String) {
+    let app = app.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(5));
+        if let Some(win) = app.get_webview_window(&label) {
+            let _ = win.eval(include_str!("../../tools/exit-ui-test.js"));
         }
     });
 }

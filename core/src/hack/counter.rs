@@ -136,6 +136,9 @@ fn plant_implant(world: &mut World) {
 fn fine(world: &mut World) {
     let amount = 100 + world.rng.range(0, 200);
     let pay = amount.min(world.player.money.max(0));
+    if pay == 0 {
+        return;
+    }
     world.player.money -= pay;
     world.defense.fines_total += pay;
     let domain = world

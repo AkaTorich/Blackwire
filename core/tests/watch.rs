@@ -106,3 +106,124 @@ fn locked_blocks_attacks_via_host() {
     assert!(hack::is_locked(&w));
     assert!(hack::lock_remaining(&w) > 0);
 }
+
+#[test]
+fn active_raid_cannot_extend_its_own_lock() {
+    let mut w = world();
+    w.player.heat = 80.0;
+    w.investigation.progress = 100.0;
+    watch::sweep(&mut w, 1);
+    let deadline = w.investigation.locked_until;
+    for _ in 0..119 {
+        w.clock.epoch_secs += 1;
+        w.investigation.progress = 100.0;
+        watch::sweep(&mut w, 1);
+    }
+    assert_eq!(w.investigation.raids, 1);
+    assert_eq!(w.investigation.locked_until, deadline);
+    w.clock.epoch_secs = deadline;
+    assert!(!watch::is_locked(&w));
+    for _ in 0..120 {
+        w.investigation.progress = 100.0;
+        watch::sweep(&mut w, 1);
+        assert!(!watch::is_locked(&w), "must allow time to recover between raids");
+        w.clock.epoch_secs += 1;
+    }
+}
+
+#[test]
+fn tracing_warning_does_not_repeat_after_progress_falls_or_reload() {
+    let mut w = world();
+    w.player.heat = 80.0;
+    w.investigation.progress = 69.9;
+    watch::sweep(&mut w, 1);
+    let before = w.machines[0].mail.len();
+    w.machines[0].mail.last_mut().unwrap().read = true;
+    w = World::from_json(&w.to_json()).unwrap();
+    for _ in 0..10 {
+        w.investigation.progress = 55.0;
+        watch::sweep(&mut w, 1);
+        w.investigation.progress = 69.9;
+        watch::sweep(&mut w, 1);
+    }
+    assert_eq!(w.machines[0].mail.len(), before);
+    assert!(w.machines[0].mail.last().unwrap().read, "threshold oscillation must not mark a warning unread again");
+}
+
+#[test]
+fn repeated_raids_update_one_notice_and_mark_it_unread() {
+    let mut w = world();
+    w.player.heat = 80.0;
+    for _ in 0..5 {
+        w.clock.epoch_secs += 241;
+        w.investigation.progress = 100.0;
+        watch::sweep(&mut w, 1);
+        let notices: Vec<_> = w.machines[0].mail.iter_mut().filter(|m| m.subject == "Канал заблокирован").collect();
+        assert_eq!(notices.len(), 1);
+        for m in notices {
+            assert!(!m.read);
+            m.read = true;
+        }
+    }
+    assert_eq!(w.investigation.raids, 5);
+}
+
+#[test]
+fn old_saves_load_without_repeating_current_warning() {
+    let mut w = world();
+    w.investigation.stage = InvStage::Tracing;
+    w.investigation.progress = 80.0;
+    let mut json = serde_json::to_value(&w).unwrap();
+    json["investigation"].as_object_mut().unwrap().remove("notified_stage");
+    let mut loaded = World::from_json(&json.to_string()).unwrap();
+    let before = loaded.machines[0].mail.len();
+    watch::sweep(&mut loaded, 1);
+    assert_eq!(loaded.machines[0].mail.len(), before);
+}
+
+#[test]
+fn closed_case_can_notify_again_without_duplicating_mail() {
+    let mut w = world();
+    w.player.heat = 80.0;
+    w.investigation.progress = 69.9;
+    watch::sweep(&mut w, 1);
+    w.machines[0].mail.last_mut().unwrap().read = true;
+    let before = w.machines[0].mail.len();
+    w.player.heat = 0.0;
+    w.investigation.progress = 0.0;
+    watch::sweep(&mut w, 1);
+    w.clock.epoch_secs += 300;
+    w.player.heat = 80.0;
+    w.investigation.progress = 69.9;
+    watch::sweep(&mut w, 1);
+    assert_eq!(w.machines[0].mail.len(), before);
+    assert!(!w.machines[0].mail.last().unwrap().read);
+    assert!(watch::take_pending(&mut w).is_some());
+}
+
+#[test]
+fn prolonged_investigation_keeps_mail_bounded() {
+    use blackwire_core::hack::counter::{Implant, ImplantKind};
+    let mut w = world();
+    w.player.money = 0;
+    w.player.heat = 80.0;
+    let now = w.now();
+    for id in 1..=244 {
+        w.defense.implants.push(Implant {
+            id,
+            path: format!("/tmp/.test{}", id),
+            kind: ImplantKind::Tracker,
+            planted: now,
+        });
+    }
+    let before = w.machines[0].mail.len();
+    for _ in 0..3600 {
+        w.tick(1000);
+    }
+    let police_mail = w.machines[0].mail[before..].iter().filter(|m| {
+        m.from.starts_with("otdel-k@") || m.from.starts_with("soc@") || m.from.starts_with("court@")
+    }).count();
+    assert!(police_mail <= 4, "one game hour produced {} police messages", police_mail);
+    assert!(w.investigation.raids <= 30, "raid cooldown was bypassed");
+    assert!(w.investigation.raids > 0, "investigation must still work");
+}

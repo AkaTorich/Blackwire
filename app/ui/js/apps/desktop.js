@@ -33,9 +33,9 @@
   function quitGame() {
     if (quitPending) return;
     quitPending = true;
-    Win.confirm('Сохранить прогресс и выйти из игры?').then(function (ok) {
-      if (ok) return BW.invoke('quit');
-    }).catch(function (e) {
+    // Native app windows can cover an HTML confirmation on the desktop.
+    // The quit command saves the world before closing every game window.
+    BW.invoke('quit').catch(function (e) {
       Win.toast('Не удалось выйти: ' + String(e), 'err');
     }).finally(function () { quitPending = false; });
   }

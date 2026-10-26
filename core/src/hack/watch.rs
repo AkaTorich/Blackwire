@@ -68,6 +68,9 @@ pub struct Investigation {
     pub raids: u32,
     /// Игровое время, до которого наступательные действия заблокированы.
     pub locked_until: u64,
+    /// Highest warning already sent for this investigation; None supports old saves.
+    #[serde(default)]
+    pub notified_stage: Option<InvStage>,
     /// Событие для оболочки (не сохраняется).
     #[serde(skip)]
     pub pending: Option<InvEvent>,
@@ -133,7 +136,8 @@ pub fn sweep(world: &mut World, dt: u64) {
     world.investigation.watched = ev.iter().map(|(id, _)| *id).collect();
     world.investigation.last_sweep = now;
 
-    let prev_rank = world.investigation.stage.rank();
+    let notified = world.investigation.notified_stage.unwrap_or(world.investigation.stage);
+    world.investigation.notified_stage = Some(notified);
 
     // дело растёт от улик и подозрения; без них — стихает
     let active = lead.is_some() && (total_ev > 0 || heat > 20.0);
@@ -145,19 +149,31 @@ pub fn sweep(world: &mut World, dt: u64) {
     let mut progress = (world.investigation.progress + delta).clamp(0.0, 100.0);
 
     let mut raided = false;
-    if progress >= 100.0 && lead.is_some() {
+    // Leave two minutes to recover after the two-minute lock expires.
+    let raid_ready = world.investigation.locked_until == 0
+        || now >= world.investigation.locked_until.saturating_add(120);
+    if progress >= 100.0 && lead.is_some() && raid_ready {
         raided = true;
         progress = 55.0;
         world.investigation.raids += 1;
         world.investigation.locked_until = now + 120;
     }
+    // A running raid must expire; repeated evidence cannot extend its deadline.
+    if !raided && !raid_ready {
+        progress = progress.min(99.0);
+    }
     world.investigation.progress = progress;
     let new_stage = stage_for(progress);
     world.investigation.stage = new_stage;
 
+    if progress == 0.0 {
+        world.investigation.notified_stage = Some(InvStage::Dormant);
+    }
     if raided {
+        world.investigation.notified_stage = Some(InvStage::Raid);
         emit_raid(world, lead);
-    } else if new_stage.rank() > prev_rank && lead.is_some() {
+    } else if new_stage.rank() > notified.rank() && lead.is_some() {
+        world.investigation.notified_stage = Some(new_stage);
         emit_stage(world, lead, new_stage);
     }
 }
@@ -240,6 +256,14 @@ fn emit_raid(world: &mut World, lead: Option<u32>) {
 fn push_mail_to_player(world: &mut World, from: &str, subject: &str, body: &str) {
     let to = format!("{}@home.net", world.player.handle);
     let now = world.now();
+    // Keep repeated system alerts in one inbox message, including across saves.
+    if let Some(mail) = world.machines[0].mail.iter_mut().rev().find(|m| {
+        m.folder == MailFolder::Inbox && m.from == from && m.subject == subject && m.body == body
+    }) {
+        mail.time = now;
+        mail.read = false;
+        return;
+    }
     world.machines[0].push_mail(MailMessage {
         id: 0,
         from: from.to_string(),

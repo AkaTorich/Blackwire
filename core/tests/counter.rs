@@ -85,3 +85,16 @@ fn shield_toggles() {
     counter::set_shield(&mut w, false);
     assert!(!w.defense.shield);
 }
+
+#[test]
+fn empty_balance_does_not_generate_zero_value_fine_mail() {
+    let mut w = world();
+    w.player.money = 0;
+    under_threat(&mut w);
+    for _ in 0..2000 {
+        w.clock.epoch_secs += 45;
+        counter::tick(&mut w, 1);
+    }
+    assert_eq!(w.defense.fines_total, 0);
+    assert!(!w.machines[0].mail.iter().any(|m| m.subject == "Судебное взыскание"));
+}
