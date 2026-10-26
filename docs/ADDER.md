@@ -105,7 +105,7 @@ exit()                 # завершить скрипт; exit(1) — с код�
 - `sys.hostname()`, `sys.whoami()`, `sys.is_root()`, `sys.cwd()`, `sys.env(name)`, `sys.set_env(name, value)`
 - `sys.users()` — список имён пользователей
 - `sys.procs()` — список словарей `{pid, name, user, cpu, mem}`
-- `sys.kill(pid)`, `sys.uptime()`, `sys.notify(title, text)` — всплывающее уведомление
+- `sys.kill(pid)`, `sys.uptime()`, `sys.notify(title, text)` — всплывающее уведомление, `sys.pid()` — pid самого скрипта
 - `sys.open(app, arg=null)` — открыть окно приложения (`editor`, `files`, `browser`, …)
 - `sys.money()` — счёт игрока (₵); `sys.debt()` — остаток долга; `sys.missions()` → список `{code, title, status, objective, reward}`
 

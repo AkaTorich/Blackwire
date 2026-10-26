@@ -1,0 +1,15 @@
+# Автоподбор: подбирает пароль по словарю и входит
+if len(sys.args) < 3:
+    print("Использование: autocrack.adr адрес пользователь")
+    exit(1)
+ip = sys.args[1]
+user = sys.args[2]
+pw = net.crack(ip, user)
+if pw == null:
+    print("Пароль не подобран")
+    exit(1)
+print(f"Пароль: {pw}")
+if net.connect(ip, user, pw):
+    print(f"Вход выполнен: {user}@{ip}")
+else:
+    print("Войти не удалось")

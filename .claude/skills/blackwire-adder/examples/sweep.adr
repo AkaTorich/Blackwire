@@ -1,0 +1,10 @@
+# Обходчик: пинг всех известных узлов из /etc/hosts
+hosts = fs.read("/etc/hosts")
+for line in hosts.split("\n"):
+    line = line.strip()
+    if line == "" or line.startswith("#"):
+        continue
+    ip = line.split()[0]
+    ms = net.ping(ip)
+    mark = "жив" if ms != null else "нет"
+    print(f"{ip:16} {mark}")

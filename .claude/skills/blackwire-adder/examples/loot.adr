@@ -1,0 +1,19 @@
+# Сборщик: ищет интересные файлы и показывает первую строку
+roots = ["/root", "/home", "/var"]
+found = 0
+for root in roots:
+    try:
+        items = fs.list(root)
+    except:
+        continue
+    for f in items:
+        name = f["name"]
+        if name.endswith(".txt") or name.endswith(".log") or name.endswith(".csv"):
+            try:
+                data = fs.read(f["path"])
+                first = data.split("\n")[0]
+                print(f"{f['path']}: {first}")
+                found = found + 1
+            except:
+                pass
+print(f"Найдено файлов: {found}")

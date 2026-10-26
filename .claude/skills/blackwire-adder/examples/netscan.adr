@@ -1,0 +1,15 @@
+# Сканер: проверяет адреса на открытый ssh и слабые места
+targets = sys.args[1:]
+if not targets:
+    print("Использование: netscan.adr адрес [адрес ...]")
+    exit(1)
+for ip in targets:
+    ms = net.ping(ip)
+    if ms == null:
+        print(f"{ip} недоступен")
+        continue
+    ports = net.scan(ip)
+    ssh = [p for p in ports if p["service"] == "ssh"]
+    vulns = net.vulns(ip)
+    mark = "есть" if ssh else "нет"
+    print(f"{ip}: портов {len(ports)}, ssh {mark}, слабых мест {len(vulns)}")
