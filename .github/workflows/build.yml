@@ -64,6 +64,9 @@ jobs:
             libssl-dev \
             file
 
+      - name: SDK packaging cache tests
+        run: python -B tools/test_package_sdk.py
+
       - name: Engine and Adder tests
         run: cargo test --locked -p blackwire-core -p blackwire-lang
 

@@ -97,12 +97,16 @@ def prepare(args):
     if STAGE.resolve() != expected or (ROOT / "target").is_symlink():
         raise ValueError("SDK staging path must stay inside the project target directory")
     if STAGE.exists():
+        entries = list(STAGE.rglob("*"))
+        if any(path.is_symlink() for path in entries):
+            raise ValueError("SDK staging directory must not contain symbolic links")
         old_manifest = STAGE / "manifest.json"
-        if not old_manifest.is_file():
-            raise ValueError("Refusing to replace an unknown SDK staging directory")
-        previous = json.loads(old_manifest.read_text(encoding="utf-8"))["sha256"]
-        actual = {p.relative_to(STAGE).as_posix() for p in STAGE.rglob("*") if p.is_file()}
-        if actual - set(previous) - {"manifest.json"}:
+        previous = (json.loads(old_manifest.read_text(encoding="utf-8"))["sha256"]
+                    if old_manifest.is_file() else {})
+        actual = {p.relative_to(STAGE).as_posix() for p in entries if p.is_file()}
+        # Rust's CI cache can restore empty directories or only some generated SDK files.
+        # Recreate known package files, while preserving the refusal to touch unrelated files.
+        if actual - set(previous) - set(files) - {"manifest.json"}:
             raise ValueError("Unexpected files in SDK staging directory")
         for name in previous:
             obsolete = (STAGE / name).resolve()
