@@ -2,10 +2,10 @@
 /* Окно, которое открывает сам плагин: берёт из плагина заголовок, текст,
    таблицу и кнопки, рисует их в оформлении игры. */
 (function () {
-  function el(tag, cls, html) {
+  function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
-    if (html != null) e.innerHTML = html;
+    if (text != null) e.textContent = text;
     return e;
   }
 
@@ -70,7 +70,8 @@
 
       var btnRow = el('div', 'plug-panel-btns');
       (spec.buttons || []).forEach(function (b, i) {
-        var btn = el('button', 'btn' + (i === 0 ? ' btn-primary' : '') + ' btn-sm', '<span>' + (b.label || b.id) + '</span>');
+        var btn = el('button', 'btn' + (i === 0 ? ' btn-primary' : '') + ' btn-sm');
+        btn.appendChild(el('span', '', b.label || b.id));
         btn.addEventListener('click', function () {
           BW.sound('click');
           btn.disabled = true;

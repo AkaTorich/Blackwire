@@ -70,14 +70,17 @@ jobs:
       - name: Engine and Adder tests
         run: cargo test --locked -p blackwire-core -p blackwire-lang
 
-      - name: Tauri CLI
-        uses: taiki-e/install-action@v2
+      - name: Node.js
+        uses: actions/setup-node@v6
         with:
-          tool: tauri-cli
+          node-version: '24'
+
+      - name: Tauri CLI
+        run: npm install --global @tauri-apps/cli@2.12.4 --no-audit --no-fund
 
       - name: Build game, SDK and installer
         working-directory: app
-        run: cargo tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }} --ci
+        run: tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }} --ci
 
       - name: Verify packaged SDK
         shell: bash
@@ -148,7 +151,7 @@ jobs:
             Blackwire with Adder Plugin SDK (API 1).
             Installers for Windows, Linux and macOS include the SDK.
             Blackwire-SDK-*.zip contains the manuals, CHM help, examples, schemas and checker tools for all three systems.
-            Blackwire-Plugins-*.zip contains 100 standalone Adder plugins with English names and individual START_HERE guides.
+            Blackwire-Plugins-*.zip contains 100 standalone Adder plugins with individual START_HERE guides.
           fail_on_unmatched_files: true
           files: |
             target/release-installers/*

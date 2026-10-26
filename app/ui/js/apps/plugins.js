@@ -55,8 +55,15 @@
 
     function row(p) {
       var card = el('section', 'panel plug-card');
+      card.dataset.pluginId = p.id;
       var h = el('div', 'panel-head');
-      h.innerHTML = Icons.get('plugins', 14) + '<span><b>' + (p.name || p.id) + '</b> · ' + (p.version || '') + '</span>';
+      h.innerHTML = Icons.get('plugins', 14);
+      var heading = el('span');
+      var name = el('b');
+      name.textContent = p.name || p.id;
+      heading.appendChild(name);
+      heading.appendChild(document.createTextNode(' · ' + (p.version || '')));
+      h.appendChild(heading);
       card.appendChild(h);
 
       var meta = el('div', 'plug-meta');
@@ -91,7 +98,10 @@
         actions.appendChild(retry);
       }
       (p.windows || []).forEach(function (w) {
-        var openB = el('button', 'btn btn-sm btn-primary', Icons.get('max', 14) + '<span>' + (w.title || 'Окно') + '</span>');
+        var openB = el('button', 'btn btn-sm btn-primary', Icons.get('max', 14));
+        var windowTitle = el('span');
+        windowTitle.textContent = w.title || 'Окно';
+        openB.appendChild(windowTitle);
         openB.addEventListener('click', function () {
           BW.sound('click');
           Apps.openOrFocus('plugin_panel', w.id);
@@ -107,7 +117,10 @@
           var cmdRow = el('div', 'plug-cmd');
           var inp = el('input', 'input plug-arg');
           inp.placeholder = 'аргументы (необязательно)';
-          var runB = el('button', 'btn btn-sm', Icons.get('terminal', 14) + '<span>' + cmd + '</span>');
+          var runB = el('button', 'btn btn-sm', Icons.get('terminal', 14));
+          var commandName = el('span');
+          commandName.textContent = cmd;
+          runB.appendChild(commandName);
           runB.addEventListener('click', function () {
             BW.sound('click');
             runB.disabled = true;

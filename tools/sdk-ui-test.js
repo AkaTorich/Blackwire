@@ -11,11 +11,11 @@
    var info=await BW.plugins_list();assert(info.plugins.length===2&&info.plugins.every(function(p){return !p.error;}),'Пакеты загружены без ошибок');
    button('district_create').click();await wait(function(){return document.querySelector('pre').textContent.includes('Создан район 1');});
    var panel=await BW.plugins_panel('district:control');assert(panel.rows[0][1]===1,'Кнопка команды создаёт район');
-   var district=Array.from(document.querySelectorAll('section')).find(function(s){return s.querySelector('h3').textContent.includes('Линия-7');});
+   var district=Array.from(document.querySelectorAll('section')).find(function(s){return s.dataset.pluginId==='district';});
    Array.from(district.querySelectorAll('button')).find(function(b){return b.textContent==='Выключить';}).click();
    await wait(async function(){return !(await BW.plugins_list()).plugins.find(function(p){return p.id==='district';}).enabled;});assert(true,'Выключение через карточку');
-   await wait(function(){return Array.from(document.querySelectorAll('section')).some(function(s){return s.querySelector('h3').textContent.includes('Линия-7')&&Array.from(s.querySelectorAll('button')).some(function(b){return b.textContent==='Включить';});});});
-   district=Array.from(document.querySelectorAll('section')).find(function(s){return s.querySelector('h3').textContent.includes('Линия-7');});Array.from(district.querySelectorAll('button')).find(function(b){return b.textContent==='Включить';}).click();
+   await wait(function(){return Array.from(document.querySelectorAll('section')).some(function(s){return s.dataset.pluginId==='district'&&Array.from(s.querySelectorAll('button')).some(function(b){return b.textContent==='Включить';});});});
+   district=Array.from(document.querySelectorAll('section')).find(function(s){return s.dataset.pluginId==='district';});Array.from(district.querySelectorAll('button')).find(function(b){return b.textContent==='Включить';}).click();
    await wait(async function(){return (await BW.plugins_list()).plugins.find(function(p){return p.id==='district';}).enabled;});assert(true,'Включение через карточку');
    await wait(function(){return button('lab_create')&&!button('lab_create').disabled;});button('lab_create').click();await wait(function(){return document.querySelector('pre').textContent.includes('lab-camera-1');});assert(true,'Кнопка создаёт новый тип устройства');
    assert((await BW.plugins_panel('district:control')).rows[0][1]===1,'Повторная загрузка не дублирует контент');
