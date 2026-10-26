@@ -1,6 +1,6 @@
 {
   "id": "credit_union_branch",
-  "name": "Credit Union Branch",
+  "name": "Отделение кредитного союза",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -1,12 +1,12 @@
 {
-  "name": "Factory Shift Handover",
+  "name": "Передача смены на заводе",
   "family": "event",
   "kind": "workstation",
   "service": "shift_control",
   "file": "handover.log",
-  "story": "An unattended control desk receives the next shift's maintenance handover.",
+  "story": "Пустой пульт принимает передачу смены — обслуживание уходит в тень.",
   "mode": "handover",
-  "objective": "Recover the incident record and follow the timed incident log.",
+  "objective": "Поймать запись инцидента и пройти по его таймлайну.",
   "reward": 124,
   "id": "factory_shift_handover",
   "number": 94,
@@ -21,9 +21,9 @@
       "lan_ip": null,
       "service": "shift_control",
       "port": 7279,
-      "os": "Factory Shift Handover OS 1.0",
+      "os": "Передача смены на заводе OS 1.0",
       "file": "/srv/records/handover.log",
-      "text": "An unattended control desk receives the next shift's maintenance handover.\nRecord owner: factory_shift_handover.\nCase reference: BW-094.\nStatus: preserved for in-game review.",
+      "text": "Пустой пульт принимает передачу смены — обслуживание уходит в тень.\nВладелец записи: factory_shift_handover.\nНомер дела: BW-094.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_factory_shift_handover_1"
     }

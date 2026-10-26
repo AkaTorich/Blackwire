@@ -1,6 +1,6 @@
 {
   "id": "swapped_construction_bids",
-  "name": "Swapped Construction Bids",
+  "name": "Подменённые строительные заявки",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

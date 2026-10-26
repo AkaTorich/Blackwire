@@ -1,11 +1,11 @@
 {
-  "name": "Library Checkout Stations",
+  "name": "Стойки выдачи в библиотеке",
   "family": "device",
   "kind": "workstation",
   "service": "loan_sync",
   "file": "loans.csv",
-  "story": "A restricted atlas was checked out using an expired staff account.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Атлас с ограниченным доступом выдали по просроченной служебной учётке.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 104,
   "id": "library_checkout_stations",
   "number": 12,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "loan_sync",
       "port": 7033,
-      "os": "Library Checkout Stations OS 1.0",
+      "os": "Стойки выдачи в библиотеке OS 1.0",
       "file": "/srv/records/loans.csv",
-      "text": "A restricted atlas was checked out using an expired staff account.\nRecord owner: library_checkout_stations.\nCase reference: BW-012.\nStatus: preserved for in-game review.",
+      "text": "Атлас с ограниченным доступом выдали по просроченной служебной учётке.\nВладелец записи: library_checkout_stations.\nНомер дела: BW-012.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_library_checkout_stations_1"
     }

@@ -1,6 +1,6 @@
 {
   "id": "quest_progress_board",
-  "name": "Quest Progress Board",
+  "name": "Доска прохождения заданий",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

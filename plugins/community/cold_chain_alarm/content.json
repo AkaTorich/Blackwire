@@ -1,12 +1,12 @@
 {
-  "name": "Cold Chain Alarm",
+  "name": "Тревога холодильной цепочки",
   "family": "event",
   "kind": "medical_device",
   "service": "cold_monitor",
   "file": "cold-chain.csv",
-  "story": "A simulated refrigerator alarm appears while its monitoring endpoint goes silent.",
+  "story": "Срабатывает учебная тревога холодильника, пока наблюдательный узел молчит.",
   "mode": "service",
-  "objective": "Recover the incident record and follow the timed incident log.",
+  "objective": "Поймать запись инцидента и пройти по его таймлайну.",
   "reward": 140,
   "id": "cold_chain_alarm",
   "number": 96,
@@ -21,9 +21,9 @@
       "lan_ip": null,
       "service": "cold_monitor",
       "port": 7285,
-      "os": "Cold Chain Alarm OS 1.0",
+      "os": "Тревога холодильной цепочки OS 1.0",
       "file": "/srv/records/cold-chain.csv",
-      "text": "A simulated refrigerator alarm appears while its monitoring endpoint goes silent.\nRecord owner: cold_chain_alarm.\nCase reference: BW-096.\nStatus: preserved for in-game review.",
+      "text": "Срабатывает учебная тревога холодильника, пока наблюдательный узел молчит.\nВладелец записи: cold_chain_alarm.\nНомер дела: BW-096.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_cold_chain_alarm_1"
     }

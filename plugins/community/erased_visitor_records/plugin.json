@@ -1,6 +1,6 @@
 {
   "id": "erased_visitor_records",
-  "name": "Erased Visitor Records",
+  "name": "Стёртые записи о посетителях",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

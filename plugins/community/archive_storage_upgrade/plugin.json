@@ -1,6 +1,6 @@
 {
   "id": "archive_storage_upgrade",
-  "name": "Archive Storage Upgrade",
+  "name": "Накопитель под архив",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

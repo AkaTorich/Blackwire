@@ -1,6 +1,6 @@
 {
   "id": "factory_inspection_cameras",
-  "name": "Factory Inspection Cameras",
+  "name": "Камеры контроля на заводе",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

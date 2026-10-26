@@ -1,13 +1,14 @@
 {
-  "name": "Process Survey Tool",
+  "name": "Инструмент: обзор процессов",
   "family": "economy",
   "mode": "market",
   "file": "process_survey.adr",
   "code": "for proc in sys.procs():\n    print(proc[\"pid\"], proc[\"name\"], proc[\"user\"], proc[\"cpu\"], proc[\"mem\"])\n",
   "price": 35,
-  "story": "Print process ownership, CPU use and memory use.",
+  "story": "Печатает процессы, их владельцев, нагрузку на процессор и память.",
   "id": "process_survey_tool",
   "number": 88,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать процессы на машине."
 }

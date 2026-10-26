@@ -1,10 +1,11 @@
 {
-  "name": "Organization Directory",
+  "name": "Справочник организаций",
   "family": "utility",
   "mode": "orgs",
-  "story": "List discovered organizations and their gateways.",
+  "story": "Собирает разведанные организации и их шлюзы.",
   "id": "organization_directory",
   "number": 73,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать известные организации."
 }

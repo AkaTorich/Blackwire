@@ -23,7 +23,7 @@ def report():
         elif mode == "routes" and visible:
             rows.append([machine["hostname"], machine["ip"], machine["router"], machine["lan_ip"]])
         elif mode == "hardware" and visible:
-            rows.append([machine["hostname"], str(machine["ram_mb"]) + " MB RAM", str(machine["disk_mb"]) + " MB disk"])
+            rows.append([machine["hostname"], str(machine["ram_mb"]) + " МБ ОЗУ", str(machine["disk_mb"]) + " МБ диска"])
         elif mode == "logs" and (machine["id"] in owned or machine["id"] == 0):
             for entry in machine["logs"][-4:]:
                 rows.append([machine["hostname"], json.dumps(entry)])
@@ -38,8 +38,8 @@ def report():
         for key, quest in world["plugins"]["quests"].items():
             rows.append([quest["title"], quest["done"], quest["reward"]])
     elif mode == "budget":
-        rows.append(["Cash", player["money"]])
-        rows.append(["Finance", json.dumps(world["finance"])])
+        rows.append(["Наличные", player["money"]])
+        rows.append(["Финансы", json.dumps(world["finance"])])
         for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
             rows.append([key, item["price"]])
     elif mode == "investigation":
@@ -54,13 +54,13 @@ def report():
             rows.append([str(note)])
     elif mode == "upgrades":
         for item in player["upgrades"]:
-            rows.append(["Owned", item])
+            rows.append(["В наличии", item])
         for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
-            rows.append(["Shop", key, item["name"], item["price"]])
+            rows.append(["Магазин", key, item["name"], item["price"]])
     return rows
 
 def panel(rows):
-    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nUse Refresh to read the current world. Export writes a report to your in-game home directory.", "rows": rows[:100], "buttons": [{"id": "refresh", "label": "Refresh"}, {"id": "export", "label": "Export report"}]})
+    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nОбновить — перечитывает мир. Выгрузить — пишет отчёт в домашний каталог внутри игры.", "rows": rows[:100], "buttons": [{"id": "refresh", "label": "Обновить"}, {"id": "export", "label": "Выгрузить отчёт"}]})
 
 def load(event):
     panel([])
@@ -68,11 +68,11 @@ def load(event):
 def refresh(event):
     rows = report()
     panel(rows)
-    print(C["name"], "|", len(rows), "rows")
+    print(C["name"], "|", len(rows), "строк")
     for row in rows[:20]:
         print(json.dumps(row))
     if len(rows) == 0:
-        print("No matching records yet. Discover hosts or progress in the game, then refresh.")
+        print("Записей пока нет. Разведай узлы или продвинься по сюжету и обнови.")
     return rows
 
 def export_report(event):
@@ -85,7 +85,7 @@ def export_report(event):
     plugin.write(0, path, text)
     plugin.set("last_export", path)
     panel(rows)
-    print("In-game report:", path)
+    print("Отчёт в игре:", path)
 
 def open_window(event):
     panel(report())

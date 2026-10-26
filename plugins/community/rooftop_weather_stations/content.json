@@ -1,11 +1,11 @@
 {
-  "name": "Rooftop Weather Stations",
+  "name": "Крышные метеостанции",
   "family": "device",
   "kind": "server",
   "service": "weather_feed",
   "file": "readings.csv",
-  "story": "Wind readings stay identical while independent stations report a storm.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Показания ветра не меняются, хотя соседние станции сообщают о шторме.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 76,
   "id": "rooftop_weather_stations",
   "number": 5,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "weather_feed",
       "port": 7012,
-      "os": "Rooftop Weather Stations OS 1.0",
+      "os": "Крышные метеостанции OS 1.0",
       "file": "/srv/records/readings.csv",
-      "text": "Wind readings stay identical while independent stations report a storm.\nRecord owner: rooftop_weather_stations.\nCase reference: BW-005.\nStatus: preserved for in-game review.",
+      "text": "Показания ветра не меняются, хотя соседние станции сообщают о шторме.\nВладелец записи: rooftop_weather_stations.\nНомер дела: BW-005.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_rooftop_weather_stations_1"
     }

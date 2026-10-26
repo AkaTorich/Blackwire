@@ -1,10 +1,11 @@
 {
-  "name": "Known Host Inventory",
+  "name": "Список известных узлов",
   "family": "utility",
   "mode": "known",
-  "story": "List discovered hosts and their live status.",
+  "story": "Собирает все узлы, которые уже засветились, и показывает их состояние.",
   "id": "known_host_inventory",
   "number": 61,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать разведанные узлы и их состояние."
 }

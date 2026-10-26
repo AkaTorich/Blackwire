@@ -1,11 +1,11 @@
 {
-  "name": "Smart Door Locks",
+  "name": "Умные замки",
   "family": "device",
   "kind": "badge",
   "service": "lock_bridge",
   "file": "access.log",
-  "story": "Apartment 407 has an obsolete guest access token.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "У квартиры 407 остался действующий гостевой ключ, срок которого давно вышел.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 72,
   "id": "smart_door_locks",
   "number": 4,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "lock_bridge",
       "port": 7009,
-      "os": "Smart Door Locks OS 1.0",
+      "os": "Умные замки OS 1.0",
       "file": "/srv/records/access.log",
-      "text": "Apartment 407 has an obsolete guest access token.\nRecord owner: smart_door_locks.\nCase reference: BW-004.\nStatus: preserved for in-game review.",
+      "text": "У квартиры 407 остался действующий гостевой ключ, срок которого давно вышел.\nВладелец записи: smart_door_locks.\nНомер дела: BW-004.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_smart_door_locks_1"
     }

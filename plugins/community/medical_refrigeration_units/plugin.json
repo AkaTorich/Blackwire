@@ -1,6 +1,6 @@
 {
   "id": "medical_refrigeration_units",
-  "name": "Medical Refrigeration Units",
+  "name": "Медицинские холодильники",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

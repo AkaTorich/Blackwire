@@ -1,13 +1,14 @@
 {
-  "name": "Heat Watch Tool",
+  "name": "Инструмент: наблюдение за подозрением",
   "family": "economy",
   "mode": "market",
   "file": "heat_watch.adr",
   "code": "print(\"Heat:\", net.heat())\nwatch = net.watch()\nprint(\"Stage:\", watch[\"stage\"], \"Progress:\", watch[\"progress\"])\nprint(\"Raids:\", watch[\"raids\"], \"Locked:\", watch[\"locked\"])\n",
   "price": 45,
-  "story": "Report suspicion and investigation progress.",
+  "story": "Печатает подозрение и ход расследования.",
   "id": "heat_watch_tool",
   "number": 90,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать подозрение и слежку."
 }

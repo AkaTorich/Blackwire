@@ -1,6 +1,6 @@
 {
   "id": "audit_window_countdown",
-  "name": "Audit Window Countdown",
+  "name": "Отсчёт окна аудита",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

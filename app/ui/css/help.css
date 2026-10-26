@@ -13,7 +13,7 @@
   flex: none;
   overflow: auto;
   border-right: 1px solid rgba(var(--accent-rgb), .12);
-  background: rgba(var(--bg-rgb), .25);
+  background: var(--bg);
   transition: width .2s var(--ease), min-width .2s var(--ease), opacity .2s;
 }
 .help.side-hidden .help-side { width: 0; min-width: 0; opacity: 0; overflow: hidden; border-right-color: transparent; }

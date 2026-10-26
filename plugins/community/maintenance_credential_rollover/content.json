@@ -1,12 +1,12 @@
 {
-  "name": "Maintenance Credential Rollover",
+  "name": "Смена сервисных ключей",
   "family": "event",
   "kind": "gateway",
   "service": "maintenance_hub",
   "file": "credential-notice.txt",
-  "story": "A service gateway rotates its maintenance credentials at the end of a shift.",
+  "story": "Служебный шлюз меняет сервисные ключи в конце смены.",
   "mode": "rollover",
-  "objective": "Recover the incident record and follow the timed incident log.",
+  "objective": "Поймать запись инцидента и пройти по его таймлайну.",
   "reward": 172,
   "id": "maintenance_credential_rollover",
   "number": 100,
@@ -21,9 +21,9 @@
       "lan_ip": null,
       "service": "maintenance_hub",
       "port": 7297,
-      "os": "Maintenance Credential Rollover OS 1.0",
+      "os": "Смена сервисных ключей OS 1.0",
       "file": "/srv/records/credential-notice.txt",
-      "text": "A service gateway rotates its maintenance credentials at the end of a shift.\nRecord owner: maintenance_credential_rollover.\nCase reference: BW-100.\nStatus: preserved for in-game review.",
+      "text": "Служебный шлюз меняет сервисные ключи в конце смены.\nВладелец записи: maintenance_credential_rollover.\nНомер дела: BW-100.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_maintenance_credential_rollover_1"
     }

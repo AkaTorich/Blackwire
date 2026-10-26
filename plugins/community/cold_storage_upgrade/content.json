@@ -1,13 +1,14 @@
 {
-  "name": "Cold Storage Upgrade",
+  "name": "Накопитель холодного хранения",
   "family": "economy",
   "mode": "hardware",
   "field": "disk_mb",
   "amount": 32768,
   "price": 480,
-  "story": "Add 32 GB of virtual disk capacity for long-term archives.",
+  "story": "Добавляет 32 ГБ виртуального диска под долгое хранение.",
   "id": "cold_storage_upgrade",
   "number": 83,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Увеличить диск на 32 ГБ."
 }

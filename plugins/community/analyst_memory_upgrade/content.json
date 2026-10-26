@@ -1,13 +1,14 @@
 {
-  "name": "Analyst Memory Upgrade",
+  "name": "Планка памяти аналитика",
   "family": "economy",
   "mode": "hardware",
   "field": "ram_mb",
   "amount": 4096,
   "price": 420,
-  "story": "Add 4 GB of memory for a larger virtual workstation.",
+  "story": "Добавляет 4 ГБ памяти — рабочая станция становится просторнее.",
   "id": "analyst_memory_upgrade",
   "number": 79,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Увеличить память на 4 ГБ."
 }

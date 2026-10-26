@@ -11,7 +11,7 @@ use crate::vfs;
 use crate::world::GameClock;
 
 /// Приложения, которые можно открыть командой `open`.
-pub const APPS: &[&str] = &["terminal", "editor", "files", "browser", "monitor", "map", "settings", "help", "mail", "scenario", "duel"];
+pub const APPS: &[&str] = &["terminal", "editor", "files", "browser", "monitor", "map", "settings", "help", "mail", "scenario", "duel", "plugins"];
 
 // ---------------------------------------------------------------- Adder
 

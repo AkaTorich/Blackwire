@@ -1,10 +1,11 @@
 {
-  "name": "Investigation Status Desk",
+  "name": "Стол следственного отдела",
   "family": "utility",
   "mode": "investigation",
-  "story": "Display the current in-game investigation state.",
+  "story": "Показывает текущее состояние расследования в мире.",
   "id": "investigation_status_desk",
   "number": 71,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать расследование и его стадию."
 }

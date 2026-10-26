@@ -1,6 +1,6 @@
 {
   "id": "vanishing_art_inventory",
-  "name": "Vanishing Art Inventory",
+  "name": "Исчезающая опись галереи",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

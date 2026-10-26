@@ -1,35 +1,31 @@
-# Independent Newsroom
+# Сеть независимой редакции
 
-An editor needs the original notes behind a silently changed public report.
+Редактору нужны исходники — публичный материал кто-то тихо подправил.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `independent_newsroom_open`, then press Start; or run `independent_newsroom_start` in the game terminal.
-3. Read the new mail titled **Independent Newsroom: first lead**.
-4. Visit `http://198.22.24.1/` in the game's browser and inspect the first host with `probe 198.22.24.1`.
-5. Traverse the gateway and recover the internal archive.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `independent_newsroom_open` или нажми «Старт».
+3. В терминале запусти `independent_newsroom_start`.
+4. Прочитай письмо «Сеть независимой редакции: первая зацепка» в игровой почте.
+5. Открой `http://198.22.24.1/` в игровом браузере и запусти `probe 198.22.24.1`.
+6. Пройти через шлюз и забрать внутренний архив.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `editorial_vault`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `independent_newsroom_status` показывает прогресс без сброса.
+- Награда: 168 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom editorial_vault_gate service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- Private addresses are reachable through the gateway; its web page names the next destination.
-- Use `independent_newsroom_status` for progress without resetting anything.
-- Reward: 168 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s independent_newsroom:gateway_entry 198.22.24.1`
 
-`exploit -s independent_newsroom:operations_entry 10.230.24.2`
+Прочитай `/srv/records/editorial-notes.txt` на последнем узле — там сохранённая запись.
 
-`exploit -s independent_newsroom:records_entry 10.230.24.3`
+## Установка и память
 
-Read `/srv/records/editorial-notes.txt` on the final host for the preserved record.
-
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: сети. Организация: СМИ. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

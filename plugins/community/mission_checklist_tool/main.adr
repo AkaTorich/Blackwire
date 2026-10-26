@@ -4,12 +4,12 @@ def panel():
     command = "buy " + C["id"] + ":item"
     if C["mode"] == "market":
         command = "market buy " + C["id"] + ":item"
-    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nPurchase in the game terminal: " + command, "rows": [["Price", C["price"]], ["Applied", plugin.get("applied", false)]], "buttons": [{"id": "status", "label": "Show instructions"}]})
+    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nПокупка в игровом терминале: " + command, "rows": [["Цена", C["price"]], ["Установлено", plugin.get("applied", false)]], "buttons": [{"id": "status", "label": "Показать подсказки"}]})
 
 def load(event):
     if C["mode"] == "hardware":
         plugin.catalog("shop", "item", {"name": C["name"], "desc": C["story"], "price": C["price"]})
-        plugin.catalog("achievements", "installed", {"name": C["name"] + " Installed", "desc": C["story"]})
+        plugin.catalog("achievements", "installed", {"name": C["name"] + ": установлено", "desc": C["story"]})
     else:
         plugin.catalog("market", "item", {"name": C["name"], "desc": C["story"], "price": C["price"], "file": C["file"], "code": C["code"]})
     panel()
@@ -31,11 +31,11 @@ def purchased(event):
 def status(event):
     print(C["name"], "-", C["story"])
     if C["mode"] == "hardware":
-        print("Purchase:", "buy " + C["id"] + ":item", "| Cost:", C["price"])
-        print("Upgrade applied:", plugin.get("applied", false))
+        print("Покупка:", "buy " + C["id"] + ":item", "| Цена:", C["price"])
+        print("Улучшение установлено:", plugin.get("applied", false))
     else:
-        print("Purchase:", "market buy " + C["id"] + ":item", "| Cost:", C["price"])
-        print("Run after purchase:", "adder ~/scripts/" + C["file"])
+        print("Покупка:", "market buy " + C["id"] + ":item", "| Цена:", C["price"])
+        print("Запуск после покупки:", "adder ~/scripts/" + C["file"])
     panel()
 
 def open_window(event):

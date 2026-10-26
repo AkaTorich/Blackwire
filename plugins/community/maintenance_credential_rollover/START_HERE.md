@@ -1,33 +1,31 @@
-# Maintenance Credential Rollover
+# Смена сервисных ключей
 
-A service gateway rotates its maintenance credentials at the end of a shift.
+Служебный шлюз меняет сервисные ключи в конце смены.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `maintenance_credential_rollover_open`, then press Start; or run `maintenance_credential_rollover_start` in the game terminal.
-3. Read the new mail titled **Maintenance Credential Rollover: first lead**.
-4. Visit `http://198.22.100.1/` in the game's browser and inspect the first host with `probe 198.22.100.1`.
-5. Recover the incident record and follow the timed incident log.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `maintenance_credential_rollover_open` или нажми «Старт».
+3. В терминале запусти `maintenance_credential_rollover_start`.
+4. Прочитай письмо «Смена сервисных ключей: первая зацепка» в игровой почте.
+5. Открой `http://198.22.100.1/` в игровом браузере и запусти `probe 198.22.100.1`.
+6. Поймать запись инцидента и пройти по его таймлайну.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `maintenance_hub`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `maintenance_credential_rollover_status` показывает прогресс без сброса.
+- Награда: 172 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom maintenance_hub service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- After entering the device, inspect /etc/maintenance-note.txt for the record location.
-- Use `maintenance_credential_rollover_status` for progress without resetting anything.
-- Reward: 172 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-This incident advances every 15 game seconds for three phases. Its own host may temporarily lose service; it recovers by phase three. The incident does not modify the original game's hosts.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s maintenance_credential_rollover:records_entry 198.22.100.1`
 
-Read `/srv/records/credential-notice.txt` on the final host for the preserved record.
+Прочитай `/srv/records/credential-notice.txt` на последнем узле — там сохранённая запись.
 
-## Installation and persistence
+## Установка и память
 
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: события. Организация: корпорация. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

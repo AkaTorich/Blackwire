@@ -1,6 +1,6 @@
 {
   "id": "public_records_office",
-  "name": "Public Records Office",
+  "name": "Муниципальный архив",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

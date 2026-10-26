@@ -1,6 +1,6 @@
 {
   "id": "altered_water_reports",
-  "name": "Altered Water Reports",
+  "name": "Подправленные отчёты по воде",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

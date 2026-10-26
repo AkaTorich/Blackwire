@@ -1,11 +1,11 @@
 {
-  "name": "Parking Terminals",
+  "name": "Терминалы парковки",
   "family": "device",
   "kind": "badge",
   "service": "parking_pay",
   "file": "tickets.csv",
-  "story": "Space B17 was billed twice; reconcile the terminal transaction log.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "За место B17 списали дважды — надо сверить журнал транзакций терминала.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 64,
   "id": "parking_terminals",
   "number": 2,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "parking_pay",
       "port": 7003,
-      "os": "Parking Terminals OS 1.0",
+      "os": "Терминалы парковки OS 1.0",
       "file": "/srv/records/tickets.csv",
-      "text": "Space B17 was billed twice; reconcile the terminal transaction log.\nRecord owner: parking_terminals.\nCase reference: BW-002.\nStatus: preserved for in-game review.",
+      "text": "За место B17 списали дважды — надо сверить журнал транзакций терминала.\nВладелец записи: parking_terminals.\nНомер дела: BW-002.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_parking_terminals_1"
     }

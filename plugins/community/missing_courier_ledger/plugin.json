@@ -1,6 +1,6 @@
 {
   "id": "missing_courier_ledger",
-  "name": "Missing Courier Ledger",
+  "name": "Журнал пропавшего курьера",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

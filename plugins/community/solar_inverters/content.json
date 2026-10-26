@@ -1,11 +1,11 @@
 {
-  "name": "Solar Inverters",
+  "name": "Солнечные инверторы",
   "family": "device",
   "kind": "server",
   "service": "solar_control",
   "file": "generation.csv",
-  "story": "One inverter reports midnight generation and conceals a bypass circuit.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Один инвертор отчитался о выработке в полночь и скрывает обходной контур.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 92,
   "id": "solar_inverters",
   "number": 9,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "solar_control",
       "port": 7024,
-      "os": "Solar Inverters OS 1.0",
+      "os": "Солнечные инверторы OS 1.0",
       "file": "/srv/records/generation.csv",
-      "text": "One inverter reports midnight generation and conceals a bypass circuit.\nRecord owner: solar_inverters.\nCase reference: BW-009.\nStatus: preserved for in-game review.",
+      "text": "Один инвертор отчитался о выработке в полночь и скрывает обходной контур.\nВладелец записи: solar_inverters.\nНомер дела: BW-009.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_solar_inverters_1"
     }

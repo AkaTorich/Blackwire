@@ -1,35 +1,31 @@
-# Corrupted Sensor Calibration
+# Испорченная калибровка датчиков
 
-Sensor measurements are plausible but their calibration signatures do not agree.
+Показания правдоподобны, но подписи калибровки не сходятся между собой.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `corrupted_sensor_calibration_open`, then press Start; or run `corrupted_sensor_calibration_start` in the game terminal.
-3. Read the new mail titled **Corrupted Sensor Calibration: first lead**.
-4. Visit `http://198.22.54.1/` in the game's browser and inspect the first host with `probe 198.22.54.1`.
-5. Follow both evidence hosts and establish the custody trail.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `corrupted_sensor_calibration_open` или нажми «Старт».
+3. В терминале запусти `corrupted_sensor_calibration_start`.
+4. Прочитай письмо «Испорченная калибровка датчиков: первая зацепка» в игровой почте.
+5. Открой `http://198.22.54.1/` в игровом браузере и запусти `probe 198.22.54.1`.
+6. Отследить обоих свидетелей и восстановить цепочку хранения.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `sensor_archive`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `corrupted_sensor_calibration_status` показывает прогресс без сброса.
+- Награда: 255 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom sensor_archive_gate service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- Private addresses are reachable through the gateway; its web page names the next destination.
-- Use `corrupted_sensor_calibration_status` for progress without resetting anything.
-- Reward: 255 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-Both evidence hosts must be accessed to complete this investigation.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s corrupted_sensor_calibration:gateway_entry 198.22.54.1`
 
-`exploit -s corrupted_sensor_calibration:records_entry 10.230.54.2`
+Прочитай `/srv/records/calibration-chain.csv` на последнем узле — там сохранённая запись.
 
-Read `/srv/records/calibration-chain.csv` on the final host for the preserved record.
+## Установка и память
 
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: расследования. Организация: корпорация. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

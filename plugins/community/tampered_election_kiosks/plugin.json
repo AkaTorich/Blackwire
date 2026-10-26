@@ -1,6 +1,6 @@
 {
   "id": "tampered_election_kiosks",
-  "name": "Tampered Election Kiosks",
+  "name": "Подправленные киоски выборов",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

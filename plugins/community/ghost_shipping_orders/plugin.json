@@ -1,6 +1,6 @@
 {
   "id": "ghost_shipping_orders",
-  "name": "Ghost Shipping Orders",
+  "name": "Фантомные заказы доставки",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

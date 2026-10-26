@@ -1,35 +1,31 @@
-# Film Production Studio
+# Киностудия
 
-An unreleased production schedule identifies an unexplained night shoot.
+В невыпущенном расписании съёмок обнаружилась необъяснимая ночная смена.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `film_production_studio_open`, then press Start; or run `film_production_studio_start` in the game terminal.
-3. Read the new mail titled **Film Production Studio: first lead**.
-4. Visit `http://198.22.35.1/` in the game's browser and inspect the first host with `probe 198.22.35.1`.
-5. Traverse the gateway and recover the internal archive.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `film_production_studio_open` или нажми «Старт».
+3. В терминале запусти `film_production_studio_start`.
+4. Прочитай письмо «Киностудия: первая зацепка» в игровой почте.
+5. Открой `http://198.22.35.1/` в игровом браузере и запусти `probe 198.22.35.1`.
+6. Пройти через шлюз и забрать внутренний архив.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `production_archive`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `film_production_studio_status` показывает прогресс без сброса.
+- Награда: 234 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom production_archive_gate service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- Private addresses are reachable through the gateway; its web page names the next destination.
-- Use `film_production_studio_status` for progress without resetting anything.
-- Reward: 234 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s film_production_studio:gateway_entry 198.22.35.1`
 
-`exploit -s film_production_studio:operations_entry 10.230.35.2`
+Прочитай `/srv/records/shooting-schedule.csv` на последнем узле — там сохранённая запись.
 
-`exploit -s film_production_studio:records_entry 10.230.35.3`
+## Установка и память
 
-Read `/srv/records/shooting-schedule.csv` on the final host for the preserved record.
-
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: сети. Организация: СМИ. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

@@ -1,6 +1,6 @@
 {
   "id": "investigation_status_desk",
-  "name": "Investigation Status Desk",
+  "name": "Стол следственного отдела",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

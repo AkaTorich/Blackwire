@@ -1,13 +1,14 @@
 {
-  "name": "Developer Memory Upgrade",
+  "name": "Планка памяти для разработки",
   "family": "economy",
   "mode": "hardware",
   "field": "ram_mb",
   "amount": 1024,
   "price": 120,
-  "story": "Add 1 GB of memory for script development.",
+  "story": "Добавляет 1 ГБ памяти под отладку скриптов.",
   "id": "developer_memory_upgrade",
   "number": 77,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Увеличить память на 1 ГБ."
 }

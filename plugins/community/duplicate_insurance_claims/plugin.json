@@ -1,6 +1,6 @@
 {
   "id": "duplicate_insurance_claims",
-  "name": "Duplicate Insurance Claims",
+  "name": "Двойные страховые заявления",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

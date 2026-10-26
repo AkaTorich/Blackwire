@@ -1,11 +1,11 @@
 {
-  "name": "Residential Cameras",
+  "name": "Камеры жилого дома",
   "family": "device",
   "kind": "camera",
   "service": "video_hub",
   "file": "recordings.csv",
-  "story": "Lobby camera footage has a 14-minute gap before the courier arrives.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "На записи камер в вестибюле не хватает 14 минут — как раз до прихода курьера.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 60,
   "id": "residential_cameras",
   "number": 1,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "video_hub",
       "port": 7000,
-      "os": "Residential Cameras OS 1.0",
+      "os": "Камеры жилого дома OS 1.0",
       "file": "/srv/records/recordings.csv",
-      "text": "Lobby camera footage has a 14-minute gap before the courier arrives.\nRecord owner: residential_cameras.\nCase reference: BW-001.\nStatus: preserved for in-game review.",
+      "text": "На записи камер в вестибюле не хватает 14 минут — как раз до прихода курьера.\nВладелец записи: residential_cameras.\nНомер дела: BW-001.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_residential_cameras_1"
     }

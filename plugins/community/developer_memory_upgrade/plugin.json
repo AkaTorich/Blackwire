@@ -1,6 +1,6 @@
 {
   "id": "developer_memory_upgrade",
-  "name": "Developer Memory Upgrade",
+  "name": "Планка памяти для разработки",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

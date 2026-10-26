@@ -1,10 +1,11 @@
 {
-  "name": "Owned Machine Inventory",
+  "name": "Список взятых машин",
   "family": "utility",
   "mode": "owned",
-  "story": "List machines already under the player's control.",
+  "story": "Собирает машины, которые уже под контролем игрока.",
   "id": "owned_machine_inventory",
   "number": 62,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать машины под контролем игрока."
 }

@@ -1,6 +1,6 @@
 {
   "id": "emergency_training_center",
-  "name": "Emergency Training Center",
+  "name": "Центр учебной тревоги",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

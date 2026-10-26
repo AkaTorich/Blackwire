@@ -1,6 +1,6 @@
 {
   "id": "independent_newsroom",
-  "name": "Independent Newsroom",
+  "name": "Сеть независимой редакции",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

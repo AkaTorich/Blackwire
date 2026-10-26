@@ -1,6 +1,6 @@
 {
   "id": "leaked_patient_referrals",
-  "name": "Leaked Patient Referrals",
+  "name": "Утечка направлений пациентов",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

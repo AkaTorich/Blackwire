@@ -1,6 +1,6 @@
 {
   "id": "black_market_exam_papers",
-  "name": "Black Market Exam Papers",
+  "name": "Экзаменационные листы с чёрного рынка",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

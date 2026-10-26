@@ -1,6 +1,6 @@
 {
   "id": "device_type_catalog",
-  "name": "Device Type Catalog",
+  "name": "Каталог типов устройств",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

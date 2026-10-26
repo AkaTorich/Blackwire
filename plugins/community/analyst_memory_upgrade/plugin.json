@@ -1,6 +1,6 @@
 {
   "id": "analyst_memory_upgrade",
-  "name": "Analyst Memory Upgrade",
+  "name": "Планка памяти аналитика",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

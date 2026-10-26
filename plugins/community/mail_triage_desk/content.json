@@ -1,10 +1,11 @@
 {
-  "name": "Mail Triage Desk",
+  "name": "Разборная стойка почты",
   "family": "utility",
   "mode": "mail",
-  "story": "Summarize unread mail on the player's computer.",
+  "story": "Собирает непрочитанные письма на компьютере игрока.",
   "id": "mail_triage_desk",
   "number": 68,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Собрать непрочитанные письма."
 }

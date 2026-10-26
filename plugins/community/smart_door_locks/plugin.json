@@ -1,6 +1,6 @@
 {
   "id": "smart_door_locks",
-  "name": "Smart Door Locks",
+  "name": "Умные замки",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -1,10 +1,11 @@
 {
-  "name": "Incident Log Viewer",
+  "name": "Просмотр журналов происшествий",
   "family": "utility",
   "mode": "logs",
-  "story": "Review recent logs on owned machines.",
+  "story": "Собирает последние записи журналов на машинах игрока.",
   "id": "incident_log_viewer",
   "number": 72,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать свежие журналы."
 }

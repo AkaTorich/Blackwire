@@ -1,15 +1,13 @@
-# Cold Storage Upgrade
+# Накопитель холодного хранения
 
-Add 32 GB of virtual disk capacity for long-term archives.
+Добавляет 32 ГБ виртуального диска под долгое хранение.
 
-## Start here
+## Начало
 
-Run `cold_storage_upgrade_open` or `cold_storage_upgrade_status` for instructions. The item is listed in the shop.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Купи улучшение командой `buy cold_storage_upgrade:item` в игровом терминале.
+3. Улучшение применяется один раз и сохраняется в сейве.
 
-Purchase: `buy cold_storage_upgrade:item` (480 credits).
+## Установка и память
 
-The hardware change applies once and survives saving and reloading.
-
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: магазины. Папка плагина не трогает чужие сохранения; результат остаётся в сейве даже если плагин выключить.

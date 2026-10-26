@@ -1,6 +1,6 @@
 {
   "id": "owned_machine_inventory",
-  "name": "Owned Machine Inventory",
+  "name": "Список взятых машин",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

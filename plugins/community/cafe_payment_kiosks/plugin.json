@@ -1,6 +1,6 @@
 {
   "id": "cafe_payment_kiosks",
-  "name": "Cafe Payment Kiosks",
+  "name": "Киоски оплаты в кафе",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

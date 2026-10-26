@@ -1,6 +1,6 @@
 {
   "id": "phantom_subscription_charges",
-  "name": "Phantom Subscription Charges",
+  "name": "Фантомные списания по подписке",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

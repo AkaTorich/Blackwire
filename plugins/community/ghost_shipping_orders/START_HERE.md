@@ -1,35 +1,31 @@
-# Ghost Shipping Orders
+# Фантомные заказы доставки
 
-Containers were billed to an address that no customer account owns.
+Контейнеры выставили на адрес, за которым нет ни одного заказчика.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `ghost_shipping_orders_open`, then press Start; or run `ghost_shipping_orders_start` in the game terminal.
-3. Read the new mail titled **Ghost Shipping Orders: first lead**.
-4. Visit `http://198.22.45.1/` in the game's browser and inspect the first host with `probe 198.22.45.1`.
-5. Follow both evidence hosts and establish the custody trail.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `ghost_shipping_orders_open` или нажми «Старт».
+3. В терминале запусти `ghost_shipping_orders_start`.
+4. Прочитай письмо «Фантомные заказы доставки: первая зацепка» в игровой почте.
+5. Открой `http://198.22.45.1/` в игровом браузере и запусти `probe 198.22.45.1`.
+6. Отследить обоих свидетелей и восстановить цепочку хранения.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `shipping_store`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `ghost_shipping_orders_status` показывает прогресс без сброса.
+- Награда: 210 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom shipping_store_gate service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- Private addresses are reachable through the gateway; its web page names the next destination.
-- Use `ghost_shipping_orders_status` for progress without resetting anything.
-- Reward: 210 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-Both evidence hosts must be accessed to complete this investigation.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s ghost_shipping_orders:gateway_entry 198.22.45.1`
 
-`exploit -s ghost_shipping_orders:records_entry 10.230.45.2`
+Прочитай `/srv/records/ghost-orders.csv` на последнем узле — там сохранённая запись.
 
-Read `/srv/records/ghost-orders.csv` on the final host for the preserved record.
+## Установка и память
 
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: расследования. Организация: СМИ. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

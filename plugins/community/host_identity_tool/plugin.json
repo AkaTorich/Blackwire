@@ -1,6 +1,6 @@
 {
   "id": "host_identity_tool",
-  "name": "Host Identity Tool",
+  "name": "Инструмент: кто я на машине",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

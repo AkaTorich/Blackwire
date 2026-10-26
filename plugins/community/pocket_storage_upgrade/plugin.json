@@ -1,6 +1,6 @@
 {
   "id": "pocket_storage_upgrade",
-  "name": "Pocket Storage Upgrade",
+  "name": "Карманный накопитель",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

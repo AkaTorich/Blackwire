@@ -1,6 +1,6 @@
 {
   "id": "expired_badge_incident",
-  "name": "Expired Badge Incident",
+  "name": "Инцидент с просроченным пропуском",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

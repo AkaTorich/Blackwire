@@ -1,6 +1,6 @@
 {
   "id": "cinema_ticket_gates",
-  "name": "Cinema Ticket Gates",
+  "name": "Турникеты кинотеатра",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

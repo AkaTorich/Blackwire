@@ -1,6 +1,6 @@
 {
   "id": "underground_radio_station",
-  "name": "Underground Radio Station",
+  "name": "Подпольная радиостанция",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

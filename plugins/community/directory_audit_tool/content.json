@@ -1,13 +1,14 @@
 {
-  "name": "Directory Audit Tool",
+  "name": "Инструмент: разбор каталога",
   "family": "economy",
   "mode": "market",
   "file": "directory_audit.adr",
   "code": "for entry in fs.list(sys.cwd()):\n    print(entry[\"name\"], entry[\"owner\"], entry[\"mode\"], entry[\"size\"])\n",
   "price": 40,
-  "story": "Inspect file ownership and permissions in the current directory.",
+  "story": "Показывает владельцев, права и размеры файлов текущего каталога.",
   "id": "directory_audit_tool",
   "number": 89,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Разобрать текущий каталог."
 }

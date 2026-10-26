@@ -1,6 +1,6 @@
 {
   "id": "hotel_keycard_encoders",
-  "name": "Hotel Keycard Encoders",
+  "name": "Шифровальщики ключ-карт отеля",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

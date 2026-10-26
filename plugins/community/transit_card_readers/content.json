@@ -1,11 +1,11 @@
 {
-  "name": "Transit Card Readers",
+  "name": "Валидаторы транспортных карт",
   "family": "device",
   "kind": "badge",
   "service": "fare_sync",
   "file": "journeys.csv",
-  "story": "A maintenance card appears on three buses at the same timestamp.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Служебная карта засветилась одновременно в трёх автобусах.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 68,
   "id": "transit_card_readers",
   "number": 3,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "fare_sync",
       "port": 7006,
-      "os": "Transit Card Readers OS 1.0",
+      "os": "Валидаторы транспортных карт OS 1.0",
       "file": "/srv/records/journeys.csv",
-      "text": "A maintenance card appears on three buses at the same timestamp.\nRecord owner: transit_card_readers.\nCase reference: BW-003.\nStatus: preserved for in-game review.",
+      "text": "Служебная карта засветилась одновременно в трёх автобусах.\nВладелец записи: transit_card_readers.\nНомер дела: BW-003.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_transit_card_readers_1"
     }

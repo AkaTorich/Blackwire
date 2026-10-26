@@ -1,6 +1,6 @@
 {
   "id": "transit_card_readers",
-  "name": "Transit Card Readers",
+  "name": "Валидаторы транспортных карт",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

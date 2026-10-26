@@ -1,6 +1,6 @@
 {
   "id": "water_quality_sensors",
-  "name": "Water Quality Sensors",
+  "name": "Датчики качества воды",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -1,15 +1,13 @@
-# Process Survey Tool
+# Инструмент: обзор процессов
 
-Print process ownership, CPU use and memory use.
+Печатает процессы, их владельцев, нагрузку на процессор и память.
 
-## Start here
+## Начало
 
-Run `process_survey_tool_open` or `process_survey_tool_status` for instructions. The item is listed in the script market.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Купи скрипт командой `market buy process_survey_tool:item` — он появится в маркете.
+3. После покупки запусти его: `adder ~/scripts/process_survey.adr`.
 
-Purchase: `market buy process_survey_tool:item` (35 credits).
+## Установка и память
 
-Run the purchased tool with `adder ~/scripts/process_survey.adr`.
-
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: магазины. Папка плагина не трогает чужие сохранения; результат остаётся в сейве даже если плагин выключить.

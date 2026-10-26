@@ -1,13 +1,14 @@
 {
-  "name": "Workstation Memory Upgrade",
+  "name": "Планка памяти рабочей станции",
   "family": "economy",
   "mode": "hardware",
   "field": "ram_mb",
   "amount": 2048,
   "price": 230,
-  "story": "Add 2 GB of memory for parallel game workloads.",
+  "story": "Добавляет 2 ГБ памяти под одновременные задачи.",
   "id": "workstation_memory_upgrade",
   "number": 78,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Увеличить память на 2 ГБ."
 }

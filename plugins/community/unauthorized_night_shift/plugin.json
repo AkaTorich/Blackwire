@@ -1,6 +1,6 @@
 {
   "id": "unauthorized_night_shift",
-  "name": "Unauthorized Night Shift",
+  "name": "Неразрешённая ночная смена",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

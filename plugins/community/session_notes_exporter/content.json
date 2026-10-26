@@ -1,10 +1,11 @@
 {
-  "name": "Session Notes Exporter",
+  "name": "Выгрузка заметок сеанса",
   "family": "utility",
   "mode": "notes",
-  "story": "Export player notes into an in-game report.",
+  "story": "Выгружает заметки игрока в отчёт внутри игры.",
   "id": "session_notes_exporter",
   "number": 74,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Сохранить заметки игрока отчётом."
 }

@@ -1,6 +1,6 @@
 {
   "id": "elevator_control_panels",
-  "name": "Elevator Control Panels",
+  "name": "Панели управления лифтами",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

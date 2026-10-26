@@ -1,12 +1,12 @@
 {
-  "name": "Battery Reserve Warning",
+  "name": "Предупреждение о резерве батареи",
   "family": "event",
   "kind": "server",
   "service": "battery_monitor",
   "file": "reserve.csv",
-  "story": "A backup battery controller reports a declining reserve during a grid drill.",
+  "story": "Контроллер резервной батареи отчитывается о падающем заряде на учениях сети.",
   "mode": "battery",
-  "objective": "Recover the incident record and follow the timed incident log.",
+  "objective": "Поймать запись инцидента и пройти по его таймлайну.",
   "reward": 156,
   "id": "battery_reserve_warning",
   "number": 98,
@@ -21,9 +21,9 @@
       "lan_ip": null,
       "service": "battery_monitor",
       "port": 7291,
-      "os": "Battery Reserve Warning OS 1.0",
+      "os": "Предупреждение о резерве батареи OS 1.0",
       "file": "/srv/records/reserve.csv",
-      "text": "A backup battery controller reports a declining reserve during a grid drill.\nRecord owner: battery_reserve_warning.\nCase reference: BW-098.\nStatus: preserved for in-game review.",
+      "text": "Контроллер резервной батареи отчитывается о падающем заряде на учениях сети.\nВладелец записи: battery_reserve_warning.\nНомер дела: BW-098.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_battery_reserve_warning_1"
     }

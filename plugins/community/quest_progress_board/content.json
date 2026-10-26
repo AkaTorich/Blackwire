@@ -1,10 +1,11 @@
 {
-  "name": "Quest Progress Board",
+  "name": "Доска прохождения заданий",
   "family": "utility",
   "mode": "quests",
-  "story": "Summarize independent plugin quests and rewards.",
+  "story": "Сводка по независимым заданиям плагинов и наградам.",
   "id": "quest_progress_board",
   "number": 67,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Собрать задания плагинов и их прогресс."
 }

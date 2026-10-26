@@ -1,6 +1,6 @@
 {
   "id": "film_production_studio",
-  "name": "Film Production Studio",
+  "name": "Киностудия",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

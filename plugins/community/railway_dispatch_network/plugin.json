@@ -1,6 +1,6 @@
 {
   "id": "railway_dispatch_network",
-  "name": "Railway Dispatch Network",
+  "name": "Диспетчерская железной дороги",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

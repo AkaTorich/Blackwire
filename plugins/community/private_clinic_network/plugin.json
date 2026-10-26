@@ -1,6 +1,6 @@
 {
   "id": "private_clinic_network",
-  "name": "Private Clinic Network",
+  "name": "Сеть частной клиники",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

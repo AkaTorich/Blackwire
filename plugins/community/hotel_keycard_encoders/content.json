@@ -1,11 +1,11 @@
 {
-  "name": "Hotel Keycard Encoders",
+  "name": "Шифровальщики ключ-карт отеля",
   "family": "device",
   "kind": "badge",
   "service": "key_issue",
   "file": "keys.csv",
-  "story": "The encoder issued a master key during an unstaffed night shift.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Устройство выпустило мастер-ключ в ночную смену без дежурного.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 84,
   "id": "hotel_keycard_encoders",
   "number": 7,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "key_issue",
       "port": 7018,
-      "os": "Hotel Keycard Encoders OS 1.0",
+      "os": "Шифровальщики ключ-карт отеля OS 1.0",
       "file": "/srv/records/keys.csv",
-      "text": "The encoder issued a master key during an unstaffed night shift.\nRecord owner: hotel_keycard_encoders.\nCase reference: BW-007.\nStatus: preserved for in-game review.",
+      "text": "Устройство выпустило мастер-ключ в ночную смену без дежурного.\nВладелец записи: hotel_keycard_encoders.\nНомер дела: BW-007.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_hotel_keycard_encoders_1"
     }

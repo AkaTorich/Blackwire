@@ -1,12 +1,12 @@
 {
-  "name": "Parcel Queue Surge",
+  "name": "Переполнение очереди посылок",
   "family": "event",
   "kind": "server",
   "service": "parcel_queue",
   "file": "queue-depth.csv",
-  "story": "A parcel router accumulates delayed pickups during an intake surge.",
+  "story": "В маршрутизаторе посылок копятся отложенные пикапы на фоне наплыва.",
   "mode": "queue",
-  "objective": "Recover the incident record and follow the timed incident log.",
+  "objective": "Поймать запись инцидента и пройти по его таймлайну.",
   "reward": 148,
   "id": "parcel_queue_surge",
   "number": 97,
@@ -21,9 +21,9 @@
       "lan_ip": null,
       "service": "parcel_queue",
       "port": 7288,
-      "os": "Parcel Queue Surge OS 1.0",
+      "os": "Переполнение очереди посылок OS 1.0",
       "file": "/srv/records/queue-depth.csv",
-      "text": "A parcel router accumulates delayed pickups during an intake surge.\nRecord owner: parcel_queue_surge.\nCase reference: BW-097.\nStatus: preserved for in-game review.",
+      "text": "В маршрутизаторе посылок копятся отложенные пикапы на фоне наплыва.\nВладелец записи: parcel_queue_surge.\nНомер дела: BW-097.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_parcel_queue_surge_1"
     }

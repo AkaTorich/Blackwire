@@ -1,6 +1,6 @@
 {
   "id": "rooftop_weather_stations",
-  "name": "Rooftop Weather Stations",
+  "name": "Крышные метеостанции",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

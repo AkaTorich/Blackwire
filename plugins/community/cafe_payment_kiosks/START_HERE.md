@@ -1,31 +1,31 @@
-# Cafe Payment Kiosks
+# Киоски оплаты в кафе
 
-Receipt 184 contains a refund to a decommissioned till.
+В чеке №184 возврат ушёл на уже выведенную из эксплуатации кассу.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `cafe_payment_kiosks_open`, then press Start; or run `cafe_payment_kiosks_start` in the game terminal.
-3. Read the new mail titled **Cafe Payment Kiosks: first lead**.
-4. Visit `http://198.22.8.1/` in the game's browser and inspect the first host with `probe 198.22.8.1`.
-5. Audit the controller and recover its operational record.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `cafe_payment_kiosks_open` или нажми «Старт».
+3. В терминале запусти `cafe_payment_kiosks_start`.
+4. Прочитай письмо «Киоски оплаты в кафе: первая зацепка» в игровой почте.
+5. Открой `http://198.22.8.1/` в игровом браузере и запусти `probe 198.22.8.1`.
+6. Разобраться с контроллером и восстановить его рабочую запись.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `cafe_pay`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `cafe_payment_kiosks_status` показывает прогресс без сброса.
+- Награда: 88 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom cafe_pay service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- After entering the device, inspect /etc/maintenance-note.txt for the record location.
-- Use `cafe_payment_kiosks_status` for progress without resetting anything.
-- Reward: 88 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s cafe_payment_kiosks:records_entry 198.22.8.1`
 
-Read `/srv/records/receipts.csv` on the final host for the preserved record.
+Прочитай `/srv/records/receipts.csv` на последнем узле — там сохранённая запись.
 
-## Installation and persistence
+## Установка и память
 
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: устройства. Организация: корпорация. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

@@ -1,13 +1,14 @@
 {
-  "name": "Pocket Memory Upgrade",
+  "name": "Карманная планка памяти",
   "family": "economy",
   "mode": "hardware",
   "field": "ram_mb",
   "amount": 256,
   "price": 35,
-  "story": "Add 256 MB of memory for lightweight terminal work.",
+  "story": "Добавляет 256 МБ памяти для лёгкой работы в терминале.",
   "id": "pocket_memory_upgrade",
   "number": 76,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Увеличить память на 256 МБ."
 }

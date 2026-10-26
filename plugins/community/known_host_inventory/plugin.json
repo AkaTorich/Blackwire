@@ -1,6 +1,6 @@
 {
   "id": "known_host_inventory",
-  "name": "Known Host Inventory",
+  "name": "Список известных узлов",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

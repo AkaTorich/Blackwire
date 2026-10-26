@@ -1,11 +1,11 @@
 {
-  "name": "Cafe Payment Kiosks",
+  "name": "Киоски оплаты в кафе",
   "family": "device",
   "kind": "atm",
   "service": "cafe_pay",
   "file": "receipts.csv",
-  "story": "Receipt 184 contains a refund to a decommissioned till.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "В чеке №184 возврат ушёл на уже выведенную из эксплуатации кассу.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 88,
   "id": "cafe_payment_kiosks",
   "number": 8,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "cafe_pay",
       "port": 7021,
-      "os": "Cafe Payment Kiosks OS 1.0",
+      "os": "Киоски оплаты в кафе OS 1.0",
       "file": "/srv/records/receipts.csv",
-      "text": "Receipt 184 contains a refund to a decommissioned till.\nRecord owner: cafe_payment_kiosks.\nCase reference: BW-008.\nStatus: preserved for in-game review.",
+      "text": "В чеке №184 возврат ушёл на уже выведенную из эксплуатации кассу.\nВладелец записи: cafe_payment_kiosks.\nНомер дела: BW-008.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_cafe_payment_kiosks_1"
     }

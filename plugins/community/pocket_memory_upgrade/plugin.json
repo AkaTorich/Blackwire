@@ -1,6 +1,6 @@
 {
   "id": "pocket_memory_upgrade",
-  "name": "Pocket Memory Upgrade",
+  "name": "Карманная планка памяти",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

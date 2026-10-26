@@ -1,6 +1,6 @@
 {
   "id": "campus_print_stations",
-  "name": "Campus Print Stations",
+  "name": "Печать на кампусе",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

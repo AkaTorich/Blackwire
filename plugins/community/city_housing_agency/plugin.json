@@ -1,6 +1,6 @@
 {
   "id": "city_housing_agency",
-  "name": "City Housing Agency",
+  "name": "Городское жилищное агентство",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -1,6 +1,6 @@
 {
   "id": "organization_directory",
-  "name": "Organization Directory",
+  "name": "Справочник организаций",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

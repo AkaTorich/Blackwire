@@ -1,10 +1,11 @@
 {
-  "name": "Device Type Catalog",
+  "name": "Каталог типов устройств",
   "family": "utility",
   "mode": "types",
-  "story": "List registered plugin device types and firmware.",
+  "story": "Собирает типы устройств, добавленных плагинами, и их прошивки.",
   "id": "device_type_catalog",
   "number": 66,
   "version": "0.1.1",
-  "api": 1
+  "api": 1,
+  "objective": "Показать зарегистрированные типы устройств."
 }

@@ -1,11 +1,11 @@
 {
-  "name": "EV Charging Controllers",
+  "name": "Контроллеры зарядок электромобилей",
   "family": "device",
   "kind": "server",
   "service": "charge_control",
   "file": "sessions.csv",
-  "story": "A charging bay kept billing after its contactor was disconnected.",
-  "objective": "Audit the controller and recover its operational record.",
+  "story": "Пост продолжал тарифицировать клиента после того, как его контактор отключили.",
+  "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
   "reward": 108,
   "id": "ev_charging_controllers",
   "number": 13,
@@ -20,9 +20,9 @@
       "lan_ip": null,
       "service": "charge_control",
       "port": 7036,
-      "os": "EV Charging Controllers OS 1.0",
+      "os": "Контроллеры зарядок электромобилей OS 1.0",
       "file": "/srv/records/sessions.csv",
-      "text": "A charging bay kept billing after its contactor was disconnected.\nRecord owner: ev_charging_controllers.\nCase reference: BW-013.\nStatus: preserved for in-game review.",
+      "text": "Пост продолжал тарифицировать клиента после того, как его контактор отключили.\nВладелец записи: ev_charging_controllers.\nНомер дела: BW-013.\nСтатус: сохранено для разбора в игре.",
       "access": "shell",
       "password": "bw_ev_charging_controllers_1"
     }

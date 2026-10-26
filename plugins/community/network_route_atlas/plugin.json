@@ -1,6 +1,6 @@
 {
   "id": "network_route_atlas",
-  "name": "Network Route Atlas",
+  "name": "Атлас сетевых маршрутов",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

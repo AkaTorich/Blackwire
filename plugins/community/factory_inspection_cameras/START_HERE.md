@@ -1,31 +1,31 @@
-# Factory Inspection Cameras
+# Камеры контроля на заводе
 
-Rejected batch K12 was relabeled as accepted after inspection.
+Забракованную партию K12 после проверки переобозначили как принятую.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `factory_inspection_cameras_open`, then press Start; or run `factory_inspection_cameras_start` in the game terminal.
-3. Read the new mail titled **Factory Inspection Cameras: first lead**.
-4. Visit `http://198.22.15.1/` in the game's browser and inspect the first host with `probe 198.22.15.1`.
-5. Audit the controller and recover its operational record.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `factory_inspection_cameras_open` или нажми «Старт».
+3. В терминале запусти `factory_inspection_cameras_start`.
+4. Прочитай письмо «Камеры контроля на заводе: первая зацепка» в игровой почте.
+5. Открой `http://198.22.15.1/` в игровом браузере и запусти `probe 198.22.15.1`.
+6. Разобраться с контроллером и восстановить его рабочую запись.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `quality_stream`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `factory_inspection_cameras_status` показывает прогресс без сброса.
+- Награда: 116 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom quality_stream service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- After entering the device, inspect /etc/maintenance-note.txt for the record location.
-- Use `factory_inspection_cameras_status` for progress without resetting anything.
-- Reward: 116 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s factory_inspection_cameras:records_entry 198.22.15.1`
 
-Read `/srv/records/rejects.csv` on the final host for the preserved record.
+Прочитай `/srv/records/rejects.csv` на последнем узле — там сохранённая запись.
 
-## Installation and persistence
+## Установка и память
 
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: устройства. Организация: корпорация. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

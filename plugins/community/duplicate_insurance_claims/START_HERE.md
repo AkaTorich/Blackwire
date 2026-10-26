@@ -1,35 +1,31 @@
-# Duplicate Insurance Claims
+# Двойные страховые заявления
 
-Two claims reference the same inspection photo and different incident dates.
+Два заявления ссылаются на одно фото осмотра, но с разными датами происшествия.
 
-## Start here
+## Начало
 
-1. Install this folder through the game's Plugins folder and choose Reload.
-2. Open its guide window with `duplicate_insurance_claims_open`, then press Start; or run `duplicate_insurance_claims_start` in the game terminal.
-3. Read the new mail titled **Duplicate Insurance Claims: first lead**.
-4. Visit `http://198.22.47.1/` in the game's browser and inspect the first host with `probe 198.22.47.1`.
-5. Follow both evidence hosts and establish the custody trail.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Открой окно подсказки командой `duplicate_insurance_claims_open` или нажми «Старт».
+3. В терминале запусти `duplicate_insurance_claims_start`.
+4. Прочитай письмо «Двойные страховые заявления: первая зацепка» в игровой почте.
+5. Открой `http://198.22.47.1/` в игровом браузере и запусти `probe 198.22.47.1`.
+6. Отследить обоих свидетелей и восстановить цепочку хранения.
 
-## Hints
+## Подсказки
 
-- If probe reports an active firewall, run "firewall <address>" before entry. A failed bypass can be retried; watch your heat.
+- Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
+- На первом узле ищи собственную службу плагина — `claims_store`.
+- Для доступа нужно слабое место «entry», а не просто утечка данных.
+- Внутри устройства посмотри `/etc/maintenance-note.txt` — там адрес записи.
+- Команда `duplicate_insurance_claims_status` показывает прогресс без сброса.
+- Награда: 220 ₵, выплачивается один раз. Повторный запуск Start не дублирует содержимое и не сбрасывает прохождение.
 
-- Look for the custom claims_store_gate service on the first host.
-- The access objective requires the entry vulnerability, not only an information leak.
-- Private addresses are reachable through the gateway; its web page names the next destination.
-- Use `duplicate_insurance_claims_status` for progress without resetting anything.
-- Reward: 220 credits, paid once. Repeating Start does not create another copy or reset completion.
-
-Both evidence hosts must be accessed to complete this investigation.
-
-## Optional full solution
+## Если хочешь готовое решение
 
 `exploit -s duplicate_insurance_claims:gateway_entry 198.22.47.1`
 
-`exploit -s duplicate_insurance_claims:records_entry 10.230.47.2`
+Прочитай `/srv/records/claim-pairs.csv` на последнем узле — там сохранённая запись.
 
-Read `/srv/records/claim-pairs.csv` on the final host for the preserved record.
+## Установка и память
 
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: расследования. Организация: СМИ. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.

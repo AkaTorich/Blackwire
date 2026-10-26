@@ -1,6 +1,6 @@
 {
   "id": "community_internet_exchange",
-  "name": "Community Internet Exchange",
+  "name": "Районный узел обмена трафиком",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

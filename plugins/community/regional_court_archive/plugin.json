@@ -1,6 +1,6 @@
 {
   "id": "regional_court_archive",
-  "name": "Regional Court Archive",
+  "name": "Областной судебный архив",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

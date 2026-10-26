@@ -1,15 +1,13 @@
-# Analyst Memory Upgrade
+# Планка памяти аналитика
 
-Add 4 GB of memory for a larger virtual workstation.
+Добавляет 4 ГБ памяти — рабочая станция становится просторнее.
 
-## Start here
+## Начало
 
-Run `analyst_memory_upgrade_open` or `analyst_memory_upgrade_status` for instructions. The item is listed in the shop.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Купи улучшение командой `buy analyst_memory_upgrade:item` в игровом терминале.
+3. Улучшение применяется один раз и сохраняется в сейве.
 
-Purchase: `buy analyst_memory_upgrade:item` (420 credits).
+## Установка и память
 
-The hardware change applies once and survives saving and reloading.
-
-## Installation and persistence
-
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: магазины. Папка плагина не трогает чужие сохранения; результат остаётся в сейве даже если плагин выключить.

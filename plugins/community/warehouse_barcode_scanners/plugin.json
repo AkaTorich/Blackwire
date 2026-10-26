@@ -1,6 +1,6 @@
 {
   "id": "warehouse_barcode_scanners",
-  "name": "Warehouse Barcode Scanners",
+  "name": "Сканеры штрихкодов на складе",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

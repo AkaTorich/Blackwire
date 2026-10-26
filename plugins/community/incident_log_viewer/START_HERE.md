@@ -1,13 +1,15 @@
-# Incident Log Viewer
+# Просмотр журналов происшествий
 
-Review recent logs on owned machines.
+Собирает последние записи журналов на машинах игрока.
 
-## Start here
+## Начало
 
-Run `incident_log_viewer_open` to open the panel, or `incident_log_viewer_report` for terminal output. Refresh reads current game state. `incident_log_viewer_export` writes a report under your **in-game** home directory in `reports/`.
+1. Положи эту папку рядом с другими плагинами и нажми «Перечитать».
+2. Запусти `incident_log_viewer_open` — откроется окно, или `incident_log_viewer_report` для вывода в терминал.
+3. «Обновить» перечитывает мир; «Выгрузить отчёт» пишет отчёт в домашний каталог внутри игры (`reports/`).
 
-There is no mission to solve. An empty report means the relevant hosts or records have not been discovered yet.
+Задачи нет — пустой отчёт значит, что подходящие узлы или записи ещё не разведаны.
 
-## Installation and persistence
+## Установка и память
 
-Copy this plugin folder into the directory opened by **Plugins → Open folder**, then Reload. It is independent of the other 99 plugins. Created game content remains in the save after disabling a plugin. Names, commands and addresses are unique within this pack.
+Семейство: инструменты. Папка плагина не трогает чужие сохранения; результат остаётся в сейве даже если плагин выключить.

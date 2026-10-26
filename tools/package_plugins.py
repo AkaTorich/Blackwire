@@ -1,8 +1,7 @@
-"""Create the release ZIP containing exactly 100 standalone Adder plugins."""
+"""Собрать релизный ZIP ровно из 100 независимых плагинов Adder."""
 from pathlib import Path
 import hashlib
 import json
-import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,7 +17,7 @@ def main():
         manifest = json.loads((folder / "plugin.json").read_text(encoding="utf-8"))
         assert manifest["id"] == item["id"] and manifest["name"] == item["name"]
         assert manifest["version"] == item["version"] and manifest["api"] == 1
-        assert re.fullmatch(r"[A-Za-z0-9 _-]+", manifest["name"]), "Plugin names must be clear English names"
+        assert manifest["name"].strip(), "Plugin name must not be empty"
         assert manifest["id"] not in ids and manifest["name"] not in names, "Duplicate plugin identity"
         assert not commands.intersection(manifest["commands"]), "Conflicting commands"
         ids.add(manifest["id"]); names.add(manifest["name"]); commands.update(manifest["commands"])

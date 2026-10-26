@@ -1,6 +1,6 @@
 {
   "id": "farm_irrigation_controllers",
-  "name": "Farm Irrigation Controllers",
+  "name": "Контроллеры полива на ферме",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",
