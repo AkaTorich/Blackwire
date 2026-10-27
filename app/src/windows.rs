@@ -182,6 +182,7 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
 /// ними); ушёл фокус в другую программу — рабочие столы опускаются под неё.
 /// Обычное окно, даже размером с монитор, лежит под панелью задач — игры сами
 /// встают поверх всего, так и здесь.
+#[cfg(windows)]
 pub fn on_focus_changed(app: &AppHandle) {
     let app = app.clone();
     std::thread::spawn(move || {
@@ -229,7 +230,7 @@ fn raise_desktops(hwnds: &[isize]) {
 }
 
 #[cfg(not(windows))]
-fn raise_desktops(_hwnds: &[isize]) {}
+pub fn on_focus_changed(_app: &AppHandle) {}
 
 /// Подложка рабочего стола на мониторе: во весь экран, без рамки, всегда позади.
 pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), String> {
