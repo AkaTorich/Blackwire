@@ -142,6 +142,7 @@ jobs:
         run: |
           python tools/package_sdk.py archive --tools target/sdk-tools
           python tools/package_plugins.py
+          python tools/package_vulnerability_plugins.py
 
       - name: Publish installers and SDK
         uses: softprops/action-gh-release@v2
@@ -154,6 +155,7 @@ jobs:
 
             [Download SDK](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip)
             [Download 100 community plugins](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip)
+            [Download 10 new vulnerability cases](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip)
 
             28 payload mechanics, player-defined Adder vulnerability types, configurable exploit outcomes and conditions, and an Access Lab tutorial plugin.
 
@@ -165,3 +167,4 @@ jobs:
             target/release-installers/*
             target/release/Blackwire-SDK-*.zip
             target/release/Blackwire-Plugins-*.zip
+            target/release/Blackwire-Vulnerability-Plugins-*.zip
