@@ -1,26 +1,19 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Типы устройств</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page030.html">Назад</a> | <a href="page032.html">Далее</a></div><h2>Типы устройств</h2>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Основные функции</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page030.html">Назад</a> | <a href="page032.html">Далее</a></div><h2>Основные функции</h2>
+<p>Все <code>plugin.*</code> ниже вызываются только из плагина. JSON-значения превращаются в обычные словари, списки, строки, числа и null Adder.</p>
 <table>
-<tr><th>Вызов</th><th>Назначение</th></tr>
-<tr><td>plugin.template(base_kind)</td><td>готовый шаблон настоящего генератора игры</td></tr>
-<tr><td>plugin.device_type(key, template)</td><td>зарегистрировать собственный тип; возвращает <code>plugin_id:key</code></td></tr>
-<tr><td>plugin.spawn(type_id, properties)</td><td>создать экземпляр; возвращает новый числовой id</td></tr>
-<tr><td>plugin.machine(id)</td><td>копия одной машины</td></tr>
-<tr><td>plugin.update_machine(id, properties)</td><td>частичное изменение машины с проверкой связей</td></tr>
-<tr><td>plugin.user(id, name, password, admin=false)</td><td>добавить игровую учётную запись и домашнюю папку</td></tr>
-<tr><td>plugin.write(id, path, text)</td><td>авторская запись в виртуальный файл; создаёт родительские папки</td></tr>
+<tr><th>Вызов</th><th>Результат / действие</th></tr>
+<tr><td>plugin.id()</td><td>id текущего плагина</td></tr>
+<tr><td>plugin.event()</td><td>словарь текущего события</td></tr>
+<tr><td>plugin.get(key, default=null)</td><td>значение своего сохранённого ключа</td></tr>
+<tr><td>plugin.set(key, value)</td><td>сохранить значение; ключ до 128 символов, данные одного плагина до 64 КБ</td></tr>
+<tr><td>plugin.asset(path)</td><td>строка объявленного текстового ресурса</td></tr>
+<tr><td>plugin.world() / plugin.world("overview")</td><td>полное состояние мира / облегчённые данные для отчётов</td></tr>
+<tr><td>plugin.apply(patch)</td><td>атомарно заменить указанные разделы игрового состояния после проверки</td></tr>
+<tr><td>plugin.random(lo, hi)</td><td>целое из [lo, hi), генератор мира; границы в пределах ±10^9</td></tr>
 </table>
-<p>Базовые виды: <code>player</code>, <code>home_pc</code>, <code>router</code>, <code>gateway</code>, <code>server</code>, <code>workstation</code>, <code>database</code>, <code>file_server</code>, <code>mail</code>, <code>web</code>, <code>camera</code>, <code>badge</code>, <code>atm</code>, <code>medical_device</code>, <code>dns</code>, <code>isp</code>, <code>honeypot</code>.</p>
-<p>Собственный тип — отдельный <code>device_type</code> с любым содержимым на основе базового поведения. Например, датчик, промышленный контроллер или спутниковый модем получают своё имя типа, ОС, оборудование, службы, файлы, пользователей и уязвимости. Особое поведение реализуется Adder-обработчиками. Новые нативные графические примитивы или инструкции интерпретатора требуют изменения самого движка.</p>
-<pre>def load(event):
-    template = plugin.template(&quot;camera&quot;)
-    template[&quot;os&quot;] = &quot;SensorOS 1.0&quot;
-    template[&quot;org&quot;] = null
-    template[&quot;router&quot;] = null
-    template[&quot;services&quot;] = [{&quot;port&quot;: 9000, &quot;name&quot;: &quot;sensor&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;running&quot;: true, &quot;banner&quot;: &quot;Sensor control&quot;, &quot;pages&quot;: []}]
-    plugin.device_type(&quot;sensor&quot;, template)
-
-def create(event):
-    mid = plugin.spawn(&quot;my_plugin:sensor&quot;, {&quot;hostname&quot;: &quot;sensor-1&quot;, &quot;ip&quot;: &quot;198.18.10.1&quot;, &quot;lan_ip&quot;: null, &quot;domain&quot;: null, &quot;up&quot;: true})
-    plugin.user(mid, &quot;operator&quot;, &quot;sensor123&quot;, false)
-    plugin.write(mid, &quot;/etc/sensor/config.txt&quot;, &quot;mode=normal\n&quot;)</pre>
-<p><code>id</code> выдаётся автоматически, hostname и IP должны быть уникальны. Для внутреннего устройства укажи <code>lan_ip</code>, <code>router</code>, организацию и маршрут. Добавь id в <code>player.known_machines</code>, если оно должно сразу появиться на карте. Строка device_type отображается в карточке карты и neofetch; прочие правила поведения продолжают учитывать базовый kind.</p></body></html>
+<p>Пример изменения экономики:</p>
+<pre>world = plugin.world()
+world[&quot;finance&quot;][&quot;rate_per_day&quot;] = 1.0
+plugin.apply({&quot;finance&quot;: world[&quot;finance&quot;]})</pre>
+<p><code>apply</code> принимает разделы <code>machines</code>, <code>orgs</code>, <code>player</code>, <code>missions</code>, <code>finance</code>, <code>ending</code>, <code>life</code>, <code>gigs</code>, <code>market</code>, <code>base</code>, <code>achievements</code>, <code>scenarios</code>, <code>investigation</code>, <code>fw_down</code>, <code>keyloggers</code>, <code>botnet</code>, <code>botnet_mined</code>, <code>defense</code>, <code>down_until</code>. Несколько разделов можно изменить одним вызовом, например одновременно машины и организации. Структура — та же, что в <code>plugin.world()</code>; примеры реальных объектов лежат в <code>sdk/schema</code>.</p>
+<p>Движок проверяет типы, идентификаторы, ссылки, порты, адреса и маршруты. Нельзя удалить существующую машину/организацию, подменить личность игрока, удалить пользователя активного сеанса или создать цикл маршрутизаторов. Чтобы убрать устройство из работы, установи <code>up=false</code>. Часы, внутренний генератор, очереди и чужие данные плагинов через apply не заменяются.</p></body></html>

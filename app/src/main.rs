@@ -46,7 +46,7 @@ fn main() {
         .on_window_event(|window, event| {
             match event {
                 tauri::WindowEvent::Destroyed => windows::on_window_destroyed(window.app_handle(), window.label()),
-                tauri::WindowEvent::Focused(_) => window_layers::focus_changed(window.app_handle()),
+                tauri::WindowEvent::Focused(focused) => window_layers::focus_changed(window.app_handle(),window.label(),*focused),
                 _ => {}
             }
         })

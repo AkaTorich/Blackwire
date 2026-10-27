@@ -1,239 +1,182 @@
 'use strict';
-// Подсветка синтаксиса для редактора: язык Adder и простые текстовые форматы.
-// Выход — HTML для <pre>: текст разбит на куски {t, c} (текст, класс), затем экранируется.
-// Файл: js/apps/editor_highlight.js (подключать перед editor.js).
-
+// Только разметка: исходный текст никогда не изменяется и не исполняется.
 const EditorHighlight = (function () {
-  const KEYWORDS = new Set(('if elif else while for in def return break continue pass lambda try except ' +
-    'finally raise global and or not true false null import as').split(' '));
+  const KEYWORDS = new Set('and or not if elif else while for in def return lambda try except finally raise pass break continue global as'.split(' '));
   const CONSTS = new Set(['true', 'false', 'null']);
-  const BUILTINS = new Set(('print input len str int float bool list dict range type abs min max sum round ' +
-    'sorted reversed enumerate zip any all chr ord hex bin oct repr sleep exit isinstance').split(' '));
+  const BUILTINS = new Set('print input len str int float bool list dict range type abs min max sum round sorted reversed enumerate zip any all chr ord hex bin oct repr sleep exit'.split(' '));
   const MODULES = new Set('sys fs net shell plugin math json time random'.split(' '));
-  const OPCHARS = '+-*/%=<>!&|^~:';
   const NUM = /0[xX][0-9a-fA-F_]+|\d[\d_]*(?:\.\d[\d_]*)?(?:[eE][+-]?\d+)?/y;
-  const PLAIN_EXT = { txt: 1, log: 1, conf: 1, ini: 1, csv: 1, cfg: 1, md: 1, json: 1 };
-
-  const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
-  function esc(s) { return s.replace(/[&<>]/g, function (c) { return ESC[c]; }); }
-
-  function isIdentStart(c) { return /[A-Za-z_Ѐ-ӿ]/.test(c); }
-  function isIdentChar(c) { return /[\wЀ-ӿ]/.test(c); }
-
+  const PLAIN_EXT = { txt:1, log:1, conf:1, ini:1, csv:1, cfg:1, md:1, json:1 };
+  const escape = { '&':'&amp;', '<':'&lt;', '>':'&gt;' };
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return escape[c]; }); }
+  function identStart(c) { return !!c && /^[\p{L}_]$/u.test(c); }
+  function identChar(c) { return !!c && /^[\p{L}\p{N}_]$/u.test(c); }
+  function charAt(s, i) { return i < s.length ? String.fromCodePoint(s.codePointAt(i)) : ''; }
   function extOf(path) {
-    if (!path) return '';
-    const name = path.slice(path.lastIndexOf('/') + 1);
+    const name = String(path || '').split(/[\\/]/).pop();
     const i = name.lastIndexOf('.');
     return i < 0 ? '' : name.slice(i + 1).toLowerCase();
   }
-
-  // Какой язык у файла: безымянный и .adr — Adder, иначе простой текст.
   function langFor(path) {
     const ext = extOf(path);
-    if (!path || ext === 'adr') return 'adder';
-    return 'plain';
+    return !path || ext === 'adr' ? 'adder' : ext === 'json' ? 'json' : 'plain';
   }
-
-  // Строка со смещения `quote` (кавычка), начиная кусок с `start` (учитывает приставку f).
-  // Возвращает смещение за концом строки.
-  function scanString(src, quote, start, isF, out) {
-    const q = src[quote];
-    const triple = src.startsWith(q + q + q, quote);
-    const qlen = triple ? 3 : 1;
-    let j = quote + qlen;
-    let segStart = start;
-    const n = src.length;
-    while (j < n) {
-      const c = src[j];
-      if (c === '\\') { j += 2; continue; }
-      if (!triple && c === '\n') break;                       // незакрытая строка
-      if (c === q && (!triple || src.startsWith(q + q + q, j))) { j += qlen; break; }
-      if (isF && c === '{') {
-        if (src[j + 1] === '{') { j += 2; continue; }        // экранированная скобка
-        let depth = 0, k = j;
-        while (k < n) {
-          const d = src[k];
-          if (d === '{') depth++;
-          else if (d === '}') { depth--; if (depth === 0) { k++; break; } }
-          else if (d === '\n' && !triple) break;
-          k++;
-        }
-        if (j > segStart) out.push({ t: src.slice(segStart, j), c: 'tk-str' });
-        out.push({ t: src.slice(j, k), c: 'tk-fexpr' });
-        segStart = k;
-        j = k;
-        continue;
-      }
-      j++;
-    }
-    if (j > n) j = n;
-    if (j > segStart) out.push({ t: src.slice(segStart, j), c: 'tk-str' });
-    return j;
-  }
-
-  function tokenizeAdder(src) {
-    const out = [];
-    const n = src.length;
-    let i = 0, plainStart = 0, prevWord = '';
-    function flushPlain(to) { if (to > plainStart) out.push({ t: src.slice(plainStart, to), c: '' }); }
-
-    while (i < n) {
-      const c = src[i];
-      if (c === '#') {
-        flushPlain(i);
-        let j = src.indexOf('\n', i);
-        if (j < 0) j = n;
-        out.push({ t: src.slice(i, j), c: 'tk-comment' });
-        i = j; plainStart = i; prevWord = '';
-        continue;
-      }
-      if (c === '"' || c === "'") {
-        flushPlain(i);
-        i = scanString(src, i, i, false, out);
-        plainStart = i; prevWord = '';
-        continue;
-      }
-      if ((c === 'f' || c === 'F') && (src[i + 1] === '"' || src[i + 1] === "'") && !(i > 0 && isIdentChar(src[i - 1]))) {
-        flushPlain(i);
-        i = scanString(src, i + 1, i, true, out);
-        plainStart = i; prevWord = '';
-        continue;
-      }
-      if (c >= '0' && c <= '9' && !(i > 0 && isIdentChar(src[i - 1]))) {
-        NUM.lastIndex = i;
-        const m = NUM.exec(src);
-        if (m) {
-          flushPlain(i);
-          out.push({ t: m[0], c: 'tk-num' });
-          i += m[0].length; plainStart = i; prevWord = '';
-          continue;
-        }
-      }
-      if (isIdentStart(c)) {
-        let j = i + 1;
-        while (j < n && isIdentChar(src[j])) j++;
-        const w = src.slice(i, j);
-        const afterDot = i > 0 && src[i - 1] === '.';
-        let cls = '';
-        if (!afterDot && KEYWORDS.has(w)) cls = CONSTS.has(w) ? 'tk-const' : 'tk-kw';
-        else if (prevWord === 'def') cls = 'tk-def';
-        else if (!afterDot && MODULES.has(w)) cls = 'tk-module';
-        else if (!afterDot && BUILTINS.has(w)) cls = 'tk-builtin';
-        else if (src[j] === '(') cls = 'tk-call';
-        else if (afterDot) cls = 'tk-attr';
-        if (cls) { flushPlain(i); out.push({ t: w, c: cls }); plainStart = j; }
-        prevWord = w;
-        i = j;
-        continue;
-      }
-      if (OPCHARS.indexOf(c) >= 0) {
-        let j = i + 1;
-        while (j < n && OPCHARS.indexOf(src[j]) >= 0) j++;
-        flushPlain(i);
-        out.push({ t: src.slice(i, j), c: 'tk-op' });
-        i = j; plainStart = i; prevWord = '';
-        continue;
-      }
-      if ('()[]{}'.indexOf(c) >= 0) {
-        flushPlain(i);
-        out.push({ t: c, c: 'tk-br' });
-        i++; plainStart = i; prevWord = '';
-        continue;
-      }
-      if (c !== ' ' && c !== '\t') prevWord = '';
+  function stringEnd(src, quote) {
+    const q = src[quote], triple = src.startsWith(q + q + q, quote), size = triple ? 3 : 1;
+    let i = quote + size;
+    while (i < src.length) {
+      if (src[i] === '\\') { i = Math.min(i + 2, src.length); continue; }
+      if (!triple && src[i] === '\n') break;
+      if (src.startsWith(q.repeat(size), i)) return i + size;
       i++;
     }
-    flushPlain(n);
+    return i;
+  }
+  function fExpressionEnd(src, start, triple) {
+    let depth = 1, i = start + 1;
+    while (i < src.length) {
+      const c = src[i];
+      if (!triple && c === '\n') break;
+      if (c === '"' || c === "'") { i = stringEnd(src, i); continue; }
+      if (c === '{') depth++;
+      else if (c === '}') { depth--; if (depth === 0) return i + 1; }
+      i++;
+    }
+    return i;
+  }
+  function stringTokens(src, start, quote, f, out, depth) {
+    const q = src[quote], triple = src.startsWith(q + q + q, quote), size = triple ? 3 : 1;
+    let i = quote + size, literal = start;
+    while (i < src.length) {
+      const c = src[i];
+      if (c === '\\') { i = Math.min(i + 2, src.length); continue; }
+      if (!triple && c === '\n') break;
+      if (src.startsWith(q.repeat(size), i)) { i += size; break; }
+      if (f && c === '{') {
+        if (src[i + 1] === '{') { i += 2; continue; }
+        const end = fExpressionEnd(src, i, triple);
+        if (i > literal) out.push({t:src.slice(literal, i), c:'tk-str'});
+        const closed = end > i && src[end - 1] === '}';
+        out.push({t:'{', c:'tk-fexpr'});
+        const expression = src.slice(i + 1, closed ? end - 1 : end);
+        if (depth < 24) out.push.apply(out, tokenizeAdder(expression, depth + 1));
+        else out.push({t:expression, c:'tk-fexpr'});
+        if (closed) out.push({t:'}', c:'tk-fexpr'});
+        i = end; literal = end;
+        continue;
+      }
+      i++;
+    }
+    if (i > literal) out.push({t:src.slice(literal, i), c:'tk-str'});
+    return i;
+  }
+  function tokenizeAdder(src, depth) {
+    depth = depth || 0;
+    const out = [];
+    let i = 0, previous = '', previousSymbol = '';
+    function push(t, c) { out.push({t:t, c:c || ''}); }
+    while (i < src.length) {
+      const c = charAt(src, i);
+      if (/\s/.test(c)) {
+        let end = i + c.length;
+        while (end < src.length && /\s/.test(src[end])) end++;
+        const space = src.slice(i, end); push(space);
+        if (space.indexOf('\n') >= 0) { previous = ''; previousSymbol = ''; }
+        i = end; continue;
+      }
+      if (c === '#') {
+        let end = src.indexOf('\n', i); if (end < 0) end = src.length;
+        push(src.slice(i, end), 'tk-comment'); i = end; previous = ''; continue;
+      }
+      if (c === '"' || c === "'" || ((c === 'f' || c === 'F') && (src[i+1] === '"' || src[i+1] === "'"))) {
+        const f = c === 'f' || c === 'F';
+        i = stringTokens(src, i, i + (f ? 1 : 0), f, out, depth); previous = ''; previousSymbol = 'string'; continue;
+      }
+      if (/\d/.test(c)) {
+        NUM.lastIndex = i;
+        const number = NUM.exec(src);
+        if (number) { push(number[0], 'tk-num'); i += number[0].length; previous = ''; previousSymbol = 'number'; continue; }
+      }
+      if (identStart(c)) {
+        let end = i + c.length;
+        while (end < src.length && identChar(charAt(src, end))) end += charAt(src, end).length;
+        const word = src.slice(i, end), afterDot = previousSymbol === '.';
+        let next = end; while (next < src.length && /[ \t]/.test(src[next])) next++;
+        let cls = '';
+        if (previous === 'def') cls = 'tk-def';
+        else if (!afterDot && CONSTS.has(word)) cls = 'tk-const';
+        else if (!afterDot && KEYWORDS.has(word)) cls = 'tk-kw';
+        else if (!afterDot && MODULES.has(word)) cls = 'tk-module';
+        else if (!afterDot && BUILTINS.has(word)) cls = 'tk-builtin';
+        else if (src[next] === '(') cls = 'tk-call';
+        else if (afterDot) cls = 'tk-attr';
+        push(word, cls); previous = word; previousSymbol = 'name'; i = end; continue;
+      }
+      push(c, '()[]{}'.indexOf(c) >= 0 ? 'tk-br' : '+-*/%=<>!&|^~:.,'.indexOf(c) >= 0 ? 'tk-op' : '');
+      previous = ''; previousSymbol = c; i += c.length;
+    }
     return out;
   }
-
-  // Простой текст: комментарии, секции [..], ключ=значение, числа, строки, слова ошибок.
-  const VALUE_RE = /("[^"\n]*"|'[^'\n]*')|((?<![\w.])\d[\d_.:\-]*(?![\w]))|((?<![\wа-яё])(?:error|fail(?:ed|ure)?|fatal|denied|ошибк[а-яё]*|сбой|отказ[а-яё]*)(?![\wа-яё]))|((?<![\wа-яё])(?:warn(?:ing)?|предупрежден[а-яё]*)(?![\wа-яё]))/gi;
-
-  function pushValue(s, out) {
-    let last = 0, m;
-    VALUE_RE.lastIndex = 0;
-    while ((m = VALUE_RE.exec(s))) {
-      if (m.index > last) out.push({ t: s.slice(last, m.index), c: '' });
-      const cls = m[1] ? 'tk-str' : m[2] ? 'tk-num' : m[3] ? 'tk-err' : 'tk-warn';
-      out.push({ t: m[0], c: cls });
-      last = VALUE_RE.lastIndex;
-      if (m[0].length === 0) VALUE_RE.lastIndex++;
+  const JSON_VALUE = /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true\b|false\b|null\b/y;
+  function tokenizeJSON(src) {
+    const out = []; let i = 0;
+    while (i < src.length) {
+      const c = src[i];
+      if (c === '"') {
+        const end = stringEnd(src, i); let next = end;
+        while (next < src.length && /\s/.test(src[next])) next++;
+        out.push({t:src.slice(i, end), c:src[next] === ':' ? 'tk-key' : 'tk-str'}); i = end; continue;
+      }
+      JSON_VALUE.lastIndex = i;
+      const match = JSON_VALUE.exec(src);
+      if (match) { out.push({t:match[0], c:CONSTS.has(match[0]) ? 'tk-const' : 'tk-num'}); i += match[0].length; continue; }
+      out.push({t:c, c:'{}[]'.indexOf(c) >= 0 ? 'tk-br' : ':,'.indexOf(c) >= 0 ? 'tk-op' : ''}); i++;
     }
-    if (last < s.length) out.push({ t: s.slice(last), c: '' });
+    return out;
   }
-
+  const VALUE_RE = /("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*')|((?<![\w.])\d[\d_.:\-]*(?![\w]))|((?<![\wа-яё])(?:error|fail(?:ed|ure)?|fatal|denied|ошибк[а-яё]*|сбой|отказ[а-яё]*)(?![\wа-яё]))|((?<![\wа-яё])(?:warn(?:ing)?|предупрежден[а-яё]*)(?![\wа-яё]))/gi;
+  function values(text, out) {
+    let last = 0, m; VALUE_RE.lastIndex = 0;
+    while ((m = VALUE_RE.exec(text))) {
+      if (m.index > last) out.push({t:text.slice(last, m.index), c:''});
+      out.push({t:m[0], c:m[1] ? 'tk-str' : m[2] ? 'tk-num' : m[3] ? 'tk-err' : 'tk-warn'}); last = VALUE_RE.lastIndex;
+    }
+    if (last < text.length) out.push({t:text.slice(last), c:''});
+  }
   function tokenizePlain(src, ext) {
     const out = [];
-    const lines = src.split('\n');
-    const kvAllowed = ext !== 'csv' && ext !== 'log' && ext !== 'md';
-    for (let li = 0; li < lines.length; li++) {
-      const L = lines[li];
-      if (li > 0) out.push({ t: '\n', c: '' });
-      if (L === '') continue;
-      const trimmed = L.trimStart();
-      if (trimmed.startsWith('#') || trimmed.startsWith(';') || trimmed.startsWith('//')) {
-        out.push({ t: L, c: 'tk-comment' });
-        continue;
-      }
-      if (/^\s*\[[^\]]*\]\s*$/.test(L)) { out.push({ t: L, c: 'tk-kw' }); continue; }
-      if (ext === 'md' && /^\s*#{1,6}\s/.test(L)) { out.push({ t: L, c: 'tk-def' }); continue; }
-      const kv = kvAllowed ? /^(\s*)([^=:#;\s][^=:]{0,60}?)(\s*[=:]\s*)(.*)$/.exec(L) : null;
-      if (kv) {
-        if (kv[1]) out.push({ t: kv[1], c: '' });
-        out.push({ t: kv[2], c: 'tk-key' });
-        out.push({ t: kv[3], c: 'tk-op' });
-        pushValue(kv[4], out);
-        continue;
-      }
-      pushValue(L, out);
-    }
+    src.split('\n').forEach(function (line, index) {
+      if (index) out.push({t:'\n', c:''});
+      if (/^\s*(?:#|;|\/\/)/.test(line)) { out.push({t:line,c:'tk-comment'}); return; }
+      if (ext === 'md' && /^\s*#{1,6}\s/.test(line)) { out.push({t:line,c:'tk-def'}); return; }
+      if (/^\s*\[[^\]]*\]\s*$/.test(line)) { out.push({t:line,c:'tk-kw'}); return; }
+      const kv = !['csv','log','md'].includes(ext) && /^(\s*)([^=:#;\s][^=:]{0,60}?)(\s*[=:]\s*)(.*)$/.exec(line);
+      if (kv) { out.push({t:kv[1],c:''},{t:kv[2],c:'tk-key'},{t:kv[3],c:'tk-op'}); values(kv[4],out); }
+      else values(line,out);
+    });
     return out;
   }
-
-  // Наложить отметки поиска: ranges — [{start, end, cur}] по возрастанию, без пересечений.
   function applyMarks(segs, ranges) {
     if (!ranges || !ranges.length) return segs;
-    const out = [];
-    let pos = 0, ri = 0;
+    const out = []; let pos = 0, ri = 0;
     for (const s of segs) {
-      const segStart = pos, segEnd = pos + s.t.length;
-      let cur = segStart;
+      const start = pos, end = pos + s.t.length; let cur = start;
       while (ri < ranges.length && ranges[ri].end <= cur) ri++;
       let k = ri;
-      while (k < ranges.length && ranges[k].start < segEnd) {
-        const r = ranges[k];
-        const a = Math.max(r.start, cur), b = Math.min(r.end, segEnd);
-        if (a > cur) out.push({ t: s.t.slice(cur - segStart, a - segStart), c: s.c });
-        if (b > a) {
-          const mc = r.cur ? 'tk-found tk-found-cur' : 'tk-found';
-          out.push({ t: s.t.slice(a - segStart, b - segStart), c: s.c ? s.c + ' ' + mc : mc });
-        }
-        cur = b;
-        if (r.end <= segEnd) k++; else break;
+      while (k < ranges.length && ranges[k].start < end) {
+        const r = ranges[k], a = Math.max(r.start, cur), b = Math.min(r.end, end);
+        if (a > cur) out.push({t:s.t.slice(cur-start,a-start),c:s.c});
+        if (b > a) out.push({t:s.t.slice(a-start,b-start),c:(s.c ? s.c+' ' : '')+'tk-found'+(r.cur ? ' tk-found-cur' : '')});
+        cur = b; if (r.end <= end) k++; else break;
       }
-      if (cur < segEnd) out.push({ t: s.t.slice(cur - segStart), c: s.c });
-      pos = segEnd;
+      if (cur < end) out.push({t:s.t.slice(cur-start),c:s.c}); pos = end;
     }
     return out;
   }
-
-  function render(segs) {
-    let html = '';
-    for (const s of segs) {
-      if (!s.t) continue;
-      html += s.c ? '<span class="' + s.c + '">' + esc(s.t) + '</span>' : esc(s.t);
-    }
-    return html;
-  }
-
-  // Главный вход: текст, путь файла (для выбора языка), отметки поиска → HTML.
-  function highlight(text, path, marks) {
+  function highlight(text, path, marks, enabled) {
     const lang = langFor(path);
-    let segs = lang === 'adder' ? tokenizeAdder(text) : tokenizePlain(text, extOf(path));
-    segs = applyMarks(segs, marks);
-    return render(segs);
+    const segs = enabled === false ? [{t:text,c:''}] : lang === 'adder' ? tokenizeAdder(text) : lang === 'json' ? tokenizeJSON(text) : tokenizePlain(text,extOf(path));
+    return applyMarks(segs,marks).map(function (s) { return s.c ? '<span class="'+s.c+'">'+esc(s.t)+'</span>' : esc(s.t); }).join('');
   }
-
-  return { highlight: highlight, langFor: langFor, extOf: extOf, esc: esc, PLAIN_EXT: PLAIN_EXT };
+  return {highlight:highlight,langFor:langFor,extOf:extOf,esc:esc,PLAIN_EXT:PLAIN_EXT};
 })();

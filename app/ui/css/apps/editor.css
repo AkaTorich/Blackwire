@@ -1,6 +1,14 @@
 /* Редактор — css/apps/editor.css */
 
 .ed {
+  --syntax-keyword: #d5a7ff;
+  --syntax-constant: #ff9cac;
+  --syntax-builtin: #ffd580;
+  --syntax-function: #82aaff;
+  --syntax-string: #a9dc76;
+  --syntax-number: #ffcc80;
+  --syntax-module: #7fdbca;
+  --syntax-comment: #829bac;
   flex: 1;
   min-height: 0;
   display: flex;
@@ -237,6 +245,7 @@
   z-index: 1;
   background: transparent;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   caret-color: var(--accent);
   resize: none;
   outline: none;
@@ -251,20 +260,24 @@
 .ed-ta::-webkit-scrollbar-corner { background: transparent; }
 
 /* --- подсветка --- */
-.tk-kw      { color: var(--accent); }
-.tk-const   { color: var(--accent2); }
-.tk-builtin { color: var(--accent2); }
-.tk-module  { color: var(--accent); font-weight: 600; }
-.tk-def     { color: var(--ok); text-shadow: 0 0 6px var(--glow); }
-.tk-call    { color: var(--fg); }
-.tk-attr    { color: var(--fg); opacity: 0.9; }
-.tk-str     { color: var(--ok); }
-.tk-fexpr   { color: var(--warn); }
-.tk-num     { color: var(--warn); }
-.tk-comment { color: var(--fg-dim); font-style: italic; }
-.tk-op      { color: var(--accent2); opacity: 0.85; }
-.tk-br      { color: var(--fg-dim); }
-.tk-key     { color: var(--accent); }
+:root[data-theme="paper"] .ed {
+  --syntax-keyword: #673ab7; --syntax-constant: #a62e52; --syntax-builtin: #7d490c;
+  --syntax-function: #164ca2; --syntax-string: #20602f; --syntax-number: #9e3b12;
+  --syntax-module: #006b78; --syntax-comment: #526b78;
+}
+.ed-btn-highlight.active { color: var(--accent); border-color: var(--panel-border); }
+.ed-pre span { font-weight: inherit; font-style: normal; }
+.tk-kw      { color: var(--syntax-keyword); }
+.tk-const   { color: var(--syntax-constant); }
+.tk-builtin { color: var(--syntax-builtin); }
+.tk-module  { color: var(--syntax-module); }
+.tk-def, .tk-call { color: var(--syntax-function); }
+.tk-attr    { color: var(--syntax-module); }
+.tk-str     { color: var(--syntax-string); }
+.tk-fexpr, .tk-num { color: var(--syntax-number); }
+.tk-comment { color: var(--syntax-comment); }
+.tk-op, .tk-br { color: var(--fg-dim); }
+.tk-key     { color: var(--syntax-module); }
 .tk-err     { color: var(--err); }
 .tk-warn    { color: var(--warn); }
 .tk-found   { background: var(--sel); outline: 1px solid var(--panel-border); border-radius: 2px; }

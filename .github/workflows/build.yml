@@ -1,10 +1,15 @@
-# A version tag starts one build and publishes installers, SDK and plugins.
+# A version tag or a manual publish builds, tests and releases all packages once.
 name: Build
 
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish a release after all tests pass'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -74,6 +79,9 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Editor syntax tests
+        run: node --test tools/test_editor_highlight.js
+
       - name: Tauri CLI
         run: npm install --global @tauri-apps/cli@2.12.4 --no-audit --no-fund
 
@@ -86,7 +94,7 @@ jobs:
         run: |
           binary="target/release/Blackwire"
           if [ "${{ matrix.sdk_platform }}" = windows ]; then binary="$binary.exe"; fi
-          if [ "${{ matrix.sdk_platform }}" = macos ]; then binary="target/universal-apple-darwin/release/bundle/macos/Blackwire.app/Contents/MacOS/Blackwire"; fi
+          if [ "${{ matrix.sdk_platform }}" = macos ]; then binary="target/universal-apple-darwin/release/Blackwire"; fi
           if [ "${{ matrix.sdk_platform }}" = linux ]; then
             xvfb-run -a dbus-run-session -- bash -c 'openbox >/tmp/blackwire-window-manager.log 2>&1 & python tools/test_native_windows.py "$1"' -- "$binary"
           else
@@ -117,7 +125,7 @@ jobs:
 
   release:
     name: Publish release
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish)
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -131,10 +139,15 @@ jobs:
 
       - name: Verify release version
         run: |
-          python -c 'import json,os; v=json.load(open("app/tauri.conf.json"))["version"]; assert os.environ["GITHUB_REF_NAME"] == "v"+v'
-
-      - name: Release download links
-        run: echo "RELEASE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          python - <<'PY'
+          import json, os
+          version = json.load(open("app/tauri.conf.json"))["version"]
+          tag = "v" + version
+          if os.environ["GITHUB_REF_TYPE"] == "tag":
+              assert os.environ["GITHUB_REF_NAME"] == tag
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              output.write("RELEASE_VERSION=" + version + "\nRELEASE_TAG=" + tag + "\n")
+          PY
 
       - name: Download installers
         uses: actions/download-artifact@v4
@@ -161,13 +174,15 @@ jobs:
         with:
           draft: false
           make_latest: true
-          name: Blackwire ${{ github.ref_name }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
+          name: Blackwire ${{ env.RELEASE_TAG }}
           body: |
             Blackwire with Adder Plugin SDK (API 1).
 
-            [Download SDK](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip)
-            [Download 100 community plugins](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip)
-            [Download 10 new vulnerability cases](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip)
+            [Download SDK](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip)
+            [Download 100 community plugins](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip)
+            [Download 10 new vulnerability cases](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip)
 
             28 payload mechanics, player-defined Adder vulnerability types, configurable exploit outcomes and conditions, and an Access Lab tutorial plugin.
 

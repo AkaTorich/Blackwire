@@ -21,8 +21,9 @@ fn plan(mut layers:Vec<Layer>)->(bool,Vec<String>){
 
 pub fn refresh(app:&AppHandle){
     let labels:std::collections::BTreeSet<_>=app.state::<AppState>().windows.lock().map(|list|list.iter().map(|w|w.label.clone()).collect()).unwrap_or_default();
+    let focused=app.state::<AppState>().focused_window.lock().ok().and_then(|f|f.clone());
     let layers=app.webview_windows().into_iter().filter(|(label,_)|labels.contains(label)).map(|(label,w)|Layer{
-        label,minimized:w.is_minimized().unwrap_or(true),focused:w.is_focused().unwrap_or(false)
+        focused:focused.as_deref()==Some(label.as_str()),minimized:w.is_minimized().unwrap_or(true),label
     }).collect();
     let (active,labels)=plan(layers);
     for label in labels {
@@ -43,7 +44,6 @@ fn set_level(w:&tauri::WebviewWindow,active:bool){
 fn set_level(w:&tauri::WebviewWindow,active:bool){
     if active {
         let _=w.set_always_on_bottom(false);
-        let _=w.set_always_on_top(false);
         let _=w.set_always_on_top(true);
     }else{
         let _=w.set_always_on_top(false);
@@ -58,7 +58,12 @@ pub fn native_topmost(w:&tauri::WebviewWindow)->bool{
 #[cfg(not(windows))]
 pub fn native_topmost(w:&tauri::WebviewWindow)->bool{w.is_always_on_top().unwrap_or(false)}
 
-pub fn focus_changed(app:&AppHandle){
+pub fn focus_changed(app:&AppHandle,label:&str,focused:bool){
+    let state=app.state::<AppState>();
+    if let Ok(mut current)=state.focused_window.lock(){
+        if focused {*current=Some(label.into());}
+        else if current.as_deref()==Some(label){*current=None;}
+    }
     let revision=app.state::<AppState>().focus_revision.fetch_add(1,Ordering::Relaxed).wrapping_add(1);
     let app=app.clone();
     std::thread::spawn(move||{

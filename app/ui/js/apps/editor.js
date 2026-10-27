@@ -50,7 +50,7 @@ const EditorApp = (function () {
       tabs: [], active: -1, nextId: 1, untitled: 0,
       checkTimer: null, checkSeq: 0,
       search: { open: false, query: '', ranges: [], cur: -1 },
-      lineHeight: 20
+      highlight: true, lineHeight: 20
     };
 
     // --- разметка ---
@@ -62,8 +62,10 @@ const EditorApp = (function () {
     const btnOpen = iconBtn('folder-open', 'Открыть — Ctrl+O');
     const btnSave = iconBtn('save', 'Сохранить — Ctrl+S');
     const btnFind = iconBtn('search', 'Поиск — Ctrl+F');
+    const btnHighlight = iconBtn('file-code', 'Выключить подсветку синтаксиса', 'ed-btn-highlight active');
+    btnHighlight.setAttribute('aria-pressed', 'true');
     const btnRun = iconBtn('play', 'Запустить — F5', 'ed-btn-run');
-    tools.append(btnNew, btnOpen, btnSave, btnFind, btnRun);
+    tools.append(btnNew, btnOpen, btnSave, btnFind, btnHighlight, btnRun);
     tabbar.append(tabsList, tools);
 
     const searchBar = el('div', 'ed-search');
@@ -101,6 +103,14 @@ const EditorApp = (function () {
     const empty = el('div', 'ed-empty', 'Нет открытых файлов');
     root.append(tabbar, searchBar, area, empty, status);
     body.appendChild(root);
+
+    btnHighlight.addEventListener('click', function () {
+      st.highlight = !st.highlight;
+      btnHighlight.classList.toggle('active', st.highlight);
+      btnHighlight.setAttribute('aria-pressed', String(st.highlight));
+      btnHighlight.title = st.highlight ? 'Выключить подсветку синтаксиса' : 'Включить подсветку синтаксиса';
+      refresh();
+    });
 
     // --- вкладки ---
     function cur() { return st.active >= 0 ? st.tabs[st.active] : null; }
@@ -221,7 +231,7 @@ const EditorApp = (function () {
       const t = cur();
       const text = t ? ta.value : '';
       const marks = st.search.ranges.map(function (r, i) { return { start: r.start, end: r.end, cur: i === st.search.cur }; });
-      pre.innerHTML = EditorHighlight.highlight(text, t ? (t.path || t.name) : '', marks) + '\n\n ';
+      pre.innerHTML = EditorHighlight.highlight(text, t ? (t.path || t.name) : '', marks, st.highlight) + '\n\n ';
       renderGutter();
       renderStatus();
     }

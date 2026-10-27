@@ -40,8 +40,12 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
         }
     });
     windows::open_desktop(app,&st,0)?;
+    let editor_path="/home/window_qa/scripts/window-check.adr";
+    let editor_initial="# Подсветка Adder\ndef example(value):\n    return net.research(\"узел\", 42) if true else null\n";
+    {let mut game=st.game()?;let fs=&mut game.world.machines[0].fs;fs.mkdir_all("/home/window_qa/scripts","window_qa")?;fs.write_text(editor_path,editor_initial,"window_qa")?;}
+    let editor_expected=format!("{}\n# Сохранённая правка\n",editor_initial);
     let first=windows::create_app_window(app,&st,"terminal",None,Some(0))?;
-    let second=windows::create_app_window(app,&st,"editor",None,Some(0))?;
+    let second=windows::create_app_window(app,&st,"editor",Some(editor_path),Some(0))?;
     windows::open_login(app)?;
     let labels=vec!["desktop0".to_string(),first.clone(),second.clone(),"login".to_string()];
     // A normal independent window excluded from the game registry simulates another app.
@@ -58,6 +62,19 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
                 window(&app,label)?.eval(&script).map_err(|e|e.to_string())?;
             }
             wait(||captured.lock().is_ok_and(|m|labels.iter().all(|l|m.get(l)==Some(&3))),"not all windows expose three in-game buttons")?;
+            let editor_script=r#"(function verify(n){
+              var ta=document.querySelector('.ed-ta');
+              if(!ta||ta.value!==$INITIAL){if(n>0)setTimeout(function(){verify(n-1);},100);return;}
+              var source=$SOURCE;
+              ta.value=source;ta.setSelectionRange(4,9);ta.dispatchEvent(new Event('input',{bubbles:true}));
+              var pre=document.querySelector('.ed-pre'), kw=pre.querySelector('.tk-kw'), str=pre.querySelector('.tk-str'), num=pre.querySelector('.tk-num');
+              var colors=kw&&str&&num&&new Set([getComputedStyle(kw).color,getComputedStyle(str).color,getComputedStyle(num).color]).size===3;
+              var good=colors&&ta.value===source&&ta.selectionStart===4&&ta.selectionEnd===9&&pre.textContent.startsWith(source);
+              window.__TAURI__.event.emit('blackwire-window-controls-qa',{label:'editor-syntax',count:good?1:0});
+              document.querySelector('.ed-tools button[title^="Сохранить"]').click();
+            })(30)"#.replace("$INITIAL",&serde_json::to_string(editor_initial).unwrap()).replace("$SOURCE",&serde_json::to_string(&editor_expected).unwrap());
+            window(&app,&second)?.eval(&editor_script).map_err(|e|e.to_string())?;
+            wait(||captured.lock().is_ok_and(|m|m.get("editor-syntax")==Some(&1))&&app.state::<AppState>().game().is_ok_and(|g|g.world.machines[0].fs.read_text(editor_path).is_ok_and(|text|text==editor_expected)),"editor syntax, selection or save round-trip failed")?;
             window(&app,&first)?.set_focus().map_err(|e|e.to_string())?;
             wait(||labels.iter().all(|l|window(&app,l).is_ok_and(|w|window_layers::native_topmost(&w))),"background and app windows did not rise together")?;
             // Exercise actual UI buttons and native minimized/maximized states.
@@ -83,7 +100,7 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
             if labels.iter().filter(|l|**l!=second).any(|l|app.get_webview_window(l).is_none()){return Err("closing an app destroyed another window".into());}
             Ok(())
         })();
-        let value=json!({"ok":result.is_ok(),"platform":std::env::consts::OS,"checks":["four windows with custom controls","independent native windows","maximize","focus and topmost group","minimize all","restore one without restoring others","close one without closing others"],"error":result.as_ref().err()});
+        let value=json!({"ok":result.is_ok(),"platform":std::env::consts::OS,"checks":["four windows with custom controls","editor syntax, selection and saving","independent native windows","maximize","focus and topmost group","minimize all","restore one without restoring others","close one without closing others"],"windows":app.webview_windows().into_iter().map(|(label,w)|json!({"label":label,"minimized":w.is_minimized().ok(),"focused":w.is_focused().ok(),"topmost":window_layers::native_topmost(&w)})).collect::<Vec<_>>(),"error":result.as_ref().err()});
         let _=std::fs::write(report,serde_json::to_vec_pretty(&value).unwrap());app.exit(if result.is_ok(){0}else{1});
     });
     Ok(())
