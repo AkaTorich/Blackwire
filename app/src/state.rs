@@ -35,6 +35,7 @@ pub struct AppState {
     pub scenarios_dir: PathBuf,
     pub plugins_dir: PathBuf,
     pub next_win: AtomicU32,
+    pub focus_revision: AtomicU32,
     /// Монитор, на котором стоит подложка рабочего стола (по одному окну на монитор).
     pub desktops: Mutex<HashMap<u32, String>>,
     /// Проверочный режим `--size ШxВ`: все новые окна этого размера.
@@ -63,6 +64,7 @@ impl AppState {
             scenarios_dir,
             plugins_dir: dir.join("plugins"),
             next_win: AtomicU32::new(1),
+            focus_revision: AtomicU32::new(0),
             desktops: Mutex::new(HashMap::new()),
             forced_size: Mutex::new(None),
             net: Mutex::new(crate::netplay::NetState::default()),

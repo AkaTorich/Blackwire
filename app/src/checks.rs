@@ -22,6 +22,7 @@ pub fn start_from_args(app: &AppHandle) -> Result<bool, Box<dyn std::error::Erro
     if args.is_empty() {
         return Ok(false);
     }
+    if args.iter().any(|a|a=="--window-system-test"){crate::window_qa::start(app)?;return Ok(true);}
     let st = app.state::<AppState>();
     let mut new_handle: Option<String> = None;
     let mut seed: Option<u64> = None;

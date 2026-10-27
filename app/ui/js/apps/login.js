@@ -37,10 +37,9 @@
     var canvas = el('canvas', 'login-fx');
     wrap.appendChild(canvas);
 
-    var power = el('button', 'login-power btn-icon', Icons.get('power', 18));
-    power.title = 'Выйти';
-    power.addEventListener('click', function () { BW.invoke('quit'); });
-    wrap.appendChild(power);
+    var controls = Win.windowControls({ close: function () { BW.invoke('quit').catch(function (e) { Win.toast(String(e), 'err'); }); }, closeLabel: 'Выйти из игры' });
+    controls.classList.add('login-window-controls');
+    wrap.appendChild(controls);
 
     var boot = el('div', 'boot');
     boot.setAttribute('data-tauri-drag-region', '');

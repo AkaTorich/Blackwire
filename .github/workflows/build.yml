@@ -61,7 +61,7 @@ jobs:
             librsvg2-dev \
             libxdo-dev \
             libssl-dev \
-            file
+            file xvfb openbox dbus-x11
 
       - name: SDK packaging cache tests
         run: python -B tools/test_package_sdk.py
@@ -80,6 +80,18 @@ jobs:
       - name: Build game, SDK and installer
         working-directory: app
         run: tauri build ${{ matrix.target && format('--target {0}', matrix.target) || '' }} --bundles ${{ matrix.bundles }} --ci
+
+      - name: Native windows and in-game buttons
+        shell: bash
+        run: |
+          binary="target/release/Blackwire"
+          if [ "${{ matrix.sdk_platform }}" = windows ]; then binary="$binary.exe"; fi
+          if [ "${{ matrix.sdk_platform }}" = macos ]; then binary="target/universal-apple-darwin/release/bundle/macos/Blackwire.app/Contents/MacOS/Blackwire"; fi
+          if [ "${{ matrix.sdk_platform }}" = linux ]; then
+            xvfb-run -a dbus-run-session -- bash -c 'openbox >/tmp/blackwire-window-manager.log 2>&1 & python tools/test_native_windows.py "$1"' -- "$binary"
+          else
+            python tools/test_native_windows.py "$binary"
+          fi
 
       - name: Verify packaged SDK
         shell: bash

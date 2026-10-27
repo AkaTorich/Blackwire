@@ -26,6 +26,8 @@ mod scripts;
 mod state;
 mod ticker;
 mod windows;
+mod window_layers;
+mod window_qa;
 
 use tauri::Manager;
 
@@ -44,7 +46,7 @@ fn main() {
         .on_window_event(|window, event| {
             match event {
                 tauri::WindowEvent::Destroyed => windows::on_window_destroyed(window.app_handle(), window.label()),
-                tauri::WindowEvent::Focused(_) => windows::on_focus_changed(window.app_handle()),
+                tauri::WindowEvent::Focused(_) => window_layers::focus_changed(window.app_handle()),
                 _ => {}
             }
         })

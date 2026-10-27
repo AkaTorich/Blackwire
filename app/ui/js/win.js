@@ -37,11 +37,45 @@ var Win = (function () {
 
   function refreshMaxIcon() {
     if (!maxBtn) return;
-    current().isMaximized().then(function (m) {
+    Promise.all([current().isMaximized(), current().isFullscreen()]).then(function (states) {
+      var m = states[0] || states[1];
       maxBtn.innerHTML = Icons.get(m ? 'restore' : 'max', 16);
       maxBtn.title = m ? 'Восстановить' : 'Развернуть';
       if (frame) frame.classList.toggle('maximized', !!m);
     }, swallow);
+  }
+
+  /* Единые игровые кнопки для каждого системного окна. */
+  function windowControls(options) {
+    options = options || {};
+    var buttons = el('span', 'win-btns');
+    var minB = el('button', 'min', Icons.get('min', 16));
+    var maxB = el('button', 'max', Icons.get('max', 16));
+    var closeB = el('button', 'close', Icons.get('close', 16));
+    [[minB, 'Свернуть'], [maxB, 'Развернуть'], [closeB, options.closeLabel || 'Закрыть']].forEach(function (entry) {
+      entry[0].type = 'button';
+      entry[0].title = entry[1];
+      entry[0].setAttribute('aria-label', entry[1]);
+      buttons.appendChild(entry[0]);
+    });
+    maxBtn = maxB;
+    function failed(action, error) { toast('Не удалось ' + action + ': ' + String(error), 'err'); }
+    minB.addEventListener('click', function (e) {
+      e.stopPropagation(); BW.sound('click');
+      current().minimize().catch(function (error) { failed('свернуть окно', error); });
+    });
+    maxB.addEventListener('click', function (e) {
+      e.stopPropagation(); BW.sound('click');
+      var w = current();
+      w.isFullscreen().then(function (f) { return f ? w.setFullscreen(false) : w.toggleMaximize(); })
+        .then(refreshMaxIcon, function (error) { failed('развернуть окно', error); });
+    });
+    closeB.addEventListener('click', function (e) {
+      e.stopPropagation(); (options.close || close)();
+    });
+    window.addEventListener('resize', refreshMaxIcon);
+    refreshMaxIcon();
+    return buttons;
   }
 
   /* ---------- рамка ---------- */
@@ -56,31 +90,16 @@ var Win = (function () {
     icon.setAttribute('data-tauri-drag-region', '');
     nameEl = el('span', 'win-name');
     nameEl.setAttribute('data-tauri-drag-region', '');
-    var btns = el('span', 'win-btns');
-    var minB = el('button', 'min', Icons.get('min', 16));
-    minB.title = 'Свернуть';
-    maxBtn = el('button', 'max', Icons.get('max', 16));
-    maxBtn.title = 'Развернуть';
-    var closeB = el('button', 'close', Icons.get('close', 16));
-    closeB.title = 'Закрыть';
-    btns.appendChild(minB); btns.appendChild(maxBtn); btns.appendChild(closeB);
+    var btns = windowControls();
     header.appendChild(icon); header.appendChild(nameEl); header.appendChild(btns);
     var body = el('main', 'win-body');
     frame.appendChild(header); frame.appendChild(body);
     root.appendChild(frame);
 
-    minB.addEventListener('click', function () { BW.sound('click'); current().minimize().catch(swallow); });
-    maxBtn.addEventListener('click', function () {
-      BW.sound('click');
-      current().toggleMaximize().then(refreshMaxIcon, swallow);
-    });
-    closeB.addEventListener('click', function () { close(); });
     header.addEventListener('dblclick', function (e) {
       if (e.target.closest('.win-btns')) return;
       current().toggleMaximize().then(refreshMaxIcon, swallow);
     });
-    window.addEventListener('resize', refreshMaxIcon);
-
     if (opts.minWidth && opts.minHeight && tauri && tauri.dpi && tauri.dpi.LogicalSize) {
       try {
         current().setMinSize(new tauri.dpi.LogicalSize(opts.minWidth, opts.minHeight)).catch(swallow);
@@ -306,6 +325,6 @@ var Win = (function () {
   return {
     init: init, setTitle: setTitle, setModified: setModified, close: close,
     confirm: confirm, prompt: prompt, toast: toast, menu: menu, closeMenus: closeMenus,
-    current: current, bindKeys: bindKeys
+    current: current, bindKeys: bindKeys, windowControls: windowControls
   };
 })();

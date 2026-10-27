@@ -83,6 +83,7 @@
     exitButton.setAttribute('aria-label', exitButton.title);
     exitButton.addEventListener('click', quitGame);
     right.appendChild(exitButton);
+    right.appendChild(Win.windowControls({ close: quitGame, closeLabel: 'Сохранить и выйти из игры' }));
 
     var notify = el('aside', 'desk-notify');
     desk.appendChild(notify);

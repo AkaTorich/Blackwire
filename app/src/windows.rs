@@ -1,5 +1,5 @@
 //! Окна игры: каждое приложение — отдельное окно Windows без системной рамки.
-//! Подложка рабочего стола — окно во весь монитор, всегда позади остальных.
+//! Фон и приложения поднимаются вместе; каждое окно доступно системному переключателю.
 
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindowBuilder};
@@ -124,6 +124,11 @@ pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Opti
         .transparent(true)
         .shadow(true)
         .resizable(true)
+        .minimizable(true)
+        .maximizable(true)
+        .closable(true)
+        .skip_taskbar(false)
+        .always_on_top(true)
         .inner_size(w, h)
         .min_inner_size(min_w, min_h);
 
@@ -139,14 +144,7 @@ pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Opti
         builder = builder.center();
     }
 
-    // окна-приложения — дочерние к рабочему столу этого монитора: они всегда над
-    // фоном, а щелчок по кнопке «Blackwire» выводит вперёд весь набор вместе.
-    if let Some(m) = &mon {
-        if let Some(parent) = app.get_webview_window(&format!("desktop{}", m.index)) {
-            builder = builder.parent(&parent).map_err(|e| format!("родитель окна: {e}"))?;
-        }
-    }
-
+    // No owner/transient parent: every application is a normal taskbar/Alt+Tab window.
     let win = builder.build().map_err(|e| format!("не удалось открыть окно: {e}"))?;
     let _ = win.set_focus();
 
@@ -167,7 +165,12 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
         .decorations(false)
         .transparent(true)
         .shadow(true)
-        .resizable(false)
+        .resizable(true)
+        .minimizable(true)
+        .maximizable(true)
+        .closable(true)
+        .skip_taskbar(false)
+        .always_on_top(true)
         .inner_size(w, h)
         .center()
         .build()?;
@@ -176,61 +179,6 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     }
     Ok(())
 }
-
-/// Игра во весь экран поверх панели задач: пока активно любое её окно, рабочие
-/// столы стоят поверх всего (окна-приложения дочерние — поднимаются вместе с
-/// ними); ушёл фокус в другую программу — рабочие столы опускаются под неё.
-/// Обычное окно, даже размером с монитор, лежит под панелью задач — игры сами
-/// встают поверх всего, так и здесь.
-#[cfg(windows)]
-pub fn on_focus_changed(app: &AppHandle) {
-    let app = app.clone();
-    std::thread::spawn(move || {
-        // фокус переходит между окнами игры через миг «ничьей» — переждать его
-        std::thread::sleep(std::time::Duration::from_millis(80));
-        let st = app.state::<AppState>();
-        let labels: Vec<String> = st.desktops.lock().map(|d| d.values().cloned().collect()).unwrap_or_default();
-        let hwnds: Vec<isize> = labels
-            .iter()
-            .filter_map(|l| app.get_webview_window(l))
-            .filter_map(|w| w.hwnd().ok())
-            .map(|h| h.0 as isize)
-            .collect();
-        let _ = app.run_on_main_thread(move || raise_desktops(&hwnds));
-    });
-}
-
-#[cfg(windows)]
-fn raise_desktops(hwnds: &[isize]) {
-    use windows::Win32::Foundation::HWND;
-    use windows::Win32::UI::WindowsAndMessaging::{
-        GetForegroundWindow, GetWindowThreadProcessId, SetWindowPos, HWND_NOTOPMOST, HWND_TOPMOST, SWP_NOACTIVATE,
-        SWP_NOMOVE, SWP_NOSIZE,
-    };
-    unsafe {
-        let fg = GetForegroundWindow();
-        if fg.0.is_null() {
-            return;
-        }
-        let mut pid = 0u32;
-        GetWindowThreadProcessId(fg, Some(&mut pid));
-        let ours = pid == std::process::id();
-        let flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
-        for &raw in hwnds {
-            let h = HWND(raw as *mut _);
-            if ours {
-                let _ = SetWindowPos(h, Some(HWND_TOPMOST), 0, 0, 0, 0, flags);
-            } else {
-                // снять «поверх всех» и встать сразу под активную чужую программу
-                let _ = SetWindowPos(h, Some(HWND_NOTOPMOST), 0, 0, 0, 0, flags);
-                let _ = SetWindowPos(h, Some(fg), 0, 0, 0, 0, flags);
-            }
-        }
-    }
-}
-
-#[cfg(not(windows))]
-pub fn on_focus_changed(_app: &AppHandle) {}
 
 /// Подложка рабочего стола на мониторе: во весь экран, без рамки, всегда позади.
 pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), String> {
@@ -243,15 +191,20 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
     let url = format!("index.html?app=desktop&win={}&arg={}", label, monitor);
     // Первый рабочий стол — главное окно игры: у него есть кнопка в панели задач,
     // чтобы игру всегда можно было вернуть, даже закрыв все окна-приложения.
-    // Подложки на других мониторах кнопку не получают.
+    // Остальные фоны тоже доступны как самостоятельные окна.
     let is_primary = st.desktops.lock().map(|d| d.is_empty()).unwrap_or(true);
     let win = WebviewWindowBuilder::new(app, &label, WebviewUrl::App(url.into()))
         .title(if is_primary { "Blackwire" } else { app_title("desktop") })
         .decorations(false)
         .transparent(true)
         .shadow(false)
-        .resizable(false)
-        .skip_taskbar(!is_primary)
+        .resizable(true)
+        .minimizable(true)
+        .maximizable(true)
+        .closable(true)
+        .skip_taskbar(false)
+        .always_on_top(true)
+        .min_inner_size(640.0,360.0)
         .focused(false)
         .build()
         .map_err(|e| format!("не удалось открыть рабочий стол: {e}"))?;

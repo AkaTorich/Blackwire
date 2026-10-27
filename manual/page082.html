@@ -1,22 +1,41 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: авторский тип — plugin.json</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page081.html">Назад</a> | <a href="page083.html">Далее</a></div><h1>Пример: авторский тип — plugin.json</h1>
-<pre>{
-  &quot;id&quot;: &quot;custom_vuln_type&quot;,
-  &quot;name&quot;: &quot;Лаборатория авторских уязвимостей&quot;,
-  &quot;version&quot;: &quot;1.0.0&quot;,
-  &quot;api&quot;: 1,
-  &quot;entry&quot;: &quot;main.adr&quot;,
-  &quot;assets&quot;: [
-    &quot;signal_solver.adr&quot;
-  ],
-  &quot;permissions&quot;: [
-    &quot;content&quot;
-  ],
-  &quot;events&quot;: {
-    &quot;on_load&quot;: &quot;load&quot;
-  },
-  &quot;commands&quot;: {
-    &quot;type_create&quot;: &quot;create&quot;
-  }
-}
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: авторский тип — main.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page081.html">Назад</a> | <a href="page083.html">Далее</a></div><h1>Пример: авторский тип — main.adr</h1>
+<pre># Автор определяет новый тип на Adder, без изменения ядра.
+def describe_signal(event):
+    ring = &quot;BLACKWIRE&quot;
+    shift = (event[&quot;seed&quot;] + event[&quot;device&quot;][&quot;id&quot;]) % len(ring)
+    return {&quot;layout&quot;:{&quot;ring&quot;:ring,&quot;shift&quot;:shift,&quot;suffix&quot;:event[&quot;params&quot;].get(&quot;suffix&quot;,&quot;!&quot;)},
+        &quot;fields&quot;:[&quot;signal&quot;],
+        &quot;hints&quot;:[&quot;Нужно переставить символы кольца сигнала.&quot;,&quot;Сдвинь ring влево на shift позиций.&quot;,&quot;Склей ring[shift:] + ring[:shift] и добавь suffix.&quot;]}
 
+def check_signal(event):
+    layout = event[&quot;profile&quot;][&quot;layout&quot;]
+    expected = layout[&quot;ring&quot;][layout[&quot;shift&quot;]:] + layout[&quot;ring&quot;][:layout[&quot;shift&quot;]] + layout[&quot;suffix&quot;]
+    return {&quot;ok&quot;:event[&quot;payload&quot;].get(&quot;signal&quot;,&quot;&quot;) == expected,&quot;feedback&quot;:&quot;Неверная перестановка сигнала или suffix.&quot;}
+
+def load(event):
+    kind = plugin.exploit_type(&quot;signal_lock&quot;, {&quot;name&quot;:&quot;Signal Lock&quot;,&quot;profile&quot;:&quot;describe_signal&quot;,&quot;validate&quot;:&quot;check_signal&quot;,&quot;market&quot;:&quot;custom_vuln_type:signal_tool&quot;})
+    template = plugin.template(&quot;server&quot;)
+    template[&quot;os&quot;] = &quot;SignalOS 1.0&quot;
+    template[&quot;org&quot;] = null
+    template[&quot;router&quot;] = null
+    template[&quot;domain&quot;] = null
+    template[&quot;lan_ip&quot;] = null
+    template[&quot;custom_vulns&quot;] = []
+    template[&quot;services&quot;] = [{&quot;name&quot;:&quot;signal&quot;,&quot;port&quot;:7001,&quot;version&quot;:&quot;1.0&quot;,&quot;running&quot;:true,&quot;banner&quot;:&quot;Signal Lock&quot;,&quot;pages&quot;:[]}]
+    device = plugin.device_type(&quot;signal_node&quot;,template)
+    plugin.vulnerability(&quot;signal_entry&quot;, {&quot;device_type&quot;:device,&quot;service&quot;:&quot;signal&quot;,&quot;version_prefix&quot;:&quot;1.&quot;,&quot;access&quot;:&quot;shell&quot;,&quot;exploit&quot;:{&quot;kind&quot;:kind,&quot;params&quot;:{&quot;suffix&quot;:&quot;-ENTRY&quot;}}})
+    plugin.vulnerability(&quot;signal_kernel&quot;, {&quot;device_type&quot;:device,&quot;local&quot;:true,&quot;version_prefix&quot;:&quot;SignalOS&quot;,&quot;access&quot;:&quot;root&quot;,&quot;exploit&quot;:{&quot;kind&quot;:kind,&quot;params&quot;:{&quot;suffix&quot;:&quot;-ROOT&quot;}}})
+    plugin.catalog(&quot;market&quot;,&quot;signal_tool&quot;,{&quot;name&quot;:&quot;Signal Weaver&quot;,&quot;desc&quot;:&quot;Эксплоит авторского типа Signal Lock, исходник на Adder.&quot;,&quot;price&quot;:180,&quot;file&quot;:&quot;signal_solver.adr&quot;,&quot;code&quot;:plugin.asset(&quot;signal_solver.adr&quot;)})
+
+def create(event):
+    count = plugin.get(&quot;created&quot;,0) + 1
+    ip = f&quot;198.18.250.{count}&quot;
+    mid = plugin.spawn(&quot;custom_vuln_type:signal_node&quot;,{&quot;hostname&quot;:f&quot;signal-node-{count}&quot;,&quot;ip&quot;:ip,&quot;up&quot;:true})
+    plugin.user(mid,&quot;operator&quot;,&quot;signal123&quot;,false)
+    plugin.set(&quot;created&quot;,count)
+    print(&quot;Создан узел:&quot;,ip)
+    print(&quot;Свой тип целиком определён функциями describe_signal и check_signal.&quot;)
+    print(&quot;Подсказки: research -h 3&quot;,ip,&quot;custom_vuln_type:signal_entry&quot;)
+    print(&quot;Свой эксплоит: exploit new ~/scripts/signal.adr&quot;,ip,&quot;custom_vuln_type:signal_entry&quot;)
+    print(&quot;Готовый: market buy custom_vuln_type:signal_tool&quot;)
 </pre></body></html>
