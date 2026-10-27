@@ -66,7 +66,7 @@ jobs:
             librsvg2-dev \
             libxdo-dev \
             libssl-dev \
-            file xvfb openbox dbus-x11
+            file xvfb openbox dbus-x11 x11-utils
 
       - name: SDK packaging cache tests
         run: python -B tools/test_package_sdk.py

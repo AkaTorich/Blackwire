@@ -83,8 +83,23 @@ pub fn native_topmost(w:&tauri::WebviewWindow)->bool{
     use ::windows::Win32::UI::WindowsAndMessaging::{GetWindowLongW,GWL_EXSTYLE,WS_EX_TOPMOST};
     w.hwnd().is_ok_and(|hwnd|unsafe{GetWindowLongW(hwnd,GWL_EXSTYLE) as u32 & WS_EX_TOPMOST.0!=0})
 }
-#[cfg(not(windows))]
+#[cfg(not(any(windows,target_os="linux")))]
 pub fn native_topmost(w:&tauri::WebviewWindow)->bool{w.is_always_on_top().unwrap_or(false)}
+#[cfg(target_os="linux")]
+pub fn native_topmost(w:&tauri::WebviewWindow)->bool{
+    // Query the X11 manager's property directly: GTK/Tao's cached ABOVE flag
+    // can omit the manager's state even though native stacking has changed.
+    use gtk::{prelude::*,glib::translate::ToGlibPtr};
+    #[link(name="gdk-3")]
+    extern "C" {fn gdk_x11_window_get_xid(window:*mut gtk::gdk::ffi::GdkWindow)->std::os::raw::c_ulong;}
+    let (tx,rx)=std::sync::mpsc::channel();let target=w.clone();
+    if w.run_on_main_thread(move||{
+        let id=target.gtk_window().ok().filter(|native|native.display().type_().name()=="GdkX11Display").and_then(|native|native.window()).map(|surface|unsafe{gdk_x11_window_get_xid(surface.to_glib_none().0)});
+        let _=tx.send(id);
+    }).is_err(){return false;}
+    let Some(id)=rx.recv_timeout(std::time::Duration::from_secs(2)).ok().flatten()else{return false};
+    std::process::Command::new("xprop").args(["-id",&format!("0x{id:x}"),"_NET_WM_STATE"]).output().is_ok_and(|output|String::from_utf8_lossy(&output.stdout).contains("_NET_WM_STATE_ABOVE"))
+}
 
 pub fn focus_changed(app:&AppHandle,label:&str,focused:bool){
     let state=app.state::<AppState>();
