@@ -178,17 +178,20 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Blackwire ${{ env.RELEASE_TAG }}
           body: |
-            Blackwire with Adder Plugin SDK (API 1).
+            В этом выпуске:
+            - Окна игры доступны в панели задач и при переключении окон системы. Кнопки в стиле игры сворачивают, разворачивают и закрывают каждое окно отдельно, включая фон и окно входа.
+            - Фон находится под игровыми окнами и поверх рабочего стола, пока игра активна. При переходе в другую программу игра уступает ей место. Свёрнутые окна не восстанавливаются самопроизвольно.
+            - Улучшена подсветка Adder и JSON в редакторе: функции, API, строки, числа, комментарии и выражения в f-строках. Добавлена кнопка включения подсветки; сохранение и выделение текста проверяются автоматически.
+            
+            Установщики Windows, Linux и macOS включают SDK в папке игры.
+            
+            Архивы:
+            - **Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip** — руководство, CHM, примеры, схемы и инструменты проверки для трёх систем.
+            - **Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip** — 100 самостоятельных плагинов, у каждого есть START_HERE.md.
+            - **Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip** — 10 дополнительных сценариев с 30 уязвимостями и русскими инструкциями.
+            
+            Плагины устанавливаются и запускаются по выбору игрока.
 
-            [Download SDK](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip)
-            [Download 100 community plugins](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip)
-            [Download 10 new vulnerability cases](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip)
-
-            28 payload mechanics, player-defined Adder vulnerability types, configurable exploit outcomes and conditions, and an Access Lab tutorial plugin.
-
-            Installers for Windows, Linux and macOS include the SDK.
-            Blackwire-SDK-*.zip contains the manuals, CHM help, examples, schemas and checker tools for all three systems.
-            Blackwire-Plugins-*.zip contains 100 standalone Adder plugins with individual START_HERE guides.
           fail_on_unmatched_files: true
           files: |
             target/release-installers/*
