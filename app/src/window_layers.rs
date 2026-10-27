@@ -65,7 +65,7 @@ fn set_level(w:&tauri::WebviewWindow,active:bool){
         native.set_keep_above(active);
         // Raise without present()/activation, in the planner's background-first order.
         if active{if let Some(surface)=native.window(){surface.raise();}}
-        if std::env::args().any(|a|a=="--window-system-test"){eprintln!("GTK level: {} active={active} native_active={} state={:?}",w.label(),native.is_active(),native.window().map(|surface|surface.state()));}
+        if std::env::args().any(|a|a=="--window-system-test"){eprintln!("GTK level: {} active={active} native_active={} backend={} state={:?}",w.label(),native.is_active(),native.display().type_().name(),native.window().map(|surface|surface.state()));}
     }
 }
 #[cfg(not(any(windows,target_os="linux")))]

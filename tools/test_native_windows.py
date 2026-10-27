@@ -1,6 +1,6 @@
 """Проверка настоящих окон Blackwire в отдельном временном профиле, без снимков экрана."""
 from pathlib import Path
-import argparse,json,subprocess,tempfile,os,time
+import argparse,json,subprocess,tempfile,os,time,sys
 from contextlib import contextmanager
 
 @contextmanager
@@ -26,6 +26,7 @@ def main():
     binary=args.binary.resolve();assert binary.is_file(),binary
     with temporary_profile() as folder:
         env=os.environ.copy();env['WEBVIEW2_USER_DATA_FOLDER']=str(Path(folder)/'webview');env['XDG_CACHE_HOME']=str(Path(folder)/'cache');env['WEBKIT_DISABLE_DMABUF_RENDERER']='1'
+        if sys.platform=='linux':env['GDK_BACKEND']='x11'
         run=subprocess.run([str(binary),'--window-system-test','--data-dir',folder],timeout=80,env=env)
         time.sleep(2)
         report=Path(folder)/'native-window-report.json'
