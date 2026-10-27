@@ -42,5 +42,9 @@
       "password": "bw_deleted_research_attribution_2"
     }
   ],
-  "subnet": "10.230.59."
+  "subnet": "10.230.59.",
+  "exploit_kind": "length_confusion",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 4
 }

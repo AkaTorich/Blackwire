@@ -56,5 +56,9 @@
       "password": "bw_neighborhood_isp_3"
     }
   ],
-  "subnet": "10.230.28."
+  "subnet": "10.230.28.",
+  "exploit_kind": "command_chain",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 3
 }

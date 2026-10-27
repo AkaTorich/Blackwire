@@ -42,5 +42,9 @@
       "password": "bw_hidden_warehouse_tenant_2"
     }
   ],
-  "subnet": "10.230.56."
+  "subnet": "10.230.56.",
+  "exploit_kind": "command_chain",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 1
 }

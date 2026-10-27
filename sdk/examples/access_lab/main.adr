@@ -1,0 +1,59 @@
+# Access Lab — разные результаты и условия взлома, заданные на Adder.
+def load(event):
+    template = plugin.template("router")
+    template["os"] = "AccessOS 1.0"
+    template["org"] = null
+    template["router"] = null
+    template["domain"] = null
+    template["lan_ip"] = null
+    template["custom_vulns"] = []
+    template["services"] = [{"name":"accesslab","port":7002,"version":"1.0","running":true,"banner":"Access Lab","pages":[]}]
+    device = plugin.device_type("access_node",template)
+    outcomes = [
+        {"type":"shell","privilege":"guest"},
+        {"type":"shell","privilege":"user","user":"operator"},
+        {"type":"shell","privilege":"root"},
+        {"type":"computer"},
+        {"type":"router"},
+        {"type":"file","path":"/tmp/access-note.txt"},
+        {"type":"partial_shell","user":"operator","methods":["whoami","hostname","list"]},
+        {"type":"partial_computer","methods":["hostname","services"]},
+        {"type":"partial_router","methods":["hostname","routes","connections"]},
+        {"type":"partial_file","path":"/tmp/access-note.txt","methods":["read","stat"]}
+    ]
+    keys = ["guest","user","root","computer","router","file","partial_shell","partial_computer","partial_router","partial_file"]
+    conditions = [{"type":"active_admin"},{"type":"active_user","user":"operator"},{"type":"connections_min","count":2},{"type":"forwarded_ports_min","count":1},{"type":"plugin_state","key":"ready","equals":true}]
+    for index in range(len(keys)):
+        plugin.vulnerability(keys[index],{"device_type":device,"service":"accesslab","version_prefix":"1.","access":"info","result":outcomes[index],"conditions":conditions,"exploit":{"kind":"protocol","hint":"Учебный стенд: access_ready создаёт нужную активность. После access_reset условия снова не выполнены."}})
+
+def create(event):
+    mid = plugin.get("machine",null)
+    if mid == null:
+        mid = plugin.spawn("access_lab:access_node",{"hostname":"access-lab","ip":"198.18.249.1","up":true})
+        plugin.user(mid,"operator","accesslab",false)
+        plugin.write(mid,"/tmp/access-note.txt","This file belongs to the Access Lab exercise.\n")
+        plugin.set("machine",mid)
+        plugin.set("ready",false)
+    print("Учебный узел: 198.18.249.1")
+    print("1. probe 198.18.249.1 — выбери результат взлома.")
+    print("2. research -h 3 198.18.249.1 access_lab:partial_file — посмотри условия.")
+    print("3. access_ready — включи учебную активность пользователей и соединений.")
+    print("4. market buy exp_protocol — купи исходник; затем exploit -f ~/scripts/exp_protocol.adr -s access_lab:partial_file 198.18.249.1")
+    print("5. В своём Adder-коде сохрани r = net.exploit(...); затем net.access(r['handle'], 'read').")
+    print("Объект работает 300 игровых секунд и только в том же окне терминала.")
+
+def ready(event):
+    mid = plugin.get("machine",null)
+    if mid == null:
+        print("Сначала access_create")
+        return
+    plugin.host_activity(mid,{"users":["root","operator"],"connections":2,"forwarded_ports":[7002]})
+    plugin.set("ready",true)
+    print("Условия учебного стенда выполнены. Выбери один результат и запусти эксплоит.")
+
+def reset(event):
+    mid = plugin.get("machine",null)
+    if mid != null:
+        plugin.host_activity(mid,{"users":[],"connections":0,"forwarded_ports":[]})
+    plugin.set("ready",false)
+    print("Учебная активность сброшена. Уже полученные объекты живут до истечения срока или смены службы.")

@@ -56,5 +56,9 @@
       "password": "bw_university_research_network_3"
     }
   ],
-  "subnet": "10.230.23."
+  "subnet": "10.230.23.",
+  "exploit_kind": "auth_replay",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 3
 }

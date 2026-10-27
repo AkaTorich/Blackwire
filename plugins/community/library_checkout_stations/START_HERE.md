@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: header_injection. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `loan_sync`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.12.1 library_checkout_stations:records_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_header_injection`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s library_checkout_stations:records_entry 198.22.12.1`
+`exploit -f ~/scripts/exp_header_injection.adr -s library_checkout_stations:records_entry 198.22.12.1`
 
 Прочитай `/srv/records/loans.csv` на последнем узле — там сохранённая запись.
 

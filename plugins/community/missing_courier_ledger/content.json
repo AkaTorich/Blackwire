@@ -42,5 +42,9 @@
       "password": "bw_missing_courier_ledger_2"
     }
   ],
-  "subnet": "10.230.41."
+  "subnet": "10.230.41.",
+  "exploit_kind": "unsafe_deserialization",
+  "kernel_kind": "race",
+  "leak_kind": "unsafe_deserialization",
+  "exploit_difficulty": 1
 }

@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: regex_backtracking. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `shipping_store`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.45.1 ghost_shipping_orders:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_regex_backtracking`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s ghost_shipping_orders:gateway_entry 198.22.45.1`
+`exploit -f ~/scripts/exp_regex_backtracking.adr -s ghost_shipping_orders:gateway_entry 198.22.45.1`
 
 Прочитай `/srv/records/ghost-orders.csv` на последнем узле — там сохранённая запись.
 

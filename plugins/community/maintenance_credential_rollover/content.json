@@ -29,5 +29,9 @@
     }
   ],
   "subnet": "10.230.100.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "prototype_pollution",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 5
 }

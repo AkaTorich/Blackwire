@@ -121,6 +121,15 @@ pub fn call(game:&mut Game,owner:&str,name:&str,args:&[Value])->Result<Value,Str
             machines.as_array_mut().unwrap().push(template);
             apply(game,&json!({"machines":machines}))?;Ok(json!(id))
         }
+        "plugin.host_activity"=>{
+            let mid=args.first().and_then(Value::as_u64).filter(|id|*id<=u32::MAX as u64).ok_or("нужен id устройства")? as u32;
+            if !game.world.has_machine(mid){return Err("нет устройства".into());}
+            if args.len()==1{return serde_json::to_value(game.world.plugins.host_activity.get(&mid).cloned().unwrap_or_default()).map_err(|e|e.to_string());}
+            let state:crate::hack::access::Activity=serde_json::from_value(args[1].clone()).map_err(|e|e.to_string())?;
+            if state.connections>4096||state.users.len()>128||state.forwarded_ports.len()>128||state.forwarded_ports.contains(&0)||state.users.iter().any(|u|!game.world.machine(mid).users.exists(u)){return Err("неверная активность устройства".into());}
+            game.world.plugins.host_activity.insert(mid,state);Ok(Value::Null)
+        },
+        "plugin.exploit_type"=>super::exploit_types::register(game,owner,args),
         "plugin.vulnerability"=>{
             let key=namespace(owner,string(args,0)?);
             let mut spec=args.get(1).cloned().ok_or("нужно описание уязвимости")?;
@@ -132,7 +141,12 @@ pub fn call(game:&mut Game,owner:&str,name:&str,args:&[Value])->Result<Value,Str
             if let Some(t)=spec.get("device_type").and_then(Value::as_str){if !game.world.plugins.device_types.contains_key(t){return Err("тип устройства не найден".into());}}
             if let Some(mid)=spec.get("machine").and_then(Value::as_u64){if mid>u32::MAX as u64 || !game.world.has_machine(mid as u32){return Err("устройство не найдено".into());}}
             if let Some(h)=spec.get("handler"){if !h.as_str().map(super::ident).unwrap_or(false){return Err("неверное имя обработчика уязвимости".into());}}
-            if let Some(exploit) = spec.get("exploit") { crate::hack::payload::validate_spec(exploit)?; }
+            if let Some(exploit) = spec.get("exploit") {
+                crate::hack::payload::validate_spec(exploit)?;
+                let kind=exploit["kind"].as_str().unwrap();
+                if !crate::hack::payload::KINDS.contains(&kind) && !game.world.plugins.exploit_types.contains_key(kind){return Err("сначала зарегистрируй авторский тип через plugin.exploit_type".into());}
+            }
+            crate::hack::access::validate_spec(&spec)?;
             spec["name"]=json!(key);
             game.world.plugins.vulnerabilities.insert(key.clone(),spec);refresh(game)?;Ok(json!(key))
         }

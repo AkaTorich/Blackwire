@@ -1,0 +1,39 @@
+# Автор определяет новый тип на Adder, без изменения ядра.
+def describe_signal(event):
+    ring = "BLACKWIRE"
+    shift = (event["seed"] + event["device"]["id"]) % len(ring)
+    return {"layout":{"ring":ring,"shift":shift,"suffix":event["params"].get("suffix","!")},
+        "fields":["signal"],
+        "hints":["Нужно переставить символы кольца сигнала.","Сдвинь ring влево на shift позиций.","Склей ring[shift:] + ring[:shift] и добавь suffix."]}
+
+def check_signal(event):
+    layout = event["profile"]["layout"]
+    expected = layout["ring"][layout["shift"]:] + layout["ring"][:layout["shift"]] + layout["suffix"]
+    return {"ok":event["payload"].get("signal","") == expected,"feedback":"Неверная перестановка сигнала или suffix."}
+
+def load(event):
+    kind = plugin.exploit_type("signal_lock", {"name":"Signal Lock","profile":"describe_signal","validate":"check_signal","market":"custom_vuln_type:signal_tool"})
+    template = plugin.template("server")
+    template["os"] = "SignalOS 1.0"
+    template["org"] = null
+    template["router"] = null
+    template["domain"] = null
+    template["lan_ip"] = null
+    template["custom_vulns"] = []
+    template["services"] = [{"name":"signal","port":7001,"version":"1.0","running":true,"banner":"Signal Lock","pages":[]}]
+    device = plugin.device_type("signal_node",template)
+    plugin.vulnerability("signal_entry", {"device_type":device,"service":"signal","version_prefix":"1.","access":"shell","exploit":{"kind":kind,"params":{"suffix":"-ENTRY"}}})
+    plugin.vulnerability("signal_kernel", {"device_type":device,"local":true,"version_prefix":"SignalOS","access":"root","exploit":{"kind":kind,"params":{"suffix":"-ROOT"}}})
+    plugin.catalog("market","signal_tool",{"name":"Signal Weaver","desc":"Эксплоит авторского типа Signal Lock, исходник на Adder.","price":180,"file":"signal_solver.adr","code":plugin.asset("signal_solver.adr")})
+
+def create(event):
+    count = plugin.get("created",0) + 1
+    ip = f"198.18.250.{count}"
+    mid = plugin.spawn("custom_vuln_type:signal_node",{"hostname":f"signal-node-{count}","ip":ip,"up":true})
+    plugin.user(mid,"operator","signal123",false)
+    plugin.set("created",count)
+    print("Создан узел:",ip)
+    print("Свой тип целиком определён функциями describe_signal и check_signal.")
+    print("Подсказки: research -h 3",ip,"custom_vuln_type:signal_entry")
+    print("Свой эксплоит: exploit new ~/scripts/signal.adr",ip,"custom_vuln_type:signal_entry")
+    print("Готовый: market buy custom_vuln_type:signal_tool")

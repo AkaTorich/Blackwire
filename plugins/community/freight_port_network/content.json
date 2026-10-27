@@ -56,5 +56,9 @@
       "password": "bw_freight_port_network_3"
     }
   ],
-  "subnet": "10.230.22."
+  "subnet": "10.230.22.",
+  "exploit_kind": "traversal",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 2
 }

@@ -29,5 +29,9 @@
     }
   ],
   "subnet": "10.230.94.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "mass_assignment",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 4
 }

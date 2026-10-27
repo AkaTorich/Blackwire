@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: format. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `referral_store`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.53.1 leaked_patient_referrals:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_format`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s leaked_patient_referrals:gateway_entry 198.22.53.1`
+`exploit -f ~/scripts/exp_format.adr -s leaked_patient_referrals:gateway_entry 198.22.53.1`
 
 Прочитай `/srv/records/referral-access.csv` на последнем узле — там сохранённая запись.
 

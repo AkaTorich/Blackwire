@@ -42,5 +42,9 @@
       "password": "bw_erased_visitor_records_2"
     }
   ],
-  "subnet": "10.230.46."
+  "subnet": "10.230.46.",
+  "exploit_kind": "fragment_overlap",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 1
 }

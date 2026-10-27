@@ -6,6 +6,7 @@ pub(crate) mod events;
 mod validate;
 pub mod catalog;
 mod content;
+pub(crate) mod exploit_types;
 #[cfg(test)] mod tests;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
@@ -25,6 +26,14 @@ pub struct SavedPlugins {
     pub data: BTreeMap<String, BTreeMap<String, Value>>,
     pub device_types: BTreeMap<String, Value>,
     pub vulnerabilities: BTreeMap<String, Value>,
+    pub exploit_types: BTreeMap<String,Value>,
+    pub host_activity: BTreeMap<u32,crate::hack::access::Activity>,
+    pub npc_logins: BTreeMap<u32,BTreeMap<String,u64>>,
+    #[serde(skip)] pub(crate) exploit_presence: BTreeMap<u32,crate::hack::access::Activity>,
+    #[serde(skip)] pub(crate) exploit_grants: BTreeMap<String,crate::hack::access::Grant>,
+    #[serde(skip)] pub(crate) exploit_grant_seq: u64,
+    #[serde(skip)]
+    pub(crate) exploit_runtime: BTreeMap<String,std::sync::Arc<Plugin>>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -41,7 +50,7 @@ pub struct Manifest {
     #[serde(default)] pub events: BTreeMap<String, String>,
     #[serde(default)] pub commands: BTreeMap<String, String>,
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Plugin { pub manifest: Manifest, pub source: String, pub assets: BTreeMap<String,String>, pub error: Option<String> }
 #[derive(Default)]
 pub struct Runtime { pub sessions: BTreeMap<String,u32>, pub order: Vec<String>, pub network: Value, pub outbox: Vec<Value>, pub loaded: BTreeMap<String, Plugin>, pub errors: Vec<String>, pub busy: bool }
@@ -99,6 +108,7 @@ impl Game {
         let mut remaining:BTreeSet<_>=runtime.loaded.keys().cloned().collect();
         loop {let ready:Vec<_>=remaining.iter().filter(|id|runtime.loaded[*id].manifest.requires.iter().all(|dep|runtime.order.contains(dep))).cloned().collect();if ready.is_empty(){break;}for id in ready{remaining.remove(&id);runtime.order.push(id);}}
         for id in remaining {runtime.loaded.get_mut(&id).unwrap().error=Some("нет зависимости или найден цикл зависимостей".into());}
+        self.world.plugins.exploit_runtime=runtime.loaded.iter().filter(|(_,p)|p.error.is_none()).map(|(id,p)|(id.clone(),std::sync::Arc::new(p.clone()))).collect();
         self.plugins = runtime;
         self.plugin_event("on_load", json!({}));
     }
@@ -110,6 +120,7 @@ impl Game {
         if enabled {for dep in &self.plugins.loaded[id].manifest.requires{if !self.plugin_ready(dep){return Err(format!("недоступна зависимость {dep}"));}}}
         if !enabled {if let Some(p)=self.plugins.loaded.get(id).cloned(){if let Some(h)=p.manifest.events.get("on_unload"){self.run_plugin(&p,h,json!({}),None);}}}
         if enabled { self.world.plugins.disabled.remove(id); self.plugins.loaded.get_mut(id).unwrap().error=None;
+            self.world.plugins.exploit_runtime.insert(id.into(),std::sync::Arc::new(self.plugins.loaded[id].clone()));
             if let Some(p)=self.plugins.loaded.get(id).cloned() {if let Some(h)=p.manifest.events.get("on_load"){self.run_plugin(&p,h,json!({}),None);}}
         } else {self.world.plugins.disabled.insert(id.into());self.plugins.outbox.retain(|packet|packet["plugin"]!=json!(id));if let Some(sid)=self.plugins.sessions.remove(id){self.close_session(sid);}}
         Ok(())
@@ -148,7 +159,7 @@ impl Game {
         let (status,mut lines)=match result {Ok(x)=>x,Err(e)=>(Err(e),Vec::new())};
         let _=internal;
         self.plugins.busy=false;
-        if let Err(e)=status { self.world=previous_world;self.sessions=previous_sessions;if !self.sessions.contains_key(&sid){self.plugins.sessions.remove(&p.manifest.id);}self.pending_scripts=pending_scripts;self.plugins.outbox.truncate(outbox_len);self.pending_ui.truncate(ui_len);if let Some(loaded)=self.plugins.loaded.get_mut(&p.manifest.id){loaded.error=Some(e.clone());} lines.push(OutLine::error(format!("{}: {e}",p.manifest.name)));}
+        if let Err(e)=status { self.world=previous_world;self.sessions=previous_sessions;if !self.sessions.contains_key(&sid){self.plugins.sessions.remove(&p.manifest.id);}self.pending_scripts=pending_scripts;self.plugins.outbox.truncate(outbox_len);self.pending_ui.truncate(ui_len);if let Some(loaded)=self.plugins.loaded.get_mut(&p.manifest.id){loaded.error=Some(e.clone());} self.world.plugins.exploit_runtime.remove(&p.manifest.id); lines.push(OutLine::error(format!("{}: {e}",p.manifest.name)));}
         lines
     }
     pub fn plugin_command(&mut self, session: u32, line: &str) -> Option<ShellResult> {

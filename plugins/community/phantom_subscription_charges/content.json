@@ -42,5 +42,9 @@
       "password": "bw_phantom_subscription_charges_2"
     }
   ],
-  "subnet": "10.230.58."
+  "subnet": "10.230.58.",
+  "exploit_kind": "signedness",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 3
 }

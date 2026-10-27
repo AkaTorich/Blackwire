@@ -1,13 +1,39 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Данные: gig</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page075.html">Назад</a> | <a href="page077.html">Далее</a></div><h1>Данные: gig</h1>
-<p>Пример сериализованного объекта текущего ядра.</p>
-<pre>{
-  &quot;id&quot;: 1,
-  &quot;title&quot;: &quot;Тихое дело&quot;,
-  &quot;objective&quot;: &quot;Получить доступ к gippokrat-mail (203.112.48.135) — 170 &#8373;&quot;,
-  &quot;reward&quot;: 170,
-  &quot;goal&quot;: {
-    &quot;Own&quot;: {
-      &quot;target&quot;: 60
-    }
-  }
-}</pre></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: устройства — camera_payload.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page075.html">Назад</a> | <a href="page077.html">Далее</a></div><h1>Пример: устройства — camera_payload.adr</h1>
+<pre># camera_payload.adr — готовый эксплоит для игровой механики overflow
+# Исходник доступен для изучения и изменения в редакторе Blackwire.
+if len(sys.args) &lt; 2:
+    print(&quot;Использование: camera_payload.adr адрес [id уязвимости]&quot;)
+    print(&quot;Поиск цели: probe адрес; подсказки: research адрес id&quot;)
+    exit(1)
+try:
+    address = sys.args[1]
+    selector = sys.args[2] if len(sys.args) &gt; 2 else null
+    profile = net.research(address, selector)
+    if profile[&quot;kind&quot;] != &quot;overflow&quot;:
+        print(&quot;Инструмент не подходит: нужна механика&quot;, profile[&quot;kind&quot;])
+        print(&quot;Подходящий инструмент: market buy&quot;, profile[&quot;market&quot;])
+        exit(1)
+    if profile[&quot;service&quot;] != &quot;lab_control&quot; or not profile[&quot;version&quot;].startswith(&quot;1.&quot;):
+        print(&quot;Camera Payload подходит только к lab_control версии 1.x.&quot;)
+        exit(1)
+    selector = profile[&quot;id&quot;]
+    layout = profile[&quot;layout&quot;]
+    payload = {&quot;fingerprint&quot;: profile[&quot;fingerprint&quot;]}
+    pad = &quot;A&quot; * (layout[&quot;frame_words&quot;] * layout[&quot;word_size&quot;])
+    entry_address = layout[&quot;code_base&quot;] + layout[&quot;entry_offset&quot;]
+    payload[&quot;buffer&quot;] = pad + &quot;|&quot; + str(entry_address) + &quot;|&quot; + layout[&quot;canary&quot;]
+    check = net.probe(address, selector, payload)
+    print(check[&quot;feedback&quot;])
+    if not check[&quot;ok&quot;]:
+        exit(1)
+    if profile[&quot;local&quot;]:
+        result = net.privesc(payload, selector)
+    else:
+        result = net.exploit(address, selector, payload)
+    print(result)
+    if not result[&quot;ok&quot;]:
+        exit(1)
+except as error:
+    print(&quot;Эксплоит не выполнен:&quot;, error)
+    exit(1)
+</pre></body></html>

@@ -43,6 +43,7 @@ fn whoami(game: &Game, session: u32) -> (MachineId, String) {
 
 /// Вызов игровой функции по полному имени.
 pub fn call(game: &mut Game, session: u32, pid: u32, name: &str, args: Vec<Value>) -> R {
+    game.sync_exploit_presence();
     let (module, func) = name.split_once('.').ok_or_else(|| format!("неизвестная функция: {}", name))?;
     let stamp=crate::plugins::events::Stamp::new(&game.world);
     let result = match module {
@@ -295,6 +296,7 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             let page = game.world.http(mid, &url);
             Ok(json!({ "status": page.status, "title": page.title, "body": page.body }))
         }
+        "access" => crate::hack::access::use_object(game, session, args),
         "research" | "probe" => {
             let addr = arg_str(args, 0, "адрес")?;
             let selector = args.get(1).and_then(Value::as_str);
@@ -306,7 +308,8 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 let payload = args.get(2).ok_or("net.probe(адрес, id, payload): нужен payload")?;
                 return crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, true);
             }
-            let result = crate::hack::payload::profile(&game.world, id, &v);
+            let mut result = crate::hack::payload::profile(&game.world, id, &v)?;
+            result["conditions"]=crate::hack::access::conditions(&game.world,id,&v,Some(sess));
             game.world.mark_scanned(id);
             Ok(result)
         }
@@ -320,7 +323,7 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 .iter()
                 .filter(|v| !v.local || mid == id)
                 .map(|v| json!({ "id": crate::hack::payload::id(v), "kind": crate::hack::payload::kind(&game.world, v),
-                    "version": v.version, "service": v.service, "port": v.port, "name": v.name, "access": access_str(&v.access), "local": v.local }))
+                    "version": v.version, "service": v.service, "port": v.port, "name": v.name, "access": access_str(&v.access), "result":crate::hack::access::result(&game.world,v), "conditions":crate::hack::access::conditions(&game.world,id,v,Some(sess)), "local": v.local }))
                 .collect();
             Ok(Value::Array(list))
         }
@@ -340,6 +343,7 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 ExploitOutcome::Creds { user, password } => json!({ "ok": true, "access": "creds", "user": user, "password": password, "host": r.target_host, "monitored": r.monitored }),
                 ExploitOutcome::Shell { user } => json!({ "ok": true, "access": "shell", "user": user, "host": r.target_host, "monitored": r.monitored }),
                 ExploitOutcome::Read { path, data } => json!({ "ok": true, "access": "read", "path": path, "data": data, "host": r.target_host, "monitored": r.monitored }),
+                ExploitOutcome::Object { handle, kind, methods } => json!({"ok":true,"access":kind,"handle":handle,"methods":methods,"host":r.target_host,"expires_in":300}),
                 ExploitOutcome::Nothing => json!({ "ok": false, "access": "none", "host": r.target_host, "monitored": r.monitored }),
             };
             Ok(out)

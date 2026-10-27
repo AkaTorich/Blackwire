@@ -56,5 +56,9 @@
       "password": "bw_marine_research_station_3"
     }
   ],
-  "subnet": "10.230.39."
+  "subnet": "10.230.39.",
+  "exploit_kind": "cache_poisoning",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 4
 }

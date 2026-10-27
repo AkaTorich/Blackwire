@@ -56,5 +56,9 @@
       "password": "bw_emergency_training_center_3"
     }
   ],
-  "subnet": "10.230.34."
+  "subnet": "10.230.34.",
+  "exploit_kind": "type_confusion",
+  "kernel_kind": "race",
+  "leak_kind": "unsafe_deserialization",
+  "exploit_difficulty": 4
 }

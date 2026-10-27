@@ -56,5 +56,9 @@
       "password": "bw_regional_court_archive_3"
     }
   ],
-  "subnet": "10.230.38."
+  "subnet": "10.230.38.",
+  "exploit_kind": "request_smuggling",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 3
 }

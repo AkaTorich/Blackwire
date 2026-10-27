@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: header_injection. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `radio_archive`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.40.1 underground_radio_station:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_header_injection`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s underground_radio_station:gateway_entry 198.22.40.1`
+`exploit -f ~/scripts/exp_header_injection.adr -s underground_radio_station:gateway_entry 198.22.40.1`
 
 Прочитай `/srv/records/broadcast-ledger.txt` на последнем узле — там сохранённая запись.
 

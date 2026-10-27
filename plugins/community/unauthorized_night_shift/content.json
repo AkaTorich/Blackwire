@@ -42,5 +42,9 @@
       "password": "bw_unauthorized_night_shift_2"
     }
   ],
-  "subnet": "10.230.55."
+  "subnet": "10.230.55.",
+  "exploit_kind": "race",
+  "kernel_kind": "race",
+  "leak_kind": "unsafe_deserialization",
+  "exploit_difficulty": 5
 }

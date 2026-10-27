@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: signedness. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `parking_pay`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.2.1 parking_terminals:records_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_signedness`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s parking_terminals:records_entry 198.22.2.1`
+`exploit -f ~/scripts/exp_signedness.adr -s parking_terminals:records_entry 198.22.2.1`
 
 Прочитай `/srv/records/tickets.csv` на последнем узле — там сохранённая запись.
 

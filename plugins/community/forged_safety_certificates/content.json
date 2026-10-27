@@ -42,5 +42,9 @@
       "password": "bw_forged_safety_certificates_2"
     }
   ],
-  "subnet": "10.230.49."
+  "subnet": "10.230.49.",
+  "exploit_kind": "overflow",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 4
 }

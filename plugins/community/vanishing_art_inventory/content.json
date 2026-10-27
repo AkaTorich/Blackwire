@@ -42,5 +42,9 @@
       "password": "bw_vanishing_art_inventory_2"
     }
   ],
-  "subnet": "10.230.51."
+  "subnet": "10.230.51.",
+  "exploit_kind": "auth_replay",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 1
 }

@@ -1,27 +1,2 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Файлы и каталоги</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page049.html">Назад</a> | <a href="page051.html">Далее</a></div><h2>Файлы и каталоги</h2>
-<table>
-<tr><th>Команда</th><th>Использование</th><th>Назначение</th></tr>
-<tr><td><code>ls</code></td><td><code>ls [-l] [-a] [-h] [путь…]</code></td><td>список файлов</td></tr>
-<tr><td><code>cd</code></td><td><code>cd [путь]</code></td><td>сменить папку (без аргумента — домой, «-» — назад)</td></tr>
-<tr><td><code>pwd</code></td><td><code>pwd</code></td><td>текущая папка</td></tr>
-<tr><td><code>cat</code></td><td><code>cat [-n] [файл…]</code></td><td>вывести файл</td></tr>
-<tr><td><code>less</code></td><td><code>less файл</code></td><td>вывести файл (то же, что cat)</td></tr>
-<tr><td><code>more</code></td><td><code>more файл</code></td><td>вывести файл (то же, что cat)</td></tr>
-<tr><td><code>touch</code></td><td><code>touch файл…</code></td><td>создать пустой файл или обновить время</td></tr>
-<tr><td><code>mkdir</code></td><td><code>mkdir [-p] папка…</code></td><td>создать папку</td></tr>
-<tr><td><code>rm</code></td><td><code>rm [-r] [-f] путь…</code></td><td>удалить файлы и папки</td></tr>
-<tr><td><code>rmdir</code></td><td><code>rmdir папка…</code></td><td>удалить пустую папку</td></tr>
-<tr><td><code>mv</code></td><td><code>mv откуда… куда</code></td><td>переместить или переименовать</td></tr>
-<tr><td><code>cp</code></td><td><code>cp [-r] откуда… куда</code></td><td>скопировать</td></tr>
-<tr><td><code>echo</code></td><td><code>echo [-n] [-e] текст…</code></td><td>напечатать текст</td></tr>
-<tr><td><code>printf</code></td><td><code>printf формат [аргументы…]</code></td><td>напечатать текст (как echo -e)</td></tr>
-<tr><td><code>find</code></td><td>`find [путь] [-name шаблон] [-type f</td><td>d]`</td><td>искать файлы</td></tr>
-<tr><td><code>du</code></td><td><code>du [-h] [-s] [путь]</code></td><td>размер папок</td></tr>
-<tr><td><code>df</code></td><td><code>df [-h]</code></td><td>место на диске</td></tr>
-<tr><td><code>chmod</code></td><td><code>chmod режим файл…</code></td><td>сменить права (755, u+x, rwxr-xr-x)</td></tr>
-<tr><td><code>chown</code></td><td><code>chown пользователь файл…</code></td><td>сменить владельца (root)</td></tr>
-<tr><td><code>file</code></td><td><code>file путь…</code></td><td>определить вид файла</td></tr>
-<tr><td><code>stat</code></td><td><code>stat путь…</code></td><td>сведения о файле</td></tr>
-<tr><td><code>tree</code></td><td><code>tree [-a] [-L глубина] [путь]</code></td><td>дерево папок</td></tr>
-<tr><td><code>ln</code></td><td><code>ln [-s] цель имя</code></td><td>создать копию под другим именем</td></tr>
-</table></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Исполнение</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page049.html">Назад</a> | <a href="page051.html">Далее</a></div><h2>Исполнение</h2>
+<p>Исполнитель считает шаги и не реже чем каждые 500 шагов спрашивает <code>Host::should_stop()</code>; так бесконечный цикл останавливается командой <code>kill</code>, Ctrl+C или закрытием игры. Глубина рекурсии ограничена (1000) — глубже ошибка «переполнение стека». Ошибка времени исполнения несёт номер строки: <code>Ошибка (строка 12): деление на ноль</code>.</p></body></html>

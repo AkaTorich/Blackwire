@@ -1,0 +1,19 @@
+{
+  "id": "custom_vuln_type",
+  "name": "Лаборатория авторских уязвимостей",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "main.adr",
+  "assets": [
+    "signal_solver.adr"
+  ],
+  "permissions": [
+    "content"
+  ],
+  "events": {
+    "on_load": "load"
+  },
+  "commands": {
+    "type_create": "create"
+  }
+}

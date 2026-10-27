@@ -37,6 +37,15 @@ fn install_example_files(root: &std::path::Path, name: &str) -> Result<(), Strin
             ("plugin.json", include_str!("../../sdk/examples/district/plugin.json")),
             ("main.adr", include_str!("../../sdk/examples/district/main.adr")),
         ],
+        "custom_vuln_type" => &[
+            ("plugin.json", include_str!("../../sdk/examples/custom_vuln_type/plugin.json")),
+            ("main.adr", include_str!("../../sdk/examples/custom_vuln_type/main.adr")),
+            ("signal_solver.adr", include_str!("../../sdk/examples/custom_vuln_type/signal_solver.adr")),
+        ],
+        "access_lab" => &[
+            ("plugin.json", include_str!("../../sdk/examples/access_lab/plugin.json")),
+            ("main.adr", include_str!("../../sdk/examples/access_lab/main.adr")),
+        ],
         _ => return Err("нет такого примера".into()),
     };
     let dir = root.join(name);
@@ -63,10 +72,13 @@ mod tests {
         let root = temporary.join(format!("blackwire-example-{}-{}", std::process::id(),
             std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
         super::install_example_files(&root, "device_lab").unwrap();
+        for name in ["district","custom_vuln_type","access_lab"] { super::install_example_files(&root,name).unwrap(); }
         let mut game = blackwire_core::Game::new(blackwire_core::World::new(42, "example_test", ""));
         game.load_plugins(&root);
         assert!(game.plugins.errors.is_empty(), "{:?}", game.plugins.errors);
-        assert!(game.plugins.loaded["device_lab"].error.is_none());
+        assert!(game.plugins.loaded.values().all(|p|p.error.is_none()));
+        assert!(game.world.plugins.exploit_types.contains_key("custom_vuln_type:signal_lock"));
+        assert!(game.world.plugins.vulnerabilities.contains_key("access_lab:partial_file"));
         assert!(game.plugins.loaded["device_lab"].assets.contains_key("camera_payload.adr"));
         assert!(game.world.plugins.catalogs["market"].contains_key("device_lab:camera_exploit"));
         let main = root.join("device_lab/main.adr");

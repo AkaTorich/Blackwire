@@ -42,5 +42,9 @@
       "password": "bw_diverted_relief_supplies_2"
     }
   ],
-  "subnet": "10.230.50."
+  "subnet": "10.230.50.",
+  "exploit_kind": "traversal",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 5
 }

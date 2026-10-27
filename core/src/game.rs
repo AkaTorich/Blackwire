@@ -96,6 +96,7 @@ impl Game {
     }
 
     pub fn close_session(&mut self, id: u32) {
+        self.world.plugins.exploit_grants.retain(|_,g|g.session!=id);
         self.pending_scripts.retain(|p|p.session!=id);
         if self.sessions.remove(&id).is_some() {
             for m in &mut self.world.machines {
@@ -105,6 +106,7 @@ impl Game {
     }
 
     pub fn exec(&mut self, session: u32, line: &str) -> ShellResult {
+        self.sync_exploit_presence();
         if let Some(result) = self.plugin_command(session, line) { return result; }
         let stamp=crate::plugins::events::Stamp::new(&self.world);
         let s = match self.sessions.get_mut(&session) {

@@ -56,5 +56,9 @@
       "password": "bw_regional_data_center_3"
     }
   ],
-  "subnet": "10.230.27."
+  "subnet": "10.230.27.",
+  "exploit_kind": "race",
+  "kernel_kind": "race",
+  "leak_kind": "unsafe_deserialization",
+  "exploit_difficulty": 2
 }

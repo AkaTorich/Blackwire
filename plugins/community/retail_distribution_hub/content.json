@@ -56,5 +56,9 @@
       "password": "bw_retail_distribution_hub_3"
     }
   ],
-  "subnet": "10.230.30."
+  "subnet": "10.230.30.",
+  "exploit_kind": "signedness",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 5
 }

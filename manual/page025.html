@@ -1,16 +1,18 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Устройство пакета</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page024.html">Назад</a> | <a href="page026.html">Далее</a></div><h2>Устройство пакета</h2>
-<p>Обязательные поля манифеста: <code>id</code>, <code>name</code>, <code>version</code>, <code>api</code>, <code>entry</code>. Неизвестные поля считаются ошибкой. <code>id</code> и имена функций/команд — ASCII-буквы, цифры и подчёркивание; первый символ не цифра, длина до 64. Имена встроенных команд переопределять нельзя.</p>
-<p>Дополнительные поля:</p>
-<table>
-<tr><th>Поле</th><th>Значение</th></tr>
-<tr><td>permissions</td><td>список разрешений</td></tr>
-<tr><td>events</td><td>словарь «событие &#8594; имя функции»</td></tr>
-<tr><td>commands</td><td>словарь «имя команды &#8594; имя функции»</td></tr>
-<tr><td>libraries</td><td>список относительных путей к исходникам Adder; добавляются перед entry в указанном порядке</td></tr>
-<tr><td>assets</td><td>список относительных путей к текстовым ресурсам UTF-8; читать через plugin.asset</td></tr>
-<tr><td>requires</td><td>список id необходимых плагинов; задаёт порядок загрузки</td></tr>
-</table>
-<p>Каждый обработчик принимает один словарь <code>event</code>. Возвращаемое значение обычной функции игнорируется. <code>print</code> попадает в ответ команды, а ошибки — в карточку плагина. Вывод фонового обработчика сам по себе не создаёт уведомление: для него используй <code>sys.notify</code>.</p>
-<p>Для фоновых событий плагин имеет собственный игровой сеанс: текущие машина, пользователь и папка сохраняются между событиями в рамках запущенной игры. Команда плагина работает в сеансе вызвавшего её терминала. При выключении или перечитывании пакета его служебный сеанс закрывается вместе с принадлежащими ему скриптами.</p>
-<p>Исходник выполняется заново на каждом событии. На верхнем уровне держи определения функций и константы; регистрацию содержимого выполняй в <code>on_load</code>. Для долговременных данных используй <code>plugin.get/set</code>, а не глобальные переменные Adder. Библиотеки также исполняются заново. Номера строк ошибки относятся к объединённому тексту libraries + entry + вызов обработчика.</p>
-<p>Плагины загружаются в порядке зависимостей, независимые — по id. Не найденная зависимость и цикл отмечаются ошибкой. Используй разные id пакетов и разные имена команд. Версия <code>api</code> должна совпадать с версией движка; поле <code>version</code> описывает версию самого пакета.</p></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Первый плагин</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page024.html">Назад</a> | <a href="page026.html">Далее</a></div><h2>Первый плагин</h2>
+<p>Папка <code>my_counter</code>:</p>
+<pre>{
+  &quot;id&quot;: &quot;my_counter&quot;,
+  &quot;name&quot;: &quot;Мой счётчик&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;api&quot;: 1,
+  &quot;entry&quot;: &quot;main.adr&quot;,
+  &quot;events&quot;: {&quot;on_tick&quot;: &quot;tick&quot;},
+  &quot;commands&quot;: {&quot;counter_show&quot;: &quot;show&quot;}
+}</pre>
+<p>Файл <code>main.adr</code>:</p>
+<pre>def tick(event):
+    plugin.set(&quot;ticks&quot;, plugin.get(&quot;ticks&quot;, 0) + 1)
+
+def show(event):
+    print(&quot;Тактов мира:&quot;, plugin.get(&quot;ticks&quot;, 0))</pre>
+<p>Нажми «Перечитать», затем <code>counter_show</code>. Значение сохраняется вместе с игрой.</p></body></html>

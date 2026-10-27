@@ -42,5 +42,9 @@
       "password": "bw_unlisted_server_rack_2"
     }
   ],
-  "subnet": "10.230.60."
+  "subnet": "10.230.60.",
+  "exploit_kind": "use_after_free",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 5
 }

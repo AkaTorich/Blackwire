@@ -1,99 +1,61 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Данные: vulnerability</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page083.html">Назад</a> | <a href="page085.html">Далее</a></div><h1>Данные: vulnerability</h1>
-<p>Пример сериализованного объекта текущего ядра.</p>
-<pre>{
-  &quot;$schema&quot;: &quot;https://json-schema.org/draft/2020-12/schema&quot;,
-  &quot;title&quot;: &quot;Blackwire plugin.vulnerability specification&quot;,
-  &quot;type&quot;: &quot;object&quot;,
-  &quot;required&quot;: [
-    &quot;access&quot;
-  ],
-  &quot;properties&quot;: {
-    &quot;device_type&quot;: {
-      &quot;type&quot;: &quot;string&quot;
-    },
-    &quot;machine&quot;: {
-      &quot;type&quot;: &quot;integer&quot;,
-      &quot;minimum&quot;: 0
-    },
-    &quot;service&quot;: {
-      &quot;type&quot;: &quot;string&quot;
-    },
-    &quot;version_prefix&quot;: {
-      &quot;type&quot;: &quot;string&quot;
-    },
-    &quot;local&quot;: {
-      &quot;type&quot;: &quot;boolean&quot;
-    },
-    &quot;access&quot;: {
-      &quot;type&quot;: &quot;string&quot;,
-      &quot;pattern&quot;: &quot;^(creds|shell|root|info|read:/.*)$&quot;
-    },
-    &quot;handler&quot;: {
-      &quot;type&quot;: &quot;string&quot;,
-      &quot;pattern&quot;: &quot;^[A-Za-z_][A-Za-z0-9_]*$&quot;
-    },
-    &quot;exploit&quot;: {
-      &quot;type&quot;: &quot;object&quot;,
-      &quot;additionalProperties&quot;: false,
-      &quot;required&quot;: [
-        &quot;kind&quot;
-      ],
-      &quot;properties&quot;: {
-        &quot;kind&quot;: {
-          &quot;enum&quot;: [
-            &quot;overflow&quot;,
-            &quot;traversal&quot;,
-            &quot;auth_replay&quot;,
-            &quot;query&quot;,
-            &quot;format&quot;,
-            &quot;protocol&quot;,
-            &quot;race&quot;,
-            &quot;command_chain&quot;
-          ]
-        },
-        &quot;difficulty&quot;: {
-          &quot;type&quot;: &quot;integer&quot;,
-          &quot;minimum&quot;: 1,
-          &quot;maximum&quot;: 5
-        },
-        &quot;hint&quot;: {
-          &quot;type&quot;: &quot;string&quot;,
-          &quot;maxLength&quot;: 2048
-        },
-        &quot;market&quot;: {
-          &quot;type&quot;: &quot;string&quot;,
-          &quot;minLength&quot;: 1,
-          &quot;maxLength&quot;: 129,
-          &quot;pattern&quot;: &quot;^[A-Za-z0-9_:]+$&quot;
-        }
-      }
-    }
-  },
-  &quot;allOf&quot;: [
-    {
-      &quot;if&quot;: {
-        &quot;properties&quot;: {
-          &quot;local&quot;: {
-            &quot;const&quot;: true
-          }
-        },
-        &quot;required&quot;: [
-          &quot;local&quot;
-        ]
-      },
-      &quot;then&quot;: {
-        &quot;properties&quot;: {
-          &quot;access&quot;: {
-            &quot;const&quot;: &quot;root&quot;
-          }
-        }
-      },
-      &quot;else&quot;: {
-        &quot;required&quot;: [
-          &quot;service&quot;
-        ]
-      }
-    }
-  ]
-}
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Пример: результаты и условия — main.adr</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page083.html">Назад</a> | <a href="page085.html">Далее</a></div><h1>Пример: результаты и условия — main.adr</h1>
+<pre># Access Lab — разные результаты и условия взлома, заданные на Adder.
+def load(event):
+    template = plugin.template(&quot;router&quot;)
+    template[&quot;os&quot;] = &quot;AccessOS 1.0&quot;
+    template[&quot;org&quot;] = null
+    template[&quot;router&quot;] = null
+    template[&quot;domain&quot;] = null
+    template[&quot;lan_ip&quot;] = null
+    template[&quot;custom_vulns&quot;] = []
+    template[&quot;services&quot;] = [{&quot;name&quot;:&quot;accesslab&quot;,&quot;port&quot;:7002,&quot;version&quot;:&quot;1.0&quot;,&quot;running&quot;:true,&quot;banner&quot;:&quot;Access Lab&quot;,&quot;pages&quot;:[]}]
+    device = plugin.device_type(&quot;access_node&quot;,template)
+    outcomes = [
+        {&quot;type&quot;:&quot;shell&quot;,&quot;privilege&quot;:&quot;guest&quot;},
+        {&quot;type&quot;:&quot;shell&quot;,&quot;privilege&quot;:&quot;user&quot;,&quot;user&quot;:&quot;operator&quot;},
+        {&quot;type&quot;:&quot;shell&quot;,&quot;privilege&quot;:&quot;root&quot;},
+        {&quot;type&quot;:&quot;computer&quot;},
+        {&quot;type&quot;:&quot;router&quot;},
+        {&quot;type&quot;:&quot;file&quot;,&quot;path&quot;:&quot;/tmp/access-note.txt&quot;},
+        {&quot;type&quot;:&quot;partial_shell&quot;,&quot;user&quot;:&quot;operator&quot;,&quot;methods&quot;:[&quot;whoami&quot;,&quot;hostname&quot;,&quot;list&quot;]},
+        {&quot;type&quot;:&quot;partial_computer&quot;,&quot;methods&quot;:[&quot;hostname&quot;,&quot;services&quot;]},
+        {&quot;type&quot;:&quot;partial_router&quot;,&quot;methods&quot;:[&quot;hostname&quot;,&quot;routes&quot;,&quot;connections&quot;]},
+        {&quot;type&quot;:&quot;partial_file&quot;,&quot;path&quot;:&quot;/tmp/access-note.txt&quot;,&quot;methods&quot;:[&quot;read&quot;,&quot;stat&quot;]}
+    ]
+    keys = [&quot;guest&quot;,&quot;user&quot;,&quot;root&quot;,&quot;computer&quot;,&quot;router&quot;,&quot;file&quot;,&quot;partial_shell&quot;,&quot;partial_computer&quot;,&quot;partial_router&quot;,&quot;partial_file&quot;]
+    conditions = [{&quot;type&quot;:&quot;active_admin&quot;},{&quot;type&quot;:&quot;active_user&quot;,&quot;user&quot;:&quot;operator&quot;},{&quot;type&quot;:&quot;connections_min&quot;,&quot;count&quot;:2},{&quot;type&quot;:&quot;forwarded_ports_min&quot;,&quot;count&quot;:1},{&quot;type&quot;:&quot;plugin_state&quot;,&quot;key&quot;:&quot;ready&quot;,&quot;equals&quot;:true}]
+    for index in range(len(keys)):
+        plugin.vulnerability(keys[index],{&quot;device_type&quot;:device,&quot;service&quot;:&quot;accesslab&quot;,&quot;version_prefix&quot;:&quot;1.&quot;,&quot;access&quot;:&quot;info&quot;,&quot;result&quot;:outcomes[index],&quot;conditions&quot;:conditions,&quot;exploit&quot;:{&quot;kind&quot;:&quot;protocol&quot;,&quot;hint&quot;:&quot;Учебный стенд: access_ready создаёт нужную активность. После access_reset условия снова не выполнены.&quot;}})
+
+def create(event):
+    mid = plugin.get(&quot;machine&quot;,null)
+    if mid == null:
+        mid = plugin.spawn(&quot;access_lab:access_node&quot;,{&quot;hostname&quot;:&quot;access-lab&quot;,&quot;ip&quot;:&quot;198.18.249.1&quot;,&quot;up&quot;:true})
+        plugin.user(mid,&quot;operator&quot;,&quot;accesslab&quot;,false)
+        plugin.write(mid,&quot;/tmp/access-note.txt&quot;,&quot;This file belongs to the Access Lab exercise.\n&quot;)
+        plugin.set(&quot;machine&quot;,mid)
+        plugin.set(&quot;ready&quot;,false)
+    print(&quot;Учебный узел: 198.18.249.1&quot;)
+    print(&quot;1. probe 198.18.249.1 — выбери результат взлома.&quot;)
+    print(&quot;2. research -h 3 198.18.249.1 access_lab:partial_file — посмотри условия.&quot;)
+    print(&quot;3. access_ready — включи учебную активность пользователей и соединений.&quot;)
+    print(&quot;4. market buy exp_protocol — купи исходник; затем exploit -f ~/scripts/exp_protocol.adr -s access_lab:partial_file 198.18.249.1&quot;)
+    print(&quot;5. В своём Adder-коде сохрани r = net.exploit(...); затем net.access(r[&#x27;handle&#x27;], &#x27;read&#x27;).&quot;)
+    print(&quot;Объект работает 300 игровых секунд и только в том же окне терминала.&quot;)
+
+def ready(event):
+    mid = plugin.get(&quot;machine&quot;,null)
+    if mid == null:
+        print(&quot;Сначала access_create&quot;)
+        return
+    plugin.host_activity(mid,{&quot;users&quot;:[&quot;root&quot;,&quot;operator&quot;],&quot;connections&quot;:2,&quot;forwarded_ports&quot;:[7002]})
+    plugin.set(&quot;ready&quot;,true)
+    print(&quot;Условия учебного стенда выполнены. Выбери один результат и запусти эксплоит.&quot;)
+
+def reset(event):
+    mid = plugin.get(&quot;machine&quot;,null)
+    if mid != null:
+        plugin.host_activity(mid,{&quot;users&quot;:[],&quot;connections&quot;:0,&quot;forwarded_ports&quot;:[]})
+    plugin.set(&quot;ready&quot;,false)
+    print(&quot;Учебная активность сброшена. Уже полученные объекты живут до истечения срока или смены службы.&quot;)
 </pre></body></html>

@@ -28,5 +28,9 @@
     }
   ],
   "subnet": "10.230.18.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "fragment_overlap",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 3
 }

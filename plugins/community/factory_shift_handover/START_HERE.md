@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: mass_assignment. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `shift_control`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.94.1 factory_shift_handover:records_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_mass_assignment`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s factory_shift_handover:records_entry 198.22.94.1`
+`exploit -f ~/scripts/exp_mass_assignment.adr -s factory_shift_handover:records_entry 198.22.94.1`
 
 Прочитай `/srv/records/handover.log` на последнем узле — там сохранённая запись.
 

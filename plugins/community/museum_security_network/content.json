@@ -56,5 +56,9 @@
       "password": "bw_museum_security_network_3"
     }
   ],
-  "subnet": "10.230.29."
+  "subnet": "10.230.29.",
+  "exploit_kind": "integer_overflow",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 4
 }

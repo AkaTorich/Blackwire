@@ -1,20 +1,23 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Взлом</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page053.html">Назад</a> | <a href="page055.html">Далее</a></div><h2>Взлом</h2>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Текст и архивы</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page053.html">Назад</a> | <a href="page055.html">Далее</a></div><h2>Текст и архивы</h2>
 <table>
 <tr><th>Команда</th><th>Использование</th><th>Назначение</th></tr>
-<tr><td><code>probe</code></td><td><code>probe адрес</code></td><td>разведка: службы, слабые места, пользователи</td></tr>
-<tr><td><code>research</code></td><td><code>research [-h 1..4] адрес id</code></td><td>параметры уязвимости, подсказки и совместимый товар маркета</td></tr>
-<tr><td><code>exploit</code></td><td><code>exploit -f файл.adr [-s id] адрес</code>; <code>exploit new файл.adr адрес id</code></td><td>запуск своего эксплоита или создание заготовки в редакторе</td></tr>
-<tr><td><code>crack</code></td><td><code>crack [-w словарь] пользователь@адрес</code></td><td>подобрать пароль по словарю</td></tr>
-<tr><td><code>privesc</code></td><td><code>privesc файл.adr id</code></td><td>собственный или купленный локальный эксплоит на текущей машине</td></tr>
-<tr><td><code>clearlogs</code></td><td><code>clearlogs [шаблон]</code></td><td>убрать следы из журналов (нужны права)</td></tr>
-<tr><td><code>wipe</code></td><td><code>wipe [шаблон]</code></td><td>убрать следы из журналов (то же, что clearlogs)</td></tr>
-<tr><td><code>proxy</code></td><td><code>proxy</code></td><td>цепочка подключений и выходной адрес</td></tr>
-<tr><td><code>heat</code></td><td><code>heat</code></td><td>уровень подозрения и улики</td></tr>
-<tr><td><code>trace</code></td><td><code>trace</code></td><td>состояние слежки: расследование центров безопасности</td></tr>
-<tr><td><code>creds</code></td><td><code>creds</code></td><td>найденные логины</td></tr>
-<tr><td><code>firewall</code></td><td><code>firewall адрес</code></td><td>обойти файрвол узла</td></tr>
-<tr><td><code>keylog</code></td><td><code>keylog [plant адрес]</code></td><td>перехватчик ввода: поставить / смотреть</td></tr>
-<tr><td><code>botnet</code></td><td>`botnet [add</td><td>remove адрес]`</td><td>ботнет из захваченных машин</td></tr>
-<tr><td><code>encrypt</code></td><td><code>encrypt файл ключ</code></td><td>зашифровать файл</td></tr>
-<tr><td><code>decrypt</code></td><td><code>decrypt файл ключ</code></td><td>расшифровать файл</td></tr>
+<tr><td><code>head</code></td><td><code>head [-n N] [файл…]</code></td><td>первые строки</td></tr>
+<tr><td><code>tail</code></td><td><code>tail [-n N] [файл…]</code></td><td>последние строки</td></tr>
+<tr><td><code>grep</code></td><td><code>grep [-i] [-n] [-v] [-c] [-r] шаблон [файл…]</code></td><td>искать строки</td></tr>
+<tr><td><code>wc</code></td><td><code>wc [-l] [-w] [-c] [файл…]</code></td><td>посчитать строки, слова, байты</td></tr>
+<tr><td><code>sort</code></td><td><code>sort [-r] [-n] [-u] [файл…]</code></td><td>отсортировать строки</td></tr>
+<tr><td><code>uniq</code></td><td><code>uniq [-c] [файл]</code></td><td>убрать повторы соседних строк</td></tr>
+<tr><td><code>cut</code></td><td><code>cut -d разделитель -f номера [файл…]</code></td><td>вырезать поля</td></tr>
+<tr><td><code>tr</code></td><td><code>tr [-d] набор1 [набор2]</code></td><td>заменить символы</td></tr>
+<tr><td><code>rev</code></td><td><code>rev [файл…]</code></td><td>перевернуть строки</td></tr>
+<tr><td><code>tee</code></td><td><code>tee [-a] файл</code></td><td>вывести и записать в файл</td></tr>
+<tr><td><code>diff</code></td><td><code>diff файл1 файл2</code></td><td>различия двух файлов</td></tr>
+<tr><td><code>md5</code></td><td><code>md5 [-s строка] [файл…]</code></td><td>условный хеш</td></tr>
+<tr><td><code>md5sum</code></td><td><code>md5sum [файл…]</code></td><td>условный хеш</td></tr>
+<tr><td><code>base64</code></td><td><code>base64 [-d] [файл]</code></td><td>кодировать/раскодировать base64</td></tr>
+<tr><td><code>hexdump</code></td><td><code>hexdump [-n байт] файл</code></td><td>байты файла в шестнадцатеричном виде</td></tr>
+<tr><td><code>xxd</code></td><td><code>xxd [-n байт] файл</code></td><td>байты файла в шестнадцатеричном виде</td></tr>
+<tr><td><code>tar</code></td><td>`tar -c</td><td>-x</td><td>-t архив.tar [файлы…]`</td><td>упаковать/распаковать архив</td></tr>
+<tr><td><code>zip</code></td><td><code>zip архив.zip файлы…</code></td><td>упаковать в архив</td></tr>
+<tr><td><code>unzip</code></td><td><code>unzip архив.zip [папка]</code></td><td>распаковать архив</td></tr>
 </table></body></html>

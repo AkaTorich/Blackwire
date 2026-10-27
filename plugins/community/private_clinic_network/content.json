@@ -56,5 +56,9 @@
       "password": "bw_private_clinic_network_3"
     }
   ],
-  "subnet": "10.230.21."
+  "subnet": "10.230.21.",
+  "exploit_kind": "overflow",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 1
 }

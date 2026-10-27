@@ -40,6 +40,7 @@ pub fn apply_vulnerability(world: &mut World, session: &mut Session, v: Option<V
     let host = world.machine(mid).hostname.clone();
     let was = session.user().to_string();
     if was == "root" { return Ok(PrivescReport { ok: false, vuln: None, host, was_user: was }); }
+    if let Some(v)=&v { super::access::check(world,session,mid,v)?; }
     session.current_mut().user = "root".to_string();
     if !world.player.owned.contains(&mid) {
         world.player.owned.push(mid);

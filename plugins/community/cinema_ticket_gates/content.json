@@ -28,5 +28,9 @@
     }
   ],
   "subnet": "10.230.16.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "xml_entity",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 1
 }

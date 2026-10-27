@@ -56,5 +56,9 @@
       "password": "bw_community_internet_exchange_3"
     }
   ],
-  "subnet": "10.230.36."
+  "subnet": "10.230.36.",
+  "exploit_kind": "mass_assignment",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 1
 }

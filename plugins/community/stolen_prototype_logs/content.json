@@ -42,5 +42,9 @@
       "password": "bw_stolen_prototype_logs_2"
     }
   ],
-  "subnet": "10.230.43."
+  "subnet": "10.230.43.",
+  "exploit_kind": "template_injection",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 3
 }

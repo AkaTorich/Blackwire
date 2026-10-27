@@ -42,5 +42,9 @@
       "password": "bw_tampered_election_kiosks_2"
     }
   ],
-  "subnet": "10.230.52."
+  "subnet": "10.230.52.",
+  "exploit_kind": "query",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 2
 }

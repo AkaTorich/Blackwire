@@ -1,0 +1,28 @@
+# exp_integer_overflow.adr — Integer Wrap: Размер выделения переполняет игровое целое число.
+if len(sys.args) < 2:
+    print("Использование: exp_integer_overflow.adr адрес [id]")
+    print("Подсказки: research -h 3 адрес id")
+    exit(1)
+try:
+    target = sys.args[1]
+    selector = sys.args[2] if len(sys.args) > 2 else null
+    profile = net.research(target, selector)
+    if profile["kind"] != "integer_overflow":
+        print("Несовместимый тип:", profile["kind"], "Подходящий товар:", profile["market"])
+        exit(1)
+    selector = profile["id"]
+    layout = profile["layout"]
+    payload = {"fingerprint":profile["fingerprint"]}
+    payload["declared"] = 2 ** layout["word_bits"] - layout["header_bytes"]
+    payload["body"] = "W" * layout["min_body"]
+    check = net.probe(target, selector, payload)
+    print(check["feedback"])
+    if not check["ok"]:
+        exit(1)
+    result = net.privesc(payload, selector) if profile["local"] else net.exploit(target, selector, payload)
+    print(result)
+    if not result["ok"]:
+        exit(1)
+except as error:
+    print("Ошибка эксплоита:", error)
+    exit(1)

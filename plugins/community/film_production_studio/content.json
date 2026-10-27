@@ -56,5 +56,9 @@
       "password": "bw_film_production_studio_3"
     }
   ],
-  "subnet": "10.230.35."
+  "subnet": "10.230.35.",
+  "exploit_kind": "object_reference",
+  "kernel_kind": "integer_overflow",
+  "leak_kind": "request_smuggling",
+  "exploit_difficulty": 5
 }

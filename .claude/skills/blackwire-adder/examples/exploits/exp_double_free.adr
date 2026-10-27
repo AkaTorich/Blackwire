@@ -1,0 +1,27 @@
+# exp_double_free.adr — Free Loop: Повторное освобождение создаёт два указателя на один слот.
+if len(sys.args) < 2:
+    print("Использование: exp_double_free.adr адрес [id]")
+    print("Подсказки: research -h 3 адрес id")
+    exit(1)
+try:
+    target = sys.args[1]
+    selector = sys.args[2] if len(sys.args) > 2 else null
+    profile = net.research(target, selector)
+    if profile["kind"] != "double_free":
+        print("Несовместимый тип:", profile["kind"], "Подходящий товар:", profile["market"])
+        exit(1)
+    selector = profile["id"]
+    layout = profile["layout"]
+    payload = {"fingerprint":profile["fingerprint"]}
+    payload["operations"] = [{"op":"alloc","handle":layout["owner"],"value":"guest"},{"op":"free","handle":layout["owner"]},{"op":"free","handle":layout["owner"]},{"op":"alloc","handle":layout["writer"],"value":"blank"},{"op":"alloc","handle":layout["reader"],"value":"blank"},{"op":"write","handle":layout["writer"],"value":layout["marker"]},{"op":"read","handle":layout["reader"]}]
+    check = net.probe(target, selector, payload)
+    print(check["feedback"])
+    if not check["ok"]:
+        exit(1)
+    result = net.privesc(payload, selector) if profile["local"] else net.exploit(target, selector, payload)
+    print(result)
+    if not result["ok"]:
+        exit(1)
+except as error:
+    print("Ошибка эксплоита:", error)
+    exit(1)

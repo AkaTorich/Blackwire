@@ -42,5 +42,9 @@
       "password": "bw_altered_water_reports_2"
     }
   ],
-  "subnet": "10.230.44."
+  "subnet": "10.230.44.",
+  "exploit_kind": "xml_entity",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 4
 }

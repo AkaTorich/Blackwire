@@ -42,5 +42,9 @@
       "password": "bw_ghost_shipping_orders_2"
     }
   ],
-  "subnet": "10.230.45."
+  "subnet": "10.230.45.",
+  "exploit_kind": "regex_backtracking",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 5
 }

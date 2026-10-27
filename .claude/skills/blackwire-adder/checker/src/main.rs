@@ -21,10 +21,10 @@ fn stub(name: &str) -> Option<serde_json::Value> {
         "sys.uptime" | "sys.money" | "sys.debt" | "sys.pid" | "net.heat" | "net.clear_logs" | "time.now" => json!(0),
         "sys.set_env" | "sys.kill" | "sys.notify" | "sys.open" | "fs.write" | "fs.append" | "fs.mkdir"
         | "fs.delete" | "fs.move" | "fs.copy" | "fs.chmod" | "fs.chown" | "net.disconnect" | "net.resolve"
-        | "net.ping" | "net.crack" => json!(null),
+        | "net.ping" | "net.crack" | "net.access" => json!(null),
         "net.http" => json!({"status": 200, "title": "", "body": ""}),
         "net.exploit" | "net.privesc" => json!({"ok": false, "access": "", "user": "", "password": "", "path": "", "data": "", "host": "", "monitored": false}),
-        "net.research" => json!({"id":"","name":"","service":"","port":0,"version":"","local":false,"kind":"","difficulty":1,"fingerprint":"","layout":{},"hints":[],"fields":[],"market":"","next":""}),
+        "net.research" => json!({"id":"","name":"","service":"","port":0,"version":"","local":false,"kind":"","difficulty":1,"fingerprint":"","layout":{},"hints":[],"fields":[],"market":"","result":{},"conditions":[],"next":""}),
         "net.probe" => json!({"ok":false,"applied":false,"feedback":"проверка только на заглушке","hint":"","id":"","kind":""}),
         "net.watch" => json!({"stage": "", "progress": 0, "raids": 0, "locked": false, "lead": ""}),
         "net.proxy" => json!({"chain": [], "exit_ip": "", "hidden": false, "monitored": false}),

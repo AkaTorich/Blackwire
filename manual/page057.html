@@ -1,10 +1,20 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Задания</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page056.html">Назад</a> | <a href="page058.html">Далее</a></div><h2>Задания</h2>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Взлом</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page056.html">Назад</a> | <a href="page058.html">Далее</a></div><h2>Взлом</h2>
 <table>
 <tr><th>Команда</th><th>Использование</th><th>Назначение</th></tr>
-<tr><td><code>missions</code></td><td><code>missions</code></td><td>задания группы hello-world и счёт</td></tr>
-<tr><td><code>jobs</code></td><td><code>jobs</code></td><td>задания (то же, что missions)</td></tr>
-<tr><td><code>mission</code></td><td><code>mission [N]</code></td><td>брифинг задания (без номера — текущего)</td></tr>
-<tr><td><code>ending</code></td><td><code>ending</code></td><td>путь к свободе: прогресс и финал</td></tr>
-<tr><td><code>gigs</code></td><td><code>gigs</code></td><td>подработки: открытые заказы и доход</td></tr>
-<tr><td><code>scenario</code></td><td><code>scenario</code></td><td>свой сценарий из редактора: цель и прогресс</td></tr>
+<tr><td><code>probe</code></td><td><code>probe адрес</code></td><td>разведка: службы, слабые места, пользователи</td></tr>
+<tr><td><code>research</code></td><td><code>research [-h 1..4] адрес id</code></td><td>параметры уязвимости, подсказки и совместимый товар маркета</td></tr>
+<tr><td><code>exploit</code></td><td><code>exploit -f файл.adr [-s id] адрес</code>; <code>exploit new файл.adr адрес id</code></td><td>запуск своего эксплоита или создание заготовки в редакторе</td></tr>
+<tr><td><code>crack</code></td><td><code>crack [-w словарь] пользователь@адрес</code></td><td>подобрать пароль по словарю</td></tr>
+<tr><td><code>privesc</code></td><td><code>privesc файл.adr id</code></td><td>собственный или купленный локальный эксплоит на текущей машине</td></tr>
+<tr><td><code>clearlogs</code></td><td><code>clearlogs [шаблон]</code></td><td>убрать следы из журналов (нужны права)</td></tr>
+<tr><td><code>wipe</code></td><td><code>wipe [шаблон]</code></td><td>убрать следы из журналов (то же, что clearlogs)</td></tr>
+<tr><td><code>proxy</code></td><td><code>proxy</code></td><td>цепочка подключений и выходной адрес</td></tr>
+<tr><td><code>heat</code></td><td><code>heat</code></td><td>уровень подозрения и улики</td></tr>
+<tr><td><code>trace</code></td><td><code>trace</code></td><td>состояние слежки: расследование центров безопасности</td></tr>
+<tr><td><code>creds</code></td><td><code>creds</code></td><td>найденные логины</td></tr>
+<tr><td><code>firewall</code></td><td><code>firewall адрес</code></td><td>обойти файрвол узла</td></tr>
+<tr><td><code>keylog</code></td><td><code>keylog [plant адрес]</code></td><td>перехватчик ввода: поставить / смотреть</td></tr>
+<tr><td><code>botnet</code></td><td>`botnet [add</td><td>remove адрес]`</td><td>ботнет из захваченных машин</td></tr>
+<tr><td><code>encrypt</code></td><td><code>encrypt файл ключ</code></td><td>зашифровать файл</td></tr>
+<tr><td><code>decrypt</code></td><td><code>decrypt файл ключ</code></td><td>расшифровать файл</td></tr>
 </table></body></html>

@@ -208,7 +208,7 @@ def overload(event):
     "market": "my_plugin:sensor_exploit"
 }
 ```
-kind: overflow, traversal, auth_replay, query, format, protocol, race, command_chain. difficulty: 1..5. hint — подсказка внутри игры, market — id совместимого товара. Без exploit механика выбирается по службе и типу доступа, поэтому старые объявления контента продолжают работать. Если авторский товар отсутствует, подсказка предлагает совместимый штатный инструмент.
+kind: одна из 28 встроенных моделей (список ниже) либо тип plugin_id:type_id, зарегистрированный через plugin.exploit_type. difficulty: 1..5. hint — подсказка внутри игры, market — id совместимого товара. Без exploit механика выбирается по службе и типу доступа, поэтому старые объявления контента продолжают работать. Если авторский товар отсутствует, подсказка предлагает совместимый штатный инструмент.
 
 `net.research(адрес, id)` возвращает профиль с layout, fingerprint и hints. Игрок составляет payload; `net.probe(адрес, id, payload)` проверяет его, `net.exploit(адрес, id, payload)` применяет. Для локального root нужна оболочка на цели и `net.privesc(payload, id)`. У каждой машины и версии свой fingerprint; старый payload на другой цели не сработает. Профили воспроизводятся после сохранения и загрузки.
 
@@ -337,3 +337,129 @@ Adder-check остаётся проверкой обычных скриптов 
 Этот режим не копирует виртуальные файловые системы, базы пользователей и полные шаблоны устройств. Для одной полной машины используй `plugin.machine(id)`. Вызов `plugin.world()` без аргументов по-прежнему возвращает полное состояние для редактирования. Неизвестный режим вызывает ошибку.
 
 Поле `event["vuln"]` события on_hack — объект описания найденной уязвимости. Для проверки её имени сравнивай `event["vuln"]["name"]` с полным именем вида `plugin_id:rule_id`.
+
+## Результаты взлома и условия
+
+`research адрес id` и `net.research(адрес, id)` показывают `result` и `conditions`.
+Каждое условие содержит `requirement`, `ok`, `observed`, `hint`. Правильный payload
+не заменяет условия: `net.probe` и применение эксплоита проверяют их заново.
+Покупной инструмент подчиняется тем же правилам. Условия соединяются через И.
+
+В `plugin.vulnerability` можно задать дополнительные поля:
+
+```python
+plugin.vulnerability("report", {
+    "device_type": device,
+    "service": "http", "version_prefix": "1.", "access": "info",
+    "exploit": {"kind": "traversal"},
+    "result": {"type": "partial_file", "path": "/tmp/report.txt", "methods": ["read", "stat"]},
+    "conditions": [
+        {"type": "active_admin"},
+        {"type": "connections_min", "count": 2},
+        {"type": "plugin_state", "key": "door_open", "equals": true}
+    ]
+})
+```
+
+Если `result` отсутствует, действует прежнее поле `access`. Новый `result` имеет приоритет.
+Поле `access` остаётся обязательным для совместимости; локальный эксплоит по-прежнему
+повышает права до root, и его явный результат может быть только `shell`/`root`.
+
+| result.type | Результат и разрешённые методы |
+| --- | --- |
+| shell | Реальный вход в терминал; privilege: guest, user или root. Необязательный user выбирает существующую учётную запись. |
+| creds | Найденные логин и пароль; необязательный user выбирает учётную запись. |
+| read | Однократная утечка файла; обязателен path. |
+| info | Баннер службы. |
+| computer | Объект: hostname, services, users, processes, read, write, list. |
+| router | Объект: hostname, services, routes, connections. |
+| file | Объект одного файла: read, write, stat; обязателен path. |
+| partial_shell | Только явно указанные методы из whoami, hostname, read, list. Права файлов — выбранного пользователя. |
+| partial_computer | Явное подмножество методов computer. |
+| partial_router | Явное подмножество методов router. |
+| partial_file | Явное подмножество методов file; обязателен path. |
+
+У частичных объектов `methods` обязателен и не может быть пустым. У полных объектов
+он необязателен и может сузить доступ. Путь должен быть абсолютным и нормализованным,
+без `..`. Объекты computer/file представляют полученный эксплоитом доступ к данным
+и действуют от root, если автор явно не указал существующего `user`.
+Частичная оболочка по умолчанию использует обычного пользователя, при его отсутствии — guest.
+Ни один объект не добавляет подключение в терминале или узел в список захваченных машин.
+Объект router даёт просмотр маршрутизации, но не неявное управление всей сетью.
+
+`net.exploit` для объекта возвращает `{ok:true, access, handle, methods, host, expires_in:300}`.
+Дальнейшие действия выполняются **в том же сеансе терминала**:
+
+```python
+r = net.exploit(address, selector, payload)
+if r["ok"] and "handle" in r:
+    print(net.access(r["handle"], "read"))  # file/partial_file: только выданный файл
+    # net.access(r["handle"], "write", "новый текст")
+    # computer: net.access(handle, "read", "/tmp/report.txt")
+    # computer: net.access(handle, "write", "/tmp/report.txt", "новый текст")
+    # partial_shell: net.access(handle, "list", "/home/operator")
+```
+
+Другие методы не принимают аргументов. `hostname` и `whoami` возвращают строку;
+`services`, `users`, `processes`, `routes`, `list` — списки; `connections` — число;
+`stat` — сведения о файле; `write` — null. Вызов `exec` не поддерживается:
+полноценный терминал выдаёт только результат shell. Объект истекает через 300 игровых
+секунд, закрытие окна терминала его отзывает. Сохранение/загрузка не сохраняет
+объекты доступа: после загрузки повтори взлом. Остановка/обновление службы,
+недоступность узла, блокировка канала или изменение результата уязвимости
+прерывают использование объекта. Условия проверяются при получении доступа;
+уже выданный объект не отзывается только из-за выхода нужного пользователя.
+Действия оставляют следы и повышают подозрение на наблюдаемых узлах.
+
+| conditions.type | Параметры и смысл |
+| --- | --- |
+| active_user | Необязательный user: указанный пользователь активен, иначе любой обычный пользователь. |
+| active_admin | Активен root или пользователь с правами администратора. init и демоны не считаются входом. |
+| users_min / users_max | count: граница числа зарегистрированных учётных записей, включая root. |
+| connections_min / connections_max | count: граница числа входящих соединений. |
+| forwarded_ports_min | count: минимум проброшенных портов; открытый сервис сам по себе не является пробросом. |
+| service_running | service: запущена указанная служба. |
+| os_prefix | prefix: ОС начинается с этой строки. |
+| file_exists | path: на узле существует файл или каталог. |
+| time_window | start, end: часы 0..23 по игровым часам; начало включено, конец исключён. 23→7 пересекает полночь; одинаковые границы дают пустое окно. |
+| same_lan | Текущий узел и цель находятся в одной локальной сети либо один является шлюзом другого. |
+| plugin_state | key, equals: значение plugin.get владельца уязвимости равно equals. |
+
+Можно задать не более 16 условий; count — целое 0..4096. Отсутствие `conditions`
+не добавляет ограничений пользовательской уязвимости. Неизвестные типы и поля
+отвергаются при регистрации. Обычный игрок не может передать «выполненные условия»
+в payload: движок проверяет состояние мира самостоятельно.
+
+Для сценариев с NPC и собственным сетевым оборудованием плагин с разрешением
+`content` задаёт моделируемую активность:
+
+```python
+plugin.host_activity(mid, {
+    "users": ["root", "operator"],
+    "connections": 2,
+    "forwarded_ports": [7002]
+})
+state = plugin.host_activity(mid)
+plugin.set("door_open", true)
+```
+
+Это полная замена активности сценария на данном узле. Имена должны существовать;
+connections — 0..4096, списки до 128 элементов, порты 1..65535. Значения сохраняются.
+Настоящие сеансы игрока учитываются дополнительно; закрытие сеанса уменьшает
+число соединений. Входы NPC живого мира тоже учитываются и истекают через
+10 игровых минут. Системные процессы не делают администратора постоянно активным.
+
+Рабочий пример: `sdk/examples/access_lab` (команды `access_create`, `access_ready`,
+`access_reset`). Он демонстрирует 10 вариантов доступа, подсказки, покупку
+`exp_protocol` и изменение условий. Пример `custom_vuln_type` показывает отдельную
+возможность: полностью авторский тип проверки payload на Adder.
+
+## Расширенные модели payload
+
+Движок поддерживает 28 встроенных моделей: overflow, traversal, auth_replay, query, format, protocol, race, command_chain, integer_overflow, signedness, length_confusion, use_after_free, double_free, type_confusion, object_reference, mass_assignment, token_confusion, request_smuggling, cache_poisoning, header_injection, unsafe_deserialization, prototype_pollution, template_injection, xml_entity, regex_backtracking, fragment_overlap, weak_rng, permission_mask. Для каждой есть `exp_<kind>.adr` и покупной инструмент. Это ограниченные игровые модели: обработчики не выполняют реальные команды ОС или произвольные шаблоны.
+
+### Полностью авторский тип на Adder
+
+`kind = plugin.exploit_type("my_lock", {"name":"My Lock", "profile":"describe", "validate":"check"})` регистрирует тип `<plugin.id>:my_lock`. Далее передай его в `plugin.vulnerability(..., {"access":"shell", "service":"my_service", "exploit":{"kind":kind,"params":{"code":42}}})`.
+
+`describe(event)` возвращает `{layout:словарь, fields:список_имён, hints:список_подсказок}`. `check(event)` возвращает bool либо `{ok:bool, feedback:строка}`. Событие содержит seed, device, vulnerability, params, profile; проверка также получает payload. Разрешены чистые вычисления и чтение `plugin.get`, `plugin.asset`; сетевые вызовы, изменение мира и ввод запрещены. Лимит — 20000 шагов и 150 мс. Не более 64 типов на плагин. При выключенном или отсутствующем плагине тип недоступен; исходный код не сохраняется в мире. Поле market определения типа может указать товар с готовым исходником. Рабочие profile/validate, продажа и удалённый/локальный вызов — в `examples/custom_vuln_type`.

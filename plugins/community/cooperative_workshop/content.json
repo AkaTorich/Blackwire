@@ -56,5 +56,9 @@
       "password": "bw_cooperative_workshop_3"
     }
   ],
-  "subnet": "10.230.37."
+  "subnet": "10.230.37.",
+  "exploit_kind": "token_confusion",
+  "kernel_kind": "double_free",
+  "leak_kind": "traversal",
+  "exploit_difficulty": 2
 }

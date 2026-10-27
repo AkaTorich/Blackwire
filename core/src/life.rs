@@ -74,9 +74,11 @@ pub fn tick(world: &mut World, dt: u64) {
         // вход сотрудника
         let cands = up_machines(world);
         if let Some(&id) = pick(world, &cands) {
-            let user = world.machine(id).users.list().iter().find(|u| !u.is_admin).map(|u| u.name.clone());
+            let admin=world.rng.chance(0.15);
+            let user = world.machine(id).users.list().iter().find(|u| u.is_admin==admin).map(|u| u.name.clone());
             if let Some(user) = user {
                 let from = world.machine(id).lan_ip.clone().unwrap_or_else(|| "127.0.0.1".to_string());
+                world.plugins.npc_logins.entry(id).or_default().insert(user.clone(),now+600);
                 world.machine_mut(id).log(now, LogKind::Login, format!("вход сотрудника {} с {}", user, from));
                 cap_logs(world, id);
             }

@@ -56,5 +56,9 @@
       "password": "bw_public_records_office_3"
     }
   ],
-  "subnet": "10.230.26."
+  "subnet": "10.230.26.",
+  "exploit_kind": "protocol",
+  "kernel_kind": "permission_mask",
+  "leak_kind": "format",
+  "exploit_difficulty": 1
 }

@@ -4,7 +4,7 @@
 
 use super::util::Args;
 use super::{CmdOutput, Ctx};
-use crate::hack::{self, VulnAccess};
+use crate::hack;
 use crate::net::machine::MachineId;
 use crate::types::{OutKind, OutLine};
 use crate::world::NetError;
@@ -29,17 +29,6 @@ pub fn locked_guard(ctx: &Ctx<'_>, cmd: &str) -> Option<CmdOutput> {
 fn resolve(ctx: &mut Ctx<'_>, cmd: &str, target: &str) -> Result<MachineId, CmdOutput> {
     let from = ctx.mid();
     ctx.world.lookup(from, target).map_err(|e| net_err(cmd, &e))
-}
-
-/// Строка-описание доступа уязвимости.
-fn access_label(a: &VulnAccess) -> String {
-    match a {
-        VulnAccess::Creds => "логин".to_string(),
-        VulnAccess::Shell => "оболочка".to_string(),
-        VulnAccess::Root => "root".to_string(),
-        VulnAccess::Read(p) => format!("чтение {}", p),
-        VulnAccess::Info => "сведения".to_string(),
-    }
 }
 
 /// Предупредить о следе, если цель под наблюдением.
@@ -78,7 +67,7 @@ pub fn probe(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         out.lines.push(OutLine::heading("Слабые места:").after(250));
         for v in &vulns {
             let scope = if v.local { "локально" } else { "по сети" };
-            out.lines.push(OutLine::new(format!("  {}  {:<8} {:<9} {} → {} [механика: {}]", hack::payload::id(v), v.service, scope, v.name, access_label(&v.access), hack::payload::kind(ctx.world, v)), OutKind::Warn).after(120));
+            out.lines.push(OutLine::new(format!("  {}  {:<8} {:<9} {} → {} [механика: {}]", hack::payload::id(v), v.service, scope, v.name, hack::access::result(ctx.world,v), hack::payload::kind(ctx.world, v)), OutKind::Warn).after(120));
         }
     }
     out.lines.push(OutLine::dim("Дальше: research адрес id · exploit new файл.adr адрес id · готовые инструменты: market").after(100));
@@ -97,16 +86,20 @@ pub fn research(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         Ok(v) => v, Err(e) => return CmdOutput::err(e)
     };
     if let Err(e) = hack::payload::ensure_reachable(ctx.world, ctx.session, id, &v) { return CmdOutput::err(e); }
-    let p = hack::payload::profile(ctx.world, id, &v);
+    let mut p = match hack::payload::profile(ctx.world, id, &v){Ok(p)=>p,Err(e)=>return CmdOutput::err(e)};
+    p["conditions"]=hack::access::conditions(ctx.world,id,&v,Some(ctx.session));
     let level = a.opt("h").and_then(|s| s.parse::<usize>().ok()).unwrap_or(1).clamp(1, 4);
     let mut out = CmdOutput::ok();
     out.push_kind(format!("{} · {} · {}", v.name, v.version, p["kind"].as_str().unwrap()), OutKind::Accent);
     out.push_kind(format!("id: {}    fingerprint: {}", p["id"].as_str().unwrap(), p["fingerprint"].as_str().unwrap()), OutKind::Dim);
+    out.push_kind(format!("Результат взлома: {}",p["result"]),OutKind::Accent);
+    for condition in p["conditions"].as_array().unwrap(){out.push_kind(format!("{} {} · сейчас {} · {}",if condition["ok"]==true{"✓"}else{"✗"},condition["requirement"],condition["observed"],condition["hint"].as_str().unwrap_or("")),OutKind::Warn);}
     out.push_kind(serde_json::to_string_pretty(&p["layout"]).unwrap(), OutKind::Normal);
     for hint in p["hints"].as_array().unwrap().iter().take(level) { out.push_kind(hint.as_str().unwrap(), OutKind::Warn); }
     out.push_kind(format!("Следующая подсказка: research -h {} {} {}", (level+1).min(4), target, p["id"].as_str().unwrap()), OutKind::Dim);
     out.push_kind(format!("Свой код: exploit new ~/scripts/my_exploit.adr {} {}", target, p["id"].as_str().unwrap()), OutKind::Normal);
-    out.push_kind(format!("Готовый инструмент: market buy {}. Совместимость: {}.", p["market"].as_str().unwrap(), p["kind"].as_str().unwrap()), OutKind::Normal);
+    if let Some(market)=p["market"].as_str(){out.push_kind(format!("Готовый инструмент: market buy {}. Совместимость: {}.",market,p["kind"].as_str().unwrap()),OutKind::Normal);}
+    else{out.push_kind("Готовый эксплоит для этого типа не продаётся; создай свой по подсказкам.",OutKind::Dim);}
     ctx.world.mark_scanned(id);
     out
 }

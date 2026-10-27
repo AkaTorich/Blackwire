@@ -42,5 +42,9 @@
       "password": "bw_corrupted_sensor_calibration_2"
     }
   ],
-  "subnet": "10.230.54."
+  "subnet": "10.230.54.",
+  "exploit_kind": "protocol",
+  "kernel_kind": "permission_mask",
+  "leak_kind": "format",
+  "exploit_difficulty": 4
 }

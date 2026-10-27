@@ -56,5 +56,9 @@
       "password": "bw_municipal_power_office_3"
     }
   ],
-  "subnet": "10.230.31."
+  "subnet": "10.230.31.",
+  "exploit_kind": "length_confusion",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 1
 }

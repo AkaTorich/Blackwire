@@ -42,5 +42,9 @@
       "password": "bw_swapped_construction_bids_2"
     }
   ],
-  "subnet": "10.230.57."
+  "subnet": "10.230.57.",
+  "exploit_kind": "integer_overflow",
+  "kernel_kind": "use_after_free",
+  "leak_kind": "xml_entity",
+  "exploit_difficulty": 2
 }

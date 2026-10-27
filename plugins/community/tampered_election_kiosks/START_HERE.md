@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: query. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `kiosk_records`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.52.1 tampered_election_kiosks:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_query`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s tampered_election_kiosks:gateway_entry 198.22.52.1`
+`exploit -f ~/scripts/exp_query.adr -s tampered_election_kiosks:gateway_entry 198.22.52.1`
 
 Прочитай `/srv/records/maintenance-audit.csv` на последнем узле — там сохранённая запись.
 

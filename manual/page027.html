@@ -1,23 +1,13 @@
-<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>События</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page026.html">Назад</a> | <a href="page028.html">Далее</a></div><h2>События</h2>
+<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Разрешения</title><style>body{font:15px Segoe UI,Arial,sans-serif;margin:26px;color:#172434;background:#fafbfc;line-height:1.55}h1{color:#173a57;font-size:27px}h2{color:#225875}pre{background:#e9eef3;padding:14px;white-space:pre-wrap;word-wrap:break-word;font:13px Consolas,monospace}code{font-family:Consolas,monospace}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #bcc8d2;padding:8px;text-align:left;vertical-align:top}th{background:#dce7ef}a{color:#125a87}.nav{font-size:13px;border-bottom:1px solid #ccd8e0;padding-bottom:10px}</style></head><body><div class="nav"><a href="index.html">Оглавление</a> | <a href="page026.html">Назад</a> | <a href="page028.html">Далее</a></div><h2>Разрешения</h2>
 <table>
-<tr><th>Событие</th><th>Когда и что передаётся</th></tr>
-<tr><td>on_load</td><td>загрузка, перечитывание или включение пакета; пустой словарь</td></tr>
-<tr><td>on_tick</td><td>вызов Game.tick; dt_ms — прошедшие миллисекунды</td></tr>
-<tr><td>on_command</td><td>завершение встроенной команды игрока; line, session</td></tr>
-<tr><td>on_hack</td><td>успешный удалённый или локальный игровой взлом; target, target_host, vuln (объект; имя в vuln["name"]), outcome, source_ip, monitored, heat_added</td></tr>
-<tr><td>on_mail</td><td>новое входящее письмо после шага мира: direction=inbox, mail; отправка через Game.mail_send: direction=sent, to, subject, body</td></tr>
-<tr><td>on_mission_done</td><td>продвижение сюжетной цепочки; before, active</td></tr>
-<tr><td>on_gig_done</td><td>изменение числа выполненных подработок; before, done</td></tr>
-<tr><td>on_purchase</td><td>покупка; catalog=shop/market, id</td></tr>
-<tr><td>on_achievement</td><td>открыто достижение; id</td></tr>
-<tr><td>on_investigation</td><td>смена стадии слежки; before, stage, progress</td></tr>
-<tr><td>on_scenario_done</td><td>завершён активный сценарий; scenario</td></tr>
-<tr><td>on_world</td><td>изменилось число машин или организаций; machines, orgs</td></tr>
-<tr><td>on_file</td><td>изменение через редактор/файловое окно или файловый API Adder; operation и сведения об операции</td></tr>
-<tr><td>on_ui</td><td>кнопка собственного окна; window, action, values</td></tr>
-<tr><td>on_network</td><td>пакет установленной партии; plugin, channel, data, from</td></tr>
-<tr><td>on_save</td><td>перед сохранением основного профиля</td></tr>
-<tr><td>on_unload</td><td>выключение пакета или выход через игровую команду quit</td></tr>
-<tr><td>custom.имя</td><td>адресное событие таймера этого плагина; timer, data</td></tr>
+<tr><th>Разрешение</th><th>Возможности</th></tr>
+<tr><td>без разрешений</td><td>своё хранилище plugin.get/set, данные события, объявленные assets</td></tr>
+<tr><td>content</td><td>создание/изменение игрового мира, типов устройств, уязвимостей, каталогов, заданий, окон, таймеров</td></tr>
+<tr><td>sys</td><td>игровые sys-функции: сведения, уведомления, открытие приложений; sys.kill в обработчике запрещён</td></tr>
+<tr><td>fs</td><td>обычные операции с виртуальными файлами в правах текущего игрового сеанса</td></tr>
+<tr><td>net</td><td>обычные игровые сетевые действия в правах текущего игрового сеанса</td></tr>
+<tr><td>shell</td><td>команды игровой оболочки через shell.exec; это также даёт доступ к механикам, реализованным командами</td></tr>
+<tr><td>time</td><td>игровые вызовы хоста time.now</td></tr>
+<tr><td>network</td><td>отправка и приём сообщений через уже подключённую сетевую партию игры</td></tr>
 </table>
-<p>События изменения состояния формируются после действия оболочки, API Adder и шага мира. Изменения, которые делает обработчик, не вызывают синхронный рекурсивный запуск другого обработчика. Проверки собственных произвольных условий удобно делать в <code>on_tick</code> или по таймеру. Прямое закрытие процесса Windows не гарантирует on_unload; важные данные сохраняй по ходу работы.</p></body></html>
+<p><code>content</code> — авторские полномочия над игровым миром. Это существенно шире прав обычного персонажа. <code>net</code> означает вымышленную сеть игры, <code>network</code> — канал установленной многопользовательской партии. Через SDK нет API чтения произвольных файлов Windows или запуска команд Windows.</p></body></html>

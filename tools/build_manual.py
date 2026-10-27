@@ -53,9 +53,11 @@ for book,file in books:
   title=(re.search(r'(?m)^#{1,2} (.+)',chunk).group(1) if re.search(r'(?m)^#{1,2} (.+)',chunk) else book)
   name=f'page{len(pages):03}.html';pages.append((name,title,chunk));entries.append((name,title))
  groups.append((book,entries))
-for book,folder in [('Пример: устройства','device_lab'),('Пример: район','district')]:
+for book,folder in [('Пример: устройства','device_lab'),('Пример: район','district'),('Пример: авторский тип','custom_vuln_type'),('Пример: результаты и условия','access_lab')]:
  entries=[]
- for file in ['plugin.json','main.adr']:
+ for source in sorted((p/'sdk/examples'/folder).glob('*')):
+  if source.suffix not in ['.json','.adr']:continue
+  file=source.name
   text=(p/'sdk/examples'/folder/file).read_text(encoding='utf-8-sig');title=f'{book} — {file}';name=f'page{len(pages):03}.html';pages.append((name,title,'# '+title+'\n\n```\n'+text+'\n```'));entries.append((name,title))
  groups.append((book,entries))
 entries=[]
@@ -69,7 +71,7 @@ for i,(name,title,md) in enumerate(pages):
  if i+1<len(pages):nav+=' | <a href="'+pages[i+1][0]+'">Далее</a>'
  document='<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>'+html.escape(title)+'</title><style>'+style+'</style></head><body><div class="nav">'+nav+'</div>'+render(md)+'</body></html>'
  (manual/name).write_bytes(document.encode('cp1251',errors='xmlcharrefreplace'))
-index='<h1>Blackwire — игра и SDK Adder</h1><p>Руководство игрока, язык, команды и разработка расширений. API 1. 26 октября 2026.</p>'
+index='<h1>Blackwire — игра и SDK Adder</h1><p>Руководство игрока, язык, команды и разработка расширений. API 1. 27 октября 2026.</p>'
 for title,entries in groups:index+='<h2>'+title+'</h2><ul>'+''.join('<li><a href="'+name+'">'+html.escape(label)+'</a></li>' for name,label in entries)+'</ul>'
 (manual/'index.html').write_bytes(('<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>Blackwire — руководство</title><style>'+style+'</style></head><body>'+index+'</body></html>').encode('cp1251',errors='xmlcharrefreplace'))
 def obj(title,local):return '<LI><OBJECT type="text/sitemap"><param name="Name" value="'+html.escape(title,quote=True)+'"><param name="Local" value="'+local+'"></OBJECT>'

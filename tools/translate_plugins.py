@@ -189,7 +189,7 @@ def write_start_here(
         f"Семейство: {family}. Организация: {org_kind}. Папка плагина не трогает чужие сохранения; созданные устройства и задания сохраняются вместе с миром.",
         "",
     ]
-    (folder / "START_HERE.md").write_text("\n".join(lines), encoding="utf-8")
+    (folder / "START_HERE.md").write_text("\n".join(lines).replace("exp_overflow", "exp_" + plugin.get("exploit_kind", "overflow")), encoding="utf-8")
 
 
 def write_short_guide(folder: Path, plugin: dict, name: str, story: str, pid: str, family: str) -> None:

@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: object_reference. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `key_issue`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.7.1 hotel_keycard_encoders:records_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_object_reference`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s hotel_keycard_encoders:records_entry 198.22.7.1`
+`exploit -f ~/scripts/exp_object_reference.adr -s hotel_keycard_encoders:records_entry 198.22.7.1`
 
 Прочитай `/srv/records/keys.csv` на последнем узле — там сохранённая запись.
 

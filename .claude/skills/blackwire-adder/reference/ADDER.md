@@ -125,7 +125,7 @@ exit()                 # завершить скрипт; exit(1) — с код�
 
 **net** — взлом (над машиной, адрес которой передан; «откуда» — текущий hop цепочки)
 - `net.vulns(ip)` → список `{id, kind, version, service, port, name, access, local}`. Локальные уязвимости видны на текущей машине; их id используют research и privesc.
-- `net.research(ip, id)` → `{id, name, service, port, version, local, kind, difficulty, fingerprint, layout, hints, fields, market, next}`. Выбирает конкретную уязвимость по id, имени или уникальной службе. Локальная исследуется после входа на машину.
+- `net.research(ip, id)` → `{id, name, service, port, version, local, kind, difficulty, fingerprint, layout, hints, fields, market, result, conditions, next}`. Выбирает конкретную уязвимость по id, имени или уникальной службе. Локальная исследуется после входа на машину.
 - `net.probe(ip, id, payload)` → `{ok, applied:false, feedback, hint, id, kind}`. Проверяет payload, оставляет след и объясняет отказ; доступ не выдаёт.
 - `net.exploit(ip, id, payload)` → `{ok, access, user, password, path, data, host, monitored}`; при отказе `{ok:false, feedback, hint, id, kind}`. Без payload автоматического взлома нет. fingerprint должен совпасть с исследованной целью. Shell добавляет hop, creds сохраняет логин.
 - `net.crack(ip, user[, словарь])` → пароль (str) или null; словарь по умолчанию `~/wordlist.txt`
@@ -168,3 +168,10 @@ for ip in targets:
 
 Поддерживаются генераторы списков `[выражение for x in xs if условие]` и словарей `{k: v for ...}`.
 Форматирование в f-строках: `{x:16}` ширина, `{x:>8}` вправо, `{x:.2f}` знаки, `{x:04}` нули.
+
+### Объекты взлома
+
+`net.access(handle, method, ...args)` обращается к выданному эксплоитом объекту.
+Список методов приходит в результате `net.exploit`. Объект действует в одном сеансе
+300 игровых секунд. Частичный объект не выдаёт терминал. Полные параметры результатов,
+условия и примеры описаны в SDK.md, раздел «Результаты взлома и условия».

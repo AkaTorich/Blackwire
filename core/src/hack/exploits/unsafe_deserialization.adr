@@ -1,0 +1,27 @@
+# exp_unsafe_deserialization.adr — Object Restore: Восстановление виртуального объекта вызывает небезопасный hook.
+if len(sys.args) < 2:
+    print("Использование: exp_unsafe_deserialization.adr адрес [id]")
+    print("Подсказки: research -h 3 адрес id")
+    exit(1)
+try:
+    target = sys.args[1]
+    selector = sys.args[2] if len(sys.args) > 2 else null
+    profile = net.research(target, selector)
+    if profile["kind"] != "unsafe_deserialization":
+        print("Несовместимый тип:", profile["kind"], "Подходящий товар:", profile["market"])
+        exit(1)
+    selector = profile["id"]
+    layout = profile["layout"]
+    payload = {"fingerprint":profile["fingerprint"]}
+    payload["object"] = {"type":layout["type_alias"],"state":{"hook":layout["hook"],"argument":layout["argument"]}}
+    check = net.probe(target, selector, payload)
+    print(check["feedback"])
+    if not check["ok"]:
+        exit(1)
+    result = net.privesc(payload, selector) if profile["local"] else net.exploit(target, selector, payload)
+    print(result)
+    if not result["ok"]:
+        exit(1)
+except as error:
+    print("Ошибка эксплоита:", error)
+    exit(1)

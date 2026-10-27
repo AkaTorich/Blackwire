@@ -49,3 +49,9 @@ In the game, open **Plugins**, choose **Open folder**, copy a plugin folder ther
 then choose **Reload**. You can also install both examples with the manager's buttons.
 On Windows the default plugin folder is `%APPDATA%\top.blackwire.game\plugins`.
 Each plugin folder contains `plugin.json` and its Adder source.
+
+## Результаты и условия взлома
+
+`examples/access_lab` — десять вариантов результата взлома и изменяемые условия;
+`examples/custom_vuln_type` — авторская проверка payload на Adder.
+Начни с `access_create`, затем `access_ready`; подробности — docs/SDK.md.

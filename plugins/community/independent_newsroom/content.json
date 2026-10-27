@@ -56,5 +56,9 @@
       "password": "bw_independent_newsroom_3"
     }
   ],
-  "subnet": "10.230.24."
+  "subnet": "10.230.24.",
+  "exploit_kind": "query",
+  "kernel_kind": "type_confusion",
+  "leak_kind": "object_reference",
+  "exploit_difficulty": 4
 }

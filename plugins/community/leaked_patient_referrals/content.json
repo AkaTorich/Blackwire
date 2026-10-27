@@ -42,5 +42,9 @@
       "password": "bw_leaked_patient_referrals_2"
     }
   ],
-  "subnet": "10.230.53."
+  "subnet": "10.230.53.",
+  "exploit_kind": "format",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 3
 }

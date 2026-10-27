@@ -4,7 +4,7 @@ use serde_json::{json, Value};
 use crate::{World, session::Session};
 use super::{VulnInfo, VulnAccess};
 
-pub const KINDS: &[&str] = &["overflow", "traversal", "auth_replay", "query", "format", "protocol", "race", "command_chain"];
+pub const KINDS: &[&str] = &["integer_overflow", "signedness", "length_confusion", "use_after_free", "double_free", "type_confusion", "object_reference", "mass_assignment", "token_confusion", "request_smuggling", "cache_poisoning", "header_injection", "unsafe_deserialization", "prototype_pollution", "template_injection", "xml_entity", "regex_backtracking", "fragment_overlap", "weak_rng", "permission_mask", "overflow", "traversal", "auth_replay", "query", "format", "protocol", "race", "command_chain"];
 
 fn hash(text: &str) -> u64 {
     text.bytes().fold(0xcbf29ce484222325, |n, b| (n ^ b as u64).wrapping_mul(0x100000001b3))
@@ -12,14 +12,19 @@ fn hash(text: &str) -> u64 {
 pub fn id(v: &VulnInfo) -> String {
     format!("bw-{:016x}", hash(&format!("{}:{}:{}:{}:{}", v.service, v.port, v.version, v.name, v.local)))
 }
+fn custom_kind(s:&str)->bool {
+    fn ident(v:&str)->bool{!v.is_empty()&&v.len()<=64&&v.bytes().enumerate().all(|(i,c)|c.is_ascii_alphabetic()||c==b'_'||(i>0&&c.is_ascii_digit()))}
+    s.split_once(':').is_some_and(|(a,b)|ident(a)&&ident(b))
+}
 pub fn validate_spec(spec: &Value) -> Result<(), String> {
     let obj = spec.as_object().ok_or("exploit должен быть словарём")?;
-    if obj.keys().any(|k| !["kind", "difficulty", "hint", "market"].contains(&k.as_str())) {
-        return Err("неизвестное поле exploit: допустимы kind, difficulty, hint, market".into());
+    if obj.keys().any(|k| !["kind", "difficulty", "hint", "market", "params"].contains(&k.as_str())) {
+        return Err("неизвестное поле exploit: допустимы kind, difficulty, hint, market, params".into());
     }
-    if !KINDS.contains(&spec["kind"].as_str().unwrap_or("")) {
+    if !KINDS.contains(&spec["kind"].as_str().unwrap_or("")) && !custom_kind(spec["kind"].as_str().unwrap_or("")) {
         return Err(format!("неизвестная механика exploit; доступны {}", KINDS.join(", ")));
     }
+    if let Some(params)=spec.get("params"){if !params.is_object()||params.to_string().len()>16384{return Err("params должен быть словарём до 16 КиБ".into());}}
     if let Some(d) = spec.get("difficulty") {
         if !d.as_u64().is_some_and(|d| (1..=5).contains(&d)) { return Err("difficulty должна быть от 1 до 5".into()); }
     }
@@ -35,7 +40,12 @@ pub fn validate_spec(spec: &Value) -> Result<(), String> {
 }
 pub fn kind(world: &World, v: &VulnInfo) -> String {
     if let Some(k) = world.plugins.vulnerabilities.get(&v.name).and_then(|s| s.get("exploit")).and_then(|s| s["kind"].as_str()) {
-        if KINDS.contains(&k) { return k.into(); }
+        if KINDS.contains(&k) || custom_kind(k) { return k.into(); }
+    }
+    for rule in crate::net::services::known_vulns(){
+        if rule.name==v.name && rule.service==v.service && v.version.starts_with(&rule.version_prefix){
+            if let Some(kind)=rule.effect.strip_prefix("payload:"){if KINDS.contains(&kind){return kind.into();}}
+        }
     }
     if v.local { return "race".into(); }
     match v.service.as_str() {
@@ -80,9 +90,9 @@ pub fn ensure_reachable(world: &World, session: &Session, target: u32, v: &VulnI
     }
     Ok(())
 }
-pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Value {
+pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Result<Value,String> {
     let m = world.machine(target);
-    let fingerprint = format!("{:016x}", hash(&format!("{}:{}:{}:{}:{}", world.seed, target, m.hostname, m.ip, id(v))));
+    let fingerprint = format!("{:016x}", hash(&format!("{}:{}:{}:{}:{}", world.seed, target, m.hostname, m.ip, format!("{}:{}",id(v),world.plugins.vulnerabilities.get(&v.name).unwrap_or(&Value::Null)))));
     let n = hash(&fingerprint);
     let spec = world.plugins.vulnerabilities.get(&v.name).and_then(|s| s.get("exploit"));
     let difficulty = spec.and_then(|s| s["difficulty"].as_u64()).unwrap_or(2).clamp(1, 5);
@@ -91,7 +101,7 @@ pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Value {
     let path = match &v.access { VulnAccess::Read(p) => p.as_str(), _ => "/etc/passwd" };
     let nonce = format!("BW-{:08x}", n as u32);
     let channel = match v.access { VulnAccess::Root => "root", VulnAccess::Shell => "shell", VulnAccess::Creds => "accounts", _ => "records" };
-    let (layout, hints, fields) = match kind.as_str() {
+    let (layout, hints, fields) = if let Some(puzzle)=super::payload_extra::profile(&kind,n,difficulty,&user,path,&nonce){puzzle}else{match kind.as_str() {
         "overflow" => (json!({"frame_words": 8 + n % (8 * difficulty), "word_size": 4, "code_base": 4096 + (n % 1024) * 16,
             "entry_offset": 16 + n % 64, "canary": format!("{:04x}", (n >> 24) as u16)}),
             vec!["Нужно переполнить буфер до границы кадра, сохранив контрольную метку.",
@@ -128,31 +138,39 @@ pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Value {
                 "steps — три словаря с op, resource и at: check, replace, use.",
                 "Метки at целочисленные: 0 ≤ check < replace < use ≤ window_ms. resource должен совпасть на всех шагах; реальное ожидание не нужно."],
             vec!["steps"]),
-        _ => (json!({"command": "status", "parser": (["semicolon", "and_then", "pipe"][(n % 3) as usize]), "channel": channel, "nonce": nonce}),
+        "command_chain" => (json!({"command": "status", "parser": (["semicolon", "and_then", "pipe"][(n % 3) as usize]), "channel": channel, "nonce": nonce}),
             vec!["Аргумент команды проходит через небезопасный игровой разборщик.",
                 "Для parser semicolon разделитель ;, для and_then — &&, для pipe — |.",
                 "argument: command + разделитель + bw-open:<channel>:<nonce>. Команды относятся только к модели Blackwire."],
-            vec!["argument"])
-    };
+            vec!["argument"]),
+        _ => (json!({}),vec!["Авторский тип: исследуй подсказки его плагина."],vec!["payload"])
+    }};
     let mut hints: Vec<String> = hints.into_iter().map(String::from).collect();
     if let Some(hint) = spec.and_then(|s| s["hint"].as_str()) { hints.insert(0, hint.into()); }
     let market = spec.and_then(|s| s["market"].as_str()).filter(|id| {
         crate::market::item(id).is_some() || world.plugins.catalogs.get("market").is_some_and(|items| items.contains_key(*id))
-    }).map(String::from).unwrap_or_else(|| format!("exp_{}", kind));
-    json!({"id": id(v), "name": v.name, "service": v.service, "port": v.port, "version": v.version,
+    }).map(String::from).or_else(|| (!custom_kind(&kind)).then(||format!("exp_{}",kind)));
+    let result=json!({"id": id(v), "name": v.name, "service": v.service, "port": v.port, "version": v.version,
         "local": v.local, "kind": kind, "difficulty": difficulty, "fingerprint": fingerprint,
         "layout": layout, "hints": hints, "fields": fields, "market": market,
-        "next": "Составь payload с fingerprint и нужными полями; net.probe проверяет, net.exploit применяет. Для локального взлома — net.privesc."})
+        "result": super::access::result(world,v), "conditions":super::access::conditions(world,target,v,None),
+        "next": "Составь payload с fingerprint и нужными полями; net.probe проверяет, net.exploit применяет. Для локального взлома — net.privesc."});
+    if custom_kind(&kind){crate::plugins::exploit_types::profile(world,target,v,result)}else{Ok(result)}
 }
 fn number(v: &Value, name: &str) -> Result<i64, String> {
     v[name].as_i64().ok_or_else(|| format!("поле {} должно быть целым числом", name))
 }
-pub fn validate(profile: &Value, payload: &Value) -> Result<(), String> {
+fn envelope(profile:&Value,payload:&Value)->Result<(),String>{
     if !payload.is_object() { return Err("payload должен быть словарём Adder".into()); }
     if payload.to_string().len() > 65536 { return Err("payload превышает 64 КиБ".into()); }
     if payload["fingerprint"].as_str() != profile["fingerprint"].as_str() {
         return Err("fingerprint не соответствует устройству или версии; повтори net.research".into());
     }
+    Ok(())
+}
+pub fn validate(profile:&Value,payload:&Value)->Result<(),String>{
+    envelope(profile,payload)?;
+    if super::payload_extra::KINDS.contains(&profile["kind"].as_str().unwrap_or("")){return super::payload_extra::validate(profile,payload);}
     let l = &profile["layout"];
     let error = match profile["kind"].as_str().unwrap_or("") {
         "overflow" => {
@@ -208,8 +226,10 @@ pub fn validate(profile: &Value, payload: &Value) -> Result<(), String> {
 }
 pub fn attempt(world: &mut World, session: &Session, target: u32, v: &VulnInfo, payload: &Value, dry_run: bool) -> Result<Value, String> {
     ensure_reachable(world, session, target, v)?;
-    let p = profile(world, target, v);
-    let result = validate(&p, payload);
+    let p = profile(world, target, v)?;
+    let result = super::access::check(world,session,target,v).and_then(|_|envelope(&p,payload)).and_then(|_|{
+        if custom_kind(p["kind"].as_str().unwrap_or("")){crate::plugins::exploit_types::validate(world,target,v,&p,payload)}else{validate(&p,payload)}
+    });
     let source = super::tracks::source_ip(world, session);
     world.log(target, crate::net::machine::LogKind::Warn, &format!("{} payload для {} с {}: {}", if dry_run {"проверка"} else {"попытка"}, id(v), source, if result.is_ok() {"принят"} else {"отклонён"}));
     // Rejected attempts and probes are visible to defenders too.
@@ -222,5 +242,5 @@ pub fn attempt(world: &mut World, session: &Session, target: u32, v: &VulnInfo, 
         "hint": p["hints"][0]}))
 }
 pub fn starter(address: &str, selector: &str) -> String {
-    format!("# Мой эксплоит: исследуй цель, составь payload и проверь результат.\n# Запуск: adder этот_файл.adr [адрес] [id]\naddress = sys.args[1] if len(sys.args) > 1 else {}\nselector = sys.args[2] if len(sys.args) > 2 else {}\np = net.research(address, selector)\nprint(p[\"name\"], p[\"kind\"])\nprint(p[\"layout\"])\nfor hint in p[\"hints\"]:\n    print(hint)\n# TODO: добавь нужные поля из p[\"fields\"]. Готовые решения: market buy exp_<kind>.\npayload = {{\"fingerprint\": p[\"fingerprint\"]}}\ncheck = net.probe(address, selector, payload)\nprint(check[\"feedback\"])\nif check[\"ok\"]:\n    if p[\"local\"]:\n        print(net.privesc(payload, selector))\n    else:\n        print(net.exploit(address, selector, payload))\n", serde_json::to_string(address).unwrap(), serde_json::to_string(selector).unwrap())
+    format!("# Мой эксплоит: исследуй цель, составь payload и проверь результат.\n# Запуск: adder этот_файл.adr [адрес] [id]\naddress = sys.args[1] if len(sys.args) > 1 else {}\nselector = sys.args[2] if len(sys.args) > 2 else {}\np = net.research(address, selector)\nprint(p[\"name\"], p[\"kind\"])\nprint(p[\"layout\"])\nprint(\"Результат:\", p[\"result\"])\nfor condition in p[\"conditions\"]:\n    print(condition)\nfor hint in p[\"hints\"]:\n    print(hint)\n# TODO: добавь нужные поля из p[\"fields\"]. Готовые решения: market buy exp_<kind>.\npayload = {{\"fingerprint\": p[\"fingerprint\"]}}\ncheck = net.probe(address, selector, payload)\nprint(check[\"feedback\"])\nif check[\"ok\"]:\n    if p[\"local\"]:\n        print(net.privesc(payload, selector))\n    else:\n        print(net.exploit(address, selector, payload))\n", serde_json::to_string(address).unwrap(), serde_json::to_string(selector).unwrap())
 }

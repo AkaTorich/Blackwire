@@ -1,0 +1,18 @@
+{
+  "id": "access_lab",
+  "name": "Access Lab",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "main.adr",
+  "permissions": [
+    "content"
+  ],
+  "events": {
+    "on_load": "load"
+  },
+  "commands": {
+    "access_create": "create",
+    "access_ready": "ready",
+    "access_reset": "reset"
+  }
+}

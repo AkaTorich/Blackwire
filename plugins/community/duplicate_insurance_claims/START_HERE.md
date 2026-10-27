@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: weak_rng. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `claims_store`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.47.1 duplicate_insurance_claims:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_weak_rng`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s duplicate_insurance_claims:gateway_entry 198.22.47.1`
+`exploit -f ~/scripts/exp_weak_rng.adr -s duplicate_insurance_claims:gateway_entry 198.22.47.1`
 
 Прочитай `/srv/records/claim-pairs.csv` на последнем узле — там сохранённая запись.
 

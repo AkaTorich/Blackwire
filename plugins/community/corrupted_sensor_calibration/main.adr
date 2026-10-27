@@ -10,7 +10,7 @@ def panel():
         lines += "\nСвой эксплоит: research " + first["ip"] + " " + vulnerability
         lines += "\nБольше подсказок: research -h 3 " + first["ip"] + " " + vulnerability
         lines += "\nЗаготовка: exploit new ~/scripts/my_exploit.adr " + first["ip"] + " " + vulnerability
-        lines += "\nГотовый инструмент: market buy exp_overflow; запуск: exploit -f ~/scripts/exp_overflow.adr -s " + vulnerability + " " + first["ip"]
+        lines += "\nГотовый инструмент: market buy exp_" + C.get("exploit_kind","overflow") + "; запуск: exploit -f ~/scripts/exp_" + C.get("exploit_kind","overflow") + ".adr -s " + vulnerability + " " + first["ip"]
     rows = [["Контент создан", created], ["Пройдено", plugin.get("completed", false)]]
     for node in C["nodes"]:
         rows.append([node["hostname"], node["ip"]])
@@ -31,8 +31,8 @@ def load(event):
         template["custom_vulns"] = []
         template["services"] = [{"port": node["port"], "name": node["service"], "version": "1.0", "running": true, "banner": C["name"] + " / " + node["key"], "pages": []}, {"port": 80, "name": "http", "version": "1.0", "running": true, "banner": C["name"], "pages": []}]
         kind = plugin.device_type(node["key"], template)
-        plugin.vulnerability(node["key"] + "_entry", {"device_type": kind, "service": node["service"], "version_prefix": "1.", "access": node["access"], "handler": "hacked"})
-        plugin.vulnerability(node["key"] + "_kernel", {"device_type": kind, "local": true, "version_prefix": node["os"], "access": "root"})
+        plugin.vulnerability(node["key"] + "_entry", {"device_type": kind, "service": node["service"], "version_prefix": "1.", "access": node["access"], "handler": "hacked", "exploit": {"kind": C.get("exploit_kind","overflow"), "difficulty": C.get("exploit_difficulty",2)}})
+        plugin.vulnerability(node["key"] + "_kernel", {"device_type": kind, "local": true, "version_prefix": node["os"], "access": "root", "exploit": {"kind": C.get("kernel_kind","race")}})
     plugin.catalog("achievements", "resolved", {"name": C["name"] + ": раскрыто", "desc": C["objective"]})
     panel()
 
@@ -50,7 +50,7 @@ def start(event):
         plugin.user(mid, "operator", node["password"], false)
         plugin.write(mid, node["file"], node["text"])
         plugin.write(mid, "/etc/maintenance-note.txt", "Служебная заметка. Служба: " + node["service"] + "\nЗапись: " + node["file"])
-        plugin.vulnerability(node["key"] + "_record_leak", {"machine": mid, "service": node["service"], "version_prefix": "1.0", "access": "read:" + node["file"]})
+        plugin.vulnerability(node["key"] + "_record_leak", {"machine": mid, "service": node["service"], "version_prefix": "1.0", "access": "read:" + node["file"], "exploit": {"kind": C.get("leak_kind","traversal")}})
         plugin.page(mid, 80, {"path": "/", "title": C["name"], "html": "<h1>" + C["name"] + "</h1><p>" + node["text"] + "</p>"})
     if len(ids) > 1:
         plugin.org({"name": C["name"], "kind": C["org_kind"], "domain": C["id"].replace("_", "-") + ".hw", "gateway": ids[0], "subnet": C["subnet"], "members": ids, "description": C["story"]})
@@ -142,7 +142,7 @@ def status(event):
     vulnerability = C["id"] + ":" + first["key"] + "_entry"
     print("Исследование и подсказки: research -h 3", first["ip"], vulnerability)
     print("Свой код: exploit new ~/scripts/my_exploit.adr", first["ip"], vulnerability)
-    print("Готовый инструмент: market buy exp_overflow; затем exploit -f ~/scripts/exp_overflow.adr -s", vulnerability, first["ip"])
+    print("Готовый инструмент: market buy exp_" + C.get("exploit_kind","overflow") + "; затем exploit -f ~/scripts/exp_" + C.get("exploit_kind","overflow") + ".adr -s", vulnerability, first["ip"])
     print("Запись дела лежит на последнем узле. Внутренние адреса достижимы через шлюз.")
     if C["family"] == "event":
         print("Фаза инцидента:", plugin.get("phase", 0), "/ 3; меняется каждые 15 игровых секунд.")

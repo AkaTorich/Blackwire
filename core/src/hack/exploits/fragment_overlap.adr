@@ -1,0 +1,27 @@
+# exp_fragment_overlap.adr — Fragment Stitch: Фрагменты с перекрытием дают разные сообщения двум сборщикам.
+if len(sys.args) < 2:
+    print("Использование: exp_fragment_overlap.adr адрес [id]")
+    print("Подсказки: research -h 3 адрес id")
+    exit(1)
+try:
+    target = sys.args[1]
+    selector = sys.args[2] if len(sys.args) > 2 else null
+    profile = net.research(target, selector)
+    if profile["kind"] != "fragment_overlap":
+        print("Несовместимый тип:", profile["kind"], "Подходящий товар:", profile["market"])
+        exit(1)
+    selector = profile["id"]
+    layout = profile["layout"]
+    payload = {"fingerprint":profile["fingerprint"]}
+    payload["fragments"] = [{"offset":0,"data":layout["prefix"] + layout["safe"]},{"offset":len(layout["prefix"]),"data":layout["privileged"]}]
+    check = net.probe(target, selector, payload)
+    print(check["feedback"])
+    if not check["ok"]:
+        exit(1)
+    result = net.privesc(payload, selector) if profile["local"] else net.exploit(target, selector, payload)
+    print(result)
+    if not result["ok"]:
+        exit(1)
+except as error:
+    print("Ошибка эксплоита:", error)
+    exit(1)

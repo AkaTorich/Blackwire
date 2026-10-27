@@ -1,0 +1,25 @@
+# signal_solver.adr — готовый исходник для авторского типа Signal Lock.
+if len(sys.args) < 2:
+    print("Использование: signal_solver.adr адрес [id]")
+    exit(1)
+try:
+    target = sys.args[1]
+    selector = sys.args[2] if len(sys.args) > 2 else "custom_vuln_type:signal_entry"
+    profile = net.research(target,selector)
+    if profile["kind"] != "custom_vuln_type:signal_lock":
+        print("Нужен авторский тип Signal Lock.")
+        exit(1)
+    layout = profile["layout"]
+    signal = layout["ring"][layout["shift"]:] + layout["ring"][:layout["shift"]] + layout["suffix"]
+    payload = {"fingerprint":profile["fingerprint"],"signal":signal}
+    check = net.probe(target,selector,payload)
+    print(check["feedback"])
+    if not check["ok"]:
+        exit(1)
+    result = net.privesc(payload,selector) if profile["local"] else net.exploit(target,selector,payload)
+    print(result)
+    if not result["ok"]:
+        exit(1)
+except as error:
+    print("Эксплоит отклонён:",error)
+    exit(1)

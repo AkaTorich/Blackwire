@@ -56,5 +56,9 @@
       "password": "bw_underground_radio_station_3"
     }
   ],
-  "subnet": "10.230.40."
+  "subnet": "10.230.40.",
+  "exploit_kind": "header_injection",
+  "kernel_kind": "permission_mask",
+  "leak_kind": "format",
+  "exploit_difficulty": 5
 }

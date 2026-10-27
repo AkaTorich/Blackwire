@@ -29,5 +29,9 @@
     }
   ],
   "subnet": "10.230.97.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "cache_poisoning",
+  "kernel_kind": "signedness",
+  "leak_kind": "cache_poisoning",
+  "exploit_difficulty": 2
 }

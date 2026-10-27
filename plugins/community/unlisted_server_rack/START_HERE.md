@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: use_after_free. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `rack_store`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.60.1 unlisted_server_rack:gateway_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_use_after_free`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s unlisted_server_rack:gateway_entry 198.22.60.1`
+`exploit -f ~/scripts/exp_use_after_free.adr -s unlisted_server_rack:gateway_entry 198.22.60.1`
 
 Прочитай `/srv/records/capacity-report.csv` на последнем узле — там сохранённая запись.
 

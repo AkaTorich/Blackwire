@@ -13,6 +13,8 @@
 
 ## Подсказки
 
+Механика взлома: fragment_overlap. Подсказки и параметры конкретного устройства даёт research.
+
 - Если `probe` показывает активный файрвол, обойди его командой `firewall <адрес>`. При промахе попробуй ещё раз и следи за подозрением.
 - На первом узле ищи собственную службу плагина — `print_spool`.
 - Для доступа нужно слабое место «entry», а не просто утечка данных.
@@ -26,9 +28,9 @@
 
 Свой исходник: `exploit new ~/scripts/my_exploit.adr 198.22.18.1 campus_print_stations:records_entry`. Заполни payload по подсказкам в игре.
 
-Готовый редактируемый инструмент: `market buy exp_overflow`.
+Готовый редактируемый инструмент: `market buy exp_fragment_overlap`.
 
-`exploit -f ~/scripts/exp_overflow.adr -s campus_print_stations:records_entry 198.22.18.1`
+`exploit -f ~/scripts/exp_fragment_overlap.adr -s campus_print_stations:records_entry 198.22.18.1`
 
 Прочитай `/srv/records/queue.csv` на последнем узле — там сохранённая запись.
 

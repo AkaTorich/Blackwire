@@ -29,7 +29,11 @@
       }
     ],
     "subnet": "10.230.1.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "integer_overflow",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 1
   },
   {
     "name": "Терминалы парковки",
@@ -61,7 +65,11 @@
       }
     ],
     "subnet": "10.230.2.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "signedness",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 2
   },
   {
     "name": "Валидаторы транспортных карт",
@@ -93,7 +101,11 @@
       }
     ],
     "subnet": "10.230.3.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "length_confusion",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 3
   },
   {
     "name": "Умные замки",
@@ -125,7 +137,11 @@
       }
     ],
     "subnet": "10.230.4.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "use_after_free",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 4
   },
   {
     "name": "Крышные метеостанции",
@@ -157,7 +173,11 @@
       }
     ],
     "subnet": "10.230.5.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "double_free",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 5
   },
   {
     "name": "Сканеры штрихкодов на складе",
@@ -189,7 +209,11 @@
       }
     ],
     "subnet": "10.230.6.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "type_confusion",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 1
   },
   {
     "name": "Шифровальщики ключ-карт отеля",
@@ -221,7 +245,11 @@
       }
     ],
     "subnet": "10.230.7.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "object_reference",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 2
   },
   {
     "name": "Киоски оплаты в кафе",
@@ -253,7 +281,11 @@
       }
     ],
     "subnet": "10.230.8.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "mass_assignment",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 3
   },
   {
     "name": "Солнечные инверторы",
@@ -285,7 +317,11 @@
       }
     ],
     "subnet": "10.230.9.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "token_confusion",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 4
   },
   {
     "name": "Датчики качества воды",
@@ -317,7 +353,11 @@
       }
     ],
     "subnet": "10.230.10.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "request_smuggling",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 5
   },
   {
     "name": "Постаматы",
@@ -349,7 +389,11 @@
       }
     ],
     "subnet": "10.230.11.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "cache_poisoning",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 1
   },
   {
     "name": "Стойки выдачи в библиотеке",
@@ -381,7 +425,11 @@
       }
     ],
     "subnet": "10.230.12.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "header_injection",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 2
   },
   {
     "name": "Контроллеры зарядок электромобилей",
@@ -413,7 +461,11 @@
       }
     ],
     "subnet": "10.230.13.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "unsafe_deserialization",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 3
   },
   {
     "name": "Панели управления лифтами",
@@ -445,7 +497,11 @@
       }
     ],
     "subnet": "10.230.14.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "prototype_pollution",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 4
   },
   {
     "name": "Камеры контроля на заводе",
@@ -477,7 +533,11 @@
       }
     ],
     "subnet": "10.230.15.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "template_injection",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 5
   },
   {
     "name": "Турникеты кинотеатра",
@@ -509,7 +569,11 @@
       }
     ],
     "subnet": "10.230.16.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "xml_entity",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 1
   },
   {
     "name": "Медицинские холодильники",
@@ -541,7 +605,11 @@
       }
     ],
     "subnet": "10.230.17.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "regex_backtracking",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 2
   },
   {
     "name": "Печать на кампусе",
@@ -573,7 +641,11 @@
       }
     ],
     "subnet": "10.230.18.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "fragment_overlap",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 3
   },
   {
     "name": "Контроллеры полива на ферме",
@@ -605,7 +677,11 @@
       }
     ],
     "subnet": "10.230.19.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "weak_rng",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 4
   },
   {
     "name": "Шкафы светофоров",
@@ -637,7 +713,11 @@
       }
     ],
     "subnet": "10.230.20.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "permission_mask",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 5
   },
   {
     "name": "Сеть частной клиники",
@@ -697,7 +777,11 @@
         "password": "bw_private_clinic_network_3"
       }
     ],
-    "subnet": "10.230.21."
+    "subnet": "10.230.21.",
+    "exploit_kind": "overflow",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 1
   },
   {
     "name": "Сеть грузового порта",
@@ -757,7 +841,11 @@
         "password": "bw_freight_port_network_3"
       }
     ],
-    "subnet": "10.230.22."
+    "subnet": "10.230.22.",
+    "exploit_kind": "traversal",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 2
   },
   {
     "name": "Сеть университетской кафедры",
@@ -817,7 +905,11 @@
         "password": "bw_university_research_network_3"
       }
     ],
-    "subnet": "10.230.23."
+    "subnet": "10.230.23.",
+    "exploit_kind": "auth_replay",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 3
   },
   {
     "name": "Сеть независимой редакции",
@@ -877,7 +969,11 @@
         "password": "bw_independent_newsroom_3"
       }
     ],
-    "subnet": "10.230.24."
+    "subnet": "10.230.24.",
+    "exploit_kind": "query",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 4
   },
   {
     "name": "Отделение кредитного союза",
@@ -937,7 +1033,11 @@
         "password": "bw_credit_union_branch_3"
       }
     ],
-    "subnet": "10.230.25."
+    "subnet": "10.230.25.",
+    "exploit_kind": "format",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 5
   },
   {
     "name": "Муниципальный архив",
@@ -997,7 +1097,11 @@
         "password": "bw_public_records_office_3"
       }
     ],
-    "subnet": "10.230.26."
+    "subnet": "10.230.26.",
+    "exploit_kind": "protocol",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 1
   },
   {
     "name": "Региональный ЦОД",
@@ -1057,7 +1161,11 @@
         "password": "bw_regional_data_center_3"
       }
     ],
-    "subnet": "10.230.27."
+    "subnet": "10.230.27.",
+    "exploit_kind": "race",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 2
   },
   {
     "name": "Районный провайдер",
@@ -1117,7 +1225,11 @@
         "password": "bw_neighborhood_isp_3"
       }
     ],
-    "subnet": "10.230.28."
+    "subnet": "10.230.28.",
+    "exploit_kind": "command_chain",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 3
   },
   {
     "name": "Сеть охраны музея",
@@ -1177,7 +1289,11 @@
         "password": "bw_museum_security_network_3"
       }
     ],
-    "subnet": "10.230.29."
+    "subnet": "10.230.29.",
+    "exploit_kind": "integer_overflow",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 4
   },
   {
     "name": "Распределительный центр торговли",
@@ -1237,7 +1353,11 @@
         "password": "bw_retail_distribution_hub_3"
       }
     ],
-    "subnet": "10.230.30."
+    "subnet": "10.230.30.",
+    "exploit_kind": "signedness",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 5
   },
   {
     "name": "Городская энергоконтора",
@@ -1297,7 +1417,11 @@
         "password": "bw_municipal_power_office_3"
       }
     ],
-    "subnet": "10.230.31."
+    "subnet": "10.230.31.",
+    "exploit_kind": "length_confusion",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 1
   },
   {
     "name": "Диспетчерская железной дороги",
@@ -1357,7 +1481,11 @@
         "password": "bw_railway_dispatch_network_3"
       }
     ],
-    "subnet": "10.230.32."
+    "subnet": "10.230.32.",
+    "exploit_kind": "use_after_free",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 2
   },
   {
     "name": "Городское жилищное агентство",
@@ -1417,7 +1545,11 @@
         "password": "bw_city_housing_agency_3"
       }
     ],
-    "subnet": "10.230.33."
+    "subnet": "10.230.33.",
+    "exploit_kind": "double_free",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 3
   },
   {
     "name": "Центр учебной тревоги",
@@ -1477,7 +1609,11 @@
         "password": "bw_emergency_training_center_3"
       }
     ],
-    "subnet": "10.230.34."
+    "subnet": "10.230.34.",
+    "exploit_kind": "type_confusion",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 4
   },
   {
     "name": "Киностудия",
@@ -1537,7 +1673,11 @@
         "password": "bw_film_production_studio_3"
       }
     ],
-    "subnet": "10.230.35."
+    "subnet": "10.230.35.",
+    "exploit_kind": "object_reference",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 5
   },
   {
     "name": "Районный узел обмена трафиком",
@@ -1597,7 +1737,11 @@
         "password": "bw_community_internet_exchange_3"
       }
     ],
-    "subnet": "10.230.36."
+    "subnet": "10.230.36.",
+    "exploit_kind": "mass_assignment",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 1
   },
   {
     "name": "Кооперативная мастерская",
@@ -1657,7 +1801,11 @@
         "password": "bw_cooperative_workshop_3"
       }
     ],
-    "subnet": "10.230.37."
+    "subnet": "10.230.37.",
+    "exploit_kind": "token_confusion",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 2
   },
   {
     "name": "Областной судебный архив",
@@ -1717,7 +1865,11 @@
         "password": "bw_regional_court_archive_3"
       }
     ],
-    "subnet": "10.230.38."
+    "subnet": "10.230.38.",
+    "exploit_kind": "request_smuggling",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 3
   },
   {
     "name": "Морская исследовательская станция",
@@ -1777,7 +1929,11 @@
         "password": "bw_marine_research_station_3"
       }
     ],
-    "subnet": "10.230.39."
+    "subnet": "10.230.39.",
+    "exploit_kind": "cache_poisoning",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 4
   },
   {
     "name": "Подпольная радиостанция",
@@ -1837,7 +1993,11 @@
         "password": "bw_underground_radio_station_3"
       }
     ],
-    "subnet": "10.230.40."
+    "subnet": "10.230.40.",
+    "exploit_kind": "header_injection",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 5
   },
   {
     "name": "Журнал пропавшего курьера",
@@ -1883,7 +2043,11 @@
         "password": "bw_missing_courier_ledger_2"
       }
     ],
-    "subnet": "10.230.41."
+    "subnet": "10.230.41.",
+    "exploit_kind": "unsafe_deserialization",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 1
   },
   {
     "name": "След фиктивной зарплаты",
@@ -1929,7 +2093,11 @@
         "password": "bw_counterfeit_payroll_trail_2"
       }
     ],
-    "subnet": "10.230.42."
+    "subnet": "10.230.42.",
+    "exploit_kind": "prototype_pollution",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 2
   },
   {
     "name": "Пропавший журнал прототипов",
@@ -1975,7 +2143,11 @@
         "password": "bw_stolen_prototype_logs_2"
       }
     ],
-    "subnet": "10.230.43."
+    "subnet": "10.230.43.",
+    "exploit_kind": "template_injection",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 3
   },
   {
     "name": "Подправленные отчёты по воде",
@@ -2021,7 +2193,11 @@
         "password": "bw_altered_water_reports_2"
       }
     ],
-    "subnet": "10.230.44."
+    "subnet": "10.230.44.",
+    "exploit_kind": "xml_entity",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 4
   },
   {
     "name": "Фантомные заказы доставки",
@@ -2067,7 +2243,11 @@
         "password": "bw_ghost_shipping_orders_2"
       }
     ],
-    "subnet": "10.230.45."
+    "subnet": "10.230.45.",
+    "exploit_kind": "regex_backtracking",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 5
   },
   {
     "name": "Стёртые записи о посетителях",
@@ -2113,7 +2293,11 @@
         "password": "bw_erased_visitor_records_2"
       }
     ],
-    "subnet": "10.230.46."
+    "subnet": "10.230.46.",
+    "exploit_kind": "fragment_overlap",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 1
   },
   {
     "name": "Двойные страховые заявления",
@@ -2159,7 +2343,11 @@
         "password": "bw_duplicate_insurance_claims_2"
       }
     ],
-    "subnet": "10.230.47."
+    "subnet": "10.230.47.",
+    "exploit_kind": "weak_rng",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 2
   },
   {
     "name": "Экзаменационные листы с чёрного рынка",
@@ -2205,7 +2393,11 @@
         "password": "bw_black_market_exam_papers_2"
       }
     ],
-    "subnet": "10.230.48."
+    "subnet": "10.230.48.",
+    "exploit_kind": "permission_mask",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 3
   },
   {
     "name": "Поддельные сертификаты безопасности",
@@ -2251,7 +2443,11 @@
         "password": "bw_forged_safety_certificates_2"
       }
     ],
-    "subnet": "10.230.49."
+    "subnet": "10.230.49.",
+    "exploit_kind": "overflow",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 4
   },
   {
     "name": "Перенаправленная гуманитарная помощь",
@@ -2297,7 +2493,11 @@
         "password": "bw_diverted_relief_supplies_2"
       }
     ],
-    "subnet": "10.230.50."
+    "subnet": "10.230.50.",
+    "exploit_kind": "traversal",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 5
   },
   {
     "name": "Исчезающая опись галереи",
@@ -2343,7 +2543,11 @@
         "password": "bw_vanishing_art_inventory_2"
       }
     ],
-    "subnet": "10.230.51."
+    "subnet": "10.230.51.",
+    "exploit_kind": "auth_replay",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 1
   },
   {
     "name": "Подправленные киоски выборов",
@@ -2389,7 +2593,11 @@
         "password": "bw_tampered_election_kiosks_2"
       }
     ],
-    "subnet": "10.230.52."
+    "subnet": "10.230.52.",
+    "exploit_kind": "query",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 2
   },
   {
     "name": "Утечка направлений пациентов",
@@ -2435,7 +2643,11 @@
         "password": "bw_leaked_patient_referrals_2"
       }
     ],
-    "subnet": "10.230.53."
+    "subnet": "10.230.53.",
+    "exploit_kind": "format",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 3
   },
   {
     "name": "Испорченная калибровка датчиков",
@@ -2481,7 +2693,11 @@
         "password": "bw_corrupted_sensor_calibration_2"
       }
     ],
-    "subnet": "10.230.54."
+    "subnet": "10.230.54.",
+    "exploit_kind": "protocol",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 4
   },
   {
     "name": "Неразрешённая ночная смена",
@@ -2527,7 +2743,11 @@
         "password": "bw_unauthorized_night_shift_2"
       }
     ],
-    "subnet": "10.230.55."
+    "subnet": "10.230.55.",
+    "exploit_kind": "race",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 5
   },
   {
     "name": "Скрытый арендатор склада",
@@ -2573,7 +2793,11 @@
         "password": "bw_hidden_warehouse_tenant_2"
       }
     ],
-    "subnet": "10.230.56."
+    "subnet": "10.230.56.",
+    "exploit_kind": "command_chain",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 1
   },
   {
     "name": "Подменённые строительные заявки",
@@ -2619,7 +2843,11 @@
         "password": "bw_swapped_construction_bids_2"
       }
     ],
-    "subnet": "10.230.57."
+    "subnet": "10.230.57.",
+    "exploit_kind": "integer_overflow",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 2
   },
   {
     "name": "Фантомные списания по подписке",
@@ -2665,7 +2893,11 @@
         "password": "bw_phantom_subscription_charges_2"
       }
     ],
-    "subnet": "10.230.58."
+    "subnet": "10.230.58.",
+    "exploit_kind": "signedness",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 3
   },
   {
     "name": "Стёртая атрибуция исследования",
@@ -2711,7 +2943,11 @@
         "password": "bw_deleted_research_attribution_2"
       }
     ],
-    "subnet": "10.230.59."
+    "subnet": "10.230.59.",
+    "exploit_kind": "length_confusion",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 4
   },
   {
     "name": "Безучётная серверная стойка",
@@ -2757,7 +2993,11 @@
         "password": "bw_unlisted_server_rack_2"
       }
     ],
-    "subnet": "10.230.60."
+    "subnet": "10.230.60.",
+    "exploit_kind": "use_after_free",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 5
   },
   {
     "name": "Список известных узлов",
@@ -3165,7 +3405,11 @@
       }
     ],
     "subnet": "10.230.91.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "double_free",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 1
   },
   {
     "name": "Утечка в ротации резервных копий",
@@ -3198,7 +3442,11 @@
       }
     ],
     "subnet": "10.230.92.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "type_confusion",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 2
   },
   {
     "name": "Инцидент с просроченным пропуском",
@@ -3231,7 +3479,11 @@
       }
     ],
     "subnet": "10.230.93.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "object_reference",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 3
   },
   {
     "name": "Передача смены на заводе",
@@ -3264,7 +3516,11 @@
       }
     ],
     "subnet": "10.230.94.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "mass_assignment",
+    "kernel_kind": "use_after_free",
+    "leak_kind": "xml_entity",
+    "exploit_difficulty": 4
   },
   {
     "name": "Радиопомеха",
@@ -3297,7 +3553,11 @@
       }
     ],
     "subnet": "10.230.95.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "token_confusion",
+    "kernel_kind": "double_free",
+    "leak_kind": "traversal",
+    "exploit_difficulty": 5
   },
   {
     "name": "Тревога холодильной цепочки",
@@ -3330,7 +3590,11 @@
       }
     ],
     "subnet": "10.230.96.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "request_smuggling",
+    "kernel_kind": "type_confusion",
+    "leak_kind": "object_reference",
+    "exploit_difficulty": 1
   },
   {
     "name": "Переполнение очереди посылок",
@@ -3363,7 +3627,11 @@
       }
     ],
     "subnet": "10.230.97.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "cache_poisoning",
+    "kernel_kind": "signedness",
+    "leak_kind": "cache_poisoning",
+    "exploit_difficulty": 2
   },
   {
     "name": "Предупреждение о резерве батареи",
@@ -3396,7 +3664,11 @@
       }
     ],
     "subnet": "10.230.98.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "header_injection",
+    "kernel_kind": "permission_mask",
+    "leak_kind": "format",
+    "exploit_difficulty": 3
   },
   {
     "name": "Отсчёт окна аудита",
@@ -3429,7 +3701,11 @@
       }
     ],
     "subnet": "10.230.99.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "unsafe_deserialization",
+    "kernel_kind": "race",
+    "leak_kind": "unsafe_deserialization",
+    "exploit_difficulty": 4
   },
   {
     "name": "Смена сервисных ключей",
@@ -3462,6 +3738,10 @@
       }
     ],
     "subnet": "10.230.100.",
-    "org_kind": "corporation"
+    "org_kind": "corporation",
+    "exploit_kind": "prototype_pollution",
+    "kernel_kind": "integer_overflow",
+    "leak_kind": "request_smuggling",
+    "exploit_difficulty": 5
   }
 ]

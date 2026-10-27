@@ -42,5 +42,9 @@
       "password": "bw_duplicate_insurance_claims_2"
     }
   ],
-  "subnet": "10.230.47."
+  "subnet": "10.230.47.",
+  "exploit_kind": "weak_rng",
+  "kernel_kind": "permission_mask",
+  "leak_kind": "format",
+  "exploit_difficulty": 2
 }

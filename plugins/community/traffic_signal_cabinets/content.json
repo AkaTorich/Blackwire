@@ -28,5 +28,9 @@
     }
   ],
   "subnet": "10.230.20.",
-  "org_kind": "corporation"
+  "org_kind": "corporation",
+  "exploit_kind": "permission_mask",
+  "kernel_kind": "race",
+  "leak_kind": "unsafe_deserialization",
+  "exploit_difficulty": 5
 }

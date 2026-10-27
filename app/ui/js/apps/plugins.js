@@ -52,6 +52,8 @@
     toolBtn('Перечитать', 'reload', function () { return BW.plugins_reload().then(render); }, true);
     toolBtn('Пример устройств', 'plus', function () { return BW.plugins_example('device_lab').then(render); });
     toolBtn('Пример района', 'plus', function () { return BW.plugins_example('district').then(render); });
+    toolBtn('Свой тип уязвимости', 'plus', function () { return BW.plugins_example('custom_vuln_type').then(render); });
+    toolBtn('Результаты и условия', 'plus', function () { return BW.plugins_example('access_lab').then(render); });
 
     function row(p) {
       var card = el('section', 'panel plug-card');
