@@ -26,6 +26,7 @@ pub fn refresh(app:&AppHandle){
         focused:window_focused(&w,&label,focused.as_deref()),minimized:w.is_minimized().unwrap_or(true),label
     }).collect();
     let (active,labels)=plan(layers);
+    if std::env::args().any(|a|a=="--window-system-test"){eprintln!("window layers: active={active} labels={labels:?}");}
     for label in labels {
         let Some(w)=app.get_webview_window(&label)else{continue};
         // Never restore or re-order an iconic window during a focus transition.
@@ -64,6 +65,7 @@ fn set_level(w:&tauri::WebviewWindow,active:bool){
         native.set_keep_above(active);
         // Raise without present()/activation, in the planner's background-first order.
         if active{if let Some(surface)=native.window(){surface.raise();}}
+        if std::env::args().any(|a|a=="--window-system-test"){eprintln!("GTK level: {} active={active} native_active={} state={:?}",w.label(),native.is_active(),native.window().map(|surface|surface.state()));}
     }
 }
 #[cfg(not(any(windows,target_os="linux")))]
