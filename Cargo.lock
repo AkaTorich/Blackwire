@@ -126,7 +126,7 @@ dependencies = [
 
 [[package]]
 name = "blackwire"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "blackwire-core",
  "blackwire-lang",
@@ -134,11 +134,12 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "windows",
 ]
 
 [[package]]
 name = "blackwire-core"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "blackwire-lang",
  "serde",
@@ -147,7 +148,7 @@ dependencies = [
 
 [[package]]
 name = "blackwire-lang"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "serde",
  "serde_json",

@@ -42,8 +42,10 @@ fn main() {
             Ok(())
         })
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::Destroyed = event {
-                windows::on_window_destroyed(window.app_handle(), window.label());
+            match event {
+                tauri::WindowEvent::Destroyed => windows::on_window_destroyed(window.app_handle(), window.label()),
+                tauri::WindowEvent::Focused(_) => windows::on_focus_changed(window.app_handle()),
+                _ => {}
             }
         })
         .invoke_handler(tauri::generate_handler![

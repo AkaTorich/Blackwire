@@ -177,6 +177,60 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// Игра во весь экран поверх панели задач: пока активно любое её окно, рабочие
+/// столы стоят поверх всего (окна-приложения дочерние — поднимаются вместе с
+/// ними); ушёл фокус в другую программу — рабочие столы опускаются под неё.
+/// Обычное окно, даже размером с монитор, лежит под панелью задач — игры сами
+/// встают поверх всего, так и здесь.
+pub fn on_focus_changed(app: &AppHandle) {
+    let app = app.clone();
+    std::thread::spawn(move || {
+        // фокус переходит между окнами игры через миг «ничьей» — переждать его
+        std::thread::sleep(std::time::Duration::from_millis(80));
+        let st = app.state::<AppState>();
+        let labels: Vec<String> = st.desktops.lock().map(|d| d.values().cloned().collect()).unwrap_or_default();
+        let hwnds: Vec<isize> = labels
+            .iter()
+            .filter_map(|l| app.get_webview_window(l))
+            .filter_map(|w| w.hwnd().ok())
+            .map(|h| h.0 as isize)
+            .collect();
+        let _ = app.run_on_main_thread(move || raise_desktops(&hwnds));
+    });
+}
+
+#[cfg(windows)]
+fn raise_desktops(hwnds: &[isize]) {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::{
+        GetForegroundWindow, GetWindowThreadProcessId, SetWindowPos, HWND_NOTOPMOST, HWND_TOPMOST, SWP_NOACTIVATE,
+        SWP_NOMOVE, SWP_NOSIZE,
+    };
+    unsafe {
+        let fg = GetForegroundWindow();
+        if fg.0.is_null() {
+            return;
+        }
+        let mut pid = 0u32;
+        GetWindowThreadProcessId(fg, Some(&mut pid));
+        let ours = pid == std::process::id();
+        let flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
+        for &raw in hwnds {
+            let h = HWND(raw as *mut _);
+            if ours {
+                let _ = SetWindowPos(h, Some(HWND_TOPMOST), 0, 0, 0, 0, flags);
+            } else {
+                // снять «поверх всех» и встать сразу под активную чужую программу
+                let _ = SetWindowPos(h, Some(HWND_NOTOPMOST), 0, 0, 0, 0, flags);
+                let _ = SetWindowPos(h, Some(fg), 0, 0, 0, 0, flags);
+            }
+        }
+    }
+}
+
+#[cfg(not(windows))]
+fn raise_desktops(_hwnds: &[isize]) {}
+
 /// Подложка рабочего стола на мониторе: во весь экран, без рамки, всегда позади.
 pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), String> {
     if st.desktops.lock().map(|d| d.contains_key(&monitor)).unwrap_or(false) {
