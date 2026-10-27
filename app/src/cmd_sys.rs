@@ -11,9 +11,11 @@ pub fn sys_status(st: State<AppState>) -> Result<blackwire_core::sysinfo::Status
 }
 
 #[tauri::command]
-pub fn sys_kill(st: State<AppState>, pid: u32) -> Result<(), String> {
+pub fn sys_kill(app:AppHandle, st: State<AppState>, pid: u32) -> Result<(), String> {
     crate::scripts::request_stop(&st, pid);
-    st.game()?.kill(pid)
+    st.game()?.kill(pid)?;
+    crate::windows::close_stopped_applications(&app,&st);
+    Ok(())
 }
 
 #[tauri::command]

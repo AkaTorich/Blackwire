@@ -6,7 +6,7 @@ use crate::{state::AppState,windows,window_layers};
 
 fn wait(mut condition:impl FnMut()->bool,message:&str)->Result<(),String>{
     let start=Instant::now();
-    while start.elapsed()<Duration::from_secs(8){if condition(){return Ok(())}std::thread::sleep(Duration::from_millis(100));}
+    while start.elapsed()<Duration::from_secs(12){if condition(){return Ok(())}std::thread::sleep(Duration::from_millis(100));}
     Err(message.into())
 }
 fn window(app:&AppHandle,label:&str)->Result<tauri::WebviewWindow,String>{app.get_webview_window(label).ok_or_else(||format!("нет окна {label}"))}
@@ -39,6 +39,7 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
             if let (Some(label),Some(count))=(v["label"].as_str(),v["count"].as_u64()){if let Ok(mut map)=events.lock(){map.insert(label.into(),count as usize);}}
         }
     });
+    let baseline_mem=st.game()?.status().mem_used;
     windows::open_desktop(app,&st,0)?;
     let editor_path="/home/window_qa/scripts/window-check.adr";
     let editor_initial="# Подсветка Adder\ndef example(value):\n    return net.research(\"узел\", 42) if true else null\n";
@@ -55,6 +56,7 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
     std::thread::spawn(move||{
         let result=(||->Result<(),String>{
             std::thread::sleep(Duration::from_secs(2));
+            if app.state::<AppState>().game()?.status().mem_used!=baseline_mem+72{return Err("opening terminal/editor did not allocate RAM".into());}
             for label in &labels{
                 task_switcher_eligible(&app,label)?;
                 let label_json=serde_json::to_string(label).unwrap();
@@ -94,15 +96,34 @@ pub fn start(app:&AppHandle)->Result<(),Box<dyn std::error::Error>>{
             wait(||!minimized(&app,&second),"restore failed")?;
             std::thread::sleep(Duration::from_millis(500));
             if labels.iter().filter(|l|**l!=second).any(|l|!minimized(&app,l)){return Err("restoring one window restored other windows".into());}
+            if app.state::<AppState>().game()?.status().mem_used!=baseline_mem+72{return Err("minimizing/restoring changed allocated RAM".into());}
             // Closing one application must not destroy its siblings or the background.
             click(&app,&second,"close")?;
             wait(||app.get_webview_window(&second).is_none(),"close button failed")?;
             if labels.iter().filter(|l|**l!=second).any(|l|app.get_webview_window(l).is_none()){return Err("closing an app destroyed another window".into());}
+            wait(||app.state::<AppState>().game().is_ok_and(|g|g.status().mem_used==baseline_mem+24),"closing editor did not release RAM")?;
+            let pid={let g=app.state::<AppState>();let game=g.game()?;game.world.machines[0].procs.list().iter().find(|p|matches!(&p.kind,blackwire_core::procs::ProcKind::Application{window} if window==&first)).map(|p|p.pid).ok_or("terminal process missing")?};
+            app.state::<AppState>().game()?.kill(pid)?;
+            windows::close_stopped_applications(&app,&app.state::<AppState>());
+            wait(||app.get_webview_window(&first).is_none()&&app.state::<AppState>().game().is_ok_and(|g|g.status().mem_used==baseline_mem),"ending application process did not close its window and release RAM")?;
+            let monitor=windows::create_app_window(&app,&app.state::<AppState>(),"monitor",None,Some(0))?;
+            let browser=windows::create_app_window(&app,&app.state::<AppState>(),"browser",None,Some(0))?;
+            window(&app,&monitor)?.set_focus().map_err(|e|e.to_string())?;
+            let check_memory=|expected:u32,key:&str|->Result<(),String>{
+                let script=format!("(function poll(n){{var value=document.querySelector('.mon-card.mem .mon-card-value');if(value&&value.title==={}){{window.__TAURI__.event.emit('blackwire-window-controls-qa',{{label:{},count:1}});}}else if(n>0)setTimeout(function(){{poll(n-1);}},100);else{{window.__TAURI__.event.emit('blackwire-window-controls-qa',{{label:'ram-actual',count:parseInt(value&&value.title)||0}});window.__TAURI__.event.emit('blackwire-window-controls-qa',{{label:'ram-hidden',count:document.hidden?1:0}});window.__TAURI__.event.emit('blackwire-window-controls-qa',{{label:'ram-present',count:value?1:0}});}}}})(100)",serde_json::to_string(&format!("{expected} МБ")).unwrap(),serde_json::to_string(key).unwrap());
+                window(&app,&monitor)?.eval(&script).map_err(|e|e.to_string())?;
+                wait(||captured.lock().is_ok_and(|m|m.get(key)==Some(&1)),"task manager did not update displayed RAM")
+            };
+            check_memory(baseline_mem+128,"ram-open")?;
+            click(&app,&browser,"close")?;
+            check_memory(baseline_mem+32,"ram-closed")?;
+            click(&app,&monitor,"close")?;
+            wait(||app.state::<AppState>().game().is_ok_and(|g|g.status().mem_used==baseline_mem),"monitor did not release its own RAM")?;
             Ok(())
         })();
         #[cfg(target_os="linux")]
         if result.is_err(){for (program,args) in [("xprop",vec!["-root","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING"]),("xwininfo",vec!["-root","-tree"]) ] {if let Ok(output)=std::process::Command::new(program).args(args).output(){eprintln!("{}: {}",program,String::from_utf8_lossy(&output.stdout));}}}
-        let value=json!({"ok":result.is_ok(),"platform":std::env::consts::OS,"checks":["four windows with custom controls","editor syntax, selection and saving","independent native windows","maximize","focus and topmost group","minimize all","restore one without restoring others","close one without closing others"],"windows":app.webview_windows().into_iter().map(|(label,w)|json!({"label":label,"minimized":w.is_minimized().ok(),"focused":w.is_focused().ok(),"topmost":window_layers::native_topmost(&w)})).collect::<Vec<_>>(),"focus_event":app.state::<AppState>().focused_window.lock().ok().and_then(|f|f.clone()),"error":result.as_ref().err()});
+        let value=json!({"ok":result.is_ok(),"platform":std::env::consts::OS,"checks":["four windows with custom controls","editor syntax, selection and saving","application RAM allocation and release","task manager RAM display updates","independent native windows","maximize","focus and topmost group","minimize all","restore one without restoring others","close one without closing others"],"windows":app.webview_windows().into_iter().map(|(label,w)|json!({"label":label,"minimized":w.is_minimized().ok(),"focused":w.is_focused().ok(),"topmost":window_layers::native_topmost(&w)})).collect::<Vec<_>>(),"ui":captured.lock().ok().map(|m|m.clone()),"focus_event":app.state::<AppState>().focused_window.lock().ok().and_then(|f|f.clone()),"error":result.as_ref().err()});
         let _=std::fs::write(report,serde_json::to_vec_pretty(&value).unwrap());app.exit(if result.is_ok(){0}else{1});
     });
     Ok(())

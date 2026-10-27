@@ -1,4 +1,4 @@
-//! Таблица процессов одной машины: системные, демоны служб и скрипты Adder.
+//! Таблица процессов одной машины: система, службы, окна приложений и скрипты Adder.
 //! Нагрузка процессора у каждого процесса слегка колеблется на каждом тике,
 //! чтобы монитор показывал живые графики.
 
@@ -11,6 +11,8 @@ use crate::rng::Rng;
 pub enum ProcKind {
     System,
     Daemon,
+    /// Открытое окно игровой программы; память освобождается при закрытии.
+    Application { window: String },
     /// Скрипт Adder, запущенный из сеанса терминала.
     Script { session: u32 },
 }
@@ -36,9 +38,15 @@ pub struct Proc {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ProcTable {
     next_pid: u32,
+    #[serde(serialize_with="save_processes")]
     procs: Vec<Proc>,
     /// Игровое время, которым помечаются новые процессы.
     clock: u64,
+}
+
+// GUI processes are runtime state, so older saves and reopening never retain phantom windows.
+fn save_processes<S:serde::Serializer>(procs:&[Proc],serializer:S)->Result<S::Ok,S::Error>{
+    procs.iter().filter(|p|!matches!(p.kind,ProcKind::Application{..})).collect::<Vec<_>>().serialize(serializer)
 }
 
 impl Default for ProcTable {
@@ -88,10 +96,37 @@ impl ProcTable {
         self.spawn(name, user, 12, 4.0, ProcKind::Script { session })
     }
 
-    /// Снять процесс. init снять нельзя.
+    /// Учёт памяти открытого окна. Повторная регистрация не создаёт второй процесс.
+    pub fn spawn_application(&mut self, window: &str, app: &str, user: &str) -> u32 {
+        if let Some(p)=self.procs.iter().find(|p|matches!(&p.kind,ProcKind::Application{window:w} if w==window)){return p.pid;}
+        let mem=match app {
+            "terminal"=>24, "editor"=>48, "files"=>40, "browser"=>96,
+            "monitor"=>32, "map"=>64, "mail"=>48, "help"=>40,
+            "scenario"=>64, "plugins"|"plugin_panel"=>48, _=>32,
+        };
+        self.spawn(app,user,mem,0.4,ProcKind::Application{window:window.into()})
+    }
+
+    pub fn remove_application(&mut self, window:&str) {
+        self.procs.retain(|p|!matches!(&p.kind,ProcKind::Application{window:w} if w==window));
+    }
+
+    /// Окна не восстанавливаются из таблицы процессов сохранения.
+    pub fn remove_applications(&mut self) {
+        self.procs.retain(|p|!matches!(p.kind,ProcKind::Application{..}));
+    }
+
+    pub fn stopped_applications(&self)->Vec<String> {
+        self.procs.iter().filter_map(|p|match &p.kind {ProcKind::Application{window} if p.killed=>Some(window.clone()),_=>None}).collect()
+    }
+
+    /// Снять процесс; для приложения сначала запросить закрытие его окна. init снять нельзя.
     pub fn kill(&mut self, pid: u32) -> Result<(), String> {
         if pid == 1 {
             return Err("нельзя снять процесс init (pid 1)".to_string());
+        }
+        if let Some(p)=self.get_mut(pid) {
+            if matches!(p.kind,ProcKind::Application{..}) {p.killed=true;return Ok(());}
         }
         let before = self.procs.len();
         self.procs.retain(|p| p.pid != pid);

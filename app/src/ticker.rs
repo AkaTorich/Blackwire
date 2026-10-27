@@ -17,6 +17,7 @@ pub fn start(app: AppHandle) {
                 std::thread::sleep(Duration::from_secs(1));
                 seconds += 1;
                 let st = app.state::<AppState>();
+                crate::windows::close_stopped_applications(&app,&st);
                 let payload = {
                     let Ok(mut g) = st.game() else { continue };
                     g.tick(1000);

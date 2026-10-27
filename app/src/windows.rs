@@ -151,6 +151,10 @@ pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Opti
     if let Ok(mut list) = st.windows.lock() {
         list.push(WinInfo { label: label.clone(), app: app_id.to_string(), arg: arg.map(|s| s.to_string()) });
     }
+    if let Ok(mut game)=st.game(){
+        let user=game.world.player.handle.clone();
+        game.world.machines[0].procs.spawn_application(&label,app_id,&user);
+    }
     crate::window_layers::observe_focus(&win);
     emit_windows(app, st);
     Ok(label)
@@ -224,6 +228,7 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
 
 pub fn on_window_destroyed(app: &AppHandle, label: &str) {
     let st = app.state::<AppState>();
+    if let Ok(mut game)=st.game(){game.world.machines[0].procs.remove_application(label);}
     if let Ok(mut list) = st.windows.lock() {
         list.retain(|w| w.label != label);
     }
@@ -388,5 +393,14 @@ pub fn move_to_monitor(app: &AppHandle, label: &str, m: &MonitorInfo) {
         let x = m.x + ((m.width as i64 - size.width as i64) / 2).max(0) as i32;
         let y = m.y + ((m.height as i64 - size.height as i64) / 2).max(0) as i32;
         let _ = win.set_position(PhysicalPosition::new(x, y));
+    }
+}
+
+/// Завершение приложения через диспетчер, kill или Adder закрывает его окно.
+pub fn close_stopped_applications(app:&AppHandle,st:&AppState){
+    let labels=st.game().map(|g|g.world.machines[0].procs.stopped_applications()).unwrap_or_default();
+    for label in labels {
+        if let Some(window)=app.get_webview_window(&label){let _=window.close();}
+        else if let Ok(mut game)=st.game(){game.world.machines[0].procs.remove_application(&label);}
     }
 }

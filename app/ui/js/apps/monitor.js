@@ -14,7 +14,7 @@ const MonitorApp = (function () {
 
   function fmtMb(mb) {
     if (mb == null) return '—';
-    if (mb >= 1024) return (mb / 1024).toFixed(1) + ' ГБ';
+    if (mb >= 1024) return (mb / 1024).toFixed(2) + ' ГБ';
     return Math.round(mb) + ' МБ';
   }
 
@@ -271,6 +271,7 @@ const MonitorApp = (function () {
       cCpu.value.textContent = Math.round(s.cpu) + ' %';
       cCpu.sub.textContent = '';
       cMem.value.textContent = fmtMb(s.mem_used);
+      cMem.value.title = Math.round(s.mem_used) + ' МБ';
       cMem.sub.textContent = 'из ' + fmtMb(s.mem_total);
       cNet.value.textContent = fmtKbs(s.net_in);
       cNet.sub.textContent = '↑ ' + fmtKbs(s.net_out);

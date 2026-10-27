@@ -411,10 +411,11 @@ impl World {
     }
 
     pub fn from_json(s: &str) -> Result<World, String> {
-        let w: World = serde_json::from_str(s).map_err(|e| format!("не удалось прочитать сохранение: {}", e))?;
+        let mut w: World = serde_json::from_str(s).map_err(|e| format!("не удалось прочитать сохранение: {}", e))?;
         if w.machines.is_empty() {
             return Err("сохранение пустое: нет машин".to_string());
         }
+        for machine in &mut w.machines {machine.procs.remove_applications();}
         Ok(w)
     }
 

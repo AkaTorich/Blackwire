@@ -89,6 +89,12 @@ impl AppState {
     pub fn set_game(&self, mut game: Game) {
         let _ = std::fs::create_dir_all(&self.plugins_dir);
         game.load_plugins(&self.plugins_dir);
+        game.world.machines[0].procs.remove_applications();
+        let windows=self.windows.lock().map(|list|list.clone()).unwrap_or_default();
+        let user=game.world.player.handle.clone();
+        for window in windows.iter().filter(|w|w.app!="desktop"&&w.app!="login") {
+            game.world.machines[0].procs.spawn_application(&window.label,&window.app,&user);
+        }
         if let Ok(mut g) = self.game.lock() {
             *g = Some(game);
         }
