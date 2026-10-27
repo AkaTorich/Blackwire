@@ -21,7 +21,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev file xvfb openbox dbus-x11 x11-utils
       - name: Build test game
-        run: cargo build --locked -p blackwire
+        run: |
+          python tools/package_sdk.py prepare
+          cargo build --locked --release -p blackwire
       - name: Native checks
         run: |
           xvfb-run -a dbus-run-session -- bash -c '
@@ -30,7 +32,7 @@ jobs:
             sleep 2
             kill -0 "$manager"
             xprop -root _NET_SUPPORTING_WM_CHECK
-            python tools/test_native_windows.py target/debug/Blackwire
+            python tools/test_native_windows.py target/release/Blackwire
             result=$?
             cat /tmp/blackwire-wm.log
             exit "$result"
