@@ -23,7 +23,7 @@ pub fn refresh(app:&AppHandle){
     let labels:std::collections::BTreeSet<_>=app.state::<AppState>().windows.lock().map(|list|list.iter().map(|w|w.label.clone()).collect()).unwrap_or_default();
     let focused=app.state::<AppState>().focused_window.lock().ok().and_then(|f|f.clone());
     let layers=app.webview_windows().into_iter().filter(|(label,_)|labels.contains(label)).map(|(label,w)|Layer{
-        focused:focused.as_deref()==Some(label.as_str()),minimized:w.is_minimized().unwrap_or(true),label
+        focused:window_focused(&w,&label,focused.as_deref()),minimized:w.is_minimized().unwrap_or(true),label
     }).collect();
     let (active,labels)=plan(layers);
     for label in labels {
@@ -40,7 +40,33 @@ fn set_level(w:&tauri::WebviewWindow,active:bool){
     use ::windows::Win32::UI::WindowsAndMessaging::{SetWindowPos,HWND_TOPMOST,HWND_BOTTOM,SWP_NOACTIVATE,SWP_NOMOVE,SWP_NOSIZE};
     if let Ok(hwnd)=w.hwnd(){unsafe{let _=SetWindowPos(hwnd,Some(if active{HWND_TOPMOST}else{HWND_BOTTOM}),0,0,0,0,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE);}}
 }
-#[cfg(not(windows))]
+// GTK focus-in/out can describe focus moving into WebKit children rather than
+// top-level activation. Observe the native active property instead.
+#[cfg(target_os="linux")]
+pub fn observe_focus(w:&tauri::WebviewWindow){
+    use gtk::prelude::*;
+    if let Ok(native)=w.gtk_window(){
+        let app=w.app_handle().clone();let label=w.label().to_string();
+        native.connect_is_active_notify(move|window|focus_changed(&app,&label,window.is_active()));
+    }
+}
+#[cfg(not(target_os="linux"))]
+pub fn observe_focus(_w:&tauri::WebviewWindow){}
+#[cfg(target_os="linux")]
+fn window_focused(w:&tauri::WebviewWindow,_label:&str,_focused:Option<&str>)->bool{w.is_focused().unwrap_or(false)}
+#[cfg(not(target_os="linux"))]
+fn window_focused(_w:&tauri::WebviewWindow,label:&str,focused:Option<&str>)->bool{focused==Some(label)}
+#[cfg(target_os="linux")]
+fn set_level(w:&tauri::WebviewWindow,active:bool){
+    use gtk::prelude::*;
+    if let Ok(native)=w.gtk_window(){
+        native.set_keep_below(!active);
+        native.set_keep_above(active);
+        // Raise without present()/activation, in the planner's background-first order.
+        if active{if let Some(surface)=native.window(){surface.raise();}}
+    }
+}
+#[cfg(not(any(windows,target_os="linux")))]
 fn set_level(w:&tauri::WebviewWindow,active:bool){
     if active {
         let _=w.set_always_on_bottom(false);

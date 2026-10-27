@@ -151,6 +151,7 @@ pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Opti
     if let Ok(mut list) = st.windows.lock() {
         list.push(WinInfo { label: label.clone(), app: app_id.to_string(), arg: arg.map(|s| s.to_string()) });
     }
+    crate::window_layers::observe_focus(&win);
     emit_windows(app, st);
     Ok(label)
 }
@@ -160,7 +161,7 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let st = app.state::<AppState>();
     let (w, h, _, _) = default_size("login");
     let label = "login";
-    WebviewWindowBuilder::new(app, label, WebviewUrl::App("index.html?app=login&win=login".into()))
+    let win = WebviewWindowBuilder::new(app, label, WebviewUrl::App("index.html?app=login&win=login".into()))
         .title("Blackwire")
         .decorations(false)
         .transparent(true)
@@ -177,6 +178,7 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     if let Ok(mut list) = st.windows.lock() {
         list.push(WinInfo { label: label.into(), app: "login".into(), arg: None });
     }
+    crate::window_layers::observe_focus(&win);
     Ok(())
 }
 
@@ -216,6 +218,7 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
     if let Ok(mut list) = st.windows.lock() {
         list.push(WinInfo { label, app: "desktop".into(), arg: Some(monitor.to_string()) });
     }
+    crate::window_layers::observe_focus(&win);
     Ok(())
 }
 

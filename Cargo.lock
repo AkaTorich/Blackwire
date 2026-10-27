@@ -130,6 +130,7 @@ version = "0.1.13"
 dependencies = [
  "blackwire-core",
  "blackwire-lang",
+ "gtk",
  "serde",
  "serde_json",
  "tauri",
