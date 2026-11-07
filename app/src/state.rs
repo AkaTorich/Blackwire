@@ -63,14 +63,23 @@ impl AppState {
         let prefs_path = dir.join("prefs.json");
         if let Some(lang) = read_lang(&prefs_path) {
             blackwire_core::i18n::set(&lang);
+            LANG_CHOSEN.store(true, Ordering::Relaxed);
         }
         // Проверочный запуск: `--lang en|ru` — язык на этот запуск, без записи в prefs.json.
         let lang_forced = if let Some(i) = args.iter().position(|a| a == "--lang") {
             blackwire_core::i18n::set(args.get(i + 1).map(|s| s.as_str()).unwrap_or("ru"));
             true
+        } else if args.iter().any(|a| matches!(a.as_str(), "--window-system-test" | "--exit-ui-test" | "--sdk-ui-test")) {
+            // Проверки окон ищут кнопки по русским подписям: без явного --lang они идут на русском,
+            // даже если система (например, раннер GitHub) английская.
+            blackwire_core::i18n::set("ru");
+            true
         } else {
             false
         };
+        if lang_forced {
+            LANG_CHOSEN.store(true, Ordering::Relaxed);
+        }
         Ok(AppState {
             game: Mutex::new(None),
             windows: Mutex::new(Vec::new()),
@@ -271,6 +280,18 @@ impl AppState {
 }
 
 /// Безопасное имя файла слота: оставляем буквы, цифры, пробел, «_» и «-».
+/// Язык уже выбран (prefs.json, ключ --lang или кнопка): тогда окна получают его в адресе.
+pub static LANG_CHOSEN: AtomicBool = AtomicBool::new(false);
+
+/// Добавка к адресу окна: `&lang=ru|en`, если язык выбран; иначе пусто — окно возьмёт язык системы.
+pub fn lang_param() -> String {
+    if LANG_CHOSEN.load(Ordering::Relaxed) {
+        format!("&lang={}", blackwire_core::i18n::code())
+    } else {
+        String::new()
+    }
+}
+
 /// Язык из `prefs.json`; `None` — игрок ещё не выбирал.
 pub fn read_lang(path: &std::path::Path) -> Option<String> {
     let text = std::fs::read_to_string(path).ok()?;

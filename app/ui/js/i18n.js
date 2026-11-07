@@ -4,7 +4,13 @@
    L('Файл', 'File'). Выбор хранится в Rust (prefs.json) и дублируется в localStorage. */
 var I18N = (function () {
   var code = null;
-  try { code = localStorage.getItem('bw_lang'); } catch (e) { /* без localStorage */ }
+  /* Rust передаёт язык в адресе окна (&lang=ru|en) — окно сразу открывается на нём, без перезагрузки. */
+  try { code = new URLSearchParams(location.search).get('lang'); } catch (e) { /* старый движок */ }
+  if (code === 'ru' || code === 'en') {
+    try { localStorage.setItem('bw_lang', code); } catch (e) { /* без localStorage */ }
+  } else {
+    try { code = localStorage.getItem('bw_lang'); } catch (e) { /* без localStorage */ }
+  }
   if (code !== 'ru' && code !== 'en') {
     var nav = String(navigator.language || 'ru').toLowerCase();
     code = nav.indexOf('ru') === 0 ? 'ru' : 'en';

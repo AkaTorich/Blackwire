@@ -106,7 +106,7 @@ fn monitor_or_default(app: &AppHandle, st: &AppState, monitor: Option<u32>) -> O
 /// Создать окно приложения. Возвращает метку окна.
 pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Option<&str>, monitor: Option<u32>) -> Result<String, String> {
     let label = st.next_label();
-    let mut url = format!("index.html?app={}&win={}", encode(app_id), label);
+    let mut url = format!("index.html?app={}&win={}{}", encode(app_id), label, crate::state::lang_param());
     if let Some(a) = arg {
         url.push_str("&arg=");
         url.push_str(&encode(a));
@@ -165,7 +165,7 @@ pub fn open_login(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let st = app.state::<AppState>();
     let (w, h, _, _) = default_size("login");
     let label = "login";
-    let win = WebviewWindowBuilder::new(app, label, WebviewUrl::App("index.html?app=login&win=login".into()))
+    let win = WebviewWindowBuilder::new(app, label, WebviewUrl::App(format!("index.html?app=login&win=login{}", crate::state::lang_param()).into()))
         .title("Blackwire")
         .decorations(false)
         .transparent(true)
@@ -194,7 +194,7 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
     let list = monitor_list(app);
     let m = list.get(monitor as usize).cloned().ok_or_else(|| tr!("нет такого монитора", "no such monitor").to_string())?;
     let label = format!("desktop{}", monitor);
-    let url = format!("index.html?app=desktop&win={}&arg={}", label, monitor);
+    let url = format!("index.html?app=desktop&win={}&arg={}{}", label, monitor, crate::state::lang_param());
     // Первый рабочий стол — главное окно игры: у него есть кнопка в панели задач,
     // чтобы игру всегда можно было вернуть, даже закрыв все окна-приложения.
     // Остальные фоны тоже доступны как самостоятельные окна.

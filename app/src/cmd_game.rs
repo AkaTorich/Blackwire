@@ -247,6 +247,7 @@ pub fn lang_get(st: State<'_, AppState>) -> Option<String> {
 pub fn lang_set(app: AppHandle, st: State<'_, AppState>, lang: String) -> Result<String, String> {
     blackwire_core::i18n::set(&lang);
     let code = blackwire_core::i18n::code().to_string();
+    crate::state::LANG_CHOSEN.store(true, std::sync::atomic::Ordering::Relaxed);
     if !st.lang_forced {
         crate::state::write_lang(&st.prefs_path, &code)?;
     }
