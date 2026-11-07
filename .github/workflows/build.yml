@@ -178,20 +178,26 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Blackwire ${{ env.RELEASE_TAG }}
           body: |
-            Исправлен расход ОЗУ в игровом диспетчере задач:
-            - Окна приложений учитываются в списке процессов и занимают игровую память. При закрытии память освобождается; при сворачивании остаётся занятой.
-            - Завершение процесса приложения закрывает его окно, в том числе через терминал и Adder.
-            - Загрузка сохранения не оставляет память закрытых окон. Повышена точность отображения гигабайт, точный объём в МБ доступен в подсказке.
-            - Добавлены проверки выделения памяти, сохранения/загрузки и изменения показаний в настоящем окне диспетчера.
+            **English version / Английская версия**
 
-            Установщики Windows, Linux и macOS включают SDK в папке игры.
-            
-            Архивы:
-            - **Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip** — руководство, CHM, примеры, схемы и инструменты проверки для трёх систем.
-            - **Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip** — 100 самостоятельных плагинов, у каждого есть START_HERE.md.
-            - **Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip** — 10 дополнительных сценариев с 30 уязвимостями и русскими инструкциями.
-            
-            Плагины устанавливаются и запускаются по выбору игрока.
+            Blackwire is now bilingual: Russian and English. Choose the language on the login screen or in Settings → Language; it switches on the fly.
+            - The whole game is translated: terminal and its help, Adder errors, missions, mail, news, shop and market scripts, all windows and the in-game help.
+            - A new world is generated in the chosen language (same seed, same network).
+            - All 110 bundled plugins follow the game language and ship START_HERE.en.md guides. Plugin API: `plugin.lang()`, `sys.lang()`, optional `name_en` in plugin.json.
+            - English documentation: README.md and docs/en.
+
+            Игра стала двуязычной — русский и английский. Язык выбирается на экране входа или в «Настройки → Язык» и переключается на лету.
+            - Переведена вся игра: терминал и справка, ошибки Adder, задания, почта, новости, магазин и скрипты маркета, все окна и справка.
+            - Новый мир создаётся на выбранном языке (то же зерно — та же сеть).
+            - Все 110 плагинов следуют языку игры, у каждого есть английская инструкция START_HERE.en.md. В API плагинов: `plugin.lang()`, `sys.lang()`, необязательное `name_en` в plugin.json.
+            - Русское описание проекта — README.ru.md.
+
+            Installers for Windows, Linux and macOS include the SDK. / Установщики включают SDK.
+
+            Archives / Архивы:
+            - **Blackwire-SDK-${{ env.RELEASE_VERSION }}.zip** — guide, CHM, examples, schemas and checkers for three systems.
+            - **Blackwire-Plugins-${{ env.RELEASE_VERSION }}.zip** — 100 standalone plugins with START_HERE.md and START_HERE.en.md.
+            - **Blackwire-Vulnerability-Plugins-${{ env.RELEASE_VERSION }}.zip** — 10 extra cases with 30 vulnerabilities, guides in Russian and English.
 
           fail_on_unmatched_files: true
           files: |

@@ -132,7 +132,7 @@ For a universal macOS build, first install both Rust targets: `rustup target add
 
 The build prepares the SDK automatically and includes it in the installation package. Build settings for all platforms are in [GitHub Actions](.github/workflows/build.yml).
 
-The sources are spread across directories: `lang/` — Adder, `core/` — the game engine, `app/` — the application and interface, `sdk/` — materials for plugin authors, `plugins/` — ready-made plugins. Engine and language tests are run from the repository root:
+The sources are spread across directories: `lang/` — Adder, `core/` — the game engine, `app/` — the application and interface, `sdk/` — materials for plugin authors, `plugins/` — ready-made plugins, `site/` — the game website (bilingual; GitHub Pages publishes it, `tools/server/update-site.ps1` uploads it to game.globthe.top). Engine and language tests are run from the repository root:
 
 ```sh
 cargo test --locked -p blackwire-core -p blackwire-lang
