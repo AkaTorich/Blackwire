@@ -16,14 +16,14 @@ pub fn unary(op: UnOp, v: &Value, line: u32) -> R<Value> {
             Some(Num::Int(n)) => n
                 .checked_neg()
                 .map(Value::Int)
-                .ok_or_else(|| rt(line, "переполнение целого")),
+                .ok_or_else(|| rt(line, tr!("переполнение целого", "integer overflow"))),
             Some(Num::Float(f)) => Ok(Value::Float(-f)),
-            None => Err(rt(line, format!("неподдерживаемый операнд для -: {}", v.type_name()))),
+            None => Err(rt(line, trf!("неподдерживаемый операнд для -: {}", "unsupported operand for -: {}", v.type_name()))),
         },
         UnOp::Pos => match v.as_number() {
             Some(Num::Int(n)) => Ok(Value::Int(n)),
             Some(Num::Float(f)) => Ok(Value::Float(f)),
-            None => Err(rt(line, format!("неподдерживаемый операнд для +: {}", v.type_name()))),
+            None => Err(rt(line, trf!("неподдерживаемый операнд для +: {}", "unsupported operand for +: {}", v.type_name()))),
         },
     }
 }
@@ -31,7 +31,7 @@ pub fn unary(op: UnOp, v: &Value, line: u32) -> R<Value> {
 fn type_err(op: BinOp, a: &Value, b: &Value, line: u32) -> crate::error::Exc {
     rt(
         line,
-        format!("неподдерживаемые операнды для {}: {} и {}", op.symbol(), a.type_name(), b.type_name()),
+        trf!("неподдерживаемые операнды для {}: {} и {}", "unsupported operands for {}: {} and {}", op.symbol(), a.type_name(), b.type_name()),
     )
 }
 
@@ -107,8 +107,8 @@ pub fn binary(op: BinOp, a: &Value, b: &Value, line: u32) -> R<Value> {
         (Some(x), Some(y)) => (x, y),
         _ => return Err(type_err(op, a, b, line)),
     };
-    let overflow = || rt(line, "переполнение целого");
-    let zero = || rt(line, "деление на ноль");
+    let overflow = || rt(line, tr!("переполнение целого", "integer overflow"));
+    let zero = || rt(line, tr!("деление на ноль", "division by zero"));
     if let (Num::Int(p), Num::Int(q)) = (x, y) {
         return match op {
             BinOp::Add => p.checked_add(q).map(Value::Int).ok_or_else(overflow),
@@ -192,7 +192,7 @@ pub fn compare(op: CmpOp, a: &Value, b: &Value, line: u32) -> R<bool> {
         _ => {
             let ord = a
                 .py_cmp(b)
-                .ok_or_else(|| rt(line, format!("нельзя сравнить {} и {}", a.type_name(), b.type_name())))?;
+                .ok_or_else(|| rt(line, trf!("нельзя сравнить {} и {}", "cannot compare {} and {}", a.type_name(), b.type_name())))?;
             Ok(match op {
                 CmpOp::Lt => ord == Ordering::Less,
                 CmpOp::Le => ord != Ordering::Greater,
@@ -209,14 +209,14 @@ pub fn contains(container: &Value, item: &Value, line: u32) -> R<bool> {
     match container {
         Value::Str(s) => match item {
             Value::Str(sub) => Ok(s.contains(&**sub)),
-            other => Err(rt(line, format!("операнд 'in' для строки должен быть строкой, а не {}", other.type_name()))),
+            other => Err(rt(line, trf!("операнд 'in' для строки должен быть строкой, а не {}", "'in' operand for a string must be a string, not {}", other.type_name()))),
         },
         Value::List(l) => Ok(l.borrow().iter().any(|v| v.py_eq(item))),
         Value::Dict(d) => match Key::from_value(item) {
             Ok(k) => Ok(d.borrow().contains(&k)),
             Err(_) => Ok(false),
         },
-        other => Err(rt(line, format!("объект типа {} не поддерживает 'in'", other.type_name()))),
+        other => Err(rt(line, trf!("объект типа {} не поддерживает 'in'", "object of type {} does not support 'in'", other.type_name()))),
     }
 }
 
@@ -235,7 +235,7 @@ fn index_value(idx: &Value, line: u32) -> R<i64> {
     match idx {
         Value::Int(n) => Ok(*n),
         Value::Bool(b) => Ok(*b as i64),
-        other => Err(rt(line, format!("индекс должен быть целым, а не {}", other.type_name()))),
+        other => Err(rt(line, trf!("индекс должен быть целым, а не {}", "index must be an integer, not {}", other.type_name()))),
     }
 }
 
@@ -246,7 +246,7 @@ pub fn get_index(obj: &Value, idx: &Value, line: u32) -> R<Value> {
             let l = l.borrow();
             match norm_index(i, l.len()) {
                 Some(j) => Ok(l[j].clone()),
-                None => Err(rt(line, "индекс списка вне диапазона")),
+                None => Err(rt(line, tr!("индекс списка вне диапазона", "list index out of range"))),
             }
         }
         Value::Str(s) => {
@@ -254,17 +254,17 @@ pub fn get_index(obj: &Value, idx: &Value, line: u32) -> R<Value> {
             let n = s.chars().count();
             match norm_index(i, n) {
                 Some(j) => Ok(Value::str(&s.chars().nth(j).map(String::from).unwrap_or_default())),
-                None => Err(rt(line, "индекс строки вне диапазона")),
+                None => Err(rt(line, tr!("индекс строки вне диапазона", "string index out of range"))),
             }
         }
         Value::Dict(d) => {
             let key = Key::from_value(idx).map_err(|m| rt(line, m))?;
             match d.borrow().get(&key) {
                 Some(v) => Ok(v.clone()),
-                None => Err(rt(line, format!("ключ не найден: {}", idx.repr()))),
+                None => Err(rt(line, trf!("ключ не найден: {}", "key not found: {}", idx.repr()))),
             }
         }
-        other => Err(rt(line, format!("объект типа {} не поддерживает индексацию", other.type_name()))),
+        other => Err(rt(line, trf!("объект типа {} не поддерживает индексацию", "object of type {} is not subscriptable", other.type_name()))),
     }
 }
 
@@ -279,7 +279,7 @@ pub fn set_index(obj: &Value, idx: &Value, value: Value, line: u32) -> R<()> {
                     l[j] = value;
                     Ok(())
                 }
-                None => Err(rt(line, "индекс списка вне диапазона")),
+                None => Err(rt(line, tr!("индекс списка вне диапазона", "list index out of range"))),
             }
         }
         Value::Dict(d) => {
@@ -287,8 +287,8 @@ pub fn set_index(obj: &Value, idx: &Value, value: Value, line: u32) -> R<()> {
             d.borrow_mut().insert(key, value);
             Ok(())
         }
-        Value::Str(_) => Err(rt(line, "строки неизменяемы")),
-        other => Err(rt(line, format!("объект типа {} не поддерживает присваивание по индексу", other.type_name()))),
+        Value::Str(_) => Err(rt(line, tr!("строки неизменяемы", "strings are immutable"))),
+        other => Err(rt(line, trf!("объект типа {} не поддерживает присваивание по индексу", "object of type {} does not support item assignment", other.type_name()))),
     }
 }
 
@@ -296,7 +296,7 @@ pub fn set_index(obj: &Value, idx: &Value, value: Value, line: u32) -> R<()> {
 pub fn slice_indices(len: usize, lo: Option<i64>, hi: Option<i64>, step: Option<i64>, line: u32) -> R<Vec<usize>> {
     let step = step.unwrap_or(1);
     if step == 0 {
-        return Err(rt(line, "шаг среза не может быть нулём"));
+        return Err(rt(line, tr!("шаг среза не может быть нулём", "slice step cannot be zero")));
     }
     let n = len as i64;
     let clamp = |i: i64| -> i64 {
@@ -336,7 +336,7 @@ pub fn slice(obj: &Value, lo: Option<i64>, hi: Option<i64>, step: Option<i64>, l
             let idx = slice_indices(chars.len(), lo, hi, step, line)?;
             Ok(Value::str(&idx.into_iter().map(|i| chars[i]).collect::<String>()))
         }
-        other => Err(rt(line, format!("объект типа {} не поддерживает срезы", other.type_name()))),
+        other => Err(rt(line, trf!("объект типа {} не поддерживает срезы", "object of type {} does not support slicing", other.type_name()))),
     }
 }
 
@@ -346,6 +346,6 @@ pub fn iter_to_vec(v: &Value, line: u32) -> R<Vec<Value>> {
         Value::List(l) => Ok(l.borrow().clone()),
         Value::Str(s) => Ok(s.chars().map(|c| Value::str(&c.to_string())).collect()),
         Value::Dict(d) => Ok(d.borrow().keys()),
-        other => Err(rt(line, format!("объект типа {} не является итерируемым", other.type_name()))),
+        other => Err(rt(line, trf!("объект типа {} не является итерируемым", "object of type {} is not iterable", other.type_name()))),
     }
 }

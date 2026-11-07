@@ -1,6 +1,7 @@
 {
   "id": "hidden_warehouse_tenant",
   "name": "Скрытый арендатор склада",
+  "name_en": "Hidden Warehouse Tenant",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

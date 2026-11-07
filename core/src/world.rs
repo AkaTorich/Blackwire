@@ -131,7 +131,7 @@ impl GameClock {
         let rest = secs % 86_400;
         let hms = format!("{:02}:{:02}:{:02}", rest / 3600, (rest % 3600) / 60, rest % 60);
         if d > 0 {
-            format!("{} дн. {}", d, hms)
+            trf!("{} дн. {}", "{}d {}", d, hms)
         } else {
             hms
         }
@@ -229,9 +229,9 @@ pub enum NetError {
 impl fmt::Display for NetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            NetError::Unknown(a) => write!(f, "неизвестный узел: {}", a),
-            NetError::Unreachable(a) => write!(f, "узел недоступен: {} (нет маршрута)", a),
-            NetError::Down(a) => write!(f, "узел не отвечает: {}", a),
+            NetError::Unknown(a) => write!(f, "{}", trf!("неизвестный узел: {}", "unknown host: {}", a)),
+            NetError::Unreachable(a) => write!(f, "{}", trf!("узел недоступен: {} (нет маршрута)", "host unreachable: {} (no route)", a)),
+            NetError::Down(a) => write!(f, "{}", trf!("узел не отвечает: {}", "host not responding: {}", a)),
         }
     }
 }
@@ -411,9 +411,9 @@ impl World {
     }
 
     pub fn from_json(s: &str) -> Result<World, String> {
-        let mut w: World = serde_json::from_str(s).map_err(|e| format!("не удалось прочитать сохранение: {}", e))?;
+        let mut w: World = serde_json::from_str(s).map_err(|e| trf!("не удалось прочитать сохранение: {}", "failed to read save: {}", e))?;
         if w.machines.is_empty() {
-            return Err("сохранение пустое: нет машин".to_string());
+            return Err(tr!("сохранение пустое: нет машин", "save is empty: no machines").to_string());
         }
         for machine in &mut w.machines {machine.procs.remove_applications();}
         Ok(w)
@@ -457,7 +457,7 @@ impl World {
         for id in wake {
             if let Some(m) = self.machines.iter_mut().find(|m| m.id == id) {
                 m.up = true;
-                m.log(now, LogKind::Service, "система запущена");
+                m.log(now, LogKind::Service, tr!("система запущена", "system started"));
             }
         }
         // подозрение к игроку медленно спадает со временем
@@ -691,7 +691,7 @@ impl World {
             return self.home_page();
         }
         if scheme != "http" && scheme != "https" {
-            return HttpPage::error(400, "Неизвестная схема", &format!("Браузер понимает только http, https и home, а не «{}».", scheme));
+            return HttpPage::error(400, tr!("Неизвестная схема", "Unknown scheme"), &trf!("Браузер понимает только http, https и home, а не «{}».", "The browser only understands http, https and home, not \"{}\".", scheme));
         }
         let (hostport, path) = match rest.split_once('/') {
             Some((h, p)) => (h, format!("/{}", p)),
@@ -703,37 +703,37 @@ impl World {
             None => (hostport, default_port),
         };
         if host.is_empty() {
-            return HttpPage::error(400, "Пустой адрес", "Укажите узел: http://имя или http://ip.");
+            return HttpPage::error(400, tr!("Пустой адрес", "Empty address"), tr!("Укажите узел: http://имя или http://ip.", "Specify a host: http://name or http://ip."));
         }
         let id = match self.lookup(from, host) {
             Ok(id) => id,
-            Err(NetError::Unknown(a)) => return HttpPage::error(404, "Нет такого узла", &format!("Имя «{}» не разрешается.", a)),
-            Err(NetError::Unreachable(a)) => return HttpPage::error(503, "Нет маршрута", &format!("Адрес {} находится в чужой подсети.", a)),
-            Err(NetError::Down(a)) => return HttpPage::error(504, "Узел не отвечает", &format!("Машина {} выключена.", a)),
+            Err(NetError::Unknown(a)) => return HttpPage::error(404, tr!("Нет такого узла", "No such host"), &trf!("Имя «{}» не разрешается.", "The name \"{}\" does not resolve.", a)),
+            Err(NetError::Unreachable(a)) => return HttpPage::error(503, tr!("Нет маршрута", "No route"), &trf!("Адрес {} находится в чужой подсети.", "Address {} is in someone else's subnet.", a)),
+            Err(NetError::Down(a)) => return HttpPage::error(504, tr!("Узел не отвечает", "Host not responding"), &trf!("Машина {} выключена.", "Machine {} is down.", a)),
         };
         let m = self.machine(id);
         let svc = m.services.iter().find(|s| s.port == port && s.running);
         let svc = match svc {
             Some(s) => s,
             None => {
-                return HttpPage::error(502, "Порт закрыт", &format!("На {} порт {} не отвечает.", host, port));
+                return HttpPage::error(502, tr!("Порт закрыт", "Port closed"), &trf!("На {} порт {} не отвечает.", "Port {1} on {0} is not responding.", host, port));
             }
         };
         if svc.name != "http" && svc.name != "https" {
-            return HttpPage::error(502, "Не веб-служба", &format!("На порту {} работает {} — это не веб-сервер.", port, svc.name));
+            return HttpPage::error(502, tr!("Не веб-служба", "Not a web service"), &trf!("На порту {} работает {} — это не веб-сервер.", "Port {} runs {} — not a web server.", port, svc.name));
         }
         let want = crate::net::machine::normalize_path(&path);
         // доска заданий hello-world рисуется из состояния миссий
         if (m.hostname == "gate.hw" && want == "/board") || m.hostname == "board.hw" {
-            return HttpPage { status: 200, title: "Доска заданий".to_string(), body: crate::missions::board_html(self) };
+            return HttpPage { status: 200, title: tr!("Доска заданий", "Job Board").to_string(), body: crate::missions::board_html(self) };
         }
         // барахолка группы — из состояния финансов
         if (m.hostname == "gate.hw" && want == "/shop") || m.hostname == "shop.hw" {
-            return HttpPage { status: 200, title: "Барахолка".to_string(), body: crate::money::shop_html(self) };
+            return HttpPage { status: 200, title: tr!("Барахолка", "Flea Market").to_string(), body: crate::money::shop_html(self) };
         }
         // маркет скриптов
         if (m.hostname == "gate.hw" && want == "/market") || m.hostname == "market.hw" {
-            return HttpPage { status: 200, title: "Маркет".to_string(), body: crate::market::market_html(self) };
+            return HttpPage { status: 200, title: tr!("Маркет", "Market").to_string(), body: crate::market::market_html(self) };
         }
         let page = svc
             .pages
@@ -749,9 +749,10 @@ impl World {
             }
             None => HttpPage {
                 status: 404,
-                title: "Страница не найдена".to_string(),
-                body: format!(
+                title: tr!("Страница не найдена", "Page not found").to_string(),
+                body: trf!(
                     "<h1>404</h1><p>На {} нет страницы <code>{}</code>.</p><p><a href=\"http://{}/\">На главную</a></p>",
+                    "<h1>404</h1><p>{} has no page <code>{}</code>.</p><p><a href=\"http://{}/\">Home</a></p>",
                     m.hostname, want, host
                 ),
             },
@@ -760,14 +761,15 @@ impl World {
 
     fn home_page(&self) -> HttpPage {
         let m = self.player_machine();
-        let mut body = format!(
+        let mut body = trf!(
             "<h1>{}</h1><p>Адрес: <code>{}</code> · Система: {} · Время: {}</p>",
+            "<h1>{}</h1><p>Address: <code>{}</code> · System: {} · Time: {}</p>",
             m.hostname,
             m.ip,
             m.os,
             GameClock::format_time(self.clock.now())
         );
-        body.push_str("<h2>Известные узлы</h2><ul>");
+        body.push_str(tr!("<h2>Известные узлы</h2><ul>", "<h2>Known hosts</h2><ul>"));
         for id in &self.player.known_machines {
             if let Some(k) = self.machines.iter().find(|x| x.id == *id) {
                 let has_web = k.services.iter().any(|s| s.running && (s.name == "http" || s.name == "https"));
@@ -778,8 +780,11 @@ impl World {
                 }
             }
         }
-        body.push_str("</ul><p>Команды терминала: <code>scan ip</code>, <code>ssh user@ip пароль</code>, <code>help</code>.</p>");
-        HttpPage { status: 200, title: "Домашняя страница".to_string(), body }
+        body.push_str(tr!(
+            "</ul><p>Команды терминала: <code>scan ip</code>, <code>ssh user@ip пароль</code>, <code>help</code>.</p>",
+            "</ul><p>Terminal commands: <code>scan ip</code>, <code>ssh user@ip password</code>, <code>help</code>.</p>"
+        ));
+        HttpPage { status: 200, title: tr!("Домашняя страница", "Home page").to_string(), body }
     }
 }
 
@@ -788,7 +793,7 @@ fn fallback_player_machine(handle: &str, password: &str) -> Machine {
     let mut users = crate::users::UserDb::new_root(password);
     users.add(handle, password, true);
     let mut fs = crate::vfs::Vfs::new_unix(handle);
-    fs.write_text(&format!("/home/{}/readme.txt", handle), "Добро пожаловать в Blackwire. Начните с команды help.\n", handle).ok();
+    fs.write_text(&format!("/home/{}/readme.txt", handle), tr!("Добро пожаловать в Blackwire. Начните с команды help.\n", "Welcome to Blackwire. Start with the help command.\n"), handle).ok();
     let mut procs = crate::procs::ProcTable::new();
     procs.spawn_daemon("sshd", "root", 6);
     Machine {
@@ -820,14 +825,14 @@ fn fallback_player_machine(handle: &str, password: &str) -> Machine {
 /// Запись журнала в одну строку для команды `logs`.
 pub fn format_log(e: &LogEntry) -> String {
     let tag = match e.kind {
-        LogKind::Login => "вход",
-        LogKind::LoginFailed => "ошибка входа",
-        LogKind::Logout => "выход",
-        LogKind::Exec => "запуск",
-        LogKind::FileChange => "файлы",
-        LogKind::Service => "служба",
-        LogKind::Net => "сеть",
-        LogKind::Warn => "внимание",
+        LogKind::Login => tr!("вход", "login"),
+        LogKind::LoginFailed => tr!("ошибка входа", "login failed"),
+        LogKind::Logout => tr!("выход", "logout"),
+        LogKind::Exec => tr!("запуск", "exec"),
+        LogKind::FileChange => tr!("файлы", "files"),
+        LogKind::Service => tr!("служба", "service"),
+        LogKind::Net => tr!("сеть", "network"),
+        LogKind::Warn => tr!("внимание", "warning"),
     };
     format!("{}  {:<13} {}", GameClock::format_time(e.time), tag, e.text)
 }

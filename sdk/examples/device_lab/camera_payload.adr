@@ -1,19 +1,28 @@
 # camera_payload.adr — готовый эксплоит для игровой механики overflow
+# camera_payload.adr — a ready-made exploit for the overflow game mechanic
 # Исходник доступен для изучения и изменения в редакторе Blackwire.
+# The source can be studied and changed in the Blackwire editor.
+
+# Строка на языке игры. / A string in the game language.
+def tr(ru, en):
+    if sys.lang() == "en":
+        return en
+    return ru
+
 if len(sys.args) < 2:
-    print("Использование: camera_payload.adr адрес [id уязвимости]")
-    print("Поиск цели: probe адрес; подсказки: research адрес id")
+    print(tr("Использование: camera_payload.adr адрес [id уязвимости]", "Usage: camera_payload.adr address [vulnerability id]"))
+    print(tr("Поиск цели: probe адрес; подсказки: research адрес id", "Find a target: probe address; hints: research address id"))
     exit(1)
 try:
     address = sys.args[1]
     selector = sys.args[2] if len(sys.args) > 2 else null
     profile = net.research(address, selector)
     if profile["kind"] != "overflow":
-        print("Инструмент не подходит: нужна механика", profile["kind"])
-        print("Подходящий инструмент: market buy", profile["market"])
+        print(tr("Инструмент не подходит: нужна механика", "Wrong tool: the target needs mechanic"), profile["kind"])
+        print(tr("Подходящий инструмент: market buy", "Matching tool: market buy"), profile["market"])
         exit(1)
     if profile["service"] != "lab_control" or not profile["version"].startswith("1."):
-        print("Camera Payload подходит только к lab_control версии 1.x.")
+        print(tr("Camera Payload подходит только к lab_control версии 1.x.", "Camera Payload only works against lab_control version 1.x."))
         exit(1)
     selector = profile["id"]
     layout = profile["layout"]
@@ -33,5 +42,5 @@ try:
     if not result["ok"]:
         exit(1)
 except as error:
-    print("Эксплоит не выполнен:", error)
+    print(tr("Эксплоит не выполнен:", "Exploit failed:"), error)
     exit(1)

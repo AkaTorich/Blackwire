@@ -8,6 +8,7 @@ use tauri::{AppHandle, Emitter, State};
 use crate::state::AppState;
 
 const ADDER_DOC: &str = include_str!("../../docs/ADDER.md");
+const ADDER_DOC_EN: &str = include_str!("../../docs/en/ADDER.md");
 
 fn changed(app: &AppHandle, path: &str) {
     let _ = app.emit("fs_changed", serde_json::json!({ "path": path }));
@@ -65,7 +66,7 @@ pub fn lang_check(src: String) -> Vec<Diagnostic> {
 
 #[tauri::command]
 pub fn lang_doc() -> &'static str {
-    ADDER_DOC
+    tr!(ADDER_DOC, ADDER_DOC_EN)
 }
 
 #[tauri::command]

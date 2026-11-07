@@ -43,7 +43,8 @@
     "resources": {
       "../Blackwire.chm": "Blackwire.chm",
       "../target/sdk/": "sdk/",
-      "../README.md": "README.md"
+      "../README.md": "README.md",
+      "../README.ru.md": "README.ru.md"
     }
   }
 }

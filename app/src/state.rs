@@ -34,6 +34,10 @@ pub struct AppState {
     /// Папка своих сценариев (из редактора сценариев).
     pub scenarios_dir: PathBuf,
     pub plugins_dir: PathBuf,
+    /// Общие настройки вне сохранения (язык): `prefs.json` в папке данных.
+    pub prefs_path: PathBuf,
+    /// Язык задан ключом `--lang` (окна не должны подменять его языком системы).
+    pub lang_forced: bool,
     pub next_win: AtomicU32,
     pub focus_revision: AtomicU32,
     pub focused_window: Mutex<Option<String>>,
@@ -56,6 +60,17 @@ impl AppState {
         std::fs::create_dir_all(&slots_dir)?;
         let scenarios_dir = dir.join("scenarios");
         std::fs::create_dir_all(&scenarios_dir)?;
+        let prefs_path = dir.join("prefs.json");
+        if let Some(lang) = read_lang(&prefs_path) {
+            blackwire_core::i18n::set(&lang);
+        }
+        // Проверочный запуск: `--lang en|ru` — язык на этот запуск, без записи в prefs.json.
+        let lang_forced = if let Some(i) = args.iter().position(|a| a == "--lang") {
+            blackwire_core::i18n::set(args.get(i + 1).map(|s| s.as_str()).unwrap_or("ru"));
+            true
+        } else {
+            false
+        };
         Ok(AppState {
             game: Mutex::new(None),
             windows: Mutex::new(Vec::new()),
@@ -64,6 +79,8 @@ impl AppState {
             slots_dir,
             scenarios_dir,
             plugins_dir: dir.join("plugins"),
+            prefs_path,
+            lang_forced,
             next_win: AtomicU32::new(1),
             focus_revision: AtomicU32::new(0),
             focused_window: Mutex::new(None),
@@ -75,9 +92,9 @@ impl AppState {
 
     /// Игра под замком. Пока игра не начата — ошибка по-русски.
     pub fn game(&self) -> Result<GameGuard<'_>, String> {
-        let g = self.game.lock().map_err(|_| "состояние игры повреждено".to_string())?;
+        let g = self.game.lock().map_err(|_| tr!("состояние игры повреждено", "game state corrupted").to_string())?;
         if g.is_none() {
-            return Err("игра ещё не начата".into());
+            return Err(tr!("игра ещё не начата", "game not started yet").into());
         }
         Ok(GameGuard(g))
     }
@@ -114,7 +131,7 @@ impl AppState {
         let mut g = self.game()?;
         g.plugin_event("on_save",serde_json::json!({}));
         let text = g.world.to_json();
-        std::fs::write(&self.save_path, text).map_err(|e| format!("не удалось сохранить игру: {e}"))
+        std::fs::write(&self.save_path, text).map_err(|e| trf!("не удалось сохранить игру: {e}", "failed to save the game: {e}"))
     }
 
     pub fn next_label(&self) -> String {
@@ -127,7 +144,7 @@ impl AppState {
     fn slot_path(&self, name: &str) -> Result<PathBuf, String> {
         let clean = sanitize_slot(name);
         if clean.is_empty() {
-            return Err("пустое имя сохранения".into());
+            return Err(tr!("пустое имя сохранения", "empty save name").into());
         }
         Ok(self.slots_dir.join(format!("{clean}.json")))
     }
@@ -139,20 +156,20 @@ impl AppState {
             let g = self.game()?;
             g.world.to_json()
         };
-        std::fs::write(&path, text).map_err(|e| format!("не удалось сохранить: {e}"))
+        std::fs::write(&path, text).map_err(|e| trf!("не удалось сохранить: {e}", "failed to save: {e}"))
     }
 
     /// Загрузить мир из слота (в игру его ставит cmd_game).
     pub fn load_slot_world(&self, name: &str) -> Result<World, String> {
         let path = self.slot_path(name)?;
-        let text = std::fs::read_to_string(&path).map_err(|_| "сохранение не найдено".to_string())?;
+        let text = std::fs::read_to_string(&path).map_err(|_| tr!("сохранение не найдено", "save not found").to_string())?;
         World::from_json(&text)
     }
 
     /// Удалить слот.
     pub fn delete_slot(&self, name: &str) -> Result<(), String> {
         let path = self.slot_path(name)?;
-        std::fs::remove_file(&path).map_err(|e| format!("не удалось удалить: {e}"))
+        std::fs::remove_file(&path).map_err(|e| trf!("не удалось удалить: {e}", "failed to delete: {e}"))
     }
 
     /// Список слотов: имя, личность, игровое время и счёт для карточки.
@@ -204,7 +221,7 @@ impl AppState {
     fn scenario_path(&self, name: &str) -> Result<PathBuf, String> {
         let clean = sanitize_slot(name);
         if clean.is_empty() {
-            return Err("пустое имя сценария".into());
+            return Err(tr!("пустое имя сценария", "empty scenario name").into());
         }
         Ok(self.scenarios_dir.join(format!("{clean}.json")))
     }
@@ -212,19 +229,19 @@ impl AppState {
     /// Сохранить сценарий файлом.
     pub fn save_scenario(&self, s: &blackwire_core::scenarios::Scenario) -> Result<(), String> {
         let path = self.scenario_path(&s.name)?;
-        let text = serde_json::to_string(s).map_err(|e| format!("не удалось записать сценарий: {e}"))?;
-        std::fs::write(&path, text).map_err(|e| format!("не удалось записать: {e}"))
+        let text = serde_json::to_string(s).map_err(|e| trf!("не удалось записать сценарий: {e}", "failed to write scenario: {e}"))?;
+        std::fs::write(&path, text).map_err(|e| trf!("не удалось записать: {e}", "failed to write: {e}"))
     }
 
     pub fn load_scenario(&self, name: &str) -> Result<blackwire_core::scenarios::Scenario, String> {
         let path = self.scenario_path(name)?;
-        let text = std::fs::read_to_string(&path).map_err(|_| "сценарий не найден".to_string())?;
-        serde_json::from_str(&text).map_err(|e| format!("сценарий повреждён: {e}"))
+        let text = std::fs::read_to_string(&path).map_err(|_| tr!("сценарий не найден", "scenario not found").to_string())?;
+        serde_json::from_str(&text).map_err(|e| trf!("сценарий повреждён: {e}", "scenario corrupted: {e}"))
     }
 
     pub fn delete_scenario(&self, name: &str) -> Result<(), String> {
         let path = self.scenario_path(name)?;
-        std::fs::remove_file(&path).map_err(|e| format!("не удалось удалить: {e}"))
+        std::fs::remove_file(&path).map_err(|e| trf!("не удалось удалить: {e}", "failed to delete: {e}"))
     }
 
     /// Список сценариев для карточек.
@@ -254,6 +271,26 @@ impl AppState {
 }
 
 /// Безопасное имя файла слота: оставляем буквы, цифры, пробел, «_» и «-».
+/// Язык из `prefs.json`; `None` — игрок ещё не выбирал.
+pub fn read_lang(path: &std::path::Path) -> Option<String> {
+    let text = std::fs::read_to_string(path).ok()?;
+    let v: serde_json::Value = serde_json::from_str(&text).ok()?;
+    v.get("lang").and_then(|l| l.as_str()).map(|l| l.to_string())
+}
+
+/// Записать язык в `prefs.json`, сохранив прочие поля.
+pub fn write_lang(path: &std::path::Path, lang: &str) -> Result<(), String> {
+    let mut v: serde_json::Value = std::fs::read_to_string(path)
+        .ok()
+        .and_then(|t| serde_json::from_str(&t).ok())
+        .unwrap_or_else(|| serde_json::json!({}));
+    if !v.is_object() {
+        v = serde_json::json!({});
+    }
+    v["lang"] = serde_json::Value::String(lang.to_string());
+    std::fs::write(path, serde_json::to_string_pretty(&v).unwrap_or_default()).map_err(|e| e.to_string())
+}
+
 fn sanitize_slot(name: &str) -> String {
     let mut s: String = name
         .trim()

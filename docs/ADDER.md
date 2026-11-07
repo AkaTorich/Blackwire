@@ -107,6 +107,7 @@ exit()                 # завершить скрипт; exit(1) — с код�
 - `sys.procs()` — список словарей `{pid, name, user, cpu, mem}`
 - `sys.kill(pid)`, `sys.uptime()`, `sys.notify(title, text)` — всплывающее уведомление, `sys.pid()` — pid самого скрипта
 - `sys.open(app, arg=null)` — открыть окно приложения (`editor`, `files`, `browser`, …)
+- `sys.lang()` — язык игры: `"ru"` или `"en"`
 - `sys.money()` — счёт игрока (₵); `sys.debt()` — остаток долга; `sys.missions()` → список `{code, title, status, objective, reward}`
 
 **fs** — файлы текущей машины (той, куда мы сейчас подключены)

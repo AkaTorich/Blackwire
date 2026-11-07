@@ -11,7 +11,7 @@ use crate::net::machine::{MachineId, MachineKind, MailFolder, MailMessage};
 use crate::net::orgs::OrgKind;
 use crate::world::World;
 
-use data::{ActionKind, TargetRole, CHAIN, DROP};
+use data::{ActionKind, TargetRole, CHAIN, CHAIN_EN, DROP};
 
 /// Проверяемое условие выполнения.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -235,12 +235,16 @@ pub fn ensure_init(world: &mut World) {
             Some(id) => (world.machine(id).hostname.clone(), world.machine(id).ip.clone()),
             None => (String::new(), String::new()),
         };
+        let (title, objective, brief, reply) = match CHAIN_EN.get(i) {
+            Some(en) if crate::i18n::is_en() => (en.title, en.objective, en.brief, en.reply),
+            _ => (def.title, def.objective, def.brief, def.reply),
+        };
         runs.push(MissionRun {
             code: def.code.to_string(),
-            title: def.title.to_string(),
-            objective: fill(def.objective, &host, &ip, &path, &to),
-            brief: fill(def.brief, &host, &ip, &path, &to),
-            reply: def.reply.to_string(),
+            title: title.to_string(),
+            objective: fill(objective, &host, &ip, &path, &to),
+            brief: fill(brief, &host, &ip, &path, &to),
+            reply: reply.to_string(),
             reward: def.reward,
             goal,
             status: if i == 0 { MissionStatus::Active } else { MissionStatus::Locked },
@@ -258,7 +262,7 @@ fn send_brief_email(world: &mut World, idx: usize) {
         Some(m) => (m.title.clone(), m.brief.clone()),
         None => return,
     };
-    push_group_mail(world, &format!("Задание: {}", title), &brief);
+    push_group_mail(world, &trf!("Задание: {}", "Mission: {}", title), &brief);
 }
 
 fn push_group_mail(world: &mut World, subject: &str, body: &str) {
@@ -323,19 +327,19 @@ fn complete(world: &mut World, idx: usize) {
     world.missions.active = next;
 
     // ответ группы + следующее задание одним письмом
-    let mut body = format!("{}\n\nНачислено: {} ₵.", reply, reward);
+    let mut body = trf!("{}\n\nНачислено: {} ₵.", "{}\n\nCredited: {} ₵.", reply, reward);
     if let Some((nt, nb)) = &next_brief {
-        body.push_str(&format!("\n\n— — —\n\nСледующее: {}\n\n{}", nt, nb));
+        body.push_str(&trf!("\n\n— — —\n\nСледующее: {}\n\n{}", "\n\n— — —\n\nNext: {}\n\n{}", nt, nb));
     } else {
-        body.push_str("\n\nЭто было последнее. Дальше — сам. Мы на связи.");
+        body.push_str(tr!("\n\nЭто было последнее. Дальше — сам. Мы на связи.", "\n\nThat was the last one. From here on you're on your own. We stay in touch."));
     }
-    let subject = format!("Принято: {}", title);
+    let subject = trf!("Принято: {}", "Accepted: {}", title);
     push_group_mail(world, &subject, &body);
 
     let notify = if next_brief.is_some() {
-        format!("«{}» выполнено (+{} ₵). Есть новое задание.", title, reward)
+        trf!("«{}» выполнено (+{} ₵). Есть новое задание.", "\"{}\" complete (+{} ₵). New mission available.", title, reward)
     } else {
-        format!("«{}» выполнено (+{} ₵). Цепочка пройдена.", title, reward)
+        trf!("«{}» выполнено (+{} ₵). Цепочка пройдена.", "\"{}\" complete (+{} ₵). Chain finished.", title, reward)
     };
     world.missions.pending = Some(MissionEvent { title: "hello-world".to_string(), text: notify });
 }
@@ -344,23 +348,24 @@ fn complete(world: &mut World, idx: usize) {
 
 /// Доска заданий (HTML) для браузера — узлы `gate.hw/board` и `board.hw`.
 pub fn board_html(world: &World) -> String {
-    let mut s = String::from("<header><h1>Доска заданий</h1></header><nav><a href=\"/manifesto\">Манифест</a></nav><main>");
+    let mut s = String::from(tr!("<header><h1>Доска заданий</h1></header><nav><a href=\"/manifesto\">Манифест</a></nav><main>", "<header><h1>Job Board</h1></header><nav><a href=\"/manifesto\">Manifesto</a></nav><main>"));
     if world.missions.missions.is_empty() {
-        s.push_str("<p>Пусто. Загляни позже.</p></main>");
+        s.push_str(tr!("<p>Пусто. Загляни позже.</p></main>", "<p>Empty. Check back later.</p></main>"));
         return s;
     }
-    s.push_str(&format!("<p>Заработано: <b>{} ₵</b></p><ol>", world.missions.money_earned));
+    s.push_str(&trf!("<p>Заработано: <b>{} ₵</b></p><ol>", "<p>Earned: <b>{} ₵</b></p><ol>", world.missions.money_earned));
     for m in &world.missions.missions {
         let (mark, cls) = match m.status {
-            MissionStatus::Done => ("✓ сделано", "done"),
-            MissionStatus::Active => ("● сейчас", "active"),
-            MissionStatus::Locked => ("· закрыто", "locked"),
+            MissionStatus::Done => (tr!("✓ сделано", "✓ done"), "done"),
+            MissionStatus::Active => (tr!("● сейчас", "● current"), "active"),
+            MissionStatus::Locked => (tr!("· закрыто", "· locked"), "locked"),
         };
         if m.status == MissionStatus::Locked {
             s.push_str(&format!("<li class=\"{}\"><b>{}</b> — <i>{}</i></li>", cls, m.title, mark));
         } else {
-            s.push_str(&format!(
+            s.push_str(&trf!(
                 "<li class=\"{}\"><b>{}</b> — {} · награда {} ₵<br><small>{}</small>",
+                "<li class=\"{}\"><b>{}</b> — {} · reward {} ₵<br><small>{}</small>",
                 cls, m.title, mark, m.reward, m.objective
             ));
             if m.status == MissionStatus::Active {
@@ -369,8 +374,8 @@ pub fn board_html(world: &World) -> String {
             s.push_str("</li>");
         }
     }
-    s.push_str("</ol><h2>Задания расширений</h2><ul>");
-    for q in world.plugins.quests.values(){fn esc(s:&str)->String{s.replace('&',"&amp;").replace('<',"&lt;").replace('>',"&gt;")}s.push_str(&format!("<li><b>{}</b> — {} · {} ₵<br>{}</li>",esc(&q.title),if q.done{"выполнено"}else{"ожидает"},q.reward,esc(&q.objective)));}
+    s.push_str(tr!("</ol><h2>Задания расширений</h2><ul>", "</ol><h2>Plugin missions</h2><ul>"));
+    for q in world.plugins.quests.values(){fn esc(s:&str)->String{s.replace('&',"&amp;").replace('<',"&lt;").replace('>',"&gt;")}s.push_str(&format!("<li><b>{}</b> — {} · {} ₵<br>{}</li>",esc(&q.title),if q.done{tr!("выполнено","done")}else{tr!("ожидает","pending")},q.reward,esc(&q.objective)));}
     s.push_str("</ul></main>");
     s
 }

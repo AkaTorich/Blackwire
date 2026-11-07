@@ -292,7 +292,7 @@ const TerminalApp = (function () {
       if (!p) return;
       if (p.pid !== st.scriptPid) { stash('done', p); return; }
       if (!p.ok && p.error) {
-        addRow(p.line ? 'Ошибка (строка ' + p.line + '): ' + p.error : p.error, 'error');
+        addRow(p.line ? L('Ошибка (строка ', 'Error (line ') + p.line + '): ' + p.error : p.error, 'error');
         BW.sound('error');
       }
       st.scriptPid = null;
@@ -331,7 +331,7 @@ const TerminalApp = (function () {
     function copyText(text) {
       if (!text) return;
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function () { Win.toast('Скопировано'); }, function () {});
+        navigator.clipboard.writeText(text).then(function () { Win.toast(L('Скопировано', 'Copied')); }, function () {});
       }
     }
 
@@ -344,7 +344,7 @@ const TerminalApp = (function () {
       if (st.busy && !st.inputWanted) return;
       if (!navigator.clipboard || !navigator.clipboard.readText) return;
       navigator.clipboard.readText().then(function (t) { if (t) insertText(t); }, function () {
-        Win.toast('Буфер обмена недоступен');
+        Win.toast(L('Буфер обмена недоступен', 'Clipboard unavailable'));
       });
     }
 
@@ -491,7 +491,7 @@ const TerminalApp = (function () {
       try {
         st.sid = await BW.shell_open();
       } catch (e) {
-        addRow('Оболочка недоступна: ' + e, 'error');
+        addRow(L('Оболочка недоступна: ', 'Shell unavailable: ') + e, 'error');
         return;
       }
       try { st.prompt = await BW.shell_prompt(st.sid); } catch (e) { st.prompt = null; }
@@ -520,6 +520,6 @@ const TerminalApp = (function () {
 })();
 
 Apps.register('terminal', {
-  title: 'Терминал', icon: 'terminal', minWidth: 520, minHeight: 320,
+  title: L('Терминал', 'Terminal'), icon: 'terminal', minWidth: 520, minHeight: 320,
   mount: function (body, arg) { TerminalApp.mount(body, arg); }
 });

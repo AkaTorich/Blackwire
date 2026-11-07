@@ -36,11 +36,11 @@ impl Default for InvStage {
 impl InvStage {
     pub fn title(self) -> &'static str {
         match self {
-            InvStage::Dormant => "затишье",
-            InvStage::Noticed => "замечена активность",
-            InvStage::Investigating => "открыто дело",
-            InvStage::Tracing => "идёт пеленг",
-            InvStage::Raid => "рейд",
+            InvStage::Dormant => tr!("затишье", "dormant"),
+            InvStage::Noticed => tr!("замечена активность", "activity noticed"),
+            InvStage::Investigating => tr!("открыто дело", "case opened"),
+            InvStage::Tracing => tr!("идёт пеленг", "trace in progress"),
+            InvStage::Raid => tr!("рейд", "raid"),
         }
     }
     fn rank(self) -> u8 {
@@ -189,30 +189,36 @@ fn sender_for(kind: OrgKind, domain: &str) -> String {
 fn stage_mail(stage: InvStage, org_name: &str) -> (String, String) {
     match stage {
         InvStage::Noticed => (
-            "Замечена подозрительная активность".to_string(),
-            format!(
+            tr!("Замечена подозрительная активность", "Suspicious activity detected").to_string(),
+            trf!(
                 "{} фиксирует необычные обращения к защищённым узлам с вашего направления.\n\
                  Это предупреждение. Прекратите — и дела не будет.",
+                "{} has detected unusual requests to protected hosts coming from your direction.\n\
+                 This is a warning. Stop now and there will be no case.",
                 org_name
             ),
         ),
         InvStage::Investigating => (
-            "Открыто дело".to_string(),
-            format!(
+            tr!("Открыто дело", "Case opened").to_string(),
+            trf!(
                 "По фактам вторжений {} открыл расследование. Мы собираем следы в журналах узлов.\n\
                  Пока источник не установлен. Советуем остановиться и замести следы.",
+                "{} has opened an investigation into the intrusions. We are collecting traces from host logs.\n\
+                 The source is not yet identified. We advise you to stop and cover your tracks.",
                 org_name
             ),
         ),
         InvStage::Tracing => (
-            "Устанавливаем источник".to_string(),
-            format!(
+            tr!("Устанавливаем источник", "Tracing the source").to_string(),
+            trf!(
                 "{}: круг сужен. Мы идём по цепочке ваших подключений от узла к узлу.\n\
                  Ещё немного — и адрес будет наш.",
+                "{}: the circle is closing. We are following your connection chain from host to host.\n\
+                 A little more and your address is ours.",
                 org_name
             ),
         ),
-        _ => ("Уведомление".to_string(), String::new()),
+        _ => (tr!("Уведомление", "Notice").to_string(), String::new()),
     }
 }
 
@@ -223,7 +229,7 @@ fn emit_stage(world: &mut World, lead: Option<u32>, stage: InvStage) {
     };
     let (subject, body) = stage_mail(stage, &org_name);
     push_mail_to_player(world, &sender, &subject, &body);
-    alert(world, lead, &format!("дело по источнику: {}", stage.title()));
+    alert(world, lead, &trf!("дело по источнику: {}", "case on the source: {}", stage.title()));
     world.investigation.pending = Some(InvEvent {
         stage,
         title: org_name,
@@ -237,18 +243,20 @@ fn emit_raid(world: &mut World, lead: Option<u32>) {
         Some(o) => (sender_for(o.kind, &o.domain), o.name.clone()),
         None => return,
     };
-    let subject = "Канал заблокирован".to_string();
-    let body = format!(
+    let subject = tr!("Канал заблокирован", "Channel blocked").to_string();
+    let body = trf!(
         "{}: источник вычислен. Ваши соединения разорваны, исходящий доступ временно ограничен.\n\
          Это не конец, но впредь работайте через цепочку и подчищайте журналы.",
+        "{}: source identified. Your connections have been cut and outgoing access is temporarily restricted.\n\
+         This is not the end, but from now on work through a chain and clean up the logs.",
         org_name
     );
     push_mail_to_player(world, &sender, &subject, &body);
-    alert(world, lead, "источник вычислен — рейд");
+    alert(world, lead, tr!("источник вычислен — рейд", "source identified — raid"));
     world.investigation.pending = Some(InvEvent {
         stage: InvStage::Raid,
         title: org_name,
-        text: "Вас вычислили — рейд".to_string(),
+        text: tr!("Вас вычислили — рейд", "You've been traced — raid").to_string(),
         raided: true,
     });
 }

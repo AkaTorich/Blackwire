@@ -1,12 +1,15 @@
 {
   "name": "Журнал пропавшего курьера",
+  "name_en": "Missing Courier Ledger",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "courier_records",
   "file": "handoff-ledger.csv",
   "story": "Курьер исчез между двумя складами; книга передач называет последнего приёмщика.",
+  "story_en": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 190,
   "id": "missing_courier_ledger",
   "number": 41,
@@ -22,8 +25,10 @@
       "service": "courier_records_gate",
       "port": 7120,
       "os": "Журнал пропавшего курьера OS 1.0",
+      "os_en": "Missing Courier Ledger OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Курьер исчез между двумя складами; книга передач называет последнего приёмщика.\nВладелец записи: missing_courier_ledger.\nНомер дела: BW-041.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.\nRecord owner: missing_courier_ledger.\nCase reference: BW-041.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_missing_courier_ledger_1"
     },
@@ -36,8 +41,10 @@
       "service": "courier_records",
       "port": 7121,
       "os": "Журнал пропавшего курьера OS 1.0",
+      "os_en": "Missing Courier Ledger OS 1.0",
       "file": "/srv/records/handoff-ledger.csv",
       "text": "Курьер исчез между двумя складами; книга передач называет последнего приёмщика.\nВладелец записи: missing_courier_ledger.\nНомер дела: BW-041.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.\nRecord owner: missing_courier_ledger.\nCase reference: BW-041.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_missing_courier_ledger_2"
     }

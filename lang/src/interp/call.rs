@@ -65,8 +65,8 @@ impl Interpreter {
             Value::Builtin(b) => (b.func)(self, host, Call { args, kwargs, line }),
             Value::Method(m) => self.call_method(m.recv.clone(), &m.name, args, kwargs, line, host),
             Value::Native(name) => self.call_native(name, args, kwargs, line, host),
-            Value::Module(m) => Err(rt(line, format!("модуль {} нельзя вызвать", m))),
-            other => Err(rt(line, format!("нельзя вызвать значение типа {}", other.type_name()))),
+            Value::Module(m) => Err(rt(line, trf!("модуль {} нельзя вызвать", "module {} is not callable", m))),
+            other => Err(rt(line, trf!("нельзя вызвать значение типа {}", "value of type {} is not callable", other.type_name()))),
         }
     }
 
@@ -93,7 +93,7 @@ impl Interpreter {
             Value::Str(s) => builtins::strings::call(self, host, s, name, call),
             Value::List(l) => builtins::lists::call(self, host, l, name, call),
             Value::Dict(d) => builtins::dicts::call(self, host, d, name, call),
-            other => Err(rt(line, format!("объект типа {} не имеет метода '{}'", other.type_name(), name))),
+            other => Err(rt(line, trf!("объект типа {} не имеет метода '{}'", "object of type {} has no method '{}'", other.type_name(), name))),
         }
     }
 
@@ -106,7 +106,7 @@ impl Interpreter {
         host: &mut dyn Host,
     ) -> R<Value> {
         if !kwargs.is_empty() {
-            return Err(rt(line, format!("{}: именованные аргументы не поддерживаются", name)));
+            return Err(rt(line, trf!("{}: именованные аргументы не поддерживаются", "{}: keyword arguments are not supported", name)));
         }
         host.call(name, args).map_err(|e| Exc::Error(e.with_line(line)))
     }
@@ -125,7 +125,7 @@ impl Interpreter {
         if args.len() > n {
             return Err(rt(
                 line,
-                format!("функция {}() принимает {} аргументов, передано {}", fname, n, args.len()),
+                trf!("функция {}() принимает {} аргументов, передано {}", "{}() takes {} arguments, {} given", fname, n, args.len()),
             ));
         }
         let mut bound: Vec<Option<Value>> = args.into_iter().map(Some).collect();
@@ -134,11 +134,11 @@ impl Interpreter {
             match def.params.iter().position(|p| p.name == k) {
                 Some(i) => {
                     if bound[i].is_some() {
-                        return Err(rt(line, format!("аргумент '{}' функции {}() передан дважды", k, fname)));
+                        return Err(rt(line, trf!("аргумент '{}' функции {}() передан дважды", "argument '{}' of {}() given twice", k, fname)));
                     }
                     bound[i] = Some(v);
                 }
-                None => return Err(rt(line, format!("функция {}() не имеет параметра '{}'", fname, k))),
+                None => return Err(rt(line, trf!("функция {}() не имеет параметра '{}'", "{}() has no parameter '{}'", fname, k))),
             }
         }
         let env = Env::child(&f.closure);
@@ -150,7 +150,7 @@ impl Interpreter {
                     None => match &f.defaults[i] {
                         Some(d) => d.clone(),
                         None => {
-                            return Err(rt(line, format!("функция {}() не получила аргумент '{}'", fname, p.name)));
+                            return Err(rt(line, trf!("функция {}() не получила аргумент '{}'", "{}() missing argument '{}'", fname, p.name)));
                         }
                     },
                 };

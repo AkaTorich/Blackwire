@@ -87,17 +87,17 @@ const BrowserApp = (function () {
     // --- разметка ---
     const root = el('div', 'br');
     const bar = el('div', 'br-bar');
-    const btnBack = iconBtn('back', 'Назад — Alt+←');
-    const btnFwd = iconBtn('forward', 'Вперёд — Alt+→');
-    const btnReload = iconBtn('reload', 'Обновить — F5');
-    const btnHome = iconBtn('home', 'Домой');
+    const btnBack = iconBtn('back', L('Назад — Alt+←', 'Back — Alt+←'));
+    const btnFwd = iconBtn('forward', L('Вперёд — Alt+→', 'Forward — Alt+→'));
+    const btnReload = iconBtn('reload', L('Обновить — F5', 'Reload — F5'));
+    const btnHome = iconBtn('home', L('Домой', 'Home'));
     const addrWrap = el('div', 'br-addr-wrap');
     const addrIcon = el('span', 'br-addr-icon');
     addrIcon.innerHTML = Icons.get('net', 14);
     const addr = el('input', 'br-addr');
     addr.type = 'text';
     addr.spellcheck = false;
-    addr.placeholder = 'адрес';
+    addr.placeholder = L('адрес', 'address');
     addr.setAttribute('autocomplete', 'off');
     addrWrap.append(addrIcon, addr);
     const progress = el('div', 'br-progress');
@@ -105,7 +105,7 @@ const BrowserApp = (function () {
     const view = el('div', 'br-view');
     const frame = el('iframe', 'br-frame');
     frame.setAttribute('sandbox', 'allow-scripts');
-    frame.setAttribute('title', 'страница');
+    frame.setAttribute('title', L('страница', 'page'));
     view.appendChild(frame);
     const statusLine = el('div', 'br-status');
     const stTitle = el('span', 'br-st-title', '');
@@ -181,7 +181,7 @@ const BrowserApp = (function () {
         '<div class="code">' + esc(url) + '</div>' +
         '<p>' + esc(detail) + '</p>' +
         (bodyText ? '<div class="body">' + esc(bodyText) + '</div>' : '') +
-        '<a href="' + esc(HOME) + '">На стартовую</a></div>';
+        '<a href="' + esc(HOME) + '">' + L('На стартовую', 'To start page') + '</a></div>';
     }
 
     function stripTags(html) {
@@ -190,14 +190,14 @@ const BrowserApp = (function () {
 
     function statusText(code) {
       switch (code) {
-        case 400: return 'Неверный запрос';
-        case 401: return 'Нужен вход';
-        case 403: return 'Доступ закрыт';
-        case 404: return 'Страница не найдена';
-        case 500: return 'Ошибка на сервере';
-        case 502: return 'Шлюз не отвечает';
-        case 503: return 'Служба недоступна';
-        default: return 'Ответ ' + code;
+        case 400: return L('Неверный запрос', 'Bad request');
+        case 401: return L('Нужен вход', 'Login required');
+        case 403: return L('Доступ закрыт', 'Access denied');
+        case 404: return L('Страница не найдена', 'Page not found');
+        case 500: return L('Ошибка на сервере', 'Server error');
+        case 502: return L('Шлюз не отвечает', 'Bad gateway');
+        case 503: return L('Служба недоступна', 'Service unavailable');
+        default: return L('Ответ ', 'Response ') + code;
       }
     }
 
@@ -206,7 +206,7 @@ const BrowserApp = (function () {
       st.loading = on;
       root.classList.toggle('loading', on);
       btnReload.innerHTML = Icons.get(on ? 'close' : 'reload', 16);
-      btnReload.title = on ? 'Остановить — Esc' : 'Обновить — F5';
+      btnReload.title = on ? L('Остановить — Esc', 'Stop — Esc') : L('Обновить — F5', 'Reload — F5');
     }
 
     function show(html, title, info) {
@@ -214,7 +214,7 @@ const BrowserApp = (function () {
       st.title = title || '';
       stTitle.textContent = st.title;
       stInfo.textContent = info || '';
-      Win.setTitle(st.title ? st.title : (st.url || 'Браузер'));
+      Win.setTitle(st.title ? st.title : (st.url || L('Браузер', 'Browser')));
     }
 
     async function load(url, push) {
@@ -230,24 +230,24 @@ const BrowserApp = (function () {
       updateNav();
       setLoading(true);
       stTitle.textContent = '';
-      stInfo.textContent = 'Соединение…';
+      stInfo.textContent = L('Соединение…', 'Connecting…');
       let res = null, err = null;
       try { res = await BW.web_get(url); }
       catch (e) { err = String(e); }
       if (seq !== st.seq) return;  // пришёл более новый запрос
       setLoading(false);
       if (err != null) {
-        show(errorPage(url, 'Нет ответа', err, ''), 'Нет ответа', 'ошибка');
+        show(errorPage(url, L('Нет ответа', 'No response'), err, ''), L('Нет ответа', 'No response'), L('ошибка', 'error'));
         BW.sound('error');
         return;
       }
       if (!res || typeof res !== 'object') {
-        show(errorPage(url, 'Нет ответа', 'Пустой ответ узла.', ''), 'Нет ответа', 'ошибка');
+        show(errorPage(url, L('Нет ответа', 'No response'), L('Пустой ответ узла.', 'Empty response from host.'), ''), L('Нет ответа', 'No response'), L('ошибка', 'error'));
         return;
       }
       if (res.status !== 200) {
         const text = statusText(res.status);
-        show(errorPage(url, text, res.title ? res.title : 'Узел ответил кодом ' + res.status + '.', stripTags(res.body)), text, String(res.status));
+        show(errorPage(url, text, res.title ? res.title : L('Узел ответил кодом ', 'Host responded with code ') + res.status + '.', stripTags(res.body)), text, String(res.status));
         return;
       }
       show(res.body || '', res.title || url, '200');
@@ -266,7 +266,7 @@ const BrowserApp = (function () {
 
     function goBack() { if (st.idx > 0) { st.idx--; load(st.hist[st.idx], false); } }
     function goFwd() { if (st.idx < st.hist.length - 1) { st.idx++; load(st.hist[st.idx], false); } }
-    function reload() { if (st.loading) { st.seq++; setLoading(false); stInfo.textContent = 'остановлено'; return; } if (st.url) load(st.url, false); }
+    function reload() { if (st.loading) { st.seq++; setLoading(false); stInfo.textContent = L('остановлено', 'stopped'); return; } if (st.url) load(st.url, false); }
     function goHome() { load(HOME, true); }
 
     // --- события ---
@@ -320,6 +320,6 @@ const BrowserApp = (function () {
 })();
 
 Apps.register('browser', {
-  title: 'Браузер', icon: 'browser', minWidth: 640, minHeight: 400,
+  title: L('Браузер', 'Browser'), icon: 'browser', minWidth: 640, minHeight: 400,
   mount: function (body, arg) { BrowserApp.mount(body, arg); }
 });

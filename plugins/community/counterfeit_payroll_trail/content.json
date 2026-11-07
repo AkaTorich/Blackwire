@@ -1,12 +1,15 @@
 {
   "name": "След фиктивной зарплаты",
+  "name_en": "Counterfeit Payroll Trail",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "payroll_audit",
   "file": "salary-adjustments.csv",
   "story": "Корректировки зарплаты бьются со счётом поставщика, который давно должны были закрыть.",
+  "story_en": "Payroll adjustments match a vendor account that should have been closed.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 195,
   "id": "counterfeit_payroll_trail",
   "number": 42,
@@ -22,8 +25,10 @@
       "service": "payroll_audit_gate",
       "port": 7123,
       "os": "След фиктивной зарплаты OS 1.0",
+      "os_en": "Counterfeit Payroll Trail OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Корректировки зарплаты бьются со счётом поставщика, который давно должны были закрыть.\nВладелец записи: counterfeit_payroll_trail.\nНомер дела: BW-042.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Payroll adjustments match a vendor account that should have been closed.\nRecord owner: counterfeit_payroll_trail.\nCase reference: BW-042.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_counterfeit_payroll_trail_1"
     },
@@ -36,8 +41,10 @@
       "service": "payroll_audit",
       "port": 7124,
       "os": "След фиктивной зарплаты OS 1.0",
+      "os_en": "Counterfeit Payroll Trail OS 1.0",
       "file": "/srv/records/salary-adjustments.csv",
       "text": "Корректировки зарплаты бьются со счётом поставщика, который давно должны были закрыть.\nВладелец записи: counterfeit_payroll_trail.\nНомер дела: BW-042.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Payroll adjustments match a vendor account that should have been closed.\nRecord owner: counterfeit_payroll_trail.\nCase reference: BW-042.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_counterfeit_payroll_trail_2"
     }

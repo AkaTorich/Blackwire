@@ -15,6 +15,24 @@ pub struct MarketItem {
     pub file: &'static str,
     pub desc: &'static str,
     pub code: &'static str,
+    pub name_en: &'static str,
+    pub desc_en: &'static str,
+    pub code_en: &'static str,
+}
+
+impl MarketItem {
+    /// Название на текущем языке.
+    pub fn name(&self) -> &'static str {
+        if crate::i18n::is_en() { self.name_en } else { self.name }
+    }
+    /// Описание на текущем языке.
+    pub fn desc(&self) -> &'static str {
+        if crate::i18n::is_en() { self.desc_en } else { self.desc }
+    }
+    /// Исходник скрипта на текущем языке (английский — те же строки кода, другие подписи).
+    pub fn script(&self) -> &'static str {
+        if crate::i18n::is_en() { self.code_en } else { self.code }
+    }
 }
 
 /// Состояние маркета (что куплено) — в мире.
@@ -24,34 +42,34 @@ pub struct MarketState {
 }
 
 pub const MARKET: &[MarketItem] = &[
-    MarketItem { id: "exp_integer_overflow", name: "Integer Wrap", price: 450, file: "exp_integer_overflow.adr", desc: "Размер выделения переполняет игровое целое число.", code: include_str!("hack/exploits/integer_overflow.adr") },
-    MarketItem { id: "exp_signedness", name: "Signed Step", price: 550, file: "exp_signedness.adr", desc: "Служба смешивает знаковый и беззнаковый индекс.", code: include_str!("hack/exploits/signedness.adr") },
-    MarketItem { id: "exp_length_confusion", name: "Byte Mirage", price: 650, file: "exp_length_confusion.adr", desc: "Разборщик путает число символов и число байтов UTF-8.", code: include_str!("hack/exploits/length_confusion.adr") },
-    MarketItem { id: "exp_use_after_free", name: "Heap Echo", price: 750, file: "exp_use_after_free.adr", desc: "Старая ссылка используется после освобождения объекта.", code: include_str!("hack/exploits/use_after_free.adr") },
-    MarketItem { id: "exp_double_free", name: "Free Loop", price: 850, file: "exp_double_free.adr", desc: "Повторное освобождение создаёт два указателя на один слот.", code: include_str!("hack/exploits/double_free.adr") },
-    MarketItem { id: "exp_type_confusion", name: "Type Shift", price: 950, file: "exp_type_confusion.adr", desc: "Число обрабатывается как адрес записи другого типа.", code: include_str!("hack/exploits/type_confusion.adr") },
-    MarketItem { id: "exp_object_reference", name: "Record Hopper", price: 1050, file: "exp_object_reference.adr", desc: "Проверяется вход пользователя, но не владелец записи.", code: include_str!("hack/exploits/object_reference.adr") },
-    MarketItem { id: "exp_mass_assignment", name: "Field Flood", price: 450, file: "exp_mass_assignment.adr", desc: "Проверенные поля и скрытые свойства применяются раздельно.", code: include_str!("hack/exploits/mass_assignment.adr") },
-    MarketItem { id: "exp_token_confusion", name: "Token Switch", price: 550, file: "exp_token_confusion.adr", desc: "Служба путает издателя и получателя игрового токена.", code: include_str!("hack/exploits/token_confusion.adr") },
-    MarketItem { id: "exp_request_smuggling", name: "Request Split", price: 650, file: "exp_request_smuggling.adr", desc: "Два игровых разборщика видят разные границы запроса.", code: include_str!("hack/exploits/request_smuggling.adr") },
-    MarketItem { id: "exp_cache_poisoning", name: "Cache Ghost", price: 750, file: "exp_cache_poisoning.adr", desc: "Ключ общего кеша не учитывает имя хоста.", code: include_str!("hack/exploits/cache_poisoning.adr") },
-    MarketItem { id: "exp_header_injection", name: "Header Break", price: 850, file: "exp_header_injection.adr", desc: "Управляющие символы внутри значения создают дополнительные заголовки.", code: include_str!("hack/exploits/header_injection.adr") },
-    MarketItem { id: "exp_unsafe_deserialization", name: "Object Restore", price: 950, file: "exp_unsafe_deserialization.adr", desc: "Восстановление виртуального объекта вызывает небезопасный hook.", code: include_str!("hack/exploits/unsafe_deserialization.adr") },
-    MarketItem { id: "exp_prototype_pollution", name: "Prototype Drift", price: 1050, file: "exp_prototype_pollution.adr", desc: "Объект наследует флаг из игрового прототипа.", code: include_str!("hack/exploits/prototype_pollution.adr") },
-    MarketItem { id: "exp_template_injection", name: "Template Forge", price: 450, file: "exp_template_injection.adr", desc: "Игровой шаблон вычисляет выражение в служебном контексте.", code: include_str!("hack/exploits/template_injection.adr") },
-    MarketItem { id: "exp_xml_entity", name: "Entity Reader", price: 550, file: "exp_xml_entity.adr", desc: "Игровая XML-служба разрешает внешнюю сущность как путь к файлу.", code: include_str!("hack/exploits/xml_entity.adr") },
-    MarketItem { id: "exp_regex_backtracking", name: "Pattern Storm", price: 650, file: "exp_regex_backtracking.adr", desc: "Неудачное совпадение раскрывает диагностический режим службы.", code: include_str!("hack/exploits/regex_backtracking.adr") },
-    MarketItem { id: "exp_fragment_overlap", name: "Fragment Stitch", price: 750, file: "exp_fragment_overlap.adr", desc: "Фрагменты с перекрытием дают разные сообщения двум сборщикам.", code: include_str!("hack/exploits/fragment_overlap.adr") },
-    MarketItem { id: "exp_weak_rng", name: "Seed Oracle", price: 850, file: "exp_weak_rng.adr", desc: "Игровые токены создаёт слабый линейный генератор.", code: include_str!("hack/exploits/weak_rng.adr") },
-    MarketItem { id: "exp_permission_mask", name: "Mask Lift", price: 950, file: "exp_permission_mask.adr", desc: "Проверка видит только младшие биты, применение — всю маску.", code: include_str!("hack/exploits/permission_mask.adr") },
-    MarketItem { id: "exp_overflow", name: "Buffer Forge", price: 550, file: "exp_overflow.adr", desc: "переполнение буфера; вычисляет размер кадра и адрес входа", code: include_str!("hack/exploits/overflow.adr") },
-    MarketItem { id: "exp_traversal", name: "Path Walker", price: 300, file: "exp_traversal.adr", desc: "обход виртуальных путей к файлу уязвимой службы", code: include_str!("hack/exploits/traversal.adr") },
-    MarketItem { id: "exp_auth_replay", name: "Challenge Replay", price: 450, file: "exp_auth_replay.adr", desc: "игровой повтор авторизации по слабой контрольной сумме", code: include_str!("hack/exploits/auth_replay.adr") },
-    MarketItem { id: "exp_query", name: "Vault Query", price: 500, file: "exp_query.adr", desc: "обход фильтра в запросах игровой базы", code: include_str!("hack/exploits/query.adr") },
-    MarketItem { id: "exp_format", name: "Stack Reader", price: 400, file: "exp_format.adr", desc: "чтение записи через ошибку формата", code: include_str!("hack/exploits/format.adr") },
-    MarketItem { id: "exp_protocol", name: "Protocol Weaver", price: 350, file: "exp_protocol.adr", desc: "составляет кадры протокола в нужном порядке", code: include_str!("hack/exploits/protocol.adr") },
-    MarketItem { id: "exp_race", name: "Race Runner", price: 700, file: "exp_race.adr", desc: "локальные и удалённые гонки проверки и использования", code: include_str!("hack/exploits/race.adr") },
-    MarketItem { id: "exp_command_chain", name: "Command Stitch", price: 600, file: "exp_command_chain.adr", desc: "цепочки команд уязвимого игрового разборщика", code: include_str!("hack/exploits/command_chain.adr") },
+    MarketItem { id: "exp_integer_overflow", name: "Integer Wrap", price: 450, file: "exp_integer_overflow.adr", desc: "Размер выделения переполняет игровое целое число.", code: include_str!("hack/exploits/integer_overflow.adr"), name_en: "Integer Wrap", desc_en: "The allocation size overflows a game integer.", code_en: include_str!("hack/exploits/en/integer_overflow.adr") },
+    MarketItem { id: "exp_signedness", name: "Signed Step", price: 550, file: "exp_signedness.adr", desc: "Служба смешивает знаковый и беззнаковый индекс.", code: include_str!("hack/exploits/signedness.adr"), name_en: "Signed Step", desc_en: "The service mixes signed and unsigned indexes.", code_en: include_str!("hack/exploits/en/signedness.adr") },
+    MarketItem { id: "exp_length_confusion", name: "Byte Mirage", price: 650, file: "exp_length_confusion.adr", desc: "Разборщик путает число символов и число байтов UTF-8.", code: include_str!("hack/exploits/length_confusion.adr"), name_en: "Byte Mirage", desc_en: "The parser confuses character count with UTF-8 byte count.", code_en: include_str!("hack/exploits/en/length_confusion.adr") },
+    MarketItem { id: "exp_use_after_free", name: "Heap Echo", price: 750, file: "exp_use_after_free.adr", desc: "Старая ссылка используется после освобождения объекта.", code: include_str!("hack/exploits/use_after_free.adr"), name_en: "Heap Echo", desc_en: "A stale reference is used after the object is freed.", code_en: include_str!("hack/exploits/en/use_after_free.adr") },
+    MarketItem { id: "exp_double_free", name: "Free Loop", price: 850, file: "exp_double_free.adr", desc: "Повторное освобождение создаёт два указателя на один слот.", code: include_str!("hack/exploits/double_free.adr"), name_en: "Free Loop", desc_en: "A double free creates two pointers to one slot.", code_en: include_str!("hack/exploits/en/double_free.adr") },
+    MarketItem { id: "exp_type_confusion", name: "Type Shift", price: 950, file: "exp_type_confusion.adr", desc: "Число обрабатывается как адрес записи другого типа.", code: include_str!("hack/exploits/type_confusion.adr"), name_en: "Type Shift", desc_en: "A number is treated as the address of a record of another type.", code_en: include_str!("hack/exploits/en/type_confusion.adr") },
+    MarketItem { id: "exp_object_reference", name: "Record Hopper", price: 1050, file: "exp_object_reference.adr", desc: "Проверяется вход пользователя, но не владелец записи.", code: include_str!("hack/exploits/object_reference.adr"), name_en: "Record Hopper", desc_en: "The user's login is checked, but not the record's owner.", code_en: include_str!("hack/exploits/en/object_reference.adr") },
+    MarketItem { id: "exp_mass_assignment", name: "Field Flood", price: 450, file: "exp_mass_assignment.adr", desc: "Проверенные поля и скрытые свойства применяются раздельно.", code: include_str!("hack/exploits/mass_assignment.adr"), name_en: "Field Flood", desc_en: "Validated fields and hidden properties are applied separately.", code_en: include_str!("hack/exploits/en/mass_assignment.adr") },
+    MarketItem { id: "exp_token_confusion", name: "Token Switch", price: 550, file: "exp_token_confusion.adr", desc: "Служба путает издателя и получателя игрового токена.", code: include_str!("hack/exploits/token_confusion.adr"), name_en: "Token Switch", desc_en: "The service confuses the issuer and audience of a game token.", code_en: include_str!("hack/exploits/en/token_confusion.adr") },
+    MarketItem { id: "exp_request_smuggling", name: "Request Split", price: 650, file: "exp_request_smuggling.adr", desc: "Два игровых разборщика видят разные границы запроса.", code: include_str!("hack/exploits/request_smuggling.adr"), name_en: "Request Split", desc_en: "Two game parsers see different request boundaries.", code_en: include_str!("hack/exploits/en/request_smuggling.adr") },
+    MarketItem { id: "exp_cache_poisoning", name: "Cache Ghost", price: 750, file: "exp_cache_poisoning.adr", desc: "Ключ общего кеша не учитывает имя хоста.", code: include_str!("hack/exploits/cache_poisoning.adr"), name_en: "Cache Ghost", desc_en: "The shared cache key ignores the host name.", code_en: include_str!("hack/exploits/en/cache_poisoning.adr") },
+    MarketItem { id: "exp_header_injection", name: "Header Break", price: 850, file: "exp_header_injection.adr", desc: "Управляющие символы внутри значения создают дополнительные заголовки.", code: include_str!("hack/exploits/header_injection.adr"), name_en: "Header Break", desc_en: "Control characters inside a value create extra headers.", code_en: include_str!("hack/exploits/en/header_injection.adr") },
+    MarketItem { id: "exp_unsafe_deserialization", name: "Object Restore", price: 950, file: "exp_unsafe_deserialization.adr", desc: "Восстановление виртуального объекта вызывает небезопасный hook.", code: include_str!("hack/exploits/unsafe_deserialization.adr"), name_en: "Object Restore", desc_en: "Restoring a virtual object calls an unsafe hook.", code_en: include_str!("hack/exploits/en/unsafe_deserialization.adr") },
+    MarketItem { id: "exp_prototype_pollution", name: "Prototype Drift", price: 1050, file: "exp_prototype_pollution.adr", desc: "Объект наследует флаг из игрового прототипа.", code: include_str!("hack/exploits/prototype_pollution.adr"), name_en: "Prototype Drift", desc_en: "The object inherits a flag from the game prototype.", code_en: include_str!("hack/exploits/en/prototype_pollution.adr") },
+    MarketItem { id: "exp_template_injection", name: "Template Forge", price: 450, file: "exp_template_injection.adr", desc: "Игровой шаблон вычисляет выражение в служебном контексте.", code: include_str!("hack/exploits/template_injection.adr"), name_en: "Template Forge", desc_en: "A game template evaluates an expression in a service context.", code_en: include_str!("hack/exploits/en/template_injection.adr") },
+    MarketItem { id: "exp_xml_entity", name: "Entity Reader", price: 550, file: "exp_xml_entity.adr", desc: "Игровая XML-служба разрешает внешнюю сущность как путь к файлу.", code: include_str!("hack/exploits/xml_entity.adr"), name_en: "Entity Reader", desc_en: "A game XML service resolves an external entity as a file path.", code_en: include_str!("hack/exploits/en/xml_entity.adr") },
+    MarketItem { id: "exp_regex_backtracking", name: "Pattern Storm", price: 650, file: "exp_regex_backtracking.adr", desc: "Неудачное совпадение раскрывает диагностический режим службы.", code: include_str!("hack/exploits/regex_backtracking.adr"), name_en: "Pattern Storm", desc_en: "A failed match exposes the service's diagnostic mode.", code_en: include_str!("hack/exploits/en/regex_backtracking.adr") },
+    MarketItem { id: "exp_fragment_overlap", name: "Fragment Stitch", price: 750, file: "exp_fragment_overlap.adr", desc: "Фрагменты с перекрытием дают разные сообщения двум сборщикам.", code: include_str!("hack/exploits/fragment_overlap.adr"), name_en: "Fragment Stitch", desc_en: "Overlapping fragments give two reassemblers different messages.", code_en: include_str!("hack/exploits/en/fragment_overlap.adr") },
+    MarketItem { id: "exp_weak_rng", name: "Seed Oracle", price: 850, file: "exp_weak_rng.adr", desc: "Игровые токены создаёт слабый линейный генератор.", code: include_str!("hack/exploits/weak_rng.adr"), name_en: "Seed Oracle", desc_en: "Game tokens come from a weak linear generator.", code_en: include_str!("hack/exploits/en/weak_rng.adr") },
+    MarketItem { id: "exp_permission_mask", name: "Mask Lift", price: 950, file: "exp_permission_mask.adr", desc: "Проверка видит только младшие биты, применение — всю маску.", code: include_str!("hack/exploits/permission_mask.adr"), name_en: "Mask Lift", desc_en: "The check sees only the low bits, the apply step sees the whole mask.", code_en: include_str!("hack/exploits/en/permission_mask.adr") },
+    MarketItem { id: "exp_overflow", name: "Buffer Forge", price: 550, file: "exp_overflow.adr", desc: "переполнение буфера; вычисляет размер кадра и адрес входа", code: include_str!("hack/exploits/overflow.adr"), name_en: "Buffer Forge", desc_en: "buffer overflow; computes the frame size and entry address", code_en: include_str!("hack/exploits/en/overflow.adr") },
+    MarketItem { id: "exp_traversal", name: "Path Walker", price: 300, file: "exp_traversal.adr", desc: "обход виртуальных путей к файлу уязвимой службы", code: include_str!("hack/exploits/traversal.adr"), name_en: "Path Walker", desc_en: "virtual path traversal to a vulnerable service's file", code_en: include_str!("hack/exploits/en/traversal.adr") },
+    MarketItem { id: "exp_auth_replay", name: "Challenge Replay", price: 450, file: "exp_auth_replay.adr", desc: "игровой повтор авторизации по слабой контрольной сумме", code: include_str!("hack/exploits/auth_replay.adr"), name_en: "Challenge Replay", desc_en: "game auth replay through a weak checksum", code_en: include_str!("hack/exploits/en/auth_replay.adr") },
+    MarketItem { id: "exp_query", name: "Vault Query", price: 500, file: "exp_query.adr", desc: "обход фильтра в запросах игровой базы", code: include_str!("hack/exploits/query.adr"), name_en: "Vault Query", desc_en: "filter bypass in game database queries", code_en: include_str!("hack/exploits/en/query.adr") },
+    MarketItem { id: "exp_format", name: "Stack Reader", price: 400, file: "exp_format.adr", desc: "чтение записи через ошибку формата", code: include_str!("hack/exploits/format.adr"), name_en: "Stack Reader", desc_en: "reads a record through a format string bug", code_en: include_str!("hack/exploits/en/format.adr") },
+    MarketItem { id: "exp_protocol", name: "Protocol Weaver", price: 350, file: "exp_protocol.adr", desc: "составляет кадры протокола в нужном порядке", code: include_str!("hack/exploits/protocol.adr"), name_en: "Protocol Weaver", desc_en: "builds protocol frames in the right order", code_en: include_str!("hack/exploits/en/protocol.adr") },
+    MarketItem { id: "exp_race", name: "Race Runner", price: 700, file: "exp_race.adr", desc: "локальные и удалённые гонки проверки и использования", code: include_str!("hack/exploits/race.adr"), name_en: "Race Runner", desc_en: "local and remote check-then-use races", code_en: include_str!("hack/exploits/en/race.adr") },
+    MarketItem { id: "exp_command_chain", name: "Command Stitch", price: 600, file: "exp_command_chain.adr", desc: "цепочки команд уязвимого игрового разборщика", code: include_str!("hack/exploits/command_chain.adr"), name_en: "Command Stitch", desc_en: "command chains for a vulnerable game parser", code_en: include_str!("hack/exploits/en/command_chain.adr") },
     MarketItem {
         id: "netscan",
         name: "Сканер сети",
@@ -59,12 +77,15 @@ pub const MARKET: &[MarketItem] = &[
         file: "netscan.adr",
         desc: "проверяет адреса на ssh и слабые места",
         code: NETSCAN,
+        name_en: "Network Scanner",
+        desc_en: "checks addresses for ssh and weak spots",
+        code_en: NETSCAN_EN,
     },
-    MarketItem { id: "sweep", name: "Обходчик", price: 120, file: "sweep.adr", desc: "пингует все узлы из /etc/hosts", code: SWEEP },
-    MarketItem { id: "autocrack", name: "Автоподбор", price: 350, file: "autocrack.adr", desc: "подбирает пароль и сразу входит", code: AUTOCRACK },
-    MarketItem { id: "cleaner", name: "Чистильщик следов", price: 200, file: "cleaner.adr", desc: "убирает следы на текущей машине", code: CLEANER },
-    MarketItem { id: "loot", name: "Сборщик добычи", price: 250, file: "loot.adr", desc: "показывает интересные файлы машины", code: LOOT },
-    MarketItem { id: "botctl", name: "Вербовщик", price: 400, file: "botctl.adr", desc: "ставит кейлоггер и берёт машину в ботнет", code: BOTCTL },
+    MarketItem { id: "sweep", name: "Обходчик", price: 120, file: "sweep.adr", desc: "пингует все узлы из /etc/hosts", code: SWEEP, name_en: "Sweeper", desc_en: "pings every host in /etc/hosts", code_en: SWEEP_EN },
+    MarketItem { id: "autocrack", name: "Автоподбор", price: 350, file: "autocrack.adr", desc: "подбирает пароль и сразу входит", code: AUTOCRACK, name_en: "Autocrack", desc_en: "cracks the password and logs right in", code_en: AUTOCRACK_EN },
+    MarketItem { id: "cleaner", name: "Чистильщик следов", price: 200, file: "cleaner.adr", desc: "убирает следы на текущей машине", code: CLEANER, name_en: "Track Cleaner", desc_en: "wipes your tracks on the current machine", code_en: CLEANER_EN },
+    MarketItem { id: "loot", name: "Сборщик добычи", price: 250, file: "loot.adr", desc: "показывает интересные файлы машины", code: LOOT, name_en: "Loot Collector", desc_en: "shows the machine's interesting files", code_en: LOOT_EN },
+    MarketItem { id: "botctl", name: "Вербовщик", price: 400, file: "botctl.adr", desc: "ставит кейлоггер и берёт машину в ботнет", code: BOTCTL, name_en: "Recruiter", desc_en: "plants a keylogger and adds the machine to the botnet", code_en: BOTCTL_EN },
 ];
 
 // Скрипты хранятся «сырыми» строками, чтобы сохранялись отступы Adder.
@@ -151,6 +172,90 @@ r2 = shell.exec("botnet add " + ip)
 print(r2["out"])
 "##;
 
+// Английские двойники скриптов: код тот же, переведены комментарии и печатаемый текст.
+const NETSCAN_EN: &str = r##"# Scanner: checks addresses for open ssh and weak spots
+targets = sys.args[1:]
+if not targets:
+    print("Usage: netscan.adr address [address ...]")
+    exit(1)
+for ip in targets:
+    ms = net.ping(ip)
+    if ms == null:
+        print(f"{ip} unreachable")
+        continue
+    ports = net.scan(ip)
+    ssh = [p for p in ports if p["service"] == "ssh"]
+    vulns = net.vulns(ip)
+    mark = "yes" if ssh else "no"
+    print(f"{ip}: ports {len(ports)}, ssh {mark}, weak spots {len(vulns)}")
+"##;
+
+const SWEEP_EN: &str = r##"# Sweeper: pings every known host in /etc/hosts
+hosts = fs.read("/etc/hosts")
+for line in hosts.split("\n"):
+    line = line.strip()
+    if line == "" or line.startswith("#"):
+        continue
+    ip = line.split()[0]
+    ms = net.ping(ip)
+    mark = "up" if ms != null else "down"
+    print(f"{ip:16} {mark}")
+"##;
+
+const AUTOCRACK_EN: &str = r##"# Autocrack: cracks a password with the wordlist and logs in
+if len(sys.args) < 3:
+    print("Usage: autocrack.adr address user")
+    exit(1)
+ip = sys.args[1]
+user = sys.args[2]
+pw = net.crack(ip, user)
+if pw == null:
+    print("Password not cracked")
+    exit(1)
+print(f"Password: {pw}")
+if net.connect(ip, user, pw):
+    print(f"Logged in: {user}@{ip}")
+else:
+    print("Login failed")
+"##;
+
+const CLEANER_EN: &str = r##"# Cleaner: wipes your tracks on the current machine
+n = net.clear_logs()
+if n < 0:
+    print("Permission denied — root required")
+else:
+    print(f"Entries removed: {n}")
+"##;
+
+const LOOT_EN: &str = r##"# Loot collector: finds interesting files and shows their first line
+roots = ["/root", "/home", "/var"]
+found = 0
+for root in roots:
+    try:
+        items = fs.list(root)
+    except:
+        continue
+    for f in items:
+        name = f["name"]
+        if name.endswith(".txt") or name.endswith(".log") or name.endswith(".csv"):
+            try:
+                data = fs.read(f["path"])
+                first = data.split("\n")[0]
+                print(f"{f['path']}: {first}")
+                found = found + 1
+            except:
+                pass
+print(f"Files found: {found}")
+"##;
+
+const BOTCTL_EN: &str = r##"# Recruiter: plants a keylogger and adds the machine to the botnet
+ip = sys.args[1] if len(sys.args) > 1 else net.my_ip()
+r1 = shell.exec("keylog plant " + ip)
+print(r1["out"])
+r2 = shell.exec("botnet add " + ip)
+print(r2["out"])
+"##;
+
 pub fn item(id: &str) -> Option<&'static MarketItem> {
     MARKET.iter().find(|i| i.id == id)
 }
@@ -158,23 +263,23 @@ pub fn item(id: &str) -> Option<&'static MarketItem> {
 /// Купить скрипт: списать ₵ и положить файл в `~/scripts`.
 pub fn buy(world: &mut World, id: &str) -> Result<String, String> {
     if let Some(result)=crate::plugins::catalog::buy(world,"market",id){return result;}
-    let it = item(id).ok_or_else(|| format!("нет такого скрипта: {}", id))?;
+    let it = item(id).ok_or_else(|| trf!("нет такого скрипта: {}", "no such script: {}", id))?;
     if world.market.bought.contains(id) {
         // Edited purchased sources belong to the player; never overwrite them.
         let path = format!("{}/scripts/{}", world.machines[0].users.home_of(&world.player.handle), it.file);
         if world.machines[0].fs.exists(&path) {
-            return Ok(format!("{} уже куплен: ~/scripts/{}. Исходник можно открыть в редакторе.", it.name, it.file));
+            return Ok(trf!("{} уже куплен: ~/scripts/{}. Исходник можно открыть в редакторе.", "{} already owned: ~/scripts/{}. You can open the source in the editor.", it.name(), it.file));
         }
         write_script(world, it)?;
-        return Ok(format!("{} уже куплен — восстановлен в ~/scripts/{}", it.name, it.file));
+        return Ok(trf!("{} уже куплен — восстановлен в ~/scripts/{}", "{} already owned — restored to ~/scripts/{}", it.name(), it.file));
     }
     if world.player.money < it.price {
-        return Err(format!("не хватает: нужно {} ₵, есть {} ₵", it.price, world.player.money));
+        return Err(trf!("не хватает: нужно {} ₵, есть {} ₵", "not enough: need {} ₵, have {} ₵", it.price, world.player.money));
     }
     write_script(world, it)?;
     world.player.money -= it.price;
     world.market.bought.insert(id.to_string());
-    Ok(format!("Куплено: {} (−{} ₵) → ~/scripts/{}. Запуск: adder ~/scripts/{} адрес id. Купленные инструменты доступны и в SSH-цепочке.", it.name, it.price, it.file, it.file))
+    Ok(trf!("Куплено: {} (−{} ₵) → ~/scripts/{}. Запуск: adder ~/scripts/{} адрес id. Купленные инструменты доступны и в SSH-цепочке.", "Bought: {} (−{} ₵) → ~/scripts/{}. Run: adder ~/scripts/{} address id. Bought tools also work through the SSH chain.", it.name(), it.price, it.file, it.file))
 }
 
 fn write_script(world: &mut World, it: &MarketItem) -> Result<(), String> {
@@ -183,21 +288,24 @@ fn write_script(world: &mut World, it: &MarketItem) -> Result<(), String> {
     let dir = format!("{}/scripts", home);
     world.machines[0].fs.mkdir_all(&dir, &handle).map_err(|e| e.to_string())?;
     let path = format!("{}/{}", dir, it.file);
-    if world.machines[0].fs.exists(&path) { return Err(format!("Файл {} уже существует; переименуй его перед покупкой.", path)); }
-    world.machines[0].fs.write_text(&path, it.code, &handle).map_err(|e| e.to_string())?;
+    if world.machines[0].fs.exists(&path) { return Err(trf!("Файл {} уже существует; переименуй его перед покупкой.", "File {} already exists; rename it before buying.", path)); }
+    world.machines[0].fs.write_text(&path, it.script(), &handle).map_err(|e| e.to_string())?;
     world.machines[0].fs.set_mode(&path, 0o755).map_err(|e| e.to_string())?;
     Ok(())
 }
 
 /// Страница маркета (HTML) — узлы `gate.hw/market` и `market.hw`.
 pub fn market_html(world: &World) -> String {
-    let mut s = String::from("<header><h1>Маркет</h1></header><nav><a href=\"/board\">Доска</a> <a href=\"/shop\">Барахолка</a></nav><main>");
-    s.push_str(&format!("<p>На счету: <b>{} ₵</b></p><p><small>Купить в терминале: <code>market buy id</code>. Скрипт ляжет в ~/scripts.</small></p><ul>", world.player.money));
-    s.push_str("<p><b>Собственные эксплоиты:</b> <code>probe адрес</code> → <code>research адрес id</code> → <code>exploit new ~/scripts/my_exploit.adr адрес id</code>. Подсказки доступны через <code>research -h 3 адрес id</code>. Купленный эксплоит можно редактировать; он проверяет совместимость и не обходит защиту цели.</p>");
+    let mut s = String::from(tr!("<header><h1>Маркет</h1></header><nav><a href=\"/board\">Доска</a> <a href=\"/shop\">Барахолка</a></nav><main>",
+        "<header><h1>Market</h1></header><nav><a href=\"/board\">Board</a> <a href=\"/shop\">Flea market</a></nav><main>"));
+    s.push_str(&trf!("<p>На счету: <b>{} ₵</b></p><p><small>Купить в терминале: <code>market buy id</code>. Скрипт ляжет в ~/scripts.</small></p><ul>",
+        "<p>Balance: <b>{} ₵</b></p><p><small>Buy in the terminal: <code>market buy id</code>. The script goes to ~/scripts.</small></p><ul>", world.player.money));
+    s.push_str(tr!("<p><b>Собственные эксплоиты:</b> <code>probe адрес</code> → <code>research адрес id</code> → <code>exploit new ~/scripts/my_exploit.adr адрес id</code>. Подсказки доступны через <code>research -h 3 адрес id</code>. Купленный эксплоит можно редактировать; он проверяет совместимость и не обходит защиту цели.</p>",
+        "<p><b>Your own exploits:</b> <code>probe address</code> → <code>research address id</code> → <code>exploit new ~/scripts/my_exploit.adr address id</code>. Hints: <code>research -h 3 address id</code>. A bought exploit can be edited; it checks compatibility and does not bypass the target's defenses.</p>"));
     for it in MARKET {
         let owned = world.market.bought.contains(it.id);
-        let mark = if owned { " — <i>куплено</i>" } else { "" };
-        s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name, it.id, it.price, it.desc, mark));
+        let mark = if owned { tr!(" — <i>куплено</i>", " — <i>owned</i>") } else { "" };
+        s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name(), it.id, it.price, it.desc(), mark));
     }
     s.push_str(&crate::plugins::catalog::html(world,"market"));
     s.push_str("</ul></main>");

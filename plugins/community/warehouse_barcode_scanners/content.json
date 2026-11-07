@@ -1,11 +1,14 @@
 {
   "name": "Сканеры штрихкодов на складе",
+  "name_en": "Warehouse Barcode Scanners",
   "family": "device",
   "kind": "workstation",
   "service": "stock_sync",
   "file": "scans.csv",
   "story": "Паллета CR-204 оказалась у погрузки без сканирования на выдачу.",
+  "story_en": "Pallet CR-204 moved to a loading dock without an outbound scan.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 80,
   "id": "warehouse_barcode_scanners",
   "number": 6,
@@ -21,8 +24,10 @@
       "service": "stock_sync",
       "port": 7015,
       "os": "Сканеры штрихкодов на складе OS 1.0",
+      "os_en": "Warehouse Barcode Scanners OS 1.0",
       "file": "/srv/records/scans.csv",
       "text": "Паллета CR-204 оказалась у погрузки без сканирования на выдачу.\nВладелец записи: warehouse_barcode_scanners.\nНомер дела: BW-006.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Pallet CR-204 moved to a loading dock without an outbound scan.\nRecord owner: warehouse_barcode_scanners.\nCase reference: BW-006.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_warehouse_barcode_scanners_1"
     }

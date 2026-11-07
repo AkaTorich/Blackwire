@@ -1,12 +1,15 @@
 {
   "name": "Утечка в ротации резервных копий",
+  "name_en": "Rolling Backup Leak",
   "family": "event",
   "kind": "file_server",
   "service": "backup_sync",
   "file": "backup-rotation.csv",
   "story": "Ротационный резерв показывает устаревший манифест до того, как его перезапишут.",
+  "story_en": "A rotating backup exposes an obsolete manifest before a new snapshot replaces it.",
   "mode": "rotate",
   "objective": "Поймать запись инцидента и пройти по его таймлайну.",
+  "objective_en": "Recover the incident record and follow the timed incident log.",
   "reward": 108,
   "id": "rolling_backup_leak",
   "number": 92,
@@ -22,8 +25,10 @@
       "service": "backup_sync",
       "port": 7273,
       "os": "Утечка в ротации резервных копий OS 1.0",
+      "os_en": "Rolling Backup Leak OS 1.0",
       "file": "/srv/records/backup-rotation.csv",
       "text": "Ротационный резерв показывает устаревший манифест до того, как его перезапишут.\nВладелец записи: rolling_backup_leak.\nНомер дела: BW-092.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A rotating backup exposes an obsolete manifest before a new snapshot replaces it.\nRecord owner: rolling_backup_leak.\nCase reference: BW-092.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_rolling_backup_leak_1"
     }

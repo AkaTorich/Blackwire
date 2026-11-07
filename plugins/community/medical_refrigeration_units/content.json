@@ -1,11 +1,14 @@
 {
   "name": "Медицинские холодильники",
+  "name_en": "Medical Refrigeration Units",
   "family": "device",
   "kind": "medical_device",
   "service": "cold_chain",
   "file": "temperatures.csv",
   "story": "Ночную тревогу по температуре квитировали ещё до того, как она сработала.",
+  "story_en": "The overnight temperature alarm was acknowledged before it was raised.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 124,
   "id": "medical_refrigeration_units",
   "number": 17,
@@ -21,8 +24,10 @@
       "service": "cold_chain",
       "port": 7048,
       "os": "Медицинские холодильники OS 1.0",
+      "os_en": "Medical Refrigeration Units OS 1.0",
       "file": "/srv/records/temperatures.csv",
       "text": "Ночную тревогу по температуре квитировали ещё до того, как она сработала.\nВладелец записи: medical_refrigeration_units.\nНомер дела: BW-017.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The overnight temperature alarm was acknowledged before it was raised.\nRecord owner: medical_refrigeration_units.\nCase reference: BW-017.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_medical_refrigeration_units_1"
     }

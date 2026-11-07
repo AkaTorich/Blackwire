@@ -1,6 +1,7 @@
 {
   "id": "solar_inverters",
   "name": "Солнечные инверторы",
+  "name_en": "Solar Inverters",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

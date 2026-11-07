@@ -40,14 +40,14 @@ pub enum FsError {
 impl fmt::Display for FsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            FsError::NotFound(p) => write!(f, "нет такого файла или каталога: {}", p),
-            FsError::NotDir(p) => write!(f, "не каталог: {}", p),
-            FsError::IsDir(p) => write!(f, "это каталог: {}", p),
-            FsError::Denied(p) => write!(f, "отказано в доступе: {}", p),
-            FsError::Exists(p) => write!(f, "уже существует: {}", p),
-            FsError::NotEmpty(p) => write!(f, "каталог не пуст: {}", p),
-            FsError::Invalid(p) => write!(f, "недопустимая операция: {}", p),
-            FsError::Binary(p) => write!(f, "двоичный файл: {}", p),
+            FsError::NotFound(p) => write!(f, "{}", trf!("нет такого файла или каталога: {}", "no such file or directory: {}", p)),
+            FsError::NotDir(p) => write!(f, "{}", trf!("не каталог: {}", "not a directory: {}", p)),
+            FsError::IsDir(p) => write!(f, "{}", trf!("это каталог: {}", "is a directory: {}", p)),
+            FsError::Denied(p) => write!(f, "{}", trf!("отказано в доступе: {}", "permission denied: {}", p)),
+            FsError::Exists(p) => write!(f, "{}", trf!("уже существует: {}", "already exists: {}", p)),
+            FsError::NotEmpty(p) => write!(f, "{}", trf!("каталог не пуст: {}", "directory not empty: {}", p)),
+            FsError::Invalid(p) => write!(f, "{}", trf!("недопустимая операция: {}", "invalid operation: {}", p)),
+            FsError::Binary(p) => write!(f, "{}", trf!("двоичный файл: {}", "binary file: {}", p)),
         }
     }
 }
@@ -549,7 +549,7 @@ impl Vfs {
     pub fn remove(&mut self, path: &str, who: &str, recursive: bool) -> Result<(), FsError> {
         let p = normalize(path);
         if p == "/" {
-            return Err(FsError::Invalid("нельзя удалить корень".to_string()));
+            return Err(FsError::Invalid(tr!("нельзя удалить корень", "cannot remove root").to_string()));
         }
         self.check_traverse(&p, who)?;
         let n = self.node(&p)?;
@@ -573,7 +573,7 @@ impl Vfs {
     fn take(&mut self, path: &str, who: &str) -> Result<(Node, String), FsError> {
         let p = normalize(path);
         if p == "/" {
-            return Err(FsError::Invalid("нельзя переместить корень".to_string()));
+            return Err(FsError::Invalid(tr!("нельзя переместить корень", "cannot move root").to_string()));
         }
         self.check_traverse(&p, who)?;
         self.node(&p)?;
@@ -623,7 +623,7 @@ impl Vfs {
             return Ok(t);
         }
         if t.starts_with(&format!("{}/", f)) {
-            return Err(FsError::Invalid(format!("нельзя переместить {} внутрь самого себя", f)));
+            return Err(FsError::Invalid(trf!("нельзя переместить {} внутрь самого себя", "cannot move {} into itself", f)));
         }
         let (node, name) = self.take(&f, who)?;
         match self.put(&t, &name, node.clone(), who) {
@@ -653,7 +653,7 @@ impl Vfs {
         let mut node = src.clone();
         let t = normalize(to);
         if t.starts_with(&format!("{}/", f)) {
-            return Err(FsError::Invalid(format!("нельзя скопировать {} внутрь самого себя", f)));
+            return Err(FsError::Invalid(trf!("нельзя скопировать {} внутрь самого себя", "cannot copy {} into itself", f)));
         }
         node.meta.owner = who.to_string();
         self.put(&t, &basename(&f), node, who)

@@ -1,7 +1,15 @@
 # Полный пример: сеть организации, устройства, сайт, задание, магазин, маркет и окно.
+# A full example: an organisation network, devices, a website, a mission, the shop, the market and a window.
+
+# Строка на языке игры. / A string in the game language.
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
 def panel():
     n = plugin.get("districts", 0)
-    plugin.window("control", {"title": "Район Линия-7", "text": "Каждое нажатие создаёт новую сеть организации: шлюз и сервер с собственной службой и уязвимостью.", "rows": [["Создано районов", n], ["Вход в сервер", "через шлюз организации"]], "buttons": [{"id": "create", "label": "Создать район"}, {"id": "status", "label": "Проверить задания"}]})
+    plugin.window("control", {"title": tr("Район Линия-7", "Line-7 District"), "text": tr("Каждое нажатие создаёт новую сеть организации: шлюз и сервер с собственной службой и уязвимостью.", "Each click creates a new organisation network: a gateway and a server with their own service and vulnerability."), "rows": [[tr("Создано районов", "Districts created"), n], [tr("Вход в сервер", "Server access"), tr("через шлюз организации", "via the organisation gateway")]], "buttons": [{"id": "create", "label": tr("Создать район", "Create district")}, {"id": "status", "label": tr("Проверить задания", "Check missions")}]})
 
 def load(event):
     gateway = plugin.template("gateway")
@@ -23,9 +31,9 @@ def load(event):
     server["services"] = [{"port": 7777, "name": "line_archive", "version": "2.0", "running": true, "banner": "Line archive", "pages": []}]
     kind = plugin.device_type("archive", server)
     plugin.vulnerability("archive_leak", {"device_type": kind, "service": "line_archive", "version_prefix": "2.", "access": "root", "handler": "archive_effect"})
-    plugin.catalog("shop", "memory", {"name": "Память Линия-7", "desc": "Добавляет 1024 МБ памяти компьютеру игрока", "price": 50})
-    plugin.catalog("market", "report", {"name": "Отчёт по узлам", "desc": "Показывает собственный адрес и доступные средства", "price": 10, "file": "line_report.adr", "code": "print(sys.hostname(), net.my_ip(), sys.money())\n"})
-    plugin.catalog("achievements", "archivist", {"name": "Архивист Линии-7", "desc": "Получить доступ к серверу нового района"})
+    plugin.catalog("shop", "memory", {"name": tr("Память Линия-7", "Line-7 Memory"), "desc": tr("Добавляет 1024 МБ памяти компьютеру игрока", "Adds 1024 MB of memory to the player's computer"), "price": 50})
+    plugin.catalog("market", "report", {"name": tr("Отчёт по узлам", "Host Report"), "desc": tr("Показывает собственный адрес и доступные средства", "Shows your own address and available funds"), "price": 10, "file": "line_report.adr", "code": "print(sys.hostname(), net.my_ip(), sys.money())\n"})
+    plugin.catalog("achievements", "archivist", {"name": tr("Архивист Линии-7", "Line-7 Archivist"), "desc": tr("Получить доступ к серверу нового района", "Gain access to the server of a new district")})
     if not plugin.get("timer_started", false):
         plugin.timer("city_news", 60, "custom.news", {}, 60)
         plugin.set("timer_started", true)
@@ -34,32 +42,32 @@ def load(event):
 def create(event):
     n = plugin.get("districts", 0) + 1
     if n > 100:
-        raise "В этом примере предусмотрено до 100 районов"
+        raise tr("В этом примере предусмотрено до 100 районов", "This example allows up to 100 districts")
     ip = f"198.19.{n}.1"
     lan = f"10.250.{n}."
     gate = plugin.spawn("district:gateway", {"hostname": f"line-gate-{n}", "ip": ip, "lan_ip": lan + "1", "up": true})
     plugin.user(gate, "operator", "line123", false)
     server = plugin.spawn("district:archive", {"hostname": f"line-archive-{n}", "ip": lan + "2", "lan_ip": lan + "2", "router": gate, "up": true})
     plugin.user(server, "archivist", "archive123", false)
-    plugin.org({"name": f"Архив Линия-7 №{n}", "kind": "media", "domain": f"line{n}.city", "gateway": gate, "subnet": lan, "members": [gate, server], "description": "Независимый городской архив"})
-    plugin.page(gate, 80, {"path": "/", "title": "Линия-7", "html": f"<h1>Архив Линия-7</h1><p>Внутренний архив: {lan}2, служба line_archive.</p>"})
-    plugin.write(server, "/srv/line/report.txt", f"Документы района {n}: архив открыт")
-    quest = plugin.quest(f"archive_{n}", {"title": f"Архив района {n}", "objective": f"Получи доступ к line-archive-{n}", "reward": 150})
+    plugin.org({"name": tr(f"Архив Линия-7 №{n}", f"Line-7 Archive #{n}"), "kind": "media", "domain": f"line{n}.city", "gateway": gate, "subnet": lan, "members": [gate, server], "description": tr("Независимый городской архив", "Independent city archive")})
+    plugin.page(gate, 80, {"path": "/", "title": tr("Линия-7", "Line-7"), "html": tr(f"<h1>Архив Линия-7</h1><p>Внутренний архив: {lan}2, служба line_archive.</p>", f"<h1>Line-7 Archive</h1><p>Internal archive: {lan}2, service line_archive.</p>")})
+    plugin.write(server, "/srv/line/report.txt", tr(f"Документы района {n}: архив открыт", f"District {n} documents: archive open"))
+    quest = plugin.quest(f"archive_{n}", {"title": tr(f"Архив района {n}", f"District {n} archive"), "objective": tr(f"Получи доступ к line-archive-{n}", f"Gain access to line-archive-{n}"), "reward": 150})
     targets = plugin.get("targets", [])
     targets.append({"machine": server, "quest": quest})
     plugin.set("targets", targets)
     world = plugin.world()
     world["player"]["known_machines"].extend([gate, server])
     plugin.apply({"player": world["player"]})
-    plugin.mail(0, {"from": "line@hw", "subject": f"Район {n}: задание", "body": f"Открой http://{ip}/. Исследуй research {ip} district:gate_entry; создай свой код через exploit new или купи market buy exp_overflow. Затем исследуй службу line_archive на {lan}2. Награда: 150."})
-    plugin.news(f"Открылся независимый архив района {n}.")
+    plugin.mail(0, {"from": "line@hw", "subject": tr(f"Район {n}: задание", f"District {n}: mission"), "body": tr(f"Открой http://{ip}/. Исследуй research {ip} district:gate_entry; создай свой код через exploit new или купи market buy exp_overflow. Затем исследуй службу line_archive на {lan}2. Награда: 150.", f"Open http://{ip}/. Research it with research {ip} district:gate_entry; write your own code with exploit new or buy one with market buy exp_overflow. Then research the line_archive service at {lan}2. Reward: 150.")})
+    plugin.news(tr(f"Открылся независимый архив района {n}.", f"An independent archive has opened in district {n}."))
     plugin.set("districts", n)
     panel()
-    print(f"Создан район {n}: шлюз {ip}, архив {lan}2")
+    print(tr(f"Создан район {n}: шлюз {ip}, архив {lan}2", f"District {n} created: gateway {ip}, archive {lan}2"))
 
 def archive_effect(event):
-    plugin.write(event["target"], "/srv/line/access.txt", "Доступ к архиву через уязвимость зарегистрирован")
-    plugin.log(event["target"], "warn", "Контроль архива перехвачен через уязвимость Линии-7")
+    plugin.write(event["target"], "/srv/line/access.txt", tr("Доступ к архиву через уязвимость зарегистрирован", "Archive access through the vulnerability has been logged"))
+    plugin.log(event["target"], "warn", tr("Контроль архива перехвачен через уязвимость Линии-7", "Archive control hijacked through a Line-7 vulnerability"))
 
 def tick(event):
     world = plugin.world()
@@ -77,7 +85,7 @@ def purchase(event):
 
 def news(event):
     if plugin.get("districts", 0) > 0:
-        plugin.news("Архивы Линии-7 продолжают принимать городские документы.")
+        plugin.news(tr("Архивы Линии-7 продолжают принимать городские документы.", "Line-7 archives keep accepting city documents."))
 
 def ui(event):
     if event["action"] == "create":
@@ -92,5 +100,5 @@ def status(event):
     world = plugin.world()
     for key, quest in world["plugins"]["quests"].items():
         if key.startswith("district:"):
-            mark = "выполнено" if quest["done"] else "ожидает"
+            mark = tr("выполнено", "done") if quest["done"] else tr("ожидает", "pending")
             print(quest["title"], mark, quest["reward"])

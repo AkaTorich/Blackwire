@@ -1,12 +1,15 @@
 {
   "name": "Сеть частной клиники",
+  "name_en": "Private Clinic Network",
   "family": "network",
   "org_kind": "hospital",
   "kind": "database",
   "service": "patient_archive",
   "file": "patient-audit.csv",
   "story": "Частная клиника спрятала архив записей за забытым служебным шлюзом.",
+  "story_en": "A private clinic moved its appointment archive behind a forgotten maintenance gateway.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 150,
   "id": "private_clinic_network",
   "number": 21,
@@ -22,8 +25,10 @@
       "service": "patient_archive_gate",
       "port": 7060,
       "os": "Сеть частной клиники OS 1.0",
+      "os_en": "Private Clinic Network OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Частная клиника спрятала архив записей за забытым служебным шлюзом.\nВладелец записи: private_clinic_network.\nНомер дела: BW-021.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A private clinic moved its appointment archive behind a forgotten maintenance gateway.\nRecord owner: private_clinic_network.\nCase reference: BW-021.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_private_clinic_network_1"
     },
@@ -36,8 +41,10 @@
       "service": "patient_archive_ops",
       "port": 7061,
       "os": "Сеть частной клиники OS 1.0",
+      "os_en": "Private Clinic Network OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "Частная клиника спрятала архив записей за забытым служебным шлюзом.\nВладелец записи: private_clinic_network.\nНомер дела: BW-021.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A private clinic moved its appointment archive behind a forgotten maintenance gateway.\nRecord owner: private_clinic_network.\nCase reference: BW-021.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_private_clinic_network_2"
     },
@@ -50,8 +57,10 @@
       "service": "patient_archive",
       "port": 7062,
       "os": "Сеть частной клиники OS 1.0",
+      "os_en": "Private Clinic Network OS 1.0",
       "file": "/srv/records/patient-audit.csv",
       "text": "Частная клиника спрятала архив записей за забытым служебным шлюзом.\nВладелец записи: private_clinic_network.\nНомер дела: BW-021.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A private clinic moved its appointment archive behind a forgotten maintenance gateway.\nRecord owner: private_clinic_network.\nCase reference: BW-021.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_private_clinic_network_3"
     }

@@ -134,7 +134,7 @@ pub fn exec(world: &mut World, session: &mut Session, line: &str) -> ShellResult
     }
     match parse::parse(line) {
         Err(e) => {
-            res.lines.push(crate::types::OutLine::error(format!("ошибка разбора: {}", e)));
+            res.lines.push(crate::types::OutLine::error(trf!("ошибка разбора: {}", "parse error: {}", e)));
             session.last_status = 2;
         }
         Ok(jobs) => {
@@ -302,7 +302,7 @@ pub fn run_simple(ctx: &mut Ctx<'_>, words: &[String]) -> CmdOutput {
     match table::lookup(name) {
         Some(info) => (info.run)(ctx, args),
         None => {
-            let mut out = CmdOutput::err(format!("{}: команда не найдена", name));
+            let mut out = CmdOutput::err(trf!("{}: команда не найдена", "{}: command not found", name));
             out.status = 127;
             let mut best: Option<(usize, &str)> = None;
             for c in table::COMMANDS {
@@ -312,9 +312,9 @@ pub fn run_simple(ctx: &mut Ctx<'_>, words: &[String]) -> CmdOutput {
                 }
             }
             if let Some((_, s)) = best {
-                out.push_kind(format!("возможно, вы имели в виду: {}", s), OutKind::Dim);
+                out.push_kind(trf!("возможно, вы имели в виду: {}", "did you mean: {}", s), OutKind::Dim);
             }
-            out.push_kind("список команд: help", OutKind::Dim);
+            out.push_kind(tr!("список команд: help", "command list: help"), OutKind::Dim);
             out
         }
     }

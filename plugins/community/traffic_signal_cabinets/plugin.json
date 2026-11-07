@@ -1,6 +1,7 @@
 {
   "id": "traffic_signal_cabinets",
   "name": "Шкафы светофоров",
+  "name_en": "Traffic Signal Cabinets",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

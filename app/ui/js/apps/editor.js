@@ -58,25 +58,25 @@ const EditorApp = (function () {
     const tabbar = el('div', 'ed-tabbar');
     const tabsList = el('div', 'ed-tabs');
     const tools = el('div', 'ed-tools');
-    const btnNew = iconBtn('plus', 'Новый файл — Ctrl+N');
-    const btnOpen = iconBtn('folder-open', 'Открыть — Ctrl+O');
-    const btnSave = iconBtn('save', 'Сохранить — Ctrl+S');
-    const btnFind = iconBtn('search', 'Поиск — Ctrl+F');
-    const btnHighlight = iconBtn('file-code', 'Выключить подсветку синтаксиса', 'ed-btn-highlight active');
+    const btnNew = iconBtn('plus', L('Новый файл — Ctrl+N', 'New file — Ctrl+N'));
+    const btnOpen = iconBtn('folder-open', L('Открыть — Ctrl+O', 'Open — Ctrl+O'));
+    const btnSave = iconBtn('save', L('Сохранить — Ctrl+S', 'Save — Ctrl+S'));
+    const btnFind = iconBtn('search', L('Поиск — Ctrl+F', 'Find — Ctrl+F'));
+    const btnHighlight = iconBtn('file-code', L('Выключить подсветку синтаксиса', 'Turn off syntax highlighting'), 'ed-btn-highlight active');
     btnHighlight.setAttribute('aria-pressed', 'true');
-    const btnRun = iconBtn('play', 'Запустить — F5', 'ed-btn-run');
+    const btnRun = iconBtn('play', L('Запустить — F5', 'Run — F5'), 'ed-btn-run');
     tools.append(btnNew, btnOpen, btnSave, btnFind, btnHighlight, btnRun);
     tabbar.append(tabsList, tools);
 
     const searchBar = el('div', 'ed-search');
     const searchInput = el('input', 'ed-search-input');
     searchInput.type = 'text';
-    searchInput.placeholder = 'Найти';
+    searchInput.placeholder = L('Найти', 'Find');
     searchInput.spellcheck = false;
     const searchCount = el('span', 'ed-search-count', '');
-    const btnPrev = iconBtn('up', 'Назад — Shift+F3');
-    const btnNext = iconBtn('down', 'Далее — F3');
-    const btnCloseSearch = iconBtn('close', 'Закрыть — Esc');
+    const btnPrev = iconBtn('up', L('Назад — Shift+F3', 'Previous — Shift+F3'));
+    const btnNext = iconBtn('down', L('Далее — F3', 'Next — F3'));
+    const btnCloseSearch = iconBtn('close', L('Закрыть — Esc', 'Close — Esc'));
     searchBar.append(searchInput, searchCount, btnPrev, btnNext, btnCloseSearch);
 
     const area = el('div', 'ed-area');
@@ -100,7 +100,7 @@ const EditorApp = (function () {
     const stLang = el('span', 'ed-st-lang', '');
     status.append(stPath, stCheck, stMod, stPos, stLang);
 
-    const empty = el('div', 'ed-empty', 'Нет открытых файлов');
+    const empty = el('div', 'ed-empty', L('Нет открытых файлов', 'No open files'));
     root.append(tabbar, searchBar, area, empty, status);
     body.appendChild(root);
 
@@ -108,7 +108,7 @@ const EditorApp = (function () {
       st.highlight = !st.highlight;
       btnHighlight.classList.toggle('active', st.highlight);
       btnHighlight.setAttribute('aria-pressed', String(st.highlight));
-      btnHighlight.title = st.highlight ? 'Выключить подсветку синтаксиса' : 'Включить подсветку синтаксиса';
+      btnHighlight.title = st.highlight ? L('Выключить подсветку синтаксиса', 'Turn off syntax highlighting') : L('Включить подсветку синтаксиса', 'Turn on syntax highlighting');
       refresh();
     });
 
@@ -118,7 +118,7 @@ const EditorApp = (function () {
     function makeTab(path, text) {
       st.untitled += path ? 0 : 1;
       return {
-        id: st.nextId++, path: path || '', name: path ? baseName(path) : 'новый' + (st.untitled > 1 ? st.untitled : '') + '.adr',
+        id: st.nextId++, path: path || '', name: path ? baseName(path) : L('новый', 'untitled') + (st.untitled > 1 ? st.untitled : '') + '.adr',
         text: text || '', modified: false, diags: [], scrollTop: 0, scrollLeft: 0, selStart: 0, selEnd: 0
       };
     }
@@ -134,7 +134,7 @@ const EditorApp = (function () {
         const dot = el('span', 'ed-tab-dot');
         const x = el('button', 'ed-tab-close');
         x.type = 'button';
-        x.title = 'Закрыть';
+        x.title = L('Закрыть', 'Close');
         x.innerHTML = Icons.get('close', 12);
         x.addEventListener('click', function (e) { e.stopPropagation(); closeTab(i); });
         tab.append(ic, nm, dot, x);
@@ -148,7 +148,7 @@ const EditorApp = (function () {
         Win.setTitle(t.name);
         Win.setModified(!!t.modified);
       } else {
-        Win.setTitle('Редактор');
+        Win.setTitle(L('Редактор', 'Editor'));
         Win.setModified(false);
       }
     }
@@ -208,7 +208,7 @@ const EditorApp = (function () {
       if (!t) return;
       if (i === st.active) saveState(t);
       if (t.modified) {
-        const ok = await Win.confirm('Закрыть «' + t.name + '» без сохранения?');
+        const ok = await Win.confirm(L('Закрыть «' + t.name + '» без сохранения?', 'Close "' + t.name + '" without saving?'));
         if (!ok) return;
       }
       st.tabs.splice(i, 1);
@@ -267,20 +267,20 @@ const EditorApp = (function () {
       }
       const lc = lineColOf(ta.value, ta.selectionStart);
       stPath.textContent = t.path || t.name;
-      stPath.title = t.path || 'Файл ещё не сохранён';
+      stPath.title = t.path || L('Файл ещё не сохранён', 'File not saved yet');
       stPos.textContent = lc.line + ':' + lc.col;
-      stMod.textContent = t.modified ? 'изменено' : '';
+      stMod.textContent = t.modified ? L('изменено', 'modified') : '';
       const lang = EditorHighlight.langFor(t.path || t.name);
-      stLang.textContent = lang === 'adder' ? 'Adder' : (EditorHighlight.extOf(t.path || t.name).toUpperCase() || 'Текст');
+      stLang.textContent = lang === 'adder' ? 'Adder' : (EditorHighlight.extOf(t.path || t.name).toUpperCase() || L('Текст', 'Text'));
       if (lang !== 'adder') {
         stCheck.textContent = '';
         stCheck.className = 'ed-st-check';
       } else if (!t.diags.length) {
-        stCheck.textContent = 'Ошибок нет';
+        stCheck.textContent = L('Ошибок нет', 'No errors');
         stCheck.className = 'ed-st-check ok';
       } else {
         const d = t.diags[0];
-        stCheck.textContent = 'Строка ' + d.line + ':' + d.col + ' — ' + d.message + (t.diags.length > 1 ? '  (+' + (t.diags.length - 1) + ')' : '');
+        stCheck.textContent = L('Строка ', 'Line ') + d.line + ':' + d.col + ' — ' + d.message + (t.diags.length > 1 ? '  (+' + (t.diags.length - 1) + ')' : '');
         stCheck.title = t.diags.map(function (x) { return x.line + ':' + x.col + ' ' + x.message; }).join('\n');
         stCheck.className = 'ed-st-check bad';
       }
@@ -396,7 +396,7 @@ const EditorApp = (function () {
       if (t === cur()) saveState(t);
       let path = t.path;
       if (!path) {
-        path = await Win.prompt('Путь для сохранения', '/home/' + t.name);
+        path = await Win.prompt(L('Путь для сохранения', 'Save to path'), '/home/' + t.name);
         if (!path) return false;
         path = path.trim();
         if (!path) return false;
@@ -404,7 +404,7 @@ const EditorApp = (function () {
       try {
         await BW.fs_write(null, path, t.text);
       } catch (e) {
-        Win.toast('Не сохранено: ' + e);
+        Win.toast(L('Не сохранено: ', 'Not saved: ') + e);
         BW.sound('error');
         return false;
       }
@@ -414,7 +414,7 @@ const EditorApp = (function () {
       renderTabs();
       refresh();
       scheduleCheck(0);
-      Win.toast('Сохранено: ' + t.name);
+      Win.toast(L('Сохранено: ', 'Saved: ') + t.name);
       return true;
     }
 
@@ -429,7 +429,7 @@ const EditorApp = (function () {
     async function openByPrompt() {
       const t = cur();
       const start = t && t.path ? t.path.slice(0, t.path.lastIndexOf('/') + 1) : '/home/';
-      const p = await Win.prompt('Открыть файл', start);
+      const p = await Win.prompt(L('Открыть файл', 'Open file'), start);
       if (p && p.trim()) openFile(p.trim());
     }
 
@@ -474,7 +474,7 @@ const EditorApp = (function () {
           if (!keepPos) revealMatch();
         }
       }
-      searchCount.textContent = q ? (st.search.ranges.length ? (st.search.cur + 1) + ' / ' + st.search.ranges.length : 'нет') : '';
+      searchCount.textContent = q ? (st.search.ranges.length ? (st.search.cur + 1) + ' / ' + st.search.ranges.length : L('нет', 'none')) : '';
       searchBar.classList.toggle('none', !!q && !st.search.ranges.length);
       refresh();
     }
@@ -506,7 +506,7 @@ const EditorApp = (function () {
     }
 
     async function gotoLine() {
-      const v = await Win.prompt('Перейти к строке', '');
+      const v = await Win.prompt(L('Перейти к строке', 'Go to line'), '');
       const n = parseInt(v, 10);
       if (!n || n < 1) return;
       const pos = lineStartOffset(ta.value, n);
@@ -670,6 +670,6 @@ const EditorApp = (function () {
 })();
 
 Apps.register('editor', {
-  title: 'Редактор', icon: 'editor', minWidth: 640, minHeight: 400,
+  title: L('Редактор', 'Editor'), icon: 'editor', minWidth: 640, minHeight: 400,
   mount: function (body, arg) { EditorApp.mount(body, arg); }
 });

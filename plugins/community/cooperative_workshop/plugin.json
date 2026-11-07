@@ -1,6 +1,7 @@
 {
   "id": "cooperative_workshop",
   "name": "Кооперативная мастерская",
+  "name_en": "Cooperative Workshop",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -1,6 +1,7 @@
 {
   "id": "cold_storage_upgrade",
   "name": "Накопитель холодного хранения",
+  "name_en": "Cold Storage Upgrade",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

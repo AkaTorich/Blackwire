@@ -191,7 +191,7 @@ fn lex(line: &str) -> Result<Vec<Tok>, String> {
         }
     }
     if quote != Quote::None {
-        return Err("незакрытая кавычка".to_string());
+        return Err(tr!("незакрытая кавычка", "unclosed quote").to_string());
     }
     flush_word(&mut toks, &mut segs, &mut buf);
     Ok(toks)
@@ -229,19 +229,19 @@ pub fn parse(line: &str) -> Result<Vec<Job>, String> {
             }
             Tok::Op(op) => {
                 if pending.is_some() {
-                    return Err(format!("после «{}» ожидалось имя файла", pending.unwrap()));
+                    return Err(trf!("после «{}» ожидалось имя файла", "expected a file name after '{}'", pending.unwrap()));
                 }
                 match op {
                     ">" | ">>" | "2>" | "2>>" | "<" => pending = Some(op),
                     "|" => {
                         if simple.words.is_empty() {
-                            return Err("перед «|» ожидалась команда".to_string());
+                            return Err(tr!("перед «|» ожидалась команда", "expected a command before '|'").to_string());
                         }
                         finish_simple(&mut pipeline, &mut simple);
                     }
                     ";" | "&&" | "||" => {
                         if simple.words.is_empty() && op != ";" {
-                            return Err(format!("перед «{}» ожидалась команда", op));
+                            return Err(trf!("перед «{}» ожидалась команда", "expected a command before '{}'", op));
                         }
                         finish_simple(&mut pipeline, &mut simple);
                         if !pipeline.cmds.is_empty() {
@@ -259,7 +259,7 @@ pub fn parse(line: &str) -> Result<Vec<Job>, String> {
         }
     }
     if let Some(op) = pending {
-        return Err(format!("после «{}» ожидалось имя файла", op));
+        return Err(trf!("после «{}» ожидалось имя файла", "expected a file name after '{}'", op));
     }
     finish_simple(&mut pipeline, &mut simple);
     if !pipeline.cmds.is_empty() {

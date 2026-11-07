@@ -1,14 +1,17 @@
 {
   "name": "Инструмент: сводка по деньгам",
+  "name_en": "Cashflow Summary Tool",
   "family": "economy",
   "mode": "market",
   "file": "cashflow_summary.adr",
   "code": "print(\"Cash:\", sys.money())\nprint(\"Debt:\", sys.debt())\nprint(\"Net:\", sys.money() - sys.debt())\n",
   "price": 25,
   "story": "Печатает наличные, долг и чистый остаток.",
+  "story_en": "Report available funds and outstanding debt.",
   "id": "cashflow_summary_tool",
   "number": 86,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Показать баланс и долг."
+  "objective": "Показать баланс и долг.",
+  "objective_en": "Show balance and debt."
 }

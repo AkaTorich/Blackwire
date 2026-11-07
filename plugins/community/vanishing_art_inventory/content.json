@@ -1,12 +1,15 @@
 {
   "name": "Исчезающая опись галереи",
+  "name_en": "Vanishing Art Inventory",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "art_store",
   "file": "art-inventory.csv",
   "story": "В закрытой описи галереи числится подмена с перенесённым каталожным номером.",
+  "story_en": "A gallery's private inventory contains a replacement with a copied catalog number.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 240,
   "id": "vanishing_art_inventory",
   "number": 51,
@@ -22,8 +25,10 @@
       "service": "art_store_gate",
       "port": 7150,
       "os": "Исчезающая опись галереи OS 1.0",
+      "os_en": "Vanishing Art Inventory OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "В закрытой описи галереи числится подмена с перенесённым каталожным номером.\nВладелец записи: vanishing_art_inventory.\nНомер дела: BW-051.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A gallery's private inventory contains a replacement with a copied catalog number.\nRecord owner: vanishing_art_inventory.\nCase reference: BW-051.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_vanishing_art_inventory_1"
     },
@@ -36,8 +41,10 @@
       "service": "art_store",
       "port": 7151,
       "os": "Исчезающая опись галереи OS 1.0",
+      "os_en": "Vanishing Art Inventory OS 1.0",
       "file": "/srv/records/art-inventory.csv",
       "text": "В закрытой описи галереи числится подмена с перенесённым каталожным номером.\nВладелец записи: vanishing_art_inventory.\nНомер дела: BW-051.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A gallery's private inventory contains a replacement with a copied catalog number.\nRecord owner: vanishing_art_inventory.\nCase reference: BW-051.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_vanishing_art_inventory_2"
     }

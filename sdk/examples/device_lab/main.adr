@@ -1,4 +1,12 @@
 # Собственный тип устройства, служба и уязвимости типа и отдельного экземпляра.
+# A custom device type, its service, and vulnerabilities of the type and of a single instance.
+
+# Строка на языке игры. / A string in the game language.
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
 def load(event):
     world = plugin.world()
     template = plugin.template("camera")
@@ -13,10 +21,10 @@ def load(event):
     template["custom_vulns"] = []
     template["services"] = [{"port": 9080, "name": "lab_control", "version": "1.0", "running": true, "banner": "Lab Camera Control", "pages": []}]
     kind = plugin.device_type("smart_camera", template)
-    plugin.vulnerability("camera_access", {"device_type": kind, "service": "lab_control", "version_prefix": "1.", "access": "shell", "exploit": {"kind": "overflow", "difficulty": 3, "hint": "Камера хранит адрес служебного обработчика рядом с кадром запроса.", "market": "device_lab:camera_exploit"}})
-    plugin.vulnerability("camera_kernel", {"device_type": kind, "local": true, "version_prefix": "LabOS 1.", "access": "root", "exploit": {"kind": "race", "difficulty": 2, "hint": "Подмени ресурс после проверки, до его использования."}})
+    plugin.vulnerability("camera_access", {"device_type": kind, "service": "lab_control", "version_prefix": "1.", "access": "shell", "exploit": {"kind": "overflow", "difficulty": 3, "hint": tr("Камера хранит адрес служебного обработчика рядом с кадром запроса.", "The camera keeps the address of its service handler right next to the request frame."), "market": "device_lab:camera_exploit"}})
+    plugin.vulnerability("camera_kernel", {"device_type": kind, "local": true, "version_prefix": "LabOS 1.", "access": "root", "exploit": {"kind": "race", "difficulty": 2, "hint": tr("Подмени ресурс после проверки, до его использования.", "Swap the resource after the check, before it is used.")}})
 
-    plugin.catalog("market", "camera_exploit", {"name": "Camera Payload", "price": 180, "desc": "Эксплоит переполнения камер LabOS. Исходник можно редактировать.", "file": "camera_payload.adr", "code": plugin.asset("camera_payload.adr")})
+    plugin.catalog("market", "camera_exploit", {"name": "Camera Payload", "price": 180, "desc": tr("Эксплоит переполнения камер LabOS. Исходник можно редактировать.", "Overflow exploit for LabOS cameras. The source is editable."), "file": "camera_payload.adr", "code": plugin.asset("camera_payload.adr")})
 
 def create(event):
     world = plugin.world()
@@ -25,23 +33,23 @@ def create(event):
     host = f"lab-camera-{n}"
     mid = plugin.spawn("device_lab:smart_camera", {"hostname": host, "ip": ip, "up": true})
     plugin.user(mid, "operator", "lab123", false)
-    plugin.write(mid, "/etc/lab/device.txt", f"Камера {n}: тестовое устройство SDK")
+    plugin.write(mid, "/etc/lab/device.txt", tr(f"Камера {n}: тестовое устройство SDK", f"Camera {n}: SDK test device"))
     plugin.vulnerability(f"single_device_{n}", {"machine": mid, "service": "lab_control", "version_prefix": "1.0", "access": "info"})
-    # Узел сразу появляется на игровой карте.
+    # Узел сразу появляется на игровой карте. / The host shows up on the network map right away.
     world = plugin.world()
     world["player"]["known_machines"].append(mid)
     plugin.apply({"player": world["player"]})
     plugin.set("created", n)
-    print(f"Создано устройство {host}: {ip}, id={mid}")
-    print(f"probe {ip} — удалённые уязвимости типа и экземпляра; локальную исследуй после входа")
-    print(f"research -h 3 {ip} device_lab:camera_access — подсказки и параметры")
-    print(f"exploit new ~/scripts/camera.adr {ip} device_lab:camera_access — свой код")
-    print("Готовый: market buy device_lab:camera_exploit; затем exploit -f ~/scripts/camera_payload.adr -s device_lab:camera_access " + ip)
-    print("После входа исследуй device_lab:camera_kernel для локального эксплоита")
+    print(tr(f"Создано устройство {host}: {ip}, id={mid}", f"Device created {host}: {ip}, id={mid}"))
+    print(tr(f"probe {ip} — удалённые уязвимости типа и экземпляра; локальную исследуй после входа", f"probe {ip} — remote vulnerabilities of the type and the instance; research the local one after you log in"))
+    print(tr(f"research -h 3 {ip} device_lab:camera_access — подсказки и параметры", f"research -h 3 {ip} device_lab:camera_access — hints and parameters"))
+    print(tr(f"exploit new ~/scripts/camera.adr {ip} device_lab:camera_access — свой код", f"exploit new ~/scripts/camera.adr {ip} device_lab:camera_access — your own code"))
+    print(tr("Готовый: market buy device_lab:camera_exploit; затем exploit -f ~/scripts/camera_payload.adr -s device_lab:camera_access ", "Ready-made: market buy device_lab:camera_exploit; then exploit -f ~/scripts/camera_payload.adr -s device_lab:camera_access ") + ip)
+    print(tr("После входа исследуй device_lab:camera_kernel для локального эксплоита", "After logging in, research device_lab:camera_kernel for a local exploit"))
 
 def tick(event):
     plugin.set("ticks", plugin.get("ticks", 0) + 1)
 
 def info(event):
-    print("Создано устройств:", plugin.get("created", 0))
-    print("Тактов мира:", plugin.get("ticks", 0))
+    print(tr("Создано устройств:", "Devices created:"), plugin.get("created", 0))
+    print(tr("Тактов мира:", "World ticks:"), plugin.get("ticks", 0))

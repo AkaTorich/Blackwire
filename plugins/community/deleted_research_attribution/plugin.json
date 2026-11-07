@@ -1,6 +1,7 @@
 {
   "id": "deleted_research_attribution",
   "name": "Стёртая атрибуция исследования",
+  "name_en": "Deleted Research Attribution",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

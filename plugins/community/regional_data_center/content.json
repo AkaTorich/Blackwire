@@ -1,12 +1,15 @@
 {
   "name": "Региональный ЦОД",
+  "name_en": "Regional Data Center",
   "family": "network",
   "org_kind": "hosting",
   "kind": "database",
   "service": "tenant_archive",
   "file": "rack-allocation.csv",
   "story": "В журналах стоек видно арендатора, которого нет в списке, но он занимает резервные мощности.",
+  "story_en": "Rack allocation logs show an unlisted tenant using reserved capacity.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 186,
   "id": "regional_data_center",
   "number": 27,
@@ -22,8 +25,10 @@
       "service": "tenant_archive_gate",
       "port": 7078,
       "os": "Региональный ЦОД OS 1.0",
+      "os_en": "Regional Data Center OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "В журналах стоек видно арендатора, которого нет в списке, но он занимает резервные мощности.\nВладелец записи: regional_data_center.\nНомер дела: BW-027.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Rack allocation logs show an unlisted tenant using reserved capacity.\nRecord owner: regional_data_center.\nCase reference: BW-027.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_regional_data_center_1"
     },
@@ -36,8 +41,10 @@
       "service": "tenant_archive_ops",
       "port": 7079,
       "os": "Региональный ЦОД OS 1.0",
+      "os_en": "Regional Data Center OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "В журналах стоек видно арендатора, которого нет в списке, но он занимает резервные мощности.\nВладелец записи: regional_data_center.\nНомер дела: BW-027.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Rack allocation logs show an unlisted tenant using reserved capacity.\nRecord owner: regional_data_center.\nCase reference: BW-027.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_regional_data_center_2"
     },
@@ -50,8 +57,10 @@
       "service": "tenant_archive",
       "port": 7080,
       "os": "Региональный ЦОД OS 1.0",
+      "os_en": "Regional Data Center OS 1.0",
       "file": "/srv/records/rack-allocation.csv",
       "text": "В журналах стоек видно арендатора, которого нет в списке, но он занимает резервные мощности.\nВладелец записи: regional_data_center.\nНомер дела: BW-027.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Rack allocation logs show an unlisted tenant using reserved capacity.\nRecord owner: regional_data_center.\nCase reference: BW-027.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_regional_data_center_3"
     }

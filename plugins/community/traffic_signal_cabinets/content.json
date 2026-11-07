@@ -1,11 +1,14 @@
 {
   "name": "Шкафы светофоров",
+  "name_en": "Traffic Signal Cabinets",
   "family": "device",
   "kind": "router",
   "service": "signal_control",
   "file": "phases.csv",
   "story": "В график обслуживания вписан несогласованный приоритетный маршрут.",
+  "story_en": "The maintenance schedule contains an unauthorized priority route.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 136,
   "id": "traffic_signal_cabinets",
   "number": 20,
@@ -21,8 +24,10 @@
       "service": "signal_control",
       "port": 7057,
       "os": "Шкафы светофоров OS 1.0",
+      "os_en": "Traffic Signal Cabinets OS 1.0",
       "file": "/srv/records/phases.csv",
       "text": "В график обслуживания вписан несогласованный приоритетный маршрут.\nВладелец записи: traffic_signal_cabinets.\nНомер дела: BW-020.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The maintenance schedule contains an unauthorized priority route.\nRecord owner: traffic_signal_cabinets.\nCase reference: BW-020.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_traffic_signal_cabinets_1"
     }

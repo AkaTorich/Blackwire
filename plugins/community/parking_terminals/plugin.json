@@ -1,6 +1,7 @@
 {
   "id": "parking_terminals",
   "name": "Терминалы парковки",
+  "name_en": "Parking Terminals",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

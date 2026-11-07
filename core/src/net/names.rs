@@ -8,54 +8,73 @@ pub struct Person {
     pub login: &'static str,
     pub first: &'static str,
     pub last: &'static str,
+    pub first_en: &'static str,
+    pub last_en: &'static str,
 }
 
-const fn p(login: &'static str, first: &'static str, last: &'static str) -> Person {
-    Person { login, first, last }
+impl Person {
+    /// Имя на языке игры.
+    pub fn first_name(&self) -> &'static str {
+        if crate::i18n::is_en() { self.first_en } else { self.first }
+    }
+    /// Фамилия на языке игры.
+    pub fn last_name(&self) -> &'static str {
+        if crate::i18n::is_en() { self.last_en } else { self.last }
+    }
+}
+
+const fn p(
+    login: &'static str,
+    first: &'static str,
+    last: &'static str,
+    first_en: &'static str,
+    last_en: &'static str,
+) -> Person {
+    Person { login, first, last, first_en, last_en }
 }
 
 /// Пул людей: имена и фамилии разных культур, вперемешку.
 pub const PEOPLE: &[Person] = &[
-    p("marat", "Марат", "Сафин"),
-    p("leyla", "Лейла", "Гаспарян"),
-    p("einar", "Эйнар", "Торвальдсен"),
-    p("solveyg", "Сольвейг", "Ларсен"),
-    p("temuchin", "Тэмуджин", "Батбаяр"),
-    p("yadviga", "Ядвига", "Ковальчик"),
-    p("kasym", "Касым", "Абдуллаев"),
-    p("nanna", "Нанна", "Йенсен"),
-    p("rashid", "Рашид", "Хаккани"),
-    p("bjorn", "Бьёрн", "Эриксон"),
-    p("zuhra", "Зухра", "Ниязова"),
-    p("osvald", "Освальд", "Крамер"),
-    p("ingrid", "Ингрид", "Халворсен"),
-    p("farid", "Фарид", "Мансуров"),
-    p("otto", "Отто", "Шнайдер"),
-    p("dilnoza", "Дильноза", "Юсупова"),
-    p("hugo", "Гуго", "Бертран"),
-    p("aiko", "Айко", "Танака"),
-    p("miro", "Миро", "Новак"),
-    p("galina", "Галина", "Орлова"),
-    p("tariq", "Тарик", "Насер"),
-    p("sanna", "Санна", "Виртанен"),
-    p("liang", "Лян", "Чэнь"),
-    p("amara", "Амара", "Диалло"),
-    p("viktor", "Виктор", "Петров"),
-    p("elda", "Эльда", "Росси"),
-    p("yusuf", "Юсуф", "Карими"),
-    p("hilde", "Хильда", "Фишер"),
-    p("ramon", "Рамон", "Гарсия"),
-    p("oksana", "Оксана", "Шевченко"),
-    p("dawit", "Давит", "Гебре"),
-    p("meret", "Мерет", "Келлер"),
-    p("ildar", "Ильдар", "Хакимов"),
-    p("astrid", "Астрид", "Бергман"),
-    p("noah", "Ной", "Леви"),
-    p("parvati", "Парвати", "Шарма"),
-    p("goran", "Горан", "Ковачевич"),
-    p("fatima", "Фатима", "аль-Захра"),
-    p("soren", "Сёрен", "Мадсен"),
-    p("mei", "Мэй", "Ван"),
+    p("marat", "Марат", "Сафин", "Marat", "Safin"),
+    p("leyla", "Лейла", "Гаспарян", "Leyla", "Gasparyan"),
+    p("einar", "Эйнар", "Торвальдсен", "Einar", "Thorvaldsen"),
+    p("solveyg", "Сольвейг", "Ларсен", "Solveig", "Larsen"),
+    p("temuchin", "Тэмуджин", "Батбаяр", "Temujin", "Batbayar"),
+    p("yadviga", "Ядвига", "Ковальчик", "Jadwiga", "Kowalczyk"),
+    p("kasym", "Касым", "Абдуллаев", "Kasym", "Abdullaev"),
+    p("nanna", "Нанна", "Йенсен", "Nanna", "Jensen"),
+    p("rashid", "Рашид", "Хаккани", "Rashid", "Haqqani"),
+    p("bjorn", "Бьёрн", "Эриксон", "Bjorn", "Eriksson"),
+    p("zuhra", "Зухра", "Ниязова", "Zuhra", "Niyazova"),
+    p("osvald", "Освальд", "Крамер", "Oswald", "Kramer"),
+    p("ingrid", "Ингрид", "Халворсен", "Ingrid", "Halvorsen"),
+    p("farid", "Фарид", "Мансуров", "Farid", "Mansurov"),
+    p("otto", "Отто", "Шнайдер", "Otto", "Schneider"),
+    p("dilnoza", "Дильноза", "Юсупова", "Dilnoza", "Yusupova"),
+    p("hugo", "Гуго", "Бертран", "Hugo", "Bertrand"),
+    p("aiko", "Айко", "Танака", "Aiko", "Tanaka"),
+    p("miro", "Миро", "Новак", "Miro", "Novak"),
+    p("galina", "Галина", "Орлова", "Galina", "Orlova"),
+    p("tariq", "Тарик", "Насер", "Tariq", "Nasser"),
+    p("sanna", "Санна", "Виртанен", "Sanna", "Virtanen"),
+    p("liang", "Лян", "Чэнь", "Liang", "Chen"),
+    p("amara", "Амара", "Диалло", "Amara", "Diallo"),
+    p("viktor", "Виктор", "Петров", "Viktor", "Petrov"),
+    p("elda", "Эльда", "Росси", "Elda", "Rossi"),
+    p("yusuf", "Юсуф", "Карими", "Yusuf", "Karimi"),
+    p("hilde", "Хильда", "Фишер", "Hilde", "Fischer"),
+    p("ramon", "Рамон", "Гарсия", "Ramon", "Garcia"),
+    p("oksana", "Оксана", "Шевченко", "Oksana", "Shevchenko"),
+    p("dawit", "Давит", "Гебре", "Dawit", "Gebre"),
+    p("meret", "Мерет", "Келлер", "Meret", "Keller"),
+    p("ildar", "Ильдар", "Хакимов", "Ildar", "Khakimov"),
+    p("astrid", "Астрид", "Бергман", "Astrid", "Bergman"),
+    p("noah", "Ной", "Леви", "Noah", "Levi"),
+    p("parvati", "Парвати", "Шарма", "Parvati", "Sharma"),
+    p("goran", "Горан", "Ковачевич", "Goran", "Kovacevic"),
+    p("fatima", "Фатима", "аль-Захра", "Fatima", "al-Zahra"),
+    p("soren", "Сёрен", "Мадсен", "Soren", "Madsen"),
+    p("mei", "Мэй", "Ван", "Mei", "Wang"),
 ];
 
 /// Начало строки словаря игрока — ровно 200 частых паролей. Слабые пароли мира

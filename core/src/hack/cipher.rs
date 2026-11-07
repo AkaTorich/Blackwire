@@ -27,7 +27,7 @@ pub fn encrypt(text: &str, key: &str) -> String {
 pub fn decrypt(hex: &str, key: &str) -> Result<String, String> {
     let hex: String = hex.split_whitespace().collect();
     if hex.len() % 2 != 0 || hex.is_empty() {
-        return Err("это не похоже на шифртекст".to_string());
+        return Err(tr!("это не похоже на шифртекст", "this doesn't look like ciphertext").to_string());
     }
     let k = key_byte(key);
     let mut bytes = Vec::with_capacity(hex.len() / 2);
@@ -39,7 +39,7 @@ pub fn decrypt(hex: &str, key: &str) -> Result<String, String> {
         bytes.push(((hi << 4) | lo).wrapping_sub(k));
         i += 2;
     }
-    String::from_utf8(bytes).map_err(|_| "неверный ключ: получается мусор".to_string())
+    String::from_utf8(bytes).map_err(|_| tr!("неверный ключ: получается мусор", "wrong key: the output is garbage").to_string())
 }
 
 fn hexval(c: u8) -> Result<u8, String> {
@@ -47,6 +47,6 @@ fn hexval(c: u8) -> Result<u8, String> {
         b'0'..=b'9' => Ok(c - b'0'),
         b'a'..=b'f' => Ok(c - b'a' + 10),
         b'A'..=b'F' => Ok(c - b'A' + 10),
-        _ => Err("это не похоже на шифртекст".to_string()),
+        _ => Err(tr!("это не похоже на шифртекст", "this doesn't look like ciphertext").to_string()),
     }
 }

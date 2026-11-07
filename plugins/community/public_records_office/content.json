@@ -1,12 +1,15 @@
 {
   "name": "Муниципальный архив",
+  "name_en": "Public Records Office",
   "family": "network",
   "org_kind": "government",
   "kind": "database",
   "service": "records_store",
   "file": "permit-register.csv",
   "story": "На публичном портале разрешений нет поправки, которая лежит во внутреннем архиве.",
+  "story_en": "The public permit portal omits an amendment stored on the internal records host.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 180,
   "id": "public_records_office",
   "number": 26,
@@ -22,8 +25,10 @@
       "service": "records_store_gate",
       "port": 7075,
       "os": "Муниципальный архив OS 1.0",
+      "os_en": "Public Records Office OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "На публичном портале разрешений нет поправки, которая лежит во внутреннем архиве.\nВладелец записи: public_records_office.\nНомер дела: BW-026.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The public permit portal omits an amendment stored on the internal records host.\nRecord owner: public_records_office.\nCase reference: BW-026.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_public_records_office_1"
     },
@@ -36,8 +41,10 @@
       "service": "records_store_ops",
       "port": 7076,
       "os": "Муниципальный архив OS 1.0",
+      "os_en": "Public Records Office OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "На публичном портале разрешений нет поправки, которая лежит во внутреннем архиве.\nВладелец записи: public_records_office.\nНомер дела: BW-026.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The public permit portal omits an amendment stored on the internal records host.\nRecord owner: public_records_office.\nCase reference: BW-026.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_public_records_office_2"
     },
@@ -50,8 +57,10 @@
       "service": "records_store",
       "port": 7077,
       "os": "Муниципальный архив OS 1.0",
+      "os_en": "Public Records Office OS 1.0",
       "file": "/srv/records/permit-register.csv",
       "text": "На публичном портале разрешений нет поправки, которая лежит во внутреннем архиве.\nВладелец записи: public_records_office.\nНомер дела: BW-026.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The public permit portal omits an amendment stored on the internal records host.\nRecord owner: public_records_office.\nCase reference: BW-026.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_public_records_office_3"
     }

@@ -1,6 +1,7 @@
 {
   "id": "cashflow_summary_tool",
   "name": "Инструмент: сводка по деньгам",
+  "name_en": "Cashflow Summary Tool",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

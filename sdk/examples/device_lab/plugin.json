@@ -1,6 +1,7 @@
 {
   "id": "device_lab",
   "name": "Лаборатория устройств",
+  "name_en": "Device Lab",
   "version": "1.0.0",
   "api": 1,
   "entry": "main.adr",

@@ -1,6 +1,7 @@
 {
   "id": "ev_charging_controllers",
   "name": "Контроллеры зарядок электромобилей",
+  "name_en": "EV Charging Controllers",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -30,7 +30,7 @@ var Apps = (function () {
     root.innerHTML = '';
     var box = document.createElement('div');
     box.className = 'unknown-app';
-    box.innerHTML = Icons.get('warning', 40) + '<h1>Неизвестное приложение</h1><p></p>';
+    box.innerHTML = Icons.get('warning', 40) + '<h1>' + L('Неизвестное приложение', 'Unknown application') + '</h1><p></p>';
     box.querySelector('p').textContent = id;
     root.appendChild(box);
   }
@@ -58,7 +58,7 @@ var Apps = (function () {
       def.mount(body, BW.arg);
     } catch (e) {
       console.error('Ошибка приложения ' + id, e);
-      Win.toast('Ошибка: ' + (e && e.message ? e.message : e), 'err');
+      Win.toast(L('Ошибка: ', 'Error: ') + (e && e.message ? e.message : e), 'err');
     }
   }
 

@@ -1,12 +1,15 @@
 {
   "name": "Сеть университетской кафедры",
+  "name_en": "University Research Network",
   "family": "network",
   "org_kind": "university",
   "kind": "database",
   "service": "research_store",
   "file": "grant-register.csv",
   "story": "Грант лаборатории провели через заброшенный исследовательский проект.",
+  "story_en": "A laboratory grant was redirected through a retired research project.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 162,
   "id": "university_research_network",
   "number": 23,
@@ -22,8 +25,10 @@
       "service": "research_store_gate",
       "port": 7066,
       "os": "Сеть университетской кафедры OS 1.0",
+      "os_en": "University Research Network OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Грант лаборатории провели через заброшенный исследовательский проект.\nВладелец записи: university_research_network.\nНомер дела: BW-023.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A laboratory grant was redirected through a retired research project.\nRecord owner: university_research_network.\nCase reference: BW-023.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_university_research_network_1"
     },
@@ -36,8 +41,10 @@
       "service": "research_store_ops",
       "port": 7067,
       "os": "Сеть университетской кафедры OS 1.0",
+      "os_en": "University Research Network OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "Грант лаборатории провели через заброшенный исследовательский проект.\nВладелец записи: university_research_network.\nНомер дела: BW-023.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A laboratory grant was redirected through a retired research project.\nRecord owner: university_research_network.\nCase reference: BW-023.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_university_research_network_2"
     },
@@ -50,8 +57,10 @@
       "service": "research_store",
       "port": 7068,
       "os": "Сеть университетской кафедры OS 1.0",
+      "os_en": "University Research Network OS 1.0",
       "file": "/srv/records/grant-register.csv",
       "text": "Грант лаборатории провели через заброшенный исследовательский проект.\nВладелец записи: university_research_network.\nНомер дела: BW-023.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A laboratory grant was redirected through a retired research project.\nRecord owner: university_research_network.\nCase reference: BW-023.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_university_research_network_3"
     }

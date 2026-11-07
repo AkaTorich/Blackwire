@@ -1,6 +1,7 @@
 {
   "id": "hardware_capacity_report",
   "name": "Отчёт по мощности железа",
+  "name_en": "Hardware Capacity Report",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

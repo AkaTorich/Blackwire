@@ -32,7 +32,7 @@ pub fn apply_actions(app: &AppHandle, st: &AppState, actions: &[UiAction]) {
             }
             UiAction::QuitGame => {
                 if let Err(error) = crate::cmd_game::save_and_quit(app, st) {
-                    let _ = app.emit("notify", serde_json::json!({ "title": "Выход отменён", "text": error }));
+                    let _ = app.emit("notify", serde_json::json!({ "title": tr!("Выход отменён", "Exit cancelled"), "text": error }));
                 }
             }
             _ => {}
@@ -68,7 +68,7 @@ pub async fn shell_exec(app: AppHandle, st: State<'_, AppState>, session_id: u32
     for (path, src) in checks {
         let diags = blackwire_lang::check(&src);
         if diags.is_empty() {
-            result.lines.push(blackwire_core::OutLine::success(format!("{path}: ошибок нет")));
+            result.lines.push(blackwire_core::OutLine::success(trf!("{path}: ошибок нет", "{path}: no errors")));
         } else {
             for d in diags {
                 result.lines.push(blackwire_core::OutLine::error(format!("{path}:{}:{}: {}", d.line, d.col, d.message)));
@@ -118,9 +118,9 @@ fn shell_quote(s: &str) -> String {
 
 #[tauri::command]
 pub fn script_input(st: State<'_, AppState>, pid: u32, text: String) -> Result<(), String> {
-    let scripts = st.scripts.lock().map_err(|_| "скрипты недоступны".to_string())?;
-    let h = scripts.get(&pid).ok_or_else(|| "скрипт уже завершён".to_string())?;
-    h.input_tx.send(text).map_err(|_| "скрипт не ждёт ввода".to_string())
+    let scripts = st.scripts.lock().map_err(|_| tr!("скрипты недоступны", "scripts unavailable").to_string())?;
+    let h = scripts.get(&pid).ok_or_else(|| tr!("скрипт уже завершён", "script already finished").to_string())?;
+    h.input_tx.send(text).map_err(|_| tr!("скрипт не ждёт ввода", "script is not waiting for input").to_string())
 }
 
 #[tauri::command]

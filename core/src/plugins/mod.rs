@@ -40,6 +40,8 @@ pub struct SavedPlugins {
 pub struct Manifest {
     pub id: String,
     pub name: String,
+    /// Название на английском (необязательно): показывается, когда игра на английском.
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub name_en: Option<String>,
     pub version: String,
     pub api: u32,
     pub entry: String,
@@ -50,6 +52,12 @@ pub struct Manifest {
     #[serde(default)] pub events: BTreeMap<String, String>,
     #[serde(default)] pub commands: BTreeMap<String, String>,
 }
+impl Manifest {
+    /// Название на языке игры.
+    pub fn title(&self) -> &str {
+        match &self.name_en { Some(en) if crate::i18n::is_en() && !en.trim().is_empty() => en, _ => &self.name }
+    }
+}
 #[derive(Clone, Debug)]
 pub struct Plugin { pub manifest: Manifest, pub source: String, pub assets: BTreeMap<String,String>, pub error: Option<String> }
 #[derive(Default)]
@@ -57,13 +65,13 @@ pub struct Runtime { pub sessions: BTreeMap<String,u32>, pub order: Vec<String>,
 fn ident(s: &str) -> bool { !s.is_empty() && s.len() <= 64 && s.bytes().enumerate().all(|(i,b)| b.is_ascii_alphabetic() || b == b'_' || (i > 0 && b.is_ascii_digit())) }
 impl Manifest {
     fn validate(&self) -> Result<(), String> {
-        if !ident(&self.id) || self.name.is_empty() || self.version.is_empty() { return Err("неверные id, name или version".into()); }
-        if self.api != API_VERSION { return Err(format!("нужен API {}, заявлен {}", API_VERSION, self.api)); }
-        if self.requires.iter().any(|s|!ident(s)||s==&self.id){return Err("неверная зависимость плагина".into());}
-        for event in self.events.keys() { if !event.starts_with("custom.") && !["on_load","on_tick","on_command","on_mission_done","on_mail","on_hack","on_ui","on_purchase","on_achievement","on_gig_done","on_investigation","on_scenario_done","on_world","on_save","on_unload","on_file","on_network"].contains(&event.as_str()) { return Err(format!("неизвестное событие {event}")); } }
-        for handler in self.events.values().chain(self.commands.values()) { if !ident(handler) { return Err("неверное имя обработчика".into()); } }
-        for command in self.commands.keys() { if !ident(command) || crate::shell::table::COMMANDS.iter().any(|c| c.name == command) || command == "plugins" { return Err(format!("недопустимая команда {command}")); } }
-        for permission in &self.permissions { if !["content","sys","fs","net","shell","time","network"].contains(&permission.as_str()) { return Err(format!("неизвестное разрешение {permission}")); } }
+        if !ident(&self.id) || self.name.is_empty() || self.version.is_empty() { return Err(tr!("неверные id, name или version", "invalid id, name or version").into()); }
+        if self.api != API_VERSION { return Err(trf!("нужен API {}, заявлен {}", "API {} required, {} declared", API_VERSION, self.api)); }
+        if self.requires.iter().any(|s|!ident(s)||s==&self.id){return Err(tr!("неверная зависимость плагина", "invalid plugin dependency").into());}
+        for event in self.events.keys() { if !event.starts_with("custom.") && !["on_load","on_tick","on_command","on_mission_done","on_mail","on_hack","on_ui","on_purchase","on_achievement","on_gig_done","on_investigation","on_scenario_done","on_world","on_save","on_unload","on_file","on_network"].contains(&event.as_str()) { return Err(trf!("неизвестное событие {event}", "unknown event {event}")); } }
+        for handler in self.events.values().chain(self.commands.values()) { if !ident(handler) { return Err(tr!("неверное имя обработчика", "invalid handler name").into()); } }
+        for command in self.commands.keys() { if !ident(command) || crate::shell::table::COMMANDS.iter().any(|c| c.name == command) || command == "plugins" { return Err(trf!("недопустимая команда {command}", "command not allowed: {command}")); } }
+        for permission in &self.permissions { if !["content","sys","fs","net","shell","time","network"].contains(&permission.as_str()) { return Err(trf!("неизвестное разрешение {permission}", "unknown permission {permission}")); } }
         Ok(())
     }
 }
@@ -81,43 +89,43 @@ impl Game {
         for dir in dirs.into_iter().take(128) {
             let result = (|| -> Result<Plugin, String> {
                 let manifest_path = dir.join("plugin.json").canonicalize().map_err(|e|e.to_string())?;
-                if !canonical_root.as_ref().map(|r|manifest_path.starts_with(r)).unwrap_or(false) { return Err("манифест за пределами plugins".into()); }
-                if std::fs::metadata(&manifest_path).map_err(|e|e.to_string())?.len() > 65536 { return Err("слишком большой манифест".into()); }
+                if !canonical_root.as_ref().map(|r|manifest_path.starts_with(r)).unwrap_or(false) { return Err(tr!("манифест за пределами plugins", "manifest outside plugins").into()); }
+                if std::fs::metadata(&manifest_path).map_err(|e|e.to_string())?.len() > 65536 { return Err(tr!("слишком большой манифест", "manifest too large").into()); }
                 let manifest: Manifest = serde_json::from_str(&std::fs::read_to_string(manifest_path).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
                 manifest.validate()?;
                 let entry = dir.join(&manifest.entry).canonicalize().map_err(|e|e.to_string())?;
-                if !entry.starts_with(dir.canonicalize().map_err(|e|e.to_string())?) { return Err("entry выходит за папку плагина".into()); }
-                if std::fs::metadata(&entry).map_err(|e|e.to_string())?.len() > 262144 { return Err("исходник больше 256 КБ".into()); }
+                if !entry.starts_with(dir.canonicalize().map_err(|e|e.to_string())?) { return Err(tr!("entry выходит за папку плагина", "entry escapes the plugin folder").into()); }
+                if std::fs::metadata(&entry).map_err(|e|e.to_string())?.len() > 262144 { return Err(tr!("исходник больше 256 КБ", "source larger than 256 KB").into()); }
                 let entry_source = std::fs::read_to_string(entry).map_err(|e|e.to_string())?;
                 let mut source=String::new();let mut assets=BTreeMap::new();
                 for (is_library,relative) in manifest.libraries.iter().map(|s|(true,s)).chain(manifest.assets.iter().map(|s|(false,s))){
                     let path=dir.join(relative).canonicalize().map_err(|e|e.to_string())?;
-                    if !path.starts_with(dir.canonicalize().map_err(|e|e.to_string())?){return Err("ресурс выходит за папку плагина".into());}
-                    if std::fs::metadata(&path).map_err(|e|e.to_string())?.len()>262144{return Err("ресурс больше 256 КБ".into());}
+                    if !path.starts_with(dir.canonicalize().map_err(|e|e.to_string())?){return Err(tr!("ресурс выходит за папку плагина", "resource escapes the plugin folder").into());}
+                    if std::fs::metadata(&path).map_err(|e|e.to_string())?.len()>262144{return Err(tr!("ресурс больше 256 КБ", "resource larger than 256 KB").into());}
                     let text=std::fs::read_to_string(path).map_err(|e|e.to_string())?;
                     if is_library{source.push_str(&text);source.push('\n');}else{assets.insert(relative.clone(),text);}
                 }
-                source.push_str(&entry_source);if source.len()>1048576||assets.values().map(String::len).sum::<usize>()>2097152{return Err("слишком большой пакет плагина".into());}
+                source.push_str(&entry_source);if source.len()>1048576||assets.values().map(String::len).sum::<usize>()>2097152{return Err(tr!("слишком большой пакет плагина", "plugin package too large").into());}
                 blackwire_lang::parse(&source).map_err(|e|e.to_string())?;
-                if runtime.loaded.contains_key(&manifest.id) { return Err("повтор id плагина".into()); }
-                for c in manifest.commands.keys() { if runtime.loaded.values().any(|p: &Plugin|p.manifest.commands.contains_key(c)) {return Err(format!("повтор команды {c}"));} }
+                if runtime.loaded.contains_key(&manifest.id) { return Err(tr!("повтор id плагина", "duplicate plugin id").into()); }
+                for c in manifest.commands.keys() { if runtime.loaded.values().any(|p: &Plugin|p.manifest.commands.contains_key(c)) {return Err(trf!("повтор команды {c}", "duplicate command {c}"));} }
                 Ok(Plugin { manifest, source, assets, error: None })
             })();
             match result { Ok(p) => {runtime.loaded.insert(p.manifest.id.clone(),p);}, Err(e) => runtime.errors.push(format!("{}: {e}",dir.display())) }
         }
         let mut remaining:BTreeSet<_>=runtime.loaded.keys().cloned().collect();
         loop {let ready:Vec<_>=remaining.iter().filter(|id|runtime.loaded[*id].manifest.requires.iter().all(|dep|runtime.order.contains(dep))).cloned().collect();if ready.is_empty(){break;}for id in ready{remaining.remove(&id);runtime.order.push(id);}}
-        for id in remaining {runtime.loaded.get_mut(&id).unwrap().error=Some("нет зависимости или найден цикл зависимостей".into());}
+        for id in remaining {runtime.loaded.get_mut(&id).unwrap().error=Some(tr!("нет зависимости или найден цикл зависимостей", "missing dependency or dependency cycle").into());}
         self.world.plugins.exploit_runtime=runtime.loaded.iter().filter(|(_,p)|p.error.is_none()).map(|(id,p)|(id.clone(),std::sync::Arc::new(p.clone()))).collect();
         self.plugins = runtime;
         self.plugin_event("on_load", json!({}));
     }
     pub fn plugin_list(&self) -> Value {
-        json!({"api": API_VERSION, "errors":self.plugins.errors, "plugins":self.plugins.loaded.iter().map(|(id,p)|json!({"id":id,"name":p.manifest.name,"version":p.manifest.version,"permissions":p.manifest.permissions,"commands":p.manifest.commands.keys().collect::<Vec<_>>(),"windows":self.world.plugins.windows.iter().filter(|(key,_)|key.starts_with(&format!("{id}:"))).map(|(key,v)|json!({"id":key,"title":v["title"]})).collect::<Vec<_>>(),"enabled":!self.world.plugins.disabled.contains(id),"error":p.error})).collect::<Vec<_>>()})
+        json!({"api": API_VERSION, "errors":self.plugins.errors, "plugins":self.plugins.loaded.iter().map(|(id,p)|json!({"id":id,"name":p.manifest.title(),"version":p.manifest.version,"permissions":p.manifest.permissions,"commands":p.manifest.commands.keys().collect::<Vec<_>>(),"windows":self.world.plugins.windows.iter().filter(|(key,_)|key.starts_with(&format!("{id}:"))).map(|(key,v)|json!({"id":key,"title":v["title"]})).collect::<Vec<_>>(),"enabled":!self.world.plugins.disabled.contains(id),"error":p.error})).collect::<Vec<_>>()})
     }
     pub fn plugin_enable(&mut self, id: &str, enabled: bool) -> Result<(),String> {
-        if !self.plugins.loaded.contains_key(id) {return Err("плагин не найден".into());}
-        if enabled {for dep in &self.plugins.loaded[id].manifest.requires{if !self.plugin_ready(dep){return Err(format!("недоступна зависимость {dep}"));}}}
+        if !self.plugins.loaded.contains_key(id) {return Err(tr!("плагин не найден", "plugin not found").into());}
+        if enabled {for dep in &self.plugins.loaded[id].manifest.requires{if !self.plugin_ready(dep){return Err(trf!("недоступна зависимость {dep}", "dependency unavailable: {dep}"));}}}
         if !enabled {if let Some(p)=self.plugins.loaded.get(id).cloned(){if let Some(h)=p.manifest.events.get("on_unload"){self.run_plugin(&p,h,json!({}),None);}}}
         if enabled { self.world.plugins.disabled.remove(id); self.plugins.loaded.get_mut(id).unwrap().error=None;
             self.world.plugins.exploit_runtime.insert(id.into(),std::sync::Arc::new(self.plugins.loaded[id].clone()));
@@ -138,7 +146,7 @@ impl Game {
         for p in plugins {if !self.plugin_ready(&p.manifest.id){continue;}self.run_plugin(&p,&p.manifest.events[event],payload.clone(),None);}
     }
     fn run_plugin(&mut self, p: &Plugin, handler: &str, event: Value, session: Option<u32>) -> Vec<OutLine> {
-        if self.plugins.busy {return vec![OutLine::error("вложенный запуск плагина запрещён")];}
+        if self.plugins.busy {return vec![OutLine::error(tr!("вложенный запуск плагина запрещён", "nested plugin run not allowed"))];}
         let previous_world=self.world.clone();
         let pending_scripts=self.pending_scripts.clone();
         let outbox_len=self.plugins.outbox.len();
@@ -159,7 +167,7 @@ impl Game {
         let (status,mut lines)=match result {Ok(x)=>x,Err(e)=>(Err(e),Vec::new())};
         let _=internal;
         self.plugins.busy=false;
-        if let Err(e)=status { self.world=previous_world;self.sessions=previous_sessions;if !self.sessions.contains_key(&sid){self.plugins.sessions.remove(&p.manifest.id);}self.pending_scripts=pending_scripts;self.plugins.outbox.truncate(outbox_len);self.pending_ui.truncate(ui_len);if let Some(loaded)=self.plugins.loaded.get_mut(&p.manifest.id){loaded.error=Some(e.clone());} self.world.plugins.exploit_runtime.remove(&p.manifest.id); lines.push(OutLine::error(format!("{}: {e}",p.manifest.name)));}
+        if let Err(e)=status { self.world=previous_world;self.sessions=previous_sessions;if !self.sessions.contains_key(&sid){self.plugins.sessions.remove(&p.manifest.id);}self.pending_scripts=pending_scripts;self.plugins.outbox.truncate(outbox_len);self.pending_ui.truncate(ui_len);if let Some(loaded)=self.plugins.loaded.get_mut(&p.manifest.id){loaded.error=Some(e.clone());} self.world.plugins.exploit_runtime.remove(&p.manifest.id); lines.push(OutLine::error(format!("{}: {e}",p.manifest.title())));}
         lines
     }
     pub fn plugin_command(&mut self, session: u32, line: &str) -> Option<ShellResult> {
@@ -170,7 +178,7 @@ impl Game {
         let words:Vec<_>=cmd.words.iter().map(|w|w.raw()).collect();
         let name=words.first()?;
         let p=self.plugins.loaded.values().find(|p|p.manifest.commands.contains_key(name) && !self.world.plugins.disabled.contains(&p.manifest.id)).cloned()?;
-        let lines=if !self.plugin_ready(&p.manifest.id) {vec![OutLine::error(format!("плагин или его зависимость не работает: {}",p.error.as_deref().unwrap_or("зависимость выключена")))]} else if let Some(e)=&p.error {vec![OutLine::error(format!("плагин остановлен: {e}"))]} else if cmd.redirs.stdout.is_some() || cmd.redirs.stderr.is_some() || cmd.redirs.stdin.is_some() {vec![OutLine::error("команды плагинов API 1 запускаются отдельно, без перенаправления")]} else {self.run_plugin(&p,&p.manifest.commands[name],json!({"args":&words[1..],"line":line,"session":session}),Some(session))};
+        let lines=if !self.plugin_ready(&p.manifest.id) {vec![OutLine::error(trf!("плагин или его зависимость не работает: {}", "plugin or its dependency is not working: {}",p.error.as_deref().unwrap_or(tr!("зависимость выключена", "dependency disabled"))))]} else if let Some(e)=&p.error {vec![OutLine::error(trf!("плагин остановлен: {e}", "plugin stopped: {e}"))]} else if cmd.redirs.stdout.is_some() || cmd.redirs.stderr.is_some() || cmd.redirs.stdin.is_some() {vec![OutLine::error(tr!("команды плагинов API 1 запускаются отдельно, без перенаправления", "API 1 plugin commands run on their own, without redirection"))]} else {self.run_plugin(&p,&p.manifest.commands[name],json!({"args":&words[1..],"line":line,"session":session}),Some(session))};
         if let Some(s)=self.sessions.get_mut(&session){s.history.push(line.into());s.last_status=if lines.iter().any(|l|l.kind==crate::OutKind::Error){1}else{0};}
         Some(ShellResult{lines,prompt:self.prompt(session),..Default::default()})
     }

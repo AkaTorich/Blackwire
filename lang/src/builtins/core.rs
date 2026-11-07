@@ -76,7 +76,7 @@ fn len(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
         Value::Str(s) => s.chars().count(),
         Value::List(l) => l.borrow().len(),
         Value::Dict(d) => d.borrow().len(),
-        other => return Err(c.err(format!("объект типа {} не имеет длины", other.type_name()))),
+        other => return Err(c.err(trf!("объект типа {} не имеет длины", "object of type {} has no length", other.type_name()))),
     };
     Ok(Value::Int(n as i64))
 }
@@ -99,7 +99,7 @@ fn to_int(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
             if f.is_finite() && f.abs() < 9.2e18 {
                 Ok(Value::Int(f.trunc() as i64))
             } else {
-                Err(c.err("число не помещается в int"))
+                Err(c.err(tr!("число не помещается в int", "number does not fit in int")))
             }
         }
         Value::Str(s) => {
@@ -108,7 +108,7 @@ fn to_int(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
                 None => 10,
             };
             if !(2..=36).contains(&base) {
-                return Err(c.err("основание int() должно быть от 2 до 36"));
+                return Err(c.err(tr!("основание int() должно быть от 2 до 36", "int() base must be between 2 and 36")));
             }
             let t = s.trim().replace('_', "");
             let t = t.as_str();
@@ -124,10 +124,10 @@ fn to_int(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
             };
             match i64::from_str_radix(digits, base) {
                 Ok(n) => Ok(Value::Int(if neg { -n } else { n })),
-                Err(_) => Err(c.err(format!("не удалось преобразовать {} в int", v.repr()))),
+                Err(_) => Err(c.err(trf!("не удалось преобразовать {} в int", "cannot convert {} to int", v.repr()))),
             }
         }
-        other => Err(c.err(format!("int() не принимает {}", other.type_name()))),
+        other => Err(c.err(trf!("int() не принимает {}", "int() does not accept {}", other.type_name()))),
     }
 }
 
@@ -140,11 +140,11 @@ fn to_float(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     match v {
         Value::Str(s) => match s.trim().replace('_', "").parse::<f64>() {
             Ok(f) => Ok(Value::Float(f)),
-            Err(_) => Err(c.err(format!("не удалось преобразовать {} в float", v.repr()))),
+            Err(_) => Err(c.err(trf!("не удалось преобразовать {} в float", "cannot convert {} to float", v.repr()))),
         },
         other => match other.as_number() {
             Some(n) => Ok(Value::Float(n.as_f64())),
-            None => Err(c.err(format!("float() не принимает {}", other.type_name()))),
+            None => Err(c.err(trf!("float() не принимает {}", "float() does not accept {}", other.type_name()))),
         },
     }
 }
@@ -172,13 +172,13 @@ fn to_dict(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
             for pair in items.borrow().iter() {
                 let kv = iter_to_vec(pair, c.line)?;
                 if kv.len() != 2 {
-                    return Err(c.err("dict() ожидает список пар [ключ, значение]"));
+                    return Err(c.err(tr!("dict() ожидает список пар [ключ, значение]", "dict() expects a list of [key, value] pairs")));
                 }
                 let key = Key::from_value(&kv[0]).map_err(|m| c.err(m))?;
                 d.insert(key, kv[1].clone());
             }
         }
-        Some(other) => return Err(c.err(format!("dict() не принимает {}", other.type_name()))),
+        Some(other) => return Err(c.err(trf!("dict() не принимает {}", "dict() does not accept {}", other.type_name()))),
     }
     for (k, v) in &c.kwargs {
         d.insert(Key::Str(k.clone()), v.clone());
@@ -193,10 +193,10 @@ pub fn range_bounds(args: &[Value], line: u32) -> R<(i64, i64, i64)> {
         1 => (0, ints[0], 1),
         2 => (ints[0], ints[1], 1),
         3 => (ints[0], ints[1], ints[2]),
-        n => return Err(rt(line, format!("функция range() принимает от 1 до 3 аргументов, передано {}", n))),
+        n => return Err(rt(line, trf!("функция range() принимает от 1 до 3 аргументов, передано {}", "range() takes 1 to 3 arguments, {} given", n))),
     };
     if step == 0 {
-        return Err(rt(line, "шаг range() не может быть нулём"));
+        return Err(rt(line, tr!("шаг range() не может быть нулём", "range() step cannot be zero")));
     }
     Ok((start, stop, step))
 }
@@ -220,10 +220,10 @@ fn type_of(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
 fn abs(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     c.check("abs", 1, 1)?;
     match &c.args[0] {
-        Value::Int(n) => n.checked_abs().map(Value::Int).ok_or_else(|| c.err("переполнение целого")),
+        Value::Int(n) => n.checked_abs().map(Value::Int).ok_or_else(|| c.err(tr!("переполнение целого", "integer overflow"))),
         Value::Bool(b) => Ok(Value::Int(*b as i64)),
         Value::Float(f) => Ok(Value::Float(f.abs())),
-        other => Err(c.err(format!("abs() не принимает {}", other.type_name()))),
+        other => Err(c.err(trf!("abs() не принимает {}", "abs() does not accept {}", other.type_name()))),
     }
 }
 
@@ -244,7 +244,7 @@ fn extreme(
     if items.is_empty() {
         return match c.kw("default") {
             Some(d) => Ok(d.clone()),
-            None => Err(c.err(format!("{}() от пустого списка", fname))),
+            None => Err(c.err(trf!("{}() от пустого списка", "{}() of an empty list", fname))),
         };
     }
     let key = c.kw("key").filter(|k| !matches!(k, Value::Null)).cloned();
@@ -260,7 +260,7 @@ fn extreme(
         };
         let ord = k
             .py_cmp(&best_key)
-            .ok_or_else(|| c.err(format!("нельзя сравнить {} и {}", k.type_name(), best_key.type_name())))?;
+            .ok_or_else(|| c.err(trf!("нельзя сравнить {} и {}", "cannot compare {} and {}", k.type_name(), best_key.type_name())))?;
         let better = if want_greater { ord == std::cmp::Ordering::Greater } else { ord == std::cmp::Ordering::Less };
         if better {
             best = it;
@@ -315,7 +315,7 @@ fn round(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
             if r.is_finite() && r.abs() < 9.2e18 {
                 Ok(Value::Int(r as i64))
             } else {
-                Err(c.err("число не помещается в int"))
+                Err(c.err(tr!("число не помещается в int", "number does not fit in int")))
             }
         }
         (v, Some(d)) => {
@@ -409,7 +409,7 @@ fn filter(interp: &mut Interpreter, host: &mut dyn Host, c: Call) -> R<Value> {
 fn chr(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     c.check("chr", 1, 1)?;
     let n = arg_int(&c.args[0], c.line)?;
-    let ch = u32::try_from(n).ok().and_then(char::from_u32).ok_or_else(|| c.err("chr(): код вне диапазона"))?;
+    let ch = u32::try_from(n).ok().and_then(char::from_u32).ok_or_else(|| c.err(tr!("chr(): код вне диапазона", "chr(): code out of range")))?;
     Ok(Value::str(&ch.to_string()))
 }
 
@@ -419,7 +419,7 @@ fn ord(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let mut chars = s.chars();
     match (chars.next(), chars.next()) {
         (Some(ch), None) => Ok(Value::Int(ch as i64)),
-        _ => Err(c.err("ord() ожидает строку из одного символа")),
+        _ => Err(c.err(tr!("ord() ожидает строку из одного символа", "ord() expects a single-character string"))),
     }
 }
 
@@ -456,7 +456,7 @@ fn sleep(_: &mut Interpreter, host: &mut dyn Host, c: Call) -> R<Value> {
     c.check("sleep", 1, 1)?;
     let ms = arg_float(&c.args[0], c.line)?;
     if ms < 0.0 {
-        return Err(c.err("sleep(): время не может быть отрицательным"));
+        return Err(c.err(tr!("sleep(): время не может быть отрицательным", "sleep(): time cannot be negative")));
     }
     host.sleep(ms as u64);
     Ok(Value::Null)
@@ -477,7 +477,7 @@ fn isinstance(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let names: Vec<Rc<str>> = match &c.args[1] {
         Value::Str(s) => vec![s.clone()],
         Value::List(l) => l.borrow().iter().map(|v| arg_str(v, c.line)).collect::<R<_>>()?,
-        other => return Err(c.err(format!("isinstance() ожидает имя типа, получено {}", other.type_name()))),
+        other => return Err(c.err(trf!("isinstance() ожидает имя типа, получено {}", "isinstance() expects a type name, got {}", other.type_name()))),
     };
     Ok(Value::Bool(names.iter().any(|n| &**n == tn || (&**n == "number" && (tn == "int" || tn == "float")))))
 }

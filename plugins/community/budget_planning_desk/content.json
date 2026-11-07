@@ -1,11 +1,14 @@
 {
   "name": "Стол планирования бюджета",
+  "name_en": "Budget Planning Desk",
   "family": "utility",
   "mode": "budget",
   "story": "Показывает наличные, остаток кредита и доступные товары.",
+  "story_en": "Show cash, loan balance and available upgrade prices.",
   "id": "budget_planning_desk",
   "number": 70,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Показать финансовое состояние и прайс."
+  "objective": "Показать финансовое состояние и прайс.",
+  "objective_en": "Show finances and prices."
 }

@@ -1,9 +1,9 @@
 use tauri::State;
 use crate::state::AppState;
 #[tauri::command]
-pub fn plugins_doc()->&'static str{include_str!("../../docs/SDK.md")}
+pub fn plugins_doc()->&'static str{tr!(include_str!("../../docs/SDK.md"), include_str!("../../docs/en/SDK.md"))}
 #[tauri::command]
-pub fn game_doc()->&'static str{include_str!("../../docs/GAME.md")}
+pub fn game_doc()->&'static str{tr!(include_str!("../../docs/GAME.md"), include_str!("../../docs/en/GAME.md"))}
 #[tauri::command]
 pub fn plugins_list(st:State<'_,AppState>)->Result<serde_json::Value,String>{
     let mut info=st.game()?.plugin_list();info["folder"]=serde_json::json!(st.plugins_dir.to_string_lossy());Ok(info)
@@ -16,7 +16,7 @@ pub fn plugins_enable(st:State<'_,AppState>,id:String,enabled:bool)->Result<serd
 pub fn plugins_run(st:State<'_,AppState>,command:String)->Result<Vec<blackwire_core::OutLine>,String>{
     let mut g=st.game()?;let sid=g.open_session();
     let result=g.plugin_command(sid,&command);g.close_session(sid);
-    result.map(|r|r.lines).ok_or_else(||"команда плагина не найдена".into())
+    result.map(|r|r.lines).ok_or_else(||tr!("команда плагина не найдена","plugin command not found").into())
 }
 #[tauri::command]
 pub fn plugins_folder(st:State<'_,AppState>)->Result<(),String>{
@@ -46,10 +46,10 @@ fn install_example_files(root: &std::path::Path, name: &str) -> Result<(), Strin
             ("plugin.json", include_str!("../../sdk/examples/access_lab/plugin.json")),
             ("main.adr", include_str!("../../sdk/examples/access_lab/main.adr")),
         ],
-        _ => return Err("нет такого примера".into()),
+        _ => return Err(tr!("нет такого примера", "no such example").into()),
     };
     let dir = root.join(name);
-    if dir.exists() { return Err("пример уже установлен; его файлы сохранены".into()); }
+    if dir.exists() { return Err(tr!("пример уже установлен; его файлы сохранены", "example already installed; its files were kept").into()); }
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     for (file, source) in files {
         std::fs::write(dir.join(file), source).map_err(|e| e.to_string())?;
@@ -94,12 +94,12 @@ mod tests {
 
 #[tauri::command]
 pub fn plugins_panel(st:State<'_,AppState>,id:String)->Result<serde_json::Value,String>{
-    let g=st.game()?;let(owner,_)=id.split_once(':').ok_or("неверный id окна")?;
-    if g.world.plugins.disabled.contains(owner)||g.plugins.loaded.get(owner).map(|p|p.error.is_some()).unwrap_or(true){return Err("плагин не работает".into());}
-    g.world.plugins.windows.get(&id).cloned().ok_or_else(||"окно не найдено".into())
+    let g=st.game()?;let(owner,_)=id.split_once(':').ok_or(tr!("неверный id окна","invalid window id"))?;
+    if g.world.plugins.disabled.contains(owner)||g.plugins.loaded.get(owner).map(|p|p.error.is_some()).unwrap_or(true){return Err(tr!("плагин не работает","plugin is not working").into());}
+    g.world.plugins.windows.get(&id).cloned().ok_or_else(||tr!("окно не найдено","window not found").into())
 }
 #[tauri::command]
 pub fn plugins_ui(st:State<'_,AppState>,id:String,action:String,values:serde_json::Value)->Result<Vec<blackwire_core::OutLine>,String>{
-    if !values.is_object()||values.to_string().len()>65536{return Err("неверные данные формы".into());}
+    if !values.is_object()||values.to_string().len()>65536{return Err(tr!("неверные данные формы","invalid form data").into());}
     st.game()?.plugin_ui(&id,&action,values)
 }

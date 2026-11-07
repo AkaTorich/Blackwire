@@ -1,4 +1,5 @@
 # Blackwire SDK
+[English version](README.en.md)
 
 SDK API 1 for Adder plugins. The SDK version matches the game release.
 

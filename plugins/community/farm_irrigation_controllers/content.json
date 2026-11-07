@@ -1,11 +1,14 @@
 {
   "name": "Контроллеры полива на ферме",
+  "name_en": "Farm Irrigation Controllers",
   "family": "device",
   "kind": "server",
   "service": "irrigation_bus",
   "file": "zones.csv",
   "story": "Зона 6 поливается непрерывно, вопреки опубликованному расписанию.",
+  "story_en": "Zone 6 waters continuously despite the published irrigation schedule.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 132,
   "id": "farm_irrigation_controllers",
   "number": 19,
@@ -21,8 +24,10 @@
       "service": "irrigation_bus",
       "port": 7054,
       "os": "Контроллеры полива на ферме OS 1.0",
+      "os_en": "Farm Irrigation Controllers OS 1.0",
       "file": "/srv/records/zones.csv",
       "text": "Зона 6 поливается непрерывно, вопреки опубликованному расписанию.\nВладелец записи: farm_irrigation_controllers.\nНомер дела: BW-019.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Zone 6 waters continuously despite the published irrigation schedule.\nRecord owner: farm_irrigation_controllers.\nCase reference: BW-019.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_farm_irrigation_controllers_1"
     }

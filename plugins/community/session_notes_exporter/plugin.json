@@ -1,6 +1,7 @@
 {
   "id": "session_notes_exporter",
   "name": "Выгрузка заметок сеанса",
+  "name_en": "Session Notes Exporter",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

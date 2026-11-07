@@ -123,7 +123,7 @@ impl ProcTable {
     /// Снять процесс; для приложения сначала запросить закрытие его окна. init снять нельзя.
     pub fn kill(&mut self, pid: u32) -> Result<(), String> {
         if pid == 1 {
-            return Err("нельзя снять процесс init (pid 1)".to_string());
+            return Err(tr!("нельзя снять процесс init (pid 1)", "cannot kill process init (pid 1)").to_string());
         }
         if let Some(p)=self.get_mut(pid) {
             if matches!(p.kind,ProcKind::Application{..}) {p.killed=true;return Ok(());}
@@ -131,7 +131,7 @@ impl ProcTable {
         let before = self.procs.len();
         self.procs.retain(|p| p.pid != pid);
         if self.procs.len() == before {
-            Err(format!("нет процесса с pid {}", pid))
+            Err(trf!("нет процесса с pid {}", "no process with pid {}", pid))
         } else {
             Ok(())
         }
@@ -139,9 +139,9 @@ impl ProcTable {
 
     /// Снять процесс от имени пользователя: чужие процессы снимает только root.
     pub fn kill_as(&mut self, pid: u32, who: &str) -> Result<(), String> {
-        let p = self.get(pid).ok_or_else(|| format!("нет процесса с pid {}", pid))?;
+        let p = self.get(pid).ok_or_else(|| trf!("нет процесса с pid {}", "no process with pid {}", pid))?;
         if who != "root" && p.user != who {
-            return Err(format!("отказано в доступе: процесс {} принадлежит {}", pid, p.user));
+            return Err(trf!("отказано в доступе: процесс {} принадлежит {}", "permission denied: process {} belongs to {}", pid, p.user));
         }
         self.kill(pid)
     }

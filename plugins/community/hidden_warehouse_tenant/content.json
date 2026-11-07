@@ -1,12 +1,15 @@
 {
   "name": "Скрытый арендатор склада",
+  "name_en": "Hidden Warehouse Tenant",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "lease_archive",
   "file": "warehouse-leases.csv",
   "story": "Опечатанная складская комната получает питание по несуществующему договору аренды.",
+  "story_en": "A sealed storage room receives power under a nonexistent lease.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 265,
   "id": "hidden_warehouse_tenant",
   "number": 56,
@@ -22,8 +25,10 @@
       "service": "lease_archive_gate",
       "port": 7165,
       "os": "Скрытый арендатор склада OS 1.0",
+      "os_en": "Hidden Warehouse Tenant OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Опечатанная складская комната получает питание по несуществующему договору аренды.\nВладелец записи: hidden_warehouse_tenant.\nНомер дела: BW-056.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A sealed storage room receives power under a nonexistent lease.\nRecord owner: hidden_warehouse_tenant.\nCase reference: BW-056.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_hidden_warehouse_tenant_1"
     },
@@ -36,8 +41,10 @@
       "service": "lease_archive",
       "port": 7166,
       "os": "Скрытый арендатор склада OS 1.0",
+      "os_en": "Hidden Warehouse Tenant OS 1.0",
       "file": "/srv/records/warehouse-leases.csv",
       "text": "Опечатанная складская комната получает питание по несуществующему договору аренды.\nВладелец записи: hidden_warehouse_tenant.\nНомер дела: BW-056.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A sealed storage room receives power under a nonexistent lease.\nRecord owner: hidden_warehouse_tenant.\nCase reference: BW-056.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_hidden_warehouse_tenant_2"
     }

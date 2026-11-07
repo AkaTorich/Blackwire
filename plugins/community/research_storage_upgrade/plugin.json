@@ -1,6 +1,7 @@
 {
   "id": "research_storage_upgrade",
   "name": "Накопитель под исследования",
+  "name_en": "Research Storage Upgrade",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

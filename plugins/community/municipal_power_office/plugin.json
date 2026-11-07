@@ -1,6 +1,7 @@
 {
   "id": "municipal_power_office",
   "name": "Городская энергоконтора",
+  "name_en": "Municipal Power Office",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

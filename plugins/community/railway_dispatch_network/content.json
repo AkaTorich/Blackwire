@@ -1,12 +1,15 @@
 {
   "name": "Диспетчерская железной дороги",
+  "name_en": "Railway Dispatch Network",
   "family": "network",
   "org_kind": "corporation",
   "kind": "database",
   "service": "rail_archive",
   "file": "dispatch-orders.csv",
   "story": "Грузовой маршрут переделали уже после того, как диспетчер сдал смену.",
+  "story_en": "A freight route changed after its dispatcher signed off.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 216,
   "id": "railway_dispatch_network",
   "number": 32,
@@ -22,8 +25,10 @@
       "service": "rail_archive_gate",
       "port": 7093,
       "os": "Диспетчерская железной дороги OS 1.0",
+      "os_en": "Railway Dispatch Network OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Грузовой маршрут переделали уже после того, как диспетчер сдал смену.\nВладелец записи: railway_dispatch_network.\nНомер дела: BW-032.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A freight route changed after its dispatcher signed off.\nRecord owner: railway_dispatch_network.\nCase reference: BW-032.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_railway_dispatch_network_1"
     },
@@ -36,8 +41,10 @@
       "service": "rail_archive_ops",
       "port": 7094,
       "os": "Диспетчерская железной дороги OS 1.0",
+      "os_en": "Railway Dispatch Network OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "Грузовой маршрут переделали уже после того, как диспетчер сдал смену.\nВладелец записи: railway_dispatch_network.\nНомер дела: BW-032.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A freight route changed after its dispatcher signed off.\nRecord owner: railway_dispatch_network.\nCase reference: BW-032.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_railway_dispatch_network_2"
     },
@@ -50,8 +57,10 @@
       "service": "rail_archive",
       "port": 7095,
       "os": "Диспетчерская железной дороги OS 1.0",
+      "os_en": "Railway Dispatch Network OS 1.0",
       "file": "/srv/records/dispatch-orders.csv",
       "text": "Грузовой маршрут переделали уже после того, как диспетчер сдал смену.\nВладелец записи: railway_dispatch_network.\nНомер дела: BW-032.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A freight route changed after its dispatcher signed off.\nRecord owner: railway_dispatch_network.\nCase reference: BW-032.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_railway_dispatch_network_3"
     }

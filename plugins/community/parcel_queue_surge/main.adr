@@ -1,27 +1,38 @@
 # Независимый пакет контента. Все действия происходят внутри вымышленного мира Blackwire.
 C = json.loads(plugin.asset("content.json"))
 
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
+# Поле на языке игры: name / story / objective / os / text, английское — из "<поле>_en".
+def F(item, key):
+    if plugin.lang() == "en" and item.get(key + "_en", null) != null:
+        return item[key + "_en"]
+    return item[key]
+
 def panel():
     created = plugin.get("created", false)
-    lines = C["story"] + "\n" + C["objective"] + "\nСтарт: " + C["id"] + "_start"
+    lines = F(C, "story") + "\n" + F(C, "objective") + "\n" + tr("Старт: ", "Start: ") + C["id"] + "_start"
     if len(C["nodes"]) > 0:
         first = C["nodes"][0]
         vulnerability = C["id"] + ":" + first["key"] + "_entry"
-        lines += "\nСвой эксплоит: research " + first["ip"] + " " + vulnerability
-        lines += "\nБольше подсказок: research -h 3 " + first["ip"] + " " + vulnerability
-        lines += "\nЗаготовка: exploit new ~/scripts/my_exploit.adr " + first["ip"] + " " + vulnerability
-        lines += "\nГотовый инструмент: market buy exp_" + C.get("exploit_kind","overflow") + "; запуск: exploit -f ~/scripts/exp_" + C.get("exploit_kind","overflow") + ".adr -s " + vulnerability + " " + first["ip"]
-    rows = [["Контент создан", created], ["Пройдено", plugin.get("completed", false)]]
+        lines += tr("\nСвой эксплоит: research ", "\nYour own exploit: research ") + first["ip"] + " " + vulnerability
+        lines += tr("\nБольше подсказок: research -h 3 ", "\nMore hints: research -h 3 ") + first["ip"] + " " + vulnerability
+        lines += tr("\nЗаготовка: exploit new ~/scripts/my_exploit.adr ", "\nTemplate: exploit new ~/scripts/my_exploit.adr ") + first["ip"] + " " + vulnerability
+        lines += tr("\nГотовый инструмент: market buy exp_", "\nReady tool: market buy exp_") + C.get("exploit_kind","overflow") + tr("; запуск: exploit -f ~/scripts/exp_", "; run: exploit -f ~/scripts/exp_") + C.get("exploit_kind","overflow") + ".adr -s " + vulnerability + " " + first["ip"]
+    rows = [[tr("Контент создан", "Content created"), created], [tr("Пройдено", "Completed"), plugin.get("completed", false)]]
     for node in C["nodes"]:
         rows.append([node["hostname"], node["ip"]])
     if C["family"] == "event":
-        rows.append(["Фаза инцидента", plugin.get("phase", 0)])
-    plugin.window("guide", {"title": C["name"], "text": lines, "rows": rows, "buttons": [{"id": "start", "label": "Старт"}, {"id": "status", "label": "Подсказки"}]})
+        rows.append([tr("Фаза инцидента", "Incident phase"), plugin.get("phase", 0)])
+    plugin.window("guide", {"title": F(C, "name"), "text": lines, "rows": rows, "buttons": [{"id": "start", "label": tr("Старт", "Start")}, {"id": "status", "label": tr("Подсказки", "Hints")}]})
 
 def load(event):
     for node in C["nodes"]:
         template = plugin.template(node["kind"])
-        template["os"] = node["os"]
+        template["os"] = F(node, "os")
         template["org"] = null
         template["router"] = null
         template["domain"] = null
@@ -29,11 +40,14 @@ def load(event):
         template["logs"] = []
         template["mail"] = []
         template["custom_vulns"] = []
-        template["services"] = [{"port": node["port"], "name": node["service"], "version": "1.0", "running": true, "banner": C["name"] + " / " + node["key"], "pages": []}, {"port": 80, "name": "http", "version": "1.0", "running": true, "banner": C["name"], "pages": []}]
+        template["services"] = [{"port": node["port"], "name": node["service"], "version": "1.0", "running": true, "banner": F(C, "name") + " / " + node["key"], "pages": []}, {"port": 80, "name": "http", "version": "1.0", "running": true, "banner": F(C, "name"), "pages": []}]
         kind = plugin.device_type(node["key"], template)
         plugin.vulnerability(node["key"] + "_entry", {"device_type": kind, "service": node["service"], "version_prefix": "1.", "access": node["access"], "handler": "hacked", "exploit": {"kind": C.get("exploit_kind","overflow"), "difficulty": C.get("exploit_difficulty",2)}})
         plugin.vulnerability(node["key"] + "_kernel", {"device_type": kind, "local": true, "version_prefix": node["os"], "access": "root", "exploit": {"kind": C.get("kernel_kind","race")}})
-    plugin.catalog("achievements", "resolved", {"name": C["name"] + ": раскрыто", "desc": C["objective"]})
+        # Устройство, созданное на другом языке, называет ОС иначе — ядро должно открываться и у него.
+        if node.get("os_en", null) != null:
+            plugin.vulnerability(node["key"] + "_kernel_en", {"device_type": kind, "local": true, "version_prefix": node["os_en"], "access": "root", "exploit": {"kind": C.get("kernel_kind","race")}})
+    plugin.catalog("achievements", "resolved", {"name": F(C, "name") + tr(": раскрыто", ": solved"), "desc": F(C, "objective")})
     panel()
 
 def start(event):
@@ -48,19 +62,19 @@ def start(event):
         mid = plugin.spawn(C["id"] + ":" + node["key"], props)
         ids.append(mid)
         plugin.user(mid, "operator", node["password"], false)
-        plugin.write(mid, node["file"], node["text"])
-        plugin.write(mid, "/etc/maintenance-note.txt", "Служебная заметка. Служба: " + node["service"] + "\nЗапись: " + node["file"])
+        plugin.write(mid, node["file"], F(node, "text"))
+        plugin.write(mid, "/etc/maintenance-note.txt", tr("Служебная заметка. Служба: ", "Maintenance note. Service: ") + node["service"] + tr("\nЗапись: ", "\nRecord: ") + node["file"])
         plugin.vulnerability(node["key"] + "_record_leak", {"machine": mid, "service": node["service"], "version_prefix": "1.0", "access": "read:" + node["file"], "exploit": {"kind": C.get("leak_kind","traversal")}})
-        plugin.page(mid, 80, {"path": "/", "title": C["name"], "html": "<h1>" + C["name"] + "</h1><p>" + node["text"] + "</p>"})
+        plugin.page(mid, 80, {"path": "/", "title": F(C, "name"), "html": "<h1>" + F(C, "name") + "</h1><p>" + F(node, "text") + "</p>"})
     if len(ids) > 1:
-        plugin.org({"name": C["name"], "kind": C["org_kind"], "domain": C["id"].replace("_", "-") + ".hw", "gateway": ids[0], "subnet": C["subnet"], "members": ids, "description": C["story"]})
-    plugin.quest("mission", {"title": C["name"], "objective": C["objective"], "reward": C["reward"]})
+        plugin.org({"name": F(C, "name"), "kind": C["org_kind"], "domain": C["id"].replace("_", "-") + ".hw", "gateway": ids[0], "subnet": C["subnet"], "members": ids, "description": F(C, "story")})
+    plugin.quest("mission", {"title": F(C, "name"), "objective": F(C, "objective"), "reward": C["reward"]})
     world = plugin.world("overview")
     world["player"]["known_machines"].extend(ids)
     plugin.apply({"player": world["player"]})
     plugin.set("machines", ids)
     plugin.set("created", true)
-    plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": первая зацепка", "body": C["story"] + "\nОткрой http://" + C["nodes"][0]["ip"] + "/ для первой зацепки.\nПодсказки: " + C["id"] + "_status"})
+    plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": F(C, "name") + tr(": первая зацепка", ": first lead"), "body": F(C, "story") + tr("\nОткрой http://", "\nOpen http://") + C["nodes"][0]["ip"] + tr("/ для первой зацепки.\nПодсказки: ", "/ for the first lead.\nHints: ") + C["id"] + "_status"})
     if C["family"] == "event":
         plugin.set("phase", 0)
         plugin.timer("incident", 15, "custom.incident", {}, 15)
@@ -87,7 +101,7 @@ def hacked(event):
     if complete and plugin.quest_complete(C["id"] + ":mission"):
         plugin.set("completed", true)
         plugin.unlock(C["id"] + ":resolved")
-        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": раскрыто", "body": "Доступ получен. Прочитай сохранённую запись на цели — там подробности. Награду выплатили один раз."})
+        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": F(C, "name") + tr(": раскрыто", ": solved"), "body": tr("Доступ получен. Прочитай сохранённую запись на цели — там подробности. Награду выплатили один раз.", "Access gained. Read the preserved record on the target for details. The reward has been paid once.")})
     panel()
 
 def pulse(event):
@@ -111,41 +125,41 @@ def pulse(event):
         if phase == 2:
             plugin.user(mid, "operator", node["password"] + "_rotated", false)
     elif mode == "handover":
-        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": C["name"] + ": смена " + str(phase), "body": "Запись о передаче смены перешла в фазу " + str(phase) + ". Смотри " + node["file"]})
-    value = "Фаза инцидента: " + str(phase)
+        plugin.mail(0, {"from": C["id"] + "@pack.hw", "subject": F(C, "name") + tr(": смена ", ": shift ") + str(phase), "body": tr("Запись о передаче смены перешла в фазу ", "The shift handover record moved to phase ") + str(phase) + tr(". Смотри ", ". See ") + node["file"]})
+    value = tr("Фаза инцидента: ", "Incident phase: ") + str(phase)
     if mode == "queue":
-        value = "Отложенных посылок: " + str(phase * 18)
+        value = tr("Отложенных посылок: ", "Delayed parcels: ") + str(phase * 18)
     elif mode == "battery":
-        value = "Резерв батареи, %: " + str(100 - phase * 15)
+        value = tr("Резерв батареи, %: ", "Battery reserve, %: ") + str(100 - phase * 15)
     elif mode == "telemetry":
-        value = "Качество сигнала, %: " + str(95 - phase * 12)
+        value = tr("Качество сигнала, %: ", "Signal quality, %: ") + str(95 - phase * 12)
     elif mode == "rotate":
-        value = "Поколение резерва: " + str(phase)
-    plugin.write(mid, node["file"], node["text"] + "\n" + value)
-    plugin.log(mid, "warn", C["name"] + " / " + value)
-    plugin.news(C["name"] + ": " + value)
+        value = tr("Поколение резерва: ", "Backup generation: ") + str(phase)
+    plugin.write(mid, node["file"], F(node, "text") + "\n" + value)
+    plugin.log(mid, "warn", F(C, "name") + " / " + value)
+    plugin.news(F(C, "name") + ": " + value)
     if phase >= 3:
         plugin.cancel_timer("incident")
     panel()
 
 def status(event):
-    print(C["name"])
-    print(C["story"])
-    print("Задача:", C["objective"])
+    print(F(C, "name"))
+    print(F(C, "story"))
+    print(tr("Задача:", "Objective:"), F(C, "objective"))
     if not plugin.get("created", false):
-        print("Старт командой:", C["id"] + "_start")
+        print(tr("Старт командой:", "Start with:"), C["id"] + "_start")
         return
-    print("Первая зацепка: http://" + C["nodes"][0]["ip"] + "/")
-    print("Запусти probe по каждому доступному адресу. Если файрвол блокирует вход — firewall <адрес>; при промахе повтори и следи за подозрением.")
-    print("Пройдено:", plugin.get("completed", false), "| Награда:", C["reward"])
+    print(tr("Первая зацепка: http://", "First lead: http://") + C["nodes"][0]["ip"] + "/")
+    print(tr("Запусти probe по каждому доступному адресу. Если файрвол блокирует вход — firewall <адрес>; при промахе повтори и следи за подозрением.", "Run probe on every reachable address. If a firewall blocks entry, use firewall <address>; on a miss, retry and watch your heat."))
+    print(tr("Пройдено:", "Completed:"), plugin.get("completed", false), tr("| Награда:", "| Reward:"), C["reward"])
     first = C["nodes"][0]
     vulnerability = C["id"] + ":" + first["key"] + "_entry"
-    print("Исследование и подсказки: research -h 3", first["ip"], vulnerability)
-    print("Свой код: exploit new ~/scripts/my_exploit.adr", first["ip"], vulnerability)
-    print("Готовый инструмент: market buy exp_" + C.get("exploit_kind","overflow") + "; затем exploit -f ~/scripts/exp_" + C.get("exploit_kind","overflow") + ".adr -s", vulnerability, first["ip"])
-    print("Запись дела лежит на последнем узле. Внутренние адреса достижимы через шлюз.")
+    print(tr("Исследование и подсказки: research -h 3", "Research and hints: research -h 3"), first["ip"], vulnerability)
+    print(tr("Свой код: exploit new ~/scripts/my_exploit.adr", "Your own code: exploit new ~/scripts/my_exploit.adr"), first["ip"], vulnerability)
+    print(tr("Готовый инструмент: market buy exp_", "Ready tool: market buy exp_") + C.get("exploit_kind","overflow") + tr("; затем exploit -f ~/scripts/exp_", "; then exploit -f ~/scripts/exp_") + C.get("exploit_kind","overflow") + ".adr -s", vulnerability, first["ip"])
+    print(tr("Запись дела лежит на последнем узле. Внутренние адреса достижимы через шлюз.", "The case record is on the last host. Internal addresses are reachable through the gateway."))
     if C["family"] == "event":
-        print("Фаза инцидента:", plugin.get("phase", 0), "/ 3; меняется каждые 15 игровых секунд.")
+        print(tr("Фаза инцидента:", "Incident phase:"), plugin.get("phase", 0), tr("/ 3; меняется каждые 15 игровых секунд.", "/ 3; changes every 15 game seconds."))
     panel()
 
 def open_window(event):

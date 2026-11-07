@@ -1,12 +1,15 @@
 {
   "name": "Безучётная серверная стойка",
+  "name_en": "Unlisted Server Rack",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "rack_store",
   "file": "capacity-report.csv",
   "story": "По расходу питания видно занятую стойку, которой нет в инвентарной описи.",
+  "story_en": "Power readings reveal an occupied rack missing from the inventory.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 285,
   "id": "unlisted_server_rack",
   "number": 60,
@@ -22,8 +25,10 @@
       "service": "rack_store_gate",
       "port": 7177,
       "os": "Безучётная серверная стойка OS 1.0",
+      "os_en": "Unlisted Server Rack OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "По расходу питания видно занятую стойку, которой нет в инвентарной описи.\nВладелец записи: unlisted_server_rack.\nНомер дела: BW-060.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Power readings reveal an occupied rack missing from the inventory.\nRecord owner: unlisted_server_rack.\nCase reference: BW-060.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_unlisted_server_rack_1"
     },
@@ -36,8 +41,10 @@
       "service": "rack_store",
       "port": 7178,
       "os": "Безучётная серверная стойка OS 1.0",
+      "os_en": "Unlisted Server Rack OS 1.0",
       "file": "/srv/records/capacity-report.csv",
       "text": "По расходу питания видно занятую стойку, которой нет в инвентарной описи.\nВладелец записи: unlisted_server_rack.\nНомер дела: BW-060.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Power readings reveal an occupied rack missing from the inventory.\nRecord owner: unlisted_server_rack.\nCase reference: BW-060.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_unlisted_server_rack_2"
     }

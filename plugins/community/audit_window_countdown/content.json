@@ -1,12 +1,15 @@
 {
   "name": "Отсчёт окна аудита",
+  "name_en": "Audit Window Countdown",
   "family": "event",
   "kind": "database",
   "service": "audit_window",
   "file": "audit-window.txt",
   "story": "Временная служба аудита доступна только на короткое плановое окно.",
+  "story_en": "A temporary audit service is available during a short scheduled inspection.",
   "mode": "window",
   "objective": "Поймать запись инцидента и пройти по его таймлайну.",
+  "objective_en": "Recover the incident record and follow the timed incident log.",
   "reward": 164,
   "id": "audit_window_countdown",
   "number": 99,
@@ -22,8 +25,10 @@
       "service": "audit_window",
       "port": 7294,
       "os": "Отсчёт окна аудита OS 1.0",
+      "os_en": "Audit Window Countdown OS 1.0",
       "file": "/srv/records/audit-window.txt",
       "text": "Временная служба аудита доступна только на короткое плановое окно.\nВладелец записи: audit_window_countdown.\nНомер дела: BW-099.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A temporary audit service is available during a short scheduled inspection.\nRecord owner: audit_window_countdown.\nCase reference: BW-099.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_audit_window_countdown_1"
     }

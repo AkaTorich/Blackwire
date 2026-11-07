@@ -132,7 +132,7 @@ impl Interpreter {
             Ok(_) => Ok(Value::Null),
             Err(Exc::Exit(code)) => Ok(Value::Int(code)),
             Err(Exc::Error(e)) => Err(e),
-            Err(Exc::Interrupted(line)) => Err(LangError::runtime(line, "прервано")),
+            Err(Exc::Interrupted(line)) => Err(LangError::runtime(line, tr!("прервано", "interrupted"))),
         }
     }
 
@@ -149,7 +149,7 @@ impl Interpreter {
     /// Проверка глубины рекурсии и остатка стека перед вызовом функции.
     pub(crate) fn enter_call(&mut self, line: u32) -> R<()> {
         if self.depth >= MAX_DEPTH {
-            return Err(rt(line, "переполнение стека"));
+            return Err(rt(line, tr!("переполнение стека", "stack overflow")));
         }
         let here = stack::here();
         let exhausted = match self.stack_bottom {
@@ -157,7 +157,7 @@ impl Interpreter {
             None => self.stack_base != 0 && self.stack_base.saturating_sub(here) > self.stack_budget,
         };
         if exhausted {
-            return Err(rt(line, "переполнение стека"));
+            return Err(rt(line, tr!("переполнение стека", "stack overflow")));
         }
         self.depth += 1;
         Ok(())
@@ -284,7 +284,7 @@ impl Interpreter {
             Some(e) => self.eval(e, env, host)?.to_display_string(),
             None => match &self.current_exc {
                 Some(m) => m.clone(),
-                None => return Err(rt(line, "raise без аргумента вне except")),
+                None => return Err(rt(line, tr!("raise без аргумента вне except", "raise without an argument outside except"))),
             },
         };
         Err(rt(line, msg))
@@ -426,7 +426,7 @@ impl Interpreter {
                 if vals.len() != items.len() {
                     return Err(rt(
                         target.line,
-                        format!("ожидалось {} значений для распаковки, получено {}", items.len(), vals.len()),
+                        trf!("ожидалось {} значений для распаковки, получено {}", "expected {} values to unpack, got {}", items.len(), vals.len()),
                     ));
                 }
                 for (t, v) in items.iter().zip(vals) {
@@ -434,8 +434,8 @@ impl Interpreter {
                 }
                 Ok(())
             }
-            ExprKind::Attr(..) => Err(rt(target.line, "нельзя присваивать атрибуты")),
-            _ => Err(rt(target.line, "недопустимая цель присваивания")),
+            ExprKind::Attr(..) => Err(rt(target.line, tr!("нельзя присваивать атрибуты", "cannot assign to attributes"))),
+            _ => Err(rt(target.line, tr!("недопустимая цель присваивания", "invalid assignment target"))),
         }
     }
 }

@@ -25,7 +25,7 @@
     wrap.appendChild(logo);
 
     var sub = el('div', 'finale-sub');
-    sub.textContent = 'Добро пожаловать домой';
+    sub.textContent = L('Добро пожаловать домой', 'Welcome home');
     wrap.appendChild(sub);
 
     var textEl = el('div', 'finale-text');
@@ -35,7 +35,7 @@
     wrap.appendChild(statsEl);
 
     var btn = el('button', 'btn btn-primary finale-btn');
-    btn.textContent = 'Остаться в системе';
+    btn.textContent = L('Остаться в системе', 'Stay in the system');
     btn.addEventListener('click', function () { BW.sound('click'); Win.close(); });
     wrap.appendChild(btn);
 
@@ -55,14 +55,14 @@
         d.appendChild(b);
         statsEl.appendChild(d);
       }
-      stat('Задания', s.missions_done + '/' + s.missions_total);
-      stat('Долг', 'закрыт');
-      stat('Заработано', s.money_earned + ' ₵');
-      stat('Выплачено', s.debt_paid + ' ₵');
-      stat('Взломано машин', s.machines_owned);
-      stat('Просканировано', s.scanned);
-      stat('Пик подозрения', Math.round(s.peak_heat || 0));
-      stat('Рейдов пережито', s.raids);
+      stat(L('Задания', 'Missions'), s.missions_done + '/' + s.missions_total);
+      stat(L('Долг', 'Debt'), L('закрыт', 'cleared'));
+      stat(L('Заработано', 'Earned'), s.money_earned + ' ₵');
+      stat(L('Выплачено', 'Paid off'), s.debt_paid + ' ₵');
+      stat(L('Взломано машин', 'Machines hacked'), s.machines_owned);
+      stat(L('Просканировано', 'Scanned'), s.scanned);
+      stat(L('Пик подозрения', 'Peak heat'), Math.round(s.peak_heat || 0));
+      stat(L('Рейдов пережито', 'Raids survived'), s.raids);
     }, function (e) {
       textEl.textContent = String(e);
     });

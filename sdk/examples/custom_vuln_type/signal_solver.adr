@@ -1,13 +1,21 @@
 # signal_solver.adr — готовый исходник для авторского типа Signal Lock.
+# signal_solver.adr — a ready-made source for the custom Signal Lock type.
+
+# Строка на языке игры. / A string in the game language.
+def tr(ru, en):
+    if sys.lang() == "en":
+        return en
+    return ru
+
 if len(sys.args) < 2:
-    print("Использование: signal_solver.adr адрес [id]")
+    print(tr("Использование: signal_solver.adr адрес [id]", "Usage: signal_solver.adr address [id]"))
     exit(1)
 try:
     target = sys.args[1]
     selector = sys.args[2] if len(sys.args) > 2 else "custom_vuln_type:signal_entry"
     profile = net.research(target,selector)
     if profile["kind"] != "custom_vuln_type:signal_lock":
-        print("Нужен авторский тип Signal Lock.")
+        print(tr("Нужен авторский тип Signal Lock.", "The custom Signal Lock type is required."))
         exit(1)
     layout = profile["layout"]
     signal = layout["ring"][layout["shift"]:] + layout["ring"][:layout["shift"]] + layout["suffix"]
@@ -21,5 +29,5 @@ try:
     if not result["ok"]:
         exit(1)
 except as error:
-    print("Эксплоит отклонён:",error)
+    print(tr("Эксплоит отклонён:", "Exploit rejected:"),error)
     exit(1)

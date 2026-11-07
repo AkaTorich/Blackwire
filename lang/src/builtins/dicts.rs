@@ -42,7 +42,7 @@ pub fn call(_: &mut Interpreter, _: &mut dyn Host, d: &DictRef, name: &str, c: C
                 Some(v) => Ok(v),
                 None => match c.arg(1) {
                     Some(def) => Ok(def.clone()),
-                    None => Err(c.err(format!("ключ не найден: {}", c.args[0].repr()))),
+                    None => Err(c.err(trf!("ключ не найден: {}", "key not found: {}", c.args[0].repr()))),
                 },
             }
         }
@@ -79,12 +79,12 @@ pub fn call(_: &mut Interpreter, _: &mut dyn Host, d: &DictRef, name: &str, c: C
                         for p in pairs {
                             let kv = iter_to_vec(&p, c.line)?;
                             if kv.len() != 2 {
-                                return Err(c.err("update() ожидает словарь или список пар"));
+                                return Err(c.err(tr!("update() ожидает словарь или список пар", "update() expects a dict or a list of pairs")));
                             }
                             me.insert(key_of(&c, &kv[0])?, kv[1].clone());
                         }
                     }
-                    other => return Err(c.err(format!("update() не принимает {}", other.type_name()))),
+                    other => return Err(c.err(trf!("update() не принимает {}", "update() does not accept {}", other.type_name()))),
                 }
             }
             let mut me = d.borrow_mut();
@@ -104,6 +104,6 @@ pub fn call(_: &mut Interpreter, _: &mut dyn Host, d: &DictRef, name: &str, c: C
             me.insert(key, v.clone());
             Ok(v)
         }
-        _ => Err(rt(c.line, format!("нет такого метода у словаря: {}", name))),
+        _ => Err(rt(c.line, trf!("нет такого метода у словаря: {}", "dict has no method: {}", name))),
     }
 }

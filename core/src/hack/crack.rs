@@ -29,13 +29,13 @@ pub struct CrackReport {
 pub fn crack(world: &mut World, session: &Session, target: MachineId, user: &str, wordlist: &[String]) -> Result<CrackReport, String> {
     let m = world.machine(target);
     if !m.up {
-        return Err("узел не отвечает".to_string());
+        return Err(tr!("узел не отвечает", "host not responding").to_string());
     }
     if m.service_named("ssh").is_none() {
-        return Err(format!("{}: порт 22 закрыт", m.hostname));
+        return Err(trf!("{}: порт 22 закрыт", "{}: port 22 closed", m.hostname));
     }
     if super::defense::firewall_up(world, target) {
-        return Err("узел закрыт файрволом — сначала обойди его: firewall <адрес>".to_string());
+        return Err(tr!("узел закрыт файрволом — сначала обойди его: firewall <адрес>", "host is behind a firewall — bypass it first: firewall <address>").to_string());
     }
     let host = m.hostname.clone();
     // пароль пользователя (если пользователя нет — не найдём ничего, но шум оставим)
@@ -59,11 +59,11 @@ pub fn crack(world: &mut World, session: &Session, target: MachineId, user: &str
             machine: target,
             user: user.to_string(),
             password: pw.clone(),
-            note: format!("подбор ({})", host),
+            note: trf!("подбор ({})", "cracked ({})", host),
         });
-        world.log(target, LogKind::Login, &format!("подбор пароля: успех для {} с {}", user, source_ip));
+        world.log(target, LogKind::Login, &trf!("подбор пароля: успех для {} с {}", "password cracking: success for {} from {}", user, source_ip));
     } else {
-        world.log(target, LogKind::LoginFailed, &format!("подбор пароля: {} неудачных попыток для {} с {}", tried, user, source_ip));
+        world.log(target, LogKind::LoginFailed, &trf!("подбор пароля: {} неудачных попыток для {} с {}", "password cracking: {} failed attempts for {} from {}", tried, user, source_ip));
     }
 
     // шум подбора поднимает подозрение заметнее обычного действия

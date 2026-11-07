@@ -1,12 +1,15 @@
 {
   "name": "Поддельные сертификаты безопасности",
+  "name_en": "Forged Safety Certificates",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "safety_store",
   "file": "certificate-chain.csv",
   "story": "Сертификат подписан учётной записью, полномочия которой уже истекли.",
+  "story_en": "A certificate was signed by an account whose authority had expired.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 230,
   "id": "forged_safety_certificates",
   "number": 49,
@@ -22,8 +25,10 @@
       "service": "safety_store_gate",
       "port": 7144,
       "os": "Поддельные сертификаты безопасности OS 1.0",
+      "os_en": "Forged Safety Certificates OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Сертификат подписан учётной записью, полномочия которой уже истекли.\nВладелец записи: forged_safety_certificates.\nНомер дела: BW-049.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A certificate was signed by an account whose authority had expired.\nRecord owner: forged_safety_certificates.\nCase reference: BW-049.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_forged_safety_certificates_1"
     },
@@ -36,8 +41,10 @@
       "service": "safety_store",
       "port": 7145,
       "os": "Поддельные сертификаты безопасности OS 1.0",
+      "os_en": "Forged Safety Certificates OS 1.0",
       "file": "/srv/records/certificate-chain.csv",
       "text": "Сертификат подписан учётной записью, полномочия которой уже истекли.\nВладелец записи: forged_safety_certificates.\nНомер дела: BW-049.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A certificate was signed by an account whose authority had expired.\nRecord owner: forged_safety_certificates.\nCase reference: BW-049.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_forged_safety_certificates_2"
     }

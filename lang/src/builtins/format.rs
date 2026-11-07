@@ -59,7 +59,7 @@ fn parse_spec(spec: &str, line: u32) -> Result<Spec, LangError> {
             i += 1;
         }
         if i == start {
-            return Err(LangError::runtime(line, format!("неверный формат '{}': после '.' нужна точность", spec)));
+            return Err(LangError::runtime(line, trf!("неверный формат '{}': после '.' нужна точность", "invalid format '{}': precision expected after '.'", spec)));
         }
         s.precision = chars[start..i].iter().collect::<String>().parse().ok();
     }
@@ -68,7 +68,7 @@ fn parse_spec(spec: &str, line: u32) -> Result<Spec, LangError> {
         i += 1;
     }
     if i < chars.len() {
-        return Err(LangError::runtime(line, format!("неверный формат '{}'", spec)));
+        return Err(LangError::runtime(line, trf!("неверный формат '{}'", "invalid format '{}'", spec)));
     }
     Ok(s)
 }
@@ -133,7 +133,7 @@ pub fn format_value(v: &Value, spec: &str, line: u32) -> Result<String, LangErro
             let i = match n {
                 Num::Int(i) => i,
                 Num::Float(_) => {
-                    return Err(LangError::runtime(line, format!("код формата '{}' не подходит для float", t)));
+                    return Err(LangError::runtime(line, trf!("код формата '{}' не подходит для float", "format code '{}' is not valid for float", t)));
                 }
             };
             negative = i < 0;
@@ -171,7 +171,7 @@ pub fn format_value(v: &Value, spec: &str, line: u32) -> Result<String, LangErro
         (Some(t), _) => {
             return Err(LangError::runtime(
                 line,
-                format!("неизвестный код формата '{}' для {}", t, v.type_name()),
+                trf!("неизвестный код формата '{}' для {}", "unknown format code '{}' for {}", t, v.type_name()),
             ));
         }
     };
@@ -232,7 +232,7 @@ pub fn str_format(_: &mut Interpreter, _: &mut dyn Host, template: &str, c: &Cal
                 j += 1;
             }
             if j >= chars.len() {
-                return Err(rt(c.line, "незакрытая '{' в format()"));
+                return Err(rt(c.line, tr!("незакрытая '{' в format()", "unclosed '{' in format()")));
             }
             i = j + 1;
             let (name, spec) = match field.find(':') {
@@ -244,13 +244,13 @@ pub fn str_format(_: &mut Interpreter, _: &mut dyn Host, template: &str, c: &Cal
                 None => (name, None),
             };
             let value = if name.is_empty() {
-                let v = c.arg(auto_index).ok_or_else(|| c.err("format(): не хватает позиционных аргументов"))?;
+                let v = c.arg(auto_index).ok_or_else(|| c.err(tr!("format(): не хватает позиционных аргументов", "format(): not enough positional arguments")))?;
                 auto_index += 1;
                 v.clone()
             } else if let Ok(n) = name.parse::<usize>() {
-                c.arg(n).ok_or_else(|| c.err(format!("format(): нет аргумента с номером {}", n)))?.clone()
+                c.arg(n).ok_or_else(|| c.err(trf!("format(): нет аргумента с номером {}", "format(): no argument with index {}", n)))?.clone()
             } else {
-                c.kw(&name).ok_or_else(|| c.err(format!("format(): именованный аргумент '{}' не передан", name)))?.clone()
+                c.kw(&name).ok_or_else(|| c.err(trf!("format(): именованный аргумент '{}' не передан", "format(): keyword argument '{}' not given", name)))?.clone()
             };
             let value = match conv {
                 Some('r') => Value::str(&value.repr()),
@@ -264,7 +264,7 @@ pub fn str_format(_: &mut Interpreter, _: &mut dyn Host, template: &str, c: &Cal
                 i += 2;
                 continue;
             }
-            return Err(rt(c.line, "одиночная '}' в format()"));
+            return Err(rt(c.line, tr!("одиночная '}' в format()", "single '}' in format()")));
         } else {
             out.push(ch);
             i += 1;

@@ -2,10 +2,10 @@
 /* Справка: оглавление слева, Markdown справа, поиск с подсветкой, якоря по заголовкам. */
 (function () {
   var BOOKS = [
-    { id: 'game', title: 'Руководство игрока', icon: 'file-code', load: function () { return BW.game_doc(); } },
-    { id: 'sdk', title: 'SDK плагинов', icon: 'plugins', load: function () { return BW.plugins_doc(); } },
-    { id: 'lang', title: 'Язык Adder', icon: 'file-code', load: function () { return BW.lang_doc(); } },
-    { id: 'shell', title: 'Команды терминала', icon: 'terminal', load: function () { return BW.shell_doc(); } }
+    { id: 'game', title: L('Руководство игрока', 'Player guide'), icon: 'file-code', load: function () { return BW.game_doc(); } },
+    { id: 'sdk', title: L('SDK плагинов', 'Plugin SDK'), icon: 'plugins', load: function () { return BW.plugins_doc(); } },
+    { id: 'lang', title: L('Язык Adder', 'Adder language'), icon: 'file-code', load: function () { return BW.lang_doc(); } },
+    { id: 'shell', title: L('Команды терминала', 'Terminal commands'), icon: 'terminal', load: function () { return BW.shell_doc(); } }
   ];
 
   var els = {}, baseHtml = {}, marks = [], markIndex = -1, headingEls = [], searchTimer = null;
@@ -22,18 +22,18 @@
     body.innerHTML = '';
     var bar = el('div', 'toolbar help-bar');
     var side = el('button', 'btn-icon', Icons.get('menu', 18));
-    side.title = 'Оглавление';
+    side.title = L('Оглавление', 'Contents');
     side.addEventListener('click', function () { els.help.classList.toggle('side-hidden'); });
     bar.appendChild(side);
     var sbox = el('div', 'help-search');
     sbox.innerHTML = '<span class="help-search-ico">' + Icons.get('search', 15) + '</span>';
-    var inp = el('input', 'input'); inp.type = 'text'; inp.placeholder = 'Поиск по справке'; inp.spellcheck = false;
+    var inp = el('input', 'input'); inp.type = 'text'; inp.placeholder = L('Поиск по справке', 'Search help'); inp.spellcheck = false;
     sbox.appendChild(inp);
     var cnt = el('span', 'help-count mono');
     sbox.appendChild(cnt);
     bar.appendChild(sbox);
-    var prev = el('button', 'btn-icon', Icons.get('up', 16)); prev.title = 'Предыдущее (Shift+Enter)';
-    var next = el('button', 'btn-icon', Icons.get('down', 16)); next.title = 'Следующее (Enter)';
+    var prev = el('button', 'btn-icon', Icons.get('up', 16)); prev.title = L('Предыдущее (Shift+Enter)', 'Previous (Shift+Enter)');
+    var next = el('button', 'btn-icon', Icons.get('down', 16)); next.title = L('Следующее (Enter)', 'Next (Enter)');
     bar.appendChild(prev); bar.appendChild(next);
     body.appendChild(bar);
 
@@ -42,7 +42,7 @@
     var toc = el('nav', 'help-toc');
     aside.appendChild(toc);
     var content = el('article', 'help-content');
-    content.innerHTML = '<div class="help-loading dim">Загрузка справки…</div>';
+    content.innerHTML = '<div class="help-loading dim">' + L('Загрузка справки…', 'Loading help…') + '</div>';
     help.appendChild(aside); help.appendChild(content);
     body.appendChild(help);
 
@@ -81,7 +81,7 @@
     els.toc.innerHTML = '';
     headingEls = [];
     BOOKS.forEach(function (b, i) {
-      var md = typeof docs[i] === 'string' ? docs[i] : '# ' + b.title + '\n\nТекст недоступен.';
+      var md = typeof docs[i] === 'string' ? docs[i] : '# ' + b.title + L('\n\nТекст недоступен.', '\n\nText unavailable.');
       var sec = el('section', 'help-book');
       sec.id = 'book-' + b.id;
       sec.dataset.book = b.id;
@@ -239,5 +239,5 @@
     });
   }
 
-  Apps.register('help', { title: 'Справка', icon: 'help', minWidth: 520, minHeight: 360, mount: mount });
+  Apps.register('help', { title: L('Справка', 'Help'), icon: 'help', minWidth: 520, minHeight: 360, mount: mount });
 })();

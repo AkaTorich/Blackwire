@@ -35,7 +35,7 @@ impl Interpreter {
             ExprKind::Str(s) => Ok(Value::Str(s.clone())),
             ExprKind::Name(n) => match self.lookup(n, env) {
                 Some(v) => Ok(v),
-                None => Err(rt(e.line, format!("имя '{}' не определено", n))),
+                None => Err(rt(e.line, trf!("имя '{}' не определено", "name '{}' is not defined", n))),
             },
             ExprKind::Call { func, args, kwargs } => self.eval_call(func, args, kwargs, env, host, e.line),
             ExprKind::Binary(op, a, b) => {
@@ -183,7 +183,7 @@ impl Interpreter {
                 Value::Null => Ok(None),
                 Value::Int(n) => Ok(Some(n)),
                 Value::Bool(b) => Ok(Some(b as i64)),
-                other => Err(rt(e.line, format!("границы среза должны быть целыми, а не {}", other.type_name()))),
+                other => Err(rt(e.line, trf!("границы среза должны быть целыми, а не {}", "slice bounds must be integers, not {}", other.type_name()))),
             },
         }
     }
@@ -256,11 +256,11 @@ impl Interpreter {
             Value::Module(m) => builtins::module_attr(self, m, name, line),
             Value::Str(_) | Value::List(_) | Value::Dict(_) => {
                 if !builtins::has_method(&obj, name) {
-                    return Err(rt(line, format!("нет такого метода у {}: {}", builtins::type_genitive(&obj), name)));
+                    return Err(rt(line, trf!("нет такого метода у {}: {}", "{} has no method: {}", builtins::type_genitive(&obj), name)));
                 }
                 Ok(Value::Method(Rc::new(BoundMethod { recv: obj.clone(), name: name.clone() })))
             }
-            other => Err(rt(line, format!("объект типа {} не имеет атрибутов", other.type_name()))),
+            other => Err(rt(line, trf!("объект типа {} не имеет атрибутов", "object of type {} has no attributes", other.type_name()))),
         }
     }
 }

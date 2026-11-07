@@ -1,6 +1,7 @@
 {
   "id": "forged_safety_certificates",
   "name": "Поддельные сертификаты безопасности",
+  "name_en": "Forged Safety Certificates",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

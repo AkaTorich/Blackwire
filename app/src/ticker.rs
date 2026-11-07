@@ -57,7 +57,7 @@ pub fn start(app: AppHandle) {
                 }
                 if payload.1 {
                     let _ = app.emit("mail_new", serde_json::json!({ "count": payload.2 }));
-                    let _ = app.emit("notify", serde_json::json!({ "title": "Почта", "text": "Новое письмо" }));
+                    let _ = app.emit("notify", serde_json::json!({ "title": tr!("Почта", "Mail"), "text": tr!("Новое письмо", "New message") }));
                 }
                 crate::cmd_shell::flush_pending(&app, &st);
                 crate::netplay::pump(&app, &st);

@@ -1,0 +1,13 @@
+# Developer Memory Upgrade
+
+Add 1 GB of memory for script development.
+
+## Start here
+
+1. Put this folder next to your other plugins and press **Reload**.
+2. Buy the upgrade with `buy developer_memory_upgrade:item` in the game terminal.
+3. The upgrade is applied once and kept in the save.
+
+## Installation and persistence
+
+Family: shops. The plugin folder never touches other saves; the result stays in the save even if the plugin is disabled.

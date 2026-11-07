@@ -30,22 +30,22 @@ fn default_size(app: &str) -> (f64, f64, f64, f64) {
 
 fn app_title(app: &str) -> &'static str {
     match app {
-        "terminal" => "Терминал",
-        "editor" => "Редактор",
-        "files" => "Файлы",
-        "browser" => "Браузер",
-        "monitor" => "Монитор",
-        "map" => "Карта сети",
-        "mail" => "Почта",
-        "plugins" => "Плагины",
-        "plugin_panel" => "Окно плагина",
-        "settings" => "Настройки",
-        "help" => "Справка",
+        "terminal" => tr!("Терминал", "Terminal"),
+        "editor" => tr!("Редактор", "Editor"),
+        "files" => tr!("Файлы", "Files"),
+        "browser" => tr!("Браузер", "Browser"),
+        "monitor" => tr!("Монитор", "System Monitor"),
+        "map" => tr!("Карта сети", "Network Map"),
+        "mail" => tr!("Почта", "Mail"),
+        "plugins" => tr!("Плагины", "Plugins"),
+        "plugin_panel" => tr!("Окно плагина", "Plugin Window"),
+        "settings" => tr!("Настройки", "Settings"),
+        "help" => tr!("Справка", "Help"),
         "finale" => "hello-world",
-        "scenario" => "Редактор сценариев",
-        "duel" => "Сетевая игра",
+        "scenario" => tr!("Редактор сценариев", "Scenario Editor"),
+        "duel" => tr!("Сетевая игра", "Multiplayer"),
         "login" => "Blackwire",
-        "desktop" => "Blackwire — рабочий стол",
+        "desktop" => tr!("Blackwire — рабочий стол", "Blackwire — Desktop"),
         _ => "Blackwire",
     }
 }
@@ -84,7 +84,7 @@ fn monitor_list(app: &AppHandle) -> Vec<MonitorInfo> {
                 .unwrap_or(i == 0);
             out.push(MonitorInfo {
                 index: i as u32,
-                name: m.name().cloned().unwrap_or_else(|| format!("Монитор {}", i + 1)),
+                name: m.name().cloned().unwrap_or_else(|| trf!("Монитор {}", "Monitor {}", i + 1)),
                 x: m.position().x,
                 y: m.position().y,
                 width: m.size().width,
@@ -145,7 +145,7 @@ pub fn create_app_window(app: &AppHandle, st: &AppState, app_id: &str, arg: Opti
     }
 
     // No owner/transient parent: every application is a normal taskbar/Alt+Tab window.
-    let win = builder.build().map_err(|e| format!("не удалось открыть окно: {e}"))?;
+    let win = builder.build().map_err(|e| trf!("не удалось открыть окно: {e}", "failed to open window: {e}"))?;
     let _ = win.set_focus();
 
     if let Ok(mut list) = st.windows.lock() {
@@ -192,7 +192,7 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
         return Ok(());
     }
     let list = monitor_list(app);
-    let m = list.get(monitor as usize).cloned().ok_or_else(|| "нет такого монитора".to_string())?;
+    let m = list.get(monitor as usize).cloned().ok_or_else(|| tr!("нет такого монитора", "no such monitor").to_string())?;
     let label = format!("desktop{}", monitor);
     let url = format!("index.html?app=desktop&win={}&arg={}", label, monitor);
     // Первый рабочий стол — главное окно игры: у него есть кнопка в панели задач,
@@ -213,7 +213,7 @@ pub fn open_desktop(app: &AppHandle, st: &AppState, monitor: u32) -> Result<(), 
         .min_inner_size(640.0,360.0)
         .focused(false)
         .build()
-        .map_err(|e| format!("не удалось открыть рабочий стол: {e}"))?;
+        .map_err(|e| trf!("не удалось открыть рабочий стол: {e}", "failed to open desktop: {e}"))?;
     let _ = win.set_position(PhysicalPosition::new(m.x, m.y));
     let _ = win.set_size(PhysicalSize::new(m.width, m.height));
     if let Ok(mut d) = st.desktops.lock() {
@@ -278,7 +278,7 @@ pub async fn open_app(handle: AppHandle, st: State<'_, AppState>, app: String, a
 
 #[tauri::command]
 pub async fn focus_window(app: AppHandle, label: String) -> Result<(), String> {
-    let win = app.get_webview_window(&label).ok_or_else(|| "окно уже закрыто".to_string())?;
+    let win = app.get_webview_window(&label).ok_or_else(|| tr!("окно уже закрыто", "window already closed").to_string())?;
     if win.is_minimized().unwrap_or(false) {
         let _ = win.unminimize();
     }
@@ -310,7 +310,7 @@ pub async fn arrange_windows(app: AppHandle, st: State<'_, AppState>, monitor: O
 }
 
 pub fn arrange_all(app: &AppHandle, st: &AppState, monitor: Option<u32>, layout: &str) -> Result<(), String> {
-    let m = monitor_or_default(app, st, monitor).ok_or_else(|| "монитор не найден".to_string())?;
+    let m = monitor_or_default(app, st, monitor).ok_or_else(|| tr!("монитор не найден", "monitor not found").to_string())?;
     let labels: Vec<String> = st
         .windows
         .lock()

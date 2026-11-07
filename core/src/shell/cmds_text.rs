@@ -49,7 +49,7 @@ pub fn tail(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn grep(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.is_empty() {
-        return CmdOutput::err("grep: укажите шаблон");
+        return CmdOutput::err(tr!("grep: укажите шаблон", "grep: specify a pattern"));
     }
     let icase = a.has("i");
     let numbers = a.has("n");
@@ -163,7 +163,7 @@ pub fn wc(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         if all || want_c {
             row.push(tc.to_string());
         }
-        row.push("итого".to_string());
+        row.push(tr!("итого", "total").to_string());
         rows.push(row);
     }
     out.push_lines(table(&rows, &[true, true, true, false]));
@@ -241,7 +241,7 @@ pub fn cut(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let fields = a.opt("f").map(parse_fields);
     let chars = a.opt("c").map(parse_fields);
     if fields.is_none() && chars.is_none() {
-        return CmdOutput::err("cut: укажите -f номера (и -d разделитель) или -c позиции");
+        return CmdOutput::err(tr!("cut: укажите -f номера (и -d разделитель) или -c позиции", "cut: specify -f fields (and -d delimiter) or -c positions"));
     }
     let mut out = CmdOutput::ok();
     for (_, text) in inputs(ctx, "cut", &a.pos, &mut out) {
@@ -288,7 +288,7 @@ pub fn tr(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     let delete = a.has("d");
     if a.pos.is_empty() || (!delete && a.pos.len() < 2) {
-        return CmdOutput::err("tr: укажите набор1 и набор2 (или -d набор)");
+        return CmdOutput::err(tr!("tr: укажите набор1 и набор2 (или -d набор)", "tr: specify set1 and set2 (or -d set)"));
     }
     let set1 = charset(&a.pos[0]);
     let set2 = if delete { Vec::new() } else { charset(&a.pos[1]) };
@@ -340,7 +340,7 @@ pub fn tee(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn diff(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.len() != 2 {
-        return CmdOutput::err("diff: укажите два файла");
+        return CmdOutput::err(tr!("diff: укажите два файла", "diff: specify two files"));
     }
     let user = ctx.user();
     let mut texts = Vec::new();
@@ -376,7 +376,7 @@ pub fn diff(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         }
     }
     if out.lines.is_empty() {
-        out.push_kind("файлы одинаковы", crate::types::OutKind::Dim);
+        out.push_kind(tr!("файлы одинаковы", "files are identical"), crate::types::OutKind::Dim);
     } else {
         out.status = 1;
     }
@@ -425,7 +425,7 @@ pub fn base64(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         let text = String::from_utf8_lossy(&data).to_string();
         match base64_decode(&text) {
             Some(bytes) => out.push(String::from_utf8_lossy(&bytes).to_string()),
-            None => return CmdOutput::err("base64: неверные данные"),
+            None => return CmdOutput::err(tr!("base64: неверные данные", "base64: invalid data")),
         }
     } else {
         let s = base64_encode(&data);
@@ -460,7 +460,7 @@ pub fn hexdump(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         out.push(format!("{:08x}  {:<47}  |{}|", i * 16, hex.join(" "), ascii));
     }
     if data.len() > limit {
-        out.push_kind(format!("… ещё {} байт", data.len() - limit), crate::types::OutKind::Dim);
+        out.push_kind(trf!("… ещё {} байт", "… {} more bytes", data.len() - limit), crate::types::OutKind::Dim);
     }
     out
 }
@@ -507,7 +507,7 @@ fn pack(ctx: &Ctx<'_>, paths: &[String]) -> Result<(String, usize), String> {
 
 /// Записи архива: (путь, режим, вид, данные).
 fn entries(text: &str) -> Result<Vec<(String, u16, char, Vec<u8>)>, String> {
-    let rest = text.strip_prefix(ARCHIVE_HEADER).ok_or("это не архив Blackwire")?;
+    let rest = text.strip_prefix(ARCHIVE_HEADER).ok_or(tr!("это не архив Blackwire", "not a Blackwire archive"))?;
     let mut out = Vec::new();
     let mut pos = 0usize;
     while pos < rest.len() {
@@ -519,16 +519,16 @@ fn entries(text: &str) -> Result<Vec<(String, u16, char, Vec<u8>)>, String> {
         }
         let parts: Vec<&str> = header.split(' ').collect();
         if parts.len() != 5 || parts[0] != "@@" {
-            return Err("повреждённый архив".to_string());
+            return Err(tr!("повреждённый архив", "corrupted archive").to_string());
         }
-        let mode = u16::from_str_radix(parts[2], 8).map_err(|_| "повреждённый архив")?;
+        let mode = u16::from_str_radix(parts[2], 8).map_err(|_| tr!("повреждённый архив", "corrupted archive"))?;
         let kind = parts[3].chars().next().unwrap_or('f');
-        let len: usize = parts[4].parse().map_err(|_| "повреждённый архив")?;
+        let len: usize = parts[4].parse().map_err(|_| tr!("повреждённый архив", "corrupted archive"))?;
         let data = if kind == 'd' {
             Vec::new()
         } else {
             if pos + len > rest.len() {
-                return Err("архив обрезан".to_string());
+                return Err(tr!("архив обрезан", "archive truncated").to_string());
             }
             let raw = &rest[pos..pos + len];
             pos += len + 1;
@@ -582,13 +582,13 @@ pub fn tar(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let extract = a.has("x");
     let listing = a.has("t");
     if a.pos.is_empty() || !(create || extract || listing) {
-        return CmdOutput::err("tar: использование: tar -c архив.tar файлы… | tar -x архив.tar [папка] | tar -t архив.tar");
+        return CmdOutput::err(tr!("tar: использование: tar -c архив.tar файлы… | tar -x архив.tar [папка] | tar -t архив.tar", "tar: usage: tar -c archive.tar files… | tar -x archive.tar [dir] | tar -t archive.tar"));
     }
     let archive = ctx.path(&a.pos[0]);
     let mut out = CmdOutput::ok();
     if create {
         if a.pos.len() < 2 {
-            return CmdOutput::err("tar: укажите, что упаковать");
+            return CmdOutput::err(tr!("tar: укажите, что упаковать", "tar: specify what to pack"));
         }
         match pack(ctx, &a.pos[1..]) {
             Ok((body, n)) => {
@@ -596,7 +596,7 @@ pub fn tar(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
                 if let Err(e) = ctx.fs_mut().write(&archive, &body, &user) {
                     return CmdOutput::err(format!("tar: {}", e));
                 }
-                out.push_kind(format!("упаковано записей: {} → {}", n, archive), crate::types::OutKind::Dim);
+                out.push_kind(trf!("упаковано записей: {} → {}", "entries packed: {} → {}", n, archive), crate::types::OutKind::Dim);
             }
             Err(e) => return CmdOutput::err(format!("tar: {}", e)),
         }
@@ -614,7 +614,7 @@ pub fn tar(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn zip(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.len() < 2 {
-        return CmdOutput::err("zip: использование: zip архив.zip файлы…");
+        return CmdOutput::err(tr!("zip: использование: zip архив.zip файлы…", "zip: usage: zip archive.zip files…"));
     }
     let archive = ctx.path(&a.pos[0]);
     match pack(ctx, &a.pos[1..]) {
@@ -624,7 +624,7 @@ pub fn zip(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
                 return CmdOutput::err(format!("zip: {}", e));
             }
             let mut out = CmdOutput::ok();
-            out.push_kind(format!("упаковано записей: {} → {}", n, archive), crate::types::OutKind::Dim);
+            out.push_kind(trf!("упаковано записей: {} → {}", "entries packed: {} → {}", n, archive), crate::types::OutKind::Dim);
             out
         }
         Err(e) => CmdOutput::err(format!("zip: {}", e)),
@@ -634,7 +634,7 @@ pub fn zip(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn unzip(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.is_empty() {
-        return CmdOutput::err("unzip: использование: unzip архив.zip [папка]");
+        return CmdOutput::err(tr!("unzip: использование: unzip архив.zip [папка]", "unzip: usage: unzip archive.zip [dir]"));
     }
     let archive = ctx.path(&a.pos[0]);
     let mut out = CmdOutput::ok();

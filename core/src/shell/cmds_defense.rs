@@ -11,19 +11,19 @@ pub fn shield(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     match a {
         Some("on") | Some("вкл") => {
             crate::hack::counter::set_shield(ctx.world, true);
-            out.lines.push(OutLine::success("Файрвол поднят — входящие атаки будут отражаться.").after(200));
+            out.lines.push(OutLine::success(tr!("Файрвол поднят — входящие атаки будут отражаться.", "Firewall up — incoming attacks will be repelled.")).after(200));
         }
         Some("off") | Some("выкл") => {
             crate::hack::counter::set_shield(ctx.world, false);
-            out.push_kind("Файрвол снят.", OutKind::Warn);
+            out.push_kind(tr!("Файрвол снят.", "Firewall down."), OutKind::Warn);
         }
         _ => {
             let on = ctx.world.defense.shield;
             let n = ctx.world.defense.implants.len();
-            out.push_kind("Защита своей машины:", OutKind::Heading);
-            out.lines.push(OutLine::new(format!("  Файрвол: {}", if on { "поднят" } else { "снят" }), if on { OutKind::Success } else { OutKind::Warn }));
-            out.push(format!("  Закладок на машине: {}", n));
-            out.push_kind("  Поднять/снять: shield on | shield off · закладки: implants, clean", OutKind::Dim);
+            out.push_kind(tr!("Защита своей машины:", "Your machine's defense:"), OutKind::Heading);
+            out.lines.push(OutLine::new(trf!("  Файрвол: {}", "  Firewall: {}", if on { tr!("поднят", "up") } else { tr!("снят", "down") }), if on { OutKind::Success } else { OutKind::Warn }));
+            out.push(trf!("  Закладок на машине: {}", "  Implants on the machine: {}", n));
+            out.push_kind(tr!("  Поднять/снять: shield on | shield off · закладки: implants, clean", "  Raise/lower: shield on | shield off · implants: implants, clean"), OutKind::Dim);
         }
     }
     out
@@ -32,15 +32,15 @@ pub fn shield(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn implants(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let list = ctx.world.defense.implants.clone();
     let mut out = CmdOutput::ok();
-    out.push_kind("Закладки на твоей машине:", OutKind::Heading);
+    out.push_kind(tr!("Закладки на твоей машине:", "Implants on your machine:"), OutKind::Heading);
     if list.is_empty() {
-        out.push_kind("  Чисто.", OutKind::Success);
+        out.push_kind(tr!("  Чисто.", "  Clean."), OutKind::Success);
         return out;
     }
     for im in &list {
-        out.lines.push(OutLine::new(format!("  {:<14} {}  (с {})", im.path, im.kind.title(), GameClock::format_short(im.planted)), OutKind::Error));
+        out.lines.push(OutLine::new(trf!("  {:<14} {}  (с {})", "  {:<14} {}  (since {})", im.path, im.kind.title(), GameClock::format_short(im.planted)), OutKind::Error));
     }
-    out.push_kind("  Убрать: clean путь · всё: clean all", OutKind::Dim);
+    out.push_kind(tr!("  Убрать: clean путь · всё: clean all", "  Remove: clean path · everything: clean all"), OutKind::Dim);
     out
 }
 
@@ -49,9 +49,9 @@ pub fn clean(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let n = crate::hack::counter::clean(ctx.world, which.or(Some("all")));
     let mut out = CmdOutput::ok();
     if n == 0 {
-        out.push_kind("Убирать нечего.", OutKind::Dim);
+        out.push_kind(tr!("Убирать нечего.", "Nothing to remove."), OutKind::Dim);
     } else {
-        out.lines.push(OutLine::success(format!("Убрано закладок: {}.", n)).after(200));
+        out.lines.push(OutLine::success(trf!("Убрано закладок: {}.", "Implants removed: {}.", n)).after(200));
     }
     out
 }

@@ -32,7 +32,7 @@ fn affix(c: &Call, v: &Value, s: &str, start: bool) -> R<bool> {
     let candidates: Vec<Rc<str>> = match v {
         Value::Str(p) => vec![p.clone()],
         Value::List(l) => l.borrow().iter().map(|x| arg_str(x, c.line)).collect::<R<_>>()?,
-        other => return Err(c.err(format!("ожидалась строка или список строк, получено {}", other.type_name()))),
+        other => return Err(c.err(trf!("ожидалась строка или список строк, получено {}", "expected a string or a list of strings, got {}", other.type_name()))),
     };
     Ok(candidates.iter().any(|p| if start { s.starts_with(&**p) } else { s.ends_with(&**p) }))
 }
@@ -60,7 +60,7 @@ fn fill_arg(c: &Call, i: usize) -> R<String> {
         Some(v) => {
             let f = arg_str(v, c.line)?;
             if f.chars().count() != 1 {
-                return Err(c.err("символ заполнения должен быть одним символом"));
+                return Err(c.err(tr!("символ заполнения должен быть одним символом", "fill character must be a single character")));
             }
             Ok(f.to_string())
         }
@@ -163,7 +163,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, s: &Rc<str>, name: &s
                 Some(v) => {
                     let sep = arg_str(v, c.line)?;
                     if sep.is_empty() {
-                        return Err(c.err("разделитель не может быть пустым"));
+                        return Err(c.err(tr!("разделитель не может быть пустым", "separator cannot be empty")));
                     }
                     let parts: Vec<String> = if maxsplit < 0 {
                         s.split(&*sep).map(String::from).collect()
@@ -186,7 +186,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, s: &Rc<str>, name: &s
                 match it {
                     Value::Str(x) => parts.push(x.to_string()),
                     other => {
-                        return Err(c.err(format!("join() ожидает список строк, встречен {}", other.type_name())));
+                        return Err(c.err(trf!("join() ожидает список строк, встречен {}", "join() expects a list of strings, found {}", other.type_name())));
                     }
                 }
             }
@@ -201,7 +201,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, s: &Rc<str>, name: &s
                 None => -1,
             };
             if old.is_empty() {
-                return Err(c.err("replace(): искомая подстрока не может быть пустой"));
+                return Err(c.err(tr!("replace(): искомая подстрока не может быть пустой", "replace(): search substring cannot be empty")));
             }
             let out = if count < 0 { s.replace(&*old, &new) } else { s.replacen(&*old, &new, count as usize) };
             Ok(Value::str(&out))
@@ -217,7 +217,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, s: &Rc<str>, name: &s
             match s[byte_start..].find(&*sub) {
                 Some(b) => Ok(Value::Int(char_index(s, byte_start + b))),
                 None if name == "find" => Ok(Value::Int(-1)),
-                None => Err(c.err("подстрока не найдена")),
+                None => Err(c.err(tr!("подстрока не найдена", "substring not found"))),
             }
         }
         "rfind" => {
@@ -288,12 +288,12 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, s: &Rc<str>, name: &s
             c.check("decode_hex", 0, 0)?;
             let clean: String = s.chars().filter(|ch| !ch.is_whitespace()).collect();
             if clean.len() % 2 != 0 || !clean.chars().all(|ch| ch.is_ascii_hexdigit()) {
-                return Err(c.err("неверная hex-строка"));
+                return Err(c.err(tr!("неверная hex-строка", "invalid hex string")));
             }
             let bytes: Vec<u8> =
                 (0..clean.len()).step_by(2).map(|i| u8::from_str_radix(&clean[i..i + 2], 16).unwrap_or(0)).collect();
             Ok(Value::str(&String::from_utf8_lossy(&bytes)))
         }
-        _ => Err(rt(c.line, format!("нет такого метода у строки: {}", name))),
+        _ => Err(rt(c.line, trf!("нет такого метода у строки: {}", "str has no method: {}", name))),
     }
 }

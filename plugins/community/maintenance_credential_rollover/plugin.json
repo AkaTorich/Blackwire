@@ -1,6 +1,7 @@
 {
   "id": "maintenance_credential_rollover",
   "name": "Смена сервисных ключей",
+  "name_en": "Maintenance Credential Rollover",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

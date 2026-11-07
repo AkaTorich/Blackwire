@@ -1,11 +1,14 @@
 {
   "name": "Инвентарь улучшений",
+  "name_en": "Upgrade Inventory Desk",
   "family": "utility",
   "mode": "upgrades",
   "story": "Собирает купленные улучшения и товары из магазина.",
+  "story_en": "List purchased upgrades and registered shop items.",
   "id": "upgrade_inventory_desk",
   "number": 75,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Показать купленные улучшения и прайс."
+  "objective": "Показать купленные улучшения и прайс.",
+  "objective_en": "Show bought upgrades and prices."
 }

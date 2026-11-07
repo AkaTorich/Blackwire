@@ -1,6 +1,7 @@
 {
   "id": "mission_checklist_tool",
   "name": "Инструмент: чек-лист заданий",
+  "name_en": "Mission Checklist Tool",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

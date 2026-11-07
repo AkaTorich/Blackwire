@@ -1,6 +1,7 @@
 {
   "id": "heat_watch_tool",
   "name": "Инструмент: наблюдение за подозрением",
+  "name_en": "Heat Watch Tool",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

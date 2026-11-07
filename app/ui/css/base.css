@@ -321,3 +321,7 @@ select.input option { background: var(--bg2); color: var(--fg); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- выбор языка ---------- */
+.lang-picker { display: inline-flex; gap: 6px; }
+.lang-picker .btn { min-width: 84px; justify-content: center; }

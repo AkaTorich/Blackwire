@@ -1,11 +1,14 @@
 {
   "name": "Турникеты кинотеатра",
+  "name_en": "Cinema Ticket Gates",
   "family": "device",
   "kind": "badge",
   "service": "ticket_gate",
   "file": "admissions.csv",
   "story": "Перекупщик выдал дубликаты пропусков на уже заполненный сеанс.",
+  "story_en": "A reseller issued duplicate passes for an already full screening.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 120,
   "id": "cinema_ticket_gates",
   "number": 16,
@@ -21,8 +24,10 @@
       "service": "ticket_gate",
       "port": 7045,
       "os": "Турникеты кинотеатра OS 1.0",
+      "os_en": "Cinema Ticket Gates OS 1.0",
       "file": "/srv/records/admissions.csv",
       "text": "Перекупщик выдал дубликаты пропусков на уже заполненный сеанс.\nВладелец записи: cinema_ticket_gates.\nНомер дела: BW-016.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A reseller issued duplicate passes for an already full screening.\nRecord owner: cinema_ticket_gates.\nCase reference: BW-016.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_cinema_ticket_gates_1"
     }

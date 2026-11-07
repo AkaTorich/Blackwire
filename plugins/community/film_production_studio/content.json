@@ -1,12 +1,15 @@
 {
   "name": "Киностудия",
+  "name_en": "Film Production Studio",
   "family": "network",
   "org_kind": "media",
   "kind": "database",
   "service": "production_archive",
   "file": "shooting-schedule.csv",
   "story": "В невыпущенном расписании съёмок обнаружилась необъяснимая ночная смена.",
+  "story_en": "An unreleased production schedule identifies an unexplained night shoot.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 234,
   "id": "film_production_studio",
   "number": 35,
@@ -22,8 +25,10 @@
       "service": "production_archive_gate",
       "port": 7102,
       "os": "Киностудия OS 1.0",
+      "os_en": "Film Production Studio OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "В невыпущенном расписании съёмок обнаружилась необъяснимая ночная смена.\nВладелец записи: film_production_studio.\nНомер дела: BW-035.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "An unreleased production schedule identifies an unexplained night shoot.\nRecord owner: film_production_studio.\nCase reference: BW-035.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_film_production_studio_1"
     },
@@ -36,8 +41,10 @@
       "service": "production_archive_ops",
       "port": 7103,
       "os": "Киностудия OS 1.0",
+      "os_en": "Film Production Studio OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "В невыпущенном расписании съёмок обнаружилась необъяснимая ночная смена.\nВладелец записи: film_production_studio.\nНомер дела: BW-035.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "An unreleased production schedule identifies an unexplained night shoot.\nRecord owner: film_production_studio.\nCase reference: BW-035.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_film_production_studio_2"
     },
@@ -50,8 +57,10 @@
       "service": "production_archive",
       "port": 7104,
       "os": "Киностудия OS 1.0",
+      "os_en": "Film Production Studio OS 1.0",
       "file": "/srv/records/shooting-schedule.csv",
       "text": "В невыпущенном расписании съёмок обнаружилась необъяснимая ночная смена.\nВладелец записи: film_production_studio.\nНомер дела: BW-035.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "An unreleased production schedule identifies an unexplained night shoot.\nRecord owner: film_production_studio.\nCase reference: BW-035.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_film_production_studio_3"
     }

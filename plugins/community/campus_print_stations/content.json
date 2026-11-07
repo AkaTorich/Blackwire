@@ -1,11 +1,14 @@
 {
   "name": "Печать на кампусе",
+  "name_en": "Campus Print Stations",
   "family": "device",
   "kind": "workstation",
   "service": "print_spool",
   "file": "queue.csv",
   "story": "Экзаменационный материал под грифом остался в общей очереди печати.",
+  "story_en": "A confidential exam remained in the shared print queue.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 128,
   "id": "campus_print_stations",
   "number": 18,
@@ -21,8 +24,10 @@
       "service": "print_spool",
       "port": 7051,
       "os": "Печать на кампусе OS 1.0",
+      "os_en": "Campus Print Stations OS 1.0",
       "file": "/srv/records/queue.csv",
       "text": "Экзаменационный материал под грифом остался в общей очереди печати.\nВладелец записи: campus_print_stations.\nНомер дела: BW-018.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A confidential exam remained in the shared print queue.\nRecord owner: campus_print_stations.\nCase reference: BW-018.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_campus_print_stations_1"
     }

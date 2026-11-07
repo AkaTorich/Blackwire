@@ -5,8 +5,8 @@
 
 const MailApp = (function () {
   const FOLDERS = [
-    { id: 'inbox', name: 'Входящие', icon: 'inbox' },
-    { id: 'sent', name: 'Отправленные', icon: 'send' }
+    { id: 'inbox', name: L('Входящие', 'Inbox'), icon: 'inbox' },
+    { id: 'sent', name: L('Отправленные', 'Sent'), icon: 'send' }
   ];
 
   function el(tag, cls, text) {
@@ -67,10 +67,10 @@ const MailApp = (function () {
     // --- разметка ---
     const root = el('div', 'ml');
     const bar = el('div', 'ml-bar');
-    const btnCompose = button('Написать', 'plus', 'primary');
-    const btnReply = button('Ответить', 'reply');
-    const btnDelete = button('Удалить', 'trash');
-    const btnRefresh = button('Обновить', 'reload');
+    const btnCompose = button(L('Написать', 'Compose'), 'plus', 'primary');
+    const btnReply = button(L('Ответить', 'Reply'), 'reply');
+    const btnDelete = button(L('Удалить', 'Delete'), 'trash');
+    const btnRefresh = button(L('Обновить', 'Refresh'), 'reload');
     const barStat = el('span', 'ml-bar-stat', '');
     bar.append(btnCompose, btnReply, btnDelete, btnRefresh, barStat);
 
@@ -94,7 +94,7 @@ const MailApp = (function () {
     const listHead = el('div', 'ml-list-head', FOLDERS[0].name);
     const list = el('div', 'ml-list');
     list.tabIndex = 0;
-    const listEmpty = el('div', 'ml-list-empty', 'Писем нет');
+    const listEmpty = el('div', 'ml-list-empty', L('Писем нет', 'No messages'));
     listCol.append(listHead, list, listEmpty);
 
     const right = el('div', 'ml-right');
@@ -111,21 +111,21 @@ const MailApp = (function () {
       rMeta.appendChild(r);
       return vv;
     }
-    const rFrom = metaRow('От');
-    const rTo = metaRow('Кому');
-    const rTime = metaRow('Время');
+    const rFrom = metaRow(L('От', 'From'));
+    const rTo = metaRow(L('Кому', 'To'));
+    const rTime = metaRow(L('Время', 'Time'));
     const rTools = el('div', 'ml-read-tools');
-    const btnMono = button('Моноширинный', 'file-code', 'small toggle');
+    const btnMono = button(L('Моноширинный', 'Monospace'), 'file-code', 'small toggle');
     rTools.append(btnMono);
     rHead.append(rSubject, rMeta, rTools);
     const rBody = el('div', 'ml-body');
     read.append(rHead, rBody);
-    const readEmpty = el('div', 'ml-read-empty', 'Выберите письмо');
+    const readEmpty = el('div', 'ml-read-empty', L('Выберите письмо', 'Select a message'));
 
     // форма
     const form = el('form', 'ml-form');
     form.noValidate = true;
-    const fTitle = el('div', 'ml-form-title', 'Новое письмо');
+    const fTitle = el('div', 'ml-form-title', L('Новое письмо', 'New message'));
     function field(label, placeholder) {
       const row = el('label', 'ml-field');
       const k = el('span', 'ml-field-k', label);
@@ -137,16 +137,16 @@ const MailApp = (function () {
       row.append(k, inp);
       return { row: row, input: inp };
     }
-    const fTo = field('Кому', 'имя@узел');
-    const fSubj = field('Тема', '');
+    const fTo = field(L('Кому', 'To'), L('имя@узел', 'name@host'));
+    const fSubj = field(L('Тема', 'Subject'), '');
     const fBody = el('textarea', 'ml-textarea');
     fBody.spellcheck = false;
-    fBody.placeholder = 'Текст письма';
+    fBody.placeholder = L('Текст письма', 'Message text');
     const fErr = el('div', 'ml-form-err', '');
     const fActions = el('div', 'ml-form-actions');
-    const btnSend = button('Отправить', 'send', 'primary');
+    const btnSend = button(L('Отправить', 'Send'), 'send', 'primary');
     btnSend.type = 'submit';
-    const btnCancel = button('Отмена', 'close');
+    const btnCancel = button(L('Отмена', 'Cancel'), 'close');
     fActions.append(btnSend, btnCancel);
     form.append(fTitle, fTo.row, fSubj.row, fBody, fErr, fActions);
 
@@ -194,8 +194,8 @@ const MailApp = (function () {
       folderEls.sent.count.textContent = '';
       for (const f of FOLDERS) folderEls[f.id].el.classList.toggle('cur', f.id === st.folder);
       listHead.textContent = FOLDERS.find(function (f) { return f.id === st.folder; }).name;
-      barStat.textContent = unread ? unread + ' ' + plural(unread, 'новое', 'новых', 'новых') : '';
-      Win.setTitle(unread ? 'Почта (' + unread + ')' : 'Почта');
+      barStat.textContent = unread ? unread + ' ' + (I18N.en ? 'new' : plural(unread, 'новое', 'новых', 'новых')) : '';
+      Win.setTitle(unread ? L('Почта (', 'Mail (') + unread + ')' : L('Почта', 'Mail'));
     }
 
     function plural(n, a, b, c) {
@@ -216,7 +216,7 @@ const MailApp = (function () {
         const who = el('span', 'ml-item-who', st.folder === 'sent' ? (m.to || '') : (m.from || ''));
         who.title = who.textContent;
         const time = el('span', 'ml-item-time', fmtTime(m.time, true));
-        const subj = el('span', 'ml-item-subj', m.subject || '(без темы)');
+        const subj = el('span', 'ml-item-subj', m.subject || L('(без темы)', '(no subject)'));
         subj.title = m.subject || '';
         row.append(dot, who, time, subj);
         row.addEventListener('click', function () { openMail(m.id); });
@@ -224,8 +224,8 @@ const MailApp = (function () {
           e.preventDefault();
           openMail(m.id);
           Win.menu([
-            { label: 'Ответить', icon: 'reply', action: reply },
-            { label: 'Удалить', icon: 'trash', action: deleteSel }
+            { label: L('Ответить', 'Reply'), icon: 'reply', action: reply },
+            { label: L('Удалить', 'Delete'), icon: 'trash', action: deleteSel }
           ], e.clientX, e.clientY);
         });
         frag.appendChild(row);
@@ -270,7 +270,7 @@ const MailApp = (function () {
       btnReply.disabled = !m;
       btnDelete.disabled = !m;
       if (!m) return;
-      rSubject.textContent = m.subject || '(без темы)';
+      rSubject.textContent = m.subject || L('(без темы)', '(no subject)');
       rFrom.textContent = m.from || '';
       rTo.textContent = m.to || '';
       rTime.textContent = fmtTime(m.time, false);
@@ -282,7 +282,7 @@ const MailApp = (function () {
     // --- действия ---
     function compose(to, subject, text) {
       st.mode = 'compose';
-      fTitle.textContent = subject && /^re:/i.test(subject) ? 'Ответ' : 'Новое письмо';
+      fTitle.textContent = subject && /^re:/i.test(subject) ? L('Ответ', 'Reply') : L('Новое письмо', 'New message');
       fTo.input.value = to || '';
       fSubj.input.value = subject || '';
       fBody.value = text || '';
@@ -303,18 +303,18 @@ const MailApp = (function () {
       if (!m) return;
       const subj = /^re:/i.test(m.subject || '') ? m.subject : 'Re: ' + (m.subject || '');
       const quoted = String(m.body || '').split('\n').map(function (L) { return '> ' + L; }).join('\n');
-      const head = (m.from || '') + ' писал(а) ' + fmtTime(m.time, false) + ':';
+      const head = (m.from || '') + L(' писал(а) ', ' wrote on ') + fmtTime(m.time, false) + ':';
       compose(m.from || '', subj, '\n\n' + head + '\n' + quoted);
     }
 
     async function send() {
       const to = fTo.input.value.trim(), subject = fSubj.input.value.trim(), text = fBody.value;
       fErr.textContent = '';
-      if (!to) { fErr.textContent = 'Укажите получателя'; fTo.input.focus(); return; }
+      if (!to) { fErr.textContent = L('Укажите получателя', 'Specify a recipient'); fTo.input.focus(); return; }
       btnSend.disabled = true;
       try {
         await BW.mail_send(to, subject, text);
-        Win.toast('Письмо отправлено: ' + to);
+        Win.toast(L('Письмо отправлено: ', 'Message sent: ') + to);
         BW.sound('notify');
         st.mode = 'read';
         renderRead();
@@ -330,7 +330,7 @@ const MailApp = (function () {
     async function deleteSel() {
       const m = st.mail;
       if (!m) return;
-      if (!(await Win.confirm('Удалить письмо «' + (m.subject || 'без темы') + '»?'))) return;
+      if (!(await Win.confirm(L('Удалить письмо «' + (m.subject || 'без темы') + '»?', 'Delete message "' + (m.subject || 'no subject') + '"?')))) return;
       const arr = currentList();
       const idx = arr.findIndex(function (x) { return x.id === m.id; });
       try { await BW.mail_delete(m.id); }
@@ -415,6 +415,6 @@ const MailApp = (function () {
 })();
 
 Apps.register('mail', {
-  title: 'Почта', icon: 'mail', minWidth: 720, minHeight: 420,
+  title: L('Почта', 'Mail'), icon: 'mail', minWidth: 720, minHeight: 420,
   mount: function (body, arg) { MailApp.mount(body, arg); }
 });

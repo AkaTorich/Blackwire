@@ -1,12 +1,15 @@
 {
   "name": "Инцидент с просроченным пропуском",
+  "name_en": "Expired Badge Incident",
   "family": "event",
   "kind": "badge",
   "service": "badge_control",
   "file": "badge-status.csv",
   "story": "Временный пропуск продолжает работать уже после окончания смены.",
+  "story_en": "A temporary badge remains active after its shift expires.",
   "mode": "credential",
   "objective": "Поймать запись инцидента и пройти по его таймлайну.",
+  "objective_en": "Recover the incident record and follow the timed incident log.",
   "reward": 116,
   "id": "expired_badge_incident",
   "number": 93,
@@ -22,8 +25,10 @@
       "service": "badge_control",
       "port": 7276,
       "os": "Инцидент с просроченным пропуском OS 1.0",
+      "os_en": "Expired Badge Incident OS 1.0",
       "file": "/srv/records/badge-status.csv",
       "text": "Временный пропуск продолжает работать уже после окончания смены.\nВладелец записи: expired_badge_incident.\nНомер дела: BW-093.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A temporary badge remains active after its shift expires.\nRecord owner: expired_badge_incident.\nCase reference: BW-093.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_expired_badge_incident_1"
     }

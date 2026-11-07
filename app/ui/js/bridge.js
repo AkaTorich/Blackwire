@@ -31,18 +31,18 @@ var BW = (function () {
 
   /* ---------- заглушка для просмотра в обычном браузере ---------- */
   var stubThemes = [
-    { id: 'swordfish', name: 'Рыба-меч', accent: '#39d8ff' },
-    { id: 'ice', name: 'Лёд', accent: '#8fd8ff' },
-    { id: 'amber', name: 'Янтарь', accent: '#ffb347' },
-    { id: 'phosphor', name: 'Фосфор', accent: '#4cff7a' },
-    { id: 'violet', name: 'Фиалка', accent: '#b57cff' },
-    { id: 'crimson', name: 'Кармин', accent: '#ff4d6d' },
-    { id: 'paper', name: 'Бумага', accent: '#1f5fbf' },
-    { id: 'midnight', name: 'Полночь', accent: '#6f9bdc' },
-    { id: 'steel', name: 'Сталь', accent: '#9fb6c9' },
-    { id: 'gold', name: 'Золото', accent: '#e6c25a' },
-    { id: 'aurora', name: 'Аврора', accent: '#5affc8' },
-    { id: 'ember', name: 'Уголь', accent: '#ff7a45' }
+    { id: 'swordfish', name: L('Рыба-меч', 'Swordfish'), accent: '#39d8ff' },
+    { id: 'ice', name: L('Лёд', 'Ice'), accent: '#8fd8ff' },
+    { id: 'amber', name: L('Янтарь', 'Amber'), accent: '#ffb347' },
+    { id: 'phosphor', name: L('Фосфор', 'Phosphor'), accent: '#4cff7a' },
+    { id: 'violet', name: L('Фиалка', 'Violet'), accent: '#b57cff' },
+    { id: 'crimson', name: L('Кармин', 'Crimson'), accent: '#ff4d6d' },
+    { id: 'paper', name: L('Бумага', 'Paper'), accent: '#1f5fbf' },
+    { id: 'midnight', name: L('Полночь', 'Midnight'), accent: '#6f9bdc' },
+    { id: 'steel', name: L('Сталь', 'Steel'), accent: '#9fb6c9' },
+    { id: 'gold', name: L('Золото', 'Gold'), accent: '#e6c25a' },
+    { id: 'aurora', name: L('Аврора', 'Aurora'), accent: '#5affc8' },
+    { id: 'ember', name: L('Уголь', 'Ember'), accent: '#ff7a45' }
   ];
   var stubState = {
     settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
@@ -53,8 +53,8 @@ var BW = (function () {
     ],
     counter: 2,
     mail: [
-      { id: 1, from: 'ops@nullvector.net', subject: 'Первое задание', date: '03:12', unread: true },
-      { id: 2, from: 'root@ghost-pc', subject: 'Добро пожаловать', date: '02:40', unread: false }
+      { id: 1, from: 'ops@nullvector.net', subject: L('Первое задание', 'First mission'), date: '03:12', unread: true },
+      { id: 2, from: 'root@ghost-pc', subject: L('Добро пожаловать', 'Welcome'), date: '02:40', unread: false }
     ]
   };
 
@@ -79,9 +79,9 @@ var BW = (function () {
       case 'scenario_list': return s.scenarios || (s.scenarios = []);
       case 'scenario_save': {
         var sc = args.scenario || {};
-        var goalText = sc.goal && sc.goal.OwnHost ? ('получить доступ к ' + sc.goal.OwnHost.host)
-          : sc.goal && sc.goal.Deliver ? ('прислать текст со строкой «' + sc.goal.Deliver.needle + '»')
-          : sc.goal && sc.goal.Money ? ('накопить ' + sc.goal.Money.amount + ' ₵') : '';
+        var goalText = sc.goal && sc.goal.OwnHost ? (L('получить доступ к ', 'gain access to ') + sc.goal.OwnHost.host)
+          : sc.goal && sc.goal.Deliver ? (L('прислать текст со строкой «', 'send a text containing "') + sc.goal.Deliver.needle + L('»', '"'))
+          : sc.goal && sc.goal.Money ? (L('накопить ', 'save up ') + sc.goal.Money.amount + ' ₵') : '';
         s.scenarios = (s.scenarios || []).filter(function (x) { return x.name !== sc.name; });
         s.scenarios.push({ name: sc.name, brief: sc.brief, goal: goalText, reward: sc.reward });
         s.activeScenario = s.activeScenario || null;
@@ -136,9 +136,9 @@ var BW = (function () {
         return label;
       }
       case 'list_windows': return s.windows;
-      case 'monitors': return [{ index: 0, name: 'Основной', x: 0, y: 0, width: screen.width, height: screen.height, scale: window.devicePixelRatio || 1, primary: true }];
+      case 'monitors': return [{ index: 0, name: L('Основной', 'Primary'), x: 0, y: 0, width: screen.width, height: screen.height, scale: window.devicePixelRatio || 1, primary: true }];
       case 'shell_open': return 1;
-      case 'shell_exec': return { lines: [{ text: 'заглушка: ' + args.line, kind: 'out', delay_ms: 0 }], actions: [], prompt: { user: 'ghost', host: 'ghost-pc', cwd: '~', is_root: false, hops: ['ghost-pc'] } };
+      case 'shell_exec': return { lines: [{ text: L('заглушка: ', 'stub: ') + args.line, kind: 'out', delay_ms: 0 }], actions: [], prompt: { user: 'ghost', host: 'ghost-pc', cwd: '~', is_root: false, hops: ['ghost-pc'] } };
       case 'shell_complete': return [];
       case 'shell_prompt': return { user: 'ghost', host: 'ghost-pc', cwd: '~', is_root: false, hops: ['ghost-pc'] };
       case 'shell_history': return [];
@@ -150,20 +150,24 @@ var BW = (function () {
       ];
       case 'fs_read': return '';
       case 'lang_check': return [];
-      case 'lang_doc': return '# Язык Adder\n\nДокумент не загружен: нет связи с ядром.\n\n## Переменные\n\nПример:\n\n```\nx = 1\nprint(x)\n```\n';
-      case 'shell_doc': return '# Команды терминала\n\n| Команда | Назначение |\n|---|---|\n| `ls` | список файлов |\n| `cd` | сменить папку |\n\n## Сеть\n\n- `scan` — осмотреть сеть\n- `ssh` — подключиться\n';
+      case 'lang_doc': return L('# Язык Adder\n\nДокумент не загружен: нет связи с ядром.\n\n## Переменные\n\nПример:\n\n```\nx = 1\nprint(x)\n```\n',
+        '# The Adder language\n\nDocument not loaded: no connection to the core.\n\n## Variables\n\nExample:\n\n```\nx = 1\nprint(x)\n```\n');
+      case 'shell_doc': return L('# Команды терминала\n\n| Команда | Назначение |\n|---|---|\n| `ls` | список файлов |\n| `cd` | сменить папку |\n\n## Сеть\n\n- `scan` — осмотреть сеть\n- `ssh` — подключиться\n',
+        '# Terminal commands\n\n| Command | Purpose |\n|---|---|\n| `ls` | list files |\n| `cd` | change directory |\n\n## Network\n\n- `scan` — survey the network\n- `ssh` — connect\n');
       case 'sys_status': return { hostname: 'ghost-pc', ip: '10.0.0.12', uptime: 3600, cpu: 12, mem_used: 1024, mem_total: 4096, net_in: 3, net_out: 1, procs: [] };
       case 'net_map': return { nodes: [], links: [] };
-      case 'web_get': return { status: 404, title: 'Нет узла', body: '<h1>Нет такого узла</h1>' };
+      case 'web_get': return { status: 404, title: L('Нет узла', 'No host'), body: L('<h1>Нет такого узла</h1>', '<h1>No such host</h1>') };
+      case 'lang_get': return s.lang || null;
+      case 'lang_set': s.lang = args && args.lang === 'en' ? 'en' : 'ru'; return s.lang;
       case 'settings_get': return s.settings;
       case 'settings_set':
         s.settings = args.settings;
         setTimeout(function () { emit('theme_changed', { settings: s.settings }); }, 0);
         return null;
       case 'mail_list': return s.mail;
-      case 'mail_read': return { id: args.id, from: 'ops@nullvector.net', to: 'ghost@ghost-pc', subject: 'Первое задание', date: '03:12', body: 'Текст письма недоступен без ядра.' };
+      case 'mail_read': return { id: args.id, from: 'ops@nullvector.net', to: 'ghost@ghost-pc', subject: L('Первое задание', 'First mission'), date: '03:12', body: L('Текст письма недоступен без ядра.', 'Mail text is unavailable without the core.') };
       case 'mail_unread_count': return s.mail.filter(function (m) { return m.unread; }).length;
-      case 'ending_summary': return { won: true, missions_done: 7, missions_total: 7, debt_cleared: true, money: 420, money_earned: 3250, debt_paid: 3000, machines_owned: 9, scanned: 14, upgrades: 2, peak_heat: 62, raids: 1, time_played: 7200, at_text: '14.03.2031 06:10', text: 'Ты закрыл их бумажку с печатью.\n\nТеперь ты — один из нас.\n\nhello-world' };
+      case 'ending_summary': return { won: true, missions_done: 7, missions_total: 7, debt_cleared: true, money: 420, money_earned: 3250, debt_paid: 3000, machines_owned: 9, scanned: 14, upgrades: 2, peak_heat: 62, raids: 1, time_played: 7200, at_text: '14.03.2031 06:10', text: L('Ты закрыл их бумажку с печатью.\n\nТеперь ты — один из нас.\n\nhello-world', 'You closed their stamped piece of paper.\n\nNow you are one of us.\n\nhello-world') };
       default:
         console.warn('[BW stub] неизвестная команда', cmd, args);
         return null;
@@ -227,6 +231,7 @@ var BW = (function () {
     lang_check: ['src'], lang_doc: [], shell_doc: [],
     sys_status: [], sys_kill: ['pid'], net_map: [], web_get: ['url'],
     settings_get: [], settings_set: ['settings'],
+    lang_get: [], lang_set: ['lang'],
     mail_list: ['folder'], mail_read: ['id'], mail_send: ['to', 'subject', 'body'],
     mail_delete: ['id'], mail_unread_count: [], ending_summary: []
   };
@@ -287,11 +292,37 @@ var BW = (function () {
     return BW.settings_set(next);
   };
 
-  BW.ready = BW.settings_get().then(function (s) {
+  /* ---------- язык ---------- */
+  /* Выбрать язык: Rust запомнит его и разошлёт lang_changed всем окнам. */
+  BW.setLang = function (code) {
+    code = I18N.remember(code);
+    return BW.lang_set(code);
+  };
+
+  /* Свести язык окна с выбором в Rust. Если ещё не выбирали — берём язык системы. */
+  function syncLang() {
+    return BW.lang_get().then(function (code) {
+      if (code !== 'ru' && code !== 'en') return BW.lang_set(I18N.lang).then(null, function () {});
+      if (code !== I18N.lang) {
+        I18N.remember(code);
+        location.reload();
+        return new Promise(function () {});
+      }
+    }, function () {});
+  }
+
+  BW.ready = syncLang().then(function () { return BW.settings_get(); }).then(function (s) {
     applySettings(s);
   }, function (err) {
-    console.warn('settings_get не удался, настройки по умолчанию', err);
+    console.warn('settings_get failed, using defaults', err);
     applySettings(DEFAULT_SETTINGS);
+  });
+
+  BW.listen('lang_changed', function (p) {
+    var code = p && p.lang === 'en' ? 'en' : 'ru';
+    if (code === I18N.lang) return;
+    I18N.remember(code);
+    if (!I18N.KEEP_ON_SWITCH[BW.app]) location.reload();
   });
 
   BW.listen('theme_changed', function (p) {
@@ -368,7 +399,7 @@ var BW = (function () {
       });
     }, 1000);
     setTimeout(function () {
-      emit('notify', { title: 'Сеть', text: 'Обнаружен новый узел 10.0.0.7' });
+      emit('notify', { title: L('Сеть', 'Network'), text: L('Обнаружен новый узел 10.0.0.7', 'New host discovered 10.0.0.7') });
     }, 4000);
   }
 

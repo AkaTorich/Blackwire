@@ -21,7 +21,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, l: &ListRef, name: &s
             c.check("pop", 0, 1)?;
             let mut v = l.borrow_mut();
             if v.is_empty() {
-                return Err(c.err("pop из пустого списка"));
+                return Err(c.err(tr!("pop из пустого списка", "pop from empty list")));
             }
             let i = match c.arg(0) {
                 Some(x) => arg_int(x, c.line)?,
@@ -29,7 +29,7 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, l: &ListRef, name: &s
             };
             match norm_index(i, v.len()) {
                 Some(j) => Ok(v.remove(j)),
-                None => Err(c.err("индекс списка вне диапазона")),
+                None => Err(c.err(tr!("индекс списка вне диапазона", "list index out of range"))),
             }
         }
         "insert" => {
@@ -49,14 +49,14 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, l: &ListRef, name: &s
                     v.remove(i);
                     Ok(Value::Null)
                 }
-                None => Err(c.err(format!("значение не найдено в списке: {}", c.args[0].repr()))),
+                None => Err(c.err(trf!("значение не найдено в списке: {}", "value not found in list: {}", c.args[0].repr()))),
             }
         }
         "index" => {
             c.check("index", 1, 1)?;
             match l.borrow().iter().position(|x| x.py_eq(&c.args[0])) {
                 Some(i) => Ok(Value::Int(i as i64)),
-                None => Err(c.err(format!("значение не найдено в списке: {}", c.args[0].repr()))),
+                None => Err(c.err(trf!("значение не найдено в списке: {}", "value not found in list: {}", c.args[0].repr()))),
             }
         }
         "count" => {
@@ -94,6 +94,6 @@ pub fn call(interp: &mut Interpreter, host: &mut dyn Host, l: &ListRef, name: &s
             c.check("copy", 0, 0)?;
             Ok(Value::list(l.borrow().clone()))
         }
-        _ => Err(rt(c.line, format!("нет такого метода у списка: {}", name))),
+        _ => Err(rt(c.line, trf!("нет такого метода у списка: {}", "list has no method: {}", name))),
     }
 }

@@ -185,9 +185,9 @@ fn populate_files(
 
         // Забытый файл с паролями у неосторожных.
         if rng.chance(care.passwords_file()) {
-            let mut entries = vec![("почта".to_string(), m.users.get(person.login).map(|u| u.password.clone()).unwrap_or_default())];
+            let mut entries = vec![(tr!("почта", "mail").to_string(), m.users.get(person.login).map(|u| u.password.clone()).unwrap_or_default())];
             if !peer_ips.is_empty() {
-                entries.push((format!("сервер {}", rng.pick(peer_ips)), names::strong_password(rng)));
+                entries.push((trf!("сервер {}", "server {}", rng.pick(peer_ips)), names::strong_password(rng)));
             }
             let _ = m.fs.write_text(&format!("{}/passwords.txt", home), &files::passwords_txt(&entries), person.login);
         }
@@ -199,7 +199,7 @@ fn populate_files(
         if i == 0 {
             let _ = m.fs.write_text(
                 &format!("{}/contract_01.txt", home),
-                &files::contract_txt(rng, org_name, "ООО «Контрагент»"),
+                &files::contract_txt(rng, org_name, tr!("ООО «Контрагент»", "Counterparty LLC")),
                 person.login,
             );
         }
@@ -207,7 +207,8 @@ fn populate_files(
 
     // Документы по виду машины.
     match m.kind {
-        MachineKind::Database if org_name.contains("Клиник") || org_name.contains("центр") || org_name.contains("Госпиталь") || org_name.contains("Медцентр") => {
+        MachineKind::Database if org_name.contains("Клиник") || org_name.contains("центр") || org_name.contains("Госпиталь") || org_name.contains("Медцентр")
+            || org_name.contains("Clinic") || org_name.contains("Medical Center") || org_name.contains("Hospital") => {
             let sample: Vec<&Person> = names::PEOPLE.iter().take(8).collect();
             let _ = m.fs.write_text("/var/data/patients.csv", &files::patients_csv(rng, &sample), "root");
         }
@@ -215,9 +216,14 @@ fn populate_files(
             let _ = m.fs.write_text("/var/data/transactions.log", &files::transactions_log(rng, epoch - 2 * DAY), "root");
             // шифрованный секрет, ключ — в заметках администратора
             let key = names::strong_password(rng);
-            let secret = format!("Резервный ключ-пароль: {}\nДоступ к копии: backup@{}\n", names::strong_password(rng), m.hostname);
+            let secret = trf!(
+                "Резервный ключ-пароль: {}\nДоступ к копии: backup@{}\n",
+                "Backup key password: {}\nCopy access: backup@{}\n",
+                names::strong_password(rng),
+                m.hostname
+            );
             let _ = m.fs.write_text("/root/secret.enc", &crate::hack::cipher::encrypt(&secret, &key), "root");
-            let _ = m.fs.write_text("/root/notes.txt", &format!("secret.enc — расшифровать ключом: {}\n", key), "root");
+            let _ = m.fs.write_text("/root/notes.txt", &trf!("secret.enc — расшифровать ключом: {}\n", "secret.enc — decrypt with key: {}\n", key), "root");
         }
         MachineKind::Camera => {
             let _ = m.fs.write_text("/etc/camera_config.ini", &files::camera_config_ini(rng, &m.hostname), "root");
@@ -255,7 +261,7 @@ fn populate_logs(m: &mut Machine, people: &[&Person], peer_ips: &[String], epoch
     for s in m.services.clone() {
         if s.running && rng.chance(0.4) {
             let t = epoch - DAY - rng.range(0, 6 * 3600) as i64 as u64;
-            m.log(t, LogKind::Service, format!("служба {} перезапущена", s.name));
+            m.log(t, LogKind::Service, trf!("служба {} перезапущена", "service {} restarted", s.name));
         }
     }
 
@@ -273,7 +279,7 @@ fn populate_logs(m: &mut Machine, people: &[&Person], peer_ips: &[String], epoch
             "127.0.0.1".to_string()
         };
         let ok = rng.chance(0.85);
-        m.log(t, if ok { LogKind::Login } else { LogKind::LoginFailed }, format!("{} {} с {}", if ok { "вход" } else { "неудачный вход" }, user, ip));
+        m.log(t, if ok { LogKind::Login } else { LogKind::LoginFailed }, trf!("{} {} с {}", "{} {} from {}", if ok { tr!("вход", "login") } else { tr!("неудачный вход", "failed login") }, user, ip));
         auth_lines.push(files::auth_line(t, &host, ok, user, &ip));
     }
 

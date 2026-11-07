@@ -1,11 +1,14 @@
 {
   "name": "Карта открытых служб",
+  "name_en": "Service Exposure Map",
   "family": "utility",
   "mode": "services",
   "story": "Собирает запущенные службы на разведанных машинах.",
+  "story_en": "Inspect running services on discovered machines.",
   "id": "service_exposure_map",
   "number": 63,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Показать активные службы."
+  "objective": "Показать активные службы.",
+  "objective_en": "Show running services."
 }

@@ -1,12 +1,15 @@
 {
   "name": "Радиопомеха",
+  "name_en": "Radio Interference Burst",
   "family": "event",
   "kind": "server",
   "service": "radio_control",
   "file": "signal-quality.csv",
   "story": "Радиоконтроллер фиксирует короткий всплеск помех и провал пробы ретранслятора.",
+  "story_en": "A radio controller reports a short interference burst and a failed relay test.",
   "mode": "telemetry",
   "objective": "Поймать запись инцидента и пройти по его таймлайну.",
+  "objective_en": "Recover the incident record and follow the timed incident log.",
   "reward": 132,
   "id": "radio_interference_burst",
   "number": 95,
@@ -22,8 +25,10 @@
       "service": "radio_control",
       "port": 7282,
       "os": "Радиопомеха OS 1.0",
+      "os_en": "Radio Interference Burst OS 1.0",
       "file": "/srv/records/signal-quality.csv",
       "text": "Радиоконтроллер фиксирует короткий всплеск помех и провал пробы ретранслятора.\nВладелец записи: radio_interference_burst.\nНомер дела: BW-095.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A radio controller reports a short interference burst and a failed relay test.\nRecord owner: radio_interference_burst.\nCase reference: BW-095.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_radio_interference_burst_1"
     }

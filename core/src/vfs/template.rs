@@ -53,7 +53,12 @@ pub fn new_unix(owner: &str) -> Vfs {
     fs.set_mode("/etc/shadow", 0o600).ok();
     fs.write_text("/etc/hosts", "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n", "root").ok();
     fs.write_text("/etc/hostname", "localhost\n", "root").ok();
-    fs.write_text("/etc/motd", "Добро пожаловать. Несанкционированный доступ преследуется.\n", "root").ok();
+    fs.write_text(
+        "/etc/motd",
+        tr!("Добро пожаловать. Несанкционированный доступ преследуется.\n", "Welcome. Unauthorized access will be prosecuted.\n"),
+        "root",
+    )
+    .ok();
     fs.write_text(
         "/etc/os-release",
         "NAME=\"Blackwire OS\"\nVERSION=\"1.0\"\nID=blackwire\nPRETTY_NAME=\"Blackwire OS 1.0\"\n",
@@ -65,11 +70,14 @@ pub fn new_unix(owner: &str) -> Vfs {
     fs.write_text("/etc/crontab", "# m h dom mon dow user command\n0 3 * * * root /sbin/syslogd --rotate\n", "root")
         .ok();
     fs.write_text("/var/log/auth.log", "", "root").ok();
-    fs.write_text("/var/log/system.log", "boot: система запущена\n", "root").ok();
+    fs.write_text("/var/log/system.log", tr!("boot: система запущена\n", "boot: system started\n"), "root").ok();
     fs.set_mode("/var/log/auth.log", 0o640).ok();
     fs.write_text(
         "/usr/share/doc/readme.txt",
-        "Blackwire OS. Справка по командам: help, man <команда>, <команда> --help.\n",
+        tr!(
+            "Blackwire OS. Справка по командам: help, man <команда>, <команда> --help.\n",
+            "Blackwire OS. Command help: help, man <command>, <command> --help.\n"
+        ),
         "root",
     )
     .ok();

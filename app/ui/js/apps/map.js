@@ -6,12 +6,17 @@
 const MapApp = (function () {
   const REFRESH_MS = 10000;
   const WORLD = 1000;       // размер мира после нормализации координат
-  const KIND_RU = {
+  const KIND_RU = L({
     Player: 'Своя машина', Router: 'Маршрутизатор', Gateway: 'Шлюз', Server: 'Сервер', Workstation: 'Рабочая станция',
     Database: 'База данных', FileServer: 'Файловый сервер', Mail: 'Почтовый сервер', Web: 'Веб-сервер', Camera: 'Камера',
     Badge: 'Пропускная система', Atm: 'Банкомат', MedicalDevice: 'Медицинский прибор', Dns: 'DNS', Isp: 'Провайдер',
     Honeypot: 'Ловушка', HomePc: 'Домашний компьютер'
-  };
+  }, {
+    Player: 'Own machine', Router: 'Router', Gateway: 'Gateway', Server: 'Server', Workstation: 'Workstation',
+    Database: 'Database', FileServer: 'File server', Mail: 'Mail server', Web: 'Web server', Camera: 'Camera',
+    Badge: 'Access control system', Atm: 'ATM', MedicalDevice: 'Medical device', Dns: 'DNS', Isp: 'ISP',
+    Honeypot: 'Honeypot', HomePc: 'Home computer'
+  });
 
   function el(tag, cls, text) {
     const e = document.createElement(tag);
@@ -148,9 +153,9 @@ const MapApp = (function () {
     const root = el('div', 'map');
     const canvas = el('canvas', 'map-canvas');
     const tools = el('div', 'map-tools');
-    const btnRefresh = button('Обновить', 'reload');
-    const btnUnknown = button('Неизвестные', 'eye-off', 'toggle');
-    const btnFit = button('Вся сеть', 'layout');
+    const btnRefresh = button(L('Обновить', 'Refresh'), 'reload');
+    const btnUnknown = button(L('Неизвестные', 'Unknown'), 'eye-off', 'toggle');
+    const btnFit = button(L('Вся сеть', 'Whole network'), 'layout');
     const stat = el('span', 'map-stat', '');
     tools.append(btnRefresh, btnUnknown, btnFit, stat);
 
@@ -171,13 +176,13 @@ const MapApp = (function () {
       return { row: r, v: vv };
     }
     const pIp = prow('IP');
-    const pKind = prow('Вид');
-    const pOrg = prow('Организация');
-    const pState = prow('Состояние');
+    const pKind = prow(L('Вид', 'Kind'));
+    const pOrg = prow(L('Организация', 'Organization'));
+    const pState = prow(L('Состояние', 'State'));
     const pActions = el('div', 'map-panel-actions');
-    const bSsh = button('Терминал → ssh', 'terminal', 'primary');
-    const bScan = button('Сканировать', 'search');
-    const bPing = button('Пинг', 'net');
+    const bSsh = button(L('Терминал → ssh', 'Terminal → ssh'), 'terminal', 'primary');
+    const bScan = button(L('Сканировать', 'Scan'), 'search');
+    const bPing = button(L('Пинг', 'Ping'), 'net');
     pActions.append(bSsh, bScan, bPing);
     panel.append(pHead, pBody, pActions);
 
@@ -245,7 +250,7 @@ const MapApp = (function () {
 
     function updateStat() {
       const known = st.nodes.filter(function (n) { return n.known; }).length;
-      stat.textContent = known + ' известно · ' + st.nodes.length + ' всего';
+      stat.textContent = known + L(' известно · ', ' known · ') + st.nodes.length + L(' всего', ' total');
     }
 
     // --- вид ---
@@ -418,13 +423,13 @@ const MapApp = (function () {
 
     // --- панель узла ---
     function fillPanel(n) {
-      pName.textContent = n.hostname || n.ip || ('узел ' + n.id);
+      pName.textContent = n.hostname || n.ip || (L('узел ', 'host ') + n.id);
       pIp.v.textContent = n.ip || '—';
       pKind.v.textContent = KIND_RU[n.kind] || n.kind || '—';
       const org = n.org_name || n.org || '';
       pOrg.row.classList.toggle('hidden', !org);
       pOrg.v.textContent = org;
-      pState.v.textContent = n.known ? 'известен' : 'не исследован';
+      pState.v.textContent = n.known ? L('известен', 'known') : L('не исследован', 'unexplored');
       pState.v.className = 'map-pv ' + (n.known ? 'ok' : 'dim');
       const isPlayer = n.kind === 'Player';
       bSsh.disabled = isPlayer || !n.ip;
@@ -470,7 +475,7 @@ const MapApp = (function () {
         st.hover = h;
         canvas.classList.toggle('hover', !!h);
         if (h) {
-          tip.textContent = h.known ? (h.hostname || h.ip) + (h.ip && h.hostname ? '  ' + h.ip : '') : 'неизвестный узел';
+          tip.textContent = h.known ? (h.hostname || h.ip) + (h.ip && h.hostname ? '  ' + h.ip : '') : L('неизвестный узел', 'unknown host');
           tip.classList.add('on');
         } else tip.classList.remove('on');
       }
@@ -517,15 +522,15 @@ const MapApp = (function () {
         select(n);
         if (n.kind === 'Player') return;
         Win.menu([
-          { label: 'Терминал → ssh ' + n.ip, icon: 'terminal', action: function () { openTerminal('ssh'); } },
-          { label: 'Сканировать', icon: 'search', action: function () { openTerminal('scan'); } },
-          { label: 'Пинг', icon: 'net', action: function () { openTerminal('ping'); } }
+          { label: L('Терминал → ssh ', 'Terminal → ssh ') + n.ip, icon: 'terminal', action: function () { openTerminal('ssh'); } },
+          { label: L('Сканировать', 'Scan'), icon: 'search', action: function () { openTerminal('scan'); } },
+          { label: L('Пинг', 'Ping'), icon: 'net', action: function () { openTerminal('ping'); } }
         ], e.clientX, e.clientY);
       } else {
         Win.menu([
-          { label: 'Обновить', icon: 'reload', action: refresh },
-          { label: 'Вся сеть', icon: 'layout', action: fitView },
-          { label: st.showUnknown ? 'Скрыть неизвестные' : 'Показать неизвестные', icon: st.showUnknown ? 'eye-off' : 'eye', action: toggleUnknown }
+          { label: L('Обновить', 'Refresh'), icon: 'reload', action: refresh },
+          { label: L('Вся сеть', 'Whole network'), icon: 'layout', action: fitView },
+          { label: st.showUnknown ? L('Скрыть неизвестные', 'Hide unknown') : L('Показать неизвестные', 'Show unknown'), icon: st.showUnknown ? 'eye-off' : 'eye', action: toggleUnknown }
         ], e.clientX, e.clientY);
       }
     });
@@ -533,7 +538,7 @@ const MapApp = (function () {
     function toggleUnknown() {
       st.showUnknown = !st.showUnknown;
       btnUnknown.classList.toggle('on', st.showUnknown);
-      btnUnknown.innerHTML = Icons.get(st.showUnknown ? 'eye' : 'eye-off', 14) + '<span>Неизвестные</span>';
+      btnUnknown.innerHTML = Icons.get(st.showUnknown ? 'eye' : 'eye-off', 14) + '<span>' + L('Неизвестные', 'Unknown') + '</span>';
     }
 
     // --- кнопки и клавиши ---
@@ -576,7 +581,7 @@ const MapApp = (function () {
     BW.onSettings(function () { st.colors = themeColors(); });
 
     Promise.resolve(BW.ready).then(function () {
-      Win.setTitle('Карта сети');
+      Win.setTitle(L('Карта сети', 'Network map'));
       startLoop();
       refresh();
       st.timer = setInterval(function () { if (!document.hidden) refresh(); }, REFRESH_MS);
@@ -591,6 +596,6 @@ const MapApp = (function () {
 })();
 
 Apps.register('map', {
-  title: 'Карта сети', icon: 'map', minWidth: 640, minHeight: 420,
+  title: L('Карта сети', 'Network map'), icon: 'map', minWidth: 640, minHeight: 420,
   mount: function (body, arg) { MapApp.mount(body, arg); }
 });

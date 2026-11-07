@@ -1,15 +1,23 @@
 # Автор определяет новый тип на Adder, без изменения ядра.
+# The author defines a new type in Adder, without changing the engine.
+
+# Строка на языке игры; работает и в describe/check. / A string in the game language; also works in describe/check.
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
 def describe_signal(event):
     ring = "BLACKWIRE"
     shift = (event["seed"] + event["device"]["id"]) % len(ring)
     return {"layout":{"ring":ring,"shift":shift,"suffix":event["params"].get("suffix","!")},
         "fields":["signal"],
-        "hints":["Нужно переставить символы кольца сигнала.","Сдвинь ring влево на shift позиций.","Склей ring[shift:] + ring[:shift] и добавь suffix."]}
+        "hints":[tr("Нужно переставить символы кольца сигнала.","The characters of the signal ring must be rearranged."),tr("Сдвинь ring влево на shift позиций.","Rotate ring left by shift positions."),tr("Склей ring[shift:] + ring[:shift] и добавь suffix.","Join ring[shift:] + ring[:shift] and append suffix.")]}
 
 def check_signal(event):
     layout = event["profile"]["layout"]
     expected = layout["ring"][layout["shift"]:] + layout["ring"][:layout["shift"]] + layout["suffix"]
-    return {"ok":event["payload"].get("signal","") == expected,"feedback":"Неверная перестановка сигнала или suffix."}
+    return {"ok":event["payload"].get("signal","") == expected,"feedback":tr("Неверная перестановка сигнала или suffix.","Wrong signal rotation or suffix.")}
 
 def load(event):
     kind = plugin.exploit_type("signal_lock", {"name":"Signal Lock","profile":"describe_signal","validate":"check_signal","market":"custom_vuln_type:signal_tool"})
@@ -24,7 +32,7 @@ def load(event):
     device = plugin.device_type("signal_node",template)
     plugin.vulnerability("signal_entry", {"device_type":device,"service":"signal","version_prefix":"1.","access":"shell","exploit":{"kind":kind,"params":{"suffix":"-ENTRY"}}})
     plugin.vulnerability("signal_kernel", {"device_type":device,"local":true,"version_prefix":"SignalOS","access":"root","exploit":{"kind":kind,"params":{"suffix":"-ROOT"}}})
-    plugin.catalog("market","signal_tool",{"name":"Signal Weaver","desc":"Эксплоит авторского типа Signal Lock, исходник на Adder.","price":180,"file":"signal_solver.adr","code":plugin.asset("signal_solver.adr")})
+    plugin.catalog("market","signal_tool",{"name":"Signal Weaver","desc":tr("Эксплоит авторского типа Signal Lock, исходник на Adder.","Exploit for the custom Signal Lock type, source in Adder."),"price":180,"file":"signal_solver.adr","code":plugin.asset("signal_solver.adr")})
 
 def create(event):
     count = plugin.get("created",0) + 1
@@ -32,8 +40,8 @@ def create(event):
     mid = plugin.spawn("custom_vuln_type:signal_node",{"hostname":f"signal-node-{count}","ip":ip,"up":true})
     plugin.user(mid,"operator","signal123",false)
     plugin.set("created",count)
-    print("Создан узел:",ip)
-    print("Свой тип целиком определён функциями describe_signal и check_signal.")
-    print("Подсказки: research -h 3",ip,"custom_vuln_type:signal_entry")
-    print("Свой эксплоит: exploit new ~/scripts/signal.adr",ip,"custom_vuln_type:signal_entry")
-    print("Готовый: market buy custom_vuln_type:signal_tool")
+    print(tr("Создан узел:","Host created:"),ip)
+    print(tr("Свой тип целиком определён функциями describe_signal и check_signal.","The custom type is defined entirely by the functions describe_signal and check_signal."))
+    print(tr("Подсказки: research -h 3","Hints: research -h 3"),ip,"custom_vuln_type:signal_entry")
+    print(tr("Свой эксплоит: exploit new ~/scripts/signal.adr","Your own exploit: exploit new ~/scripts/signal.adr"),ip,"custom_vuln_type:signal_entry")
+    print(tr("Готовый: market buy custom_vuln_type:signal_tool","Ready-made: market buy custom_vuln_type:signal_tool"))

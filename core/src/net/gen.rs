@@ -212,7 +212,7 @@ pub fn generate(rng: &mut Rng, handle: &str, player_password: &str) -> Generated
                     kind: pl.kind,
                     org: Some(org_id),
                     router: Some(gateway_id),
-                    org_name: variant.name.to_string(),
+                    org_name: variant.title().to_string(),
                     care: tpl.care,
                     x,
                     y,
@@ -227,13 +227,13 @@ pub fn generate(rng: &mut Rng, handle: &str, player_password: &str) -> Generated
 
             let org = Org {
                 id: org_id,
-                name: variant.name.to_string(),
+                name: variant.title().to_string(),
                 kind: tpl.kind,
                 domain: variant.domain.to_string(),
                 gateway: gateway_id,
                 subnet: subnet.clone(),
                 members: member_ids.clone(),
-                description: variant.description.to_string(),
+                description: variant.about().to_string(),
             };
 
             attach_pages(tpl, variant, &org, &mut org_machines, &invite, rng);
@@ -287,9 +287,9 @@ pub fn generate(rng: &mut Rng, handle: &str, player_password: &str) -> Generated
     let inbox = super::mail::player_inbox(
         handle,
         &player_ip,
-        bank.map(|o| o.name.as_str()).unwrap_or("Банк"),
+        bank.map(|o| o.name.as_str()).unwrap_or(tr!("Банк", "Bank")),
         bank.map(|o| o.domain.as_str()).unwrap_or("bank.net"),
-        corp.map(|o| o.name.as_str()).unwrap_or("Корпорация"),
+        corp.map(|o| o.name.as_str()).unwrap_or(tr!("Корпорация", "Corporation")),
         corp.map(|o| o.domain.as_str()).unwrap_or("corp.net"),
         isp.map(|o| o.domain.as_str()).unwrap_or("meridian.net"),
         &invite,
@@ -381,18 +381,21 @@ fn attach_pages(
             for id in &org.members {
                 if let Some(m) = find_mut(machines, *id) {
                     if m.kind == MachineKind::Web {
-                        set_web_pages(m, web::isp_status(&variant.name, variant.domain));
+                        set_web_pages(m, web::isp_status(variant.title(), variant.domain));
                     }
                 }
             }
         }
         OrgKind::Hosting => {
-            let sites = ["Блог путешественника", "Кулинарная страница", "Мастерская по ремонту", "Городская афиша", "Клуб любителей книг", "Фотоальбом", "Магазинчик у дома"];
+            let sites = tr!(
+                ["Блог путешественника", "Кулинарная страница", "Мастерская по ремонту", "Городская афиша", "Клуб любителей книг", "Фотоальбом", "Магазинчик у дома"],
+                ["Traveler's Blog", "Cooking Page", "Repair Workshop", "City Events", "Book Lovers' Club", "Photo Album", "Corner Store"]
+            );
             for id in &org.members {
                 if let Some(m) = find_mut(machines, *id) {
                     if m.kind == MachineKind::Web {
                         let name = *rng.pick(&sites);
-                        set_web_pages(m, web::hosting_site(name, "Личный проект на общем хостинге."));
+                        set_web_pages(m, web::hosting_site(name, tr!("Личный проект на общем хостинге.", "A personal project on shared hosting.")));
                     }
                 }
             }
@@ -408,7 +411,7 @@ fn attach_pages(
                 .or(Some(org.gateway));
             if let Some(id) = target {
                 if let Some(m) = find_mut(machines, id) {
-                    set_web_pages(m, web::org_site(tpl.kind, &variant.name, variant.domain, variant.description, &contacts));
+                    set_web_pages(m, web::org_site(tpl.kind, variant.title(), variant.domain, variant.about(), &contacts));
                 }
             }
         }
@@ -417,7 +420,10 @@ fn attach_pages(
 
 /// Контакты организации: сотрудники с адресами почты.
 fn contacts_of(org: &Org, machines: &[Machine]) -> Vec<Contact> {
-    let roles = ["специалист", "менеджер", "инженер", "администратор", "бухгалтер"];
+    let roles = tr!(
+        ["специалист", "менеджер", "инженер", "администратор", "бухгалтер"],
+        ["specialist", "manager", "engineer", "administrator", "accountant"]
+    );
     let mut out = Vec::new();
     let mut ri = 0usize;
     for id in &org.members {
@@ -428,7 +434,7 @@ fn contacts_of(org: &Org, machines: &[Machine]) -> Vec<Contact> {
                 }
                 if let Some(p) = names::PEOPLE.iter().find(|p| p.login == u.name) {
                     out.push(Contact {
-                        name: format!("{} {}", p.first, p.last),
+                        name: format!("{} {}", p.first_name(), p.last_name()),
                         email: format!("{}@{}", p.login, org.domain),
                         role: roles[ri % roles.len()].to_string(),
                     });

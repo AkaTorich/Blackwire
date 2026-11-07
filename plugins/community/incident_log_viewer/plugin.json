@@ -1,6 +1,7 @@
 {
   "id": "incident_log_viewer",
   "name": "Просмотр журналов происшествий",
+  "name_en": "Incident Log Viewer",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

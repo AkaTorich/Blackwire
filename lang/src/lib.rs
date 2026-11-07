@@ -11,6 +11,8 @@
 //! Скрипт общается с игрой только через `Host`: печать, ввод, вызовы игровых
 //! модулей (`sys.*`, `fs.*`, `net.*`, `shell.*`) и проверку «пора остановиться».
 
+#[macro_use]
+pub mod i18n;
 pub mod lexer;
 pub mod ast;
 pub mod parser;

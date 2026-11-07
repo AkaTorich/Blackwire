@@ -1,12 +1,15 @@
 {
   "name": "Стёртая атрибуция исследования",
+  "name_en": "Deleted Research Attribution",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "research_records",
   "file": "authorship-history.csv",
   "story": "Авторство набора данных поменяли между проверкой и публикацией.",
+  "story_en": "A dataset's attribution changed between its review and publication.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 280,
   "id": "deleted_research_attribution",
   "number": 59,
@@ -22,8 +25,10 @@
       "service": "research_records_gate",
       "port": 7174,
       "os": "Стёртая атрибуция исследования OS 1.0",
+      "os_en": "Deleted Research Attribution OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Авторство набора данных поменяли между проверкой и публикацией.\nВладелец записи: deleted_research_attribution.\nНомер дела: BW-059.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A dataset's attribution changed between its review and publication.\nRecord owner: deleted_research_attribution.\nCase reference: BW-059.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_deleted_research_attribution_1"
     },
@@ -36,8 +41,10 @@
       "service": "research_records",
       "port": 7175,
       "os": "Стёртая атрибуция исследования OS 1.0",
+      "os_en": "Deleted Research Attribution OS 1.0",
       "file": "/srv/records/authorship-history.csv",
       "text": "Авторство набора данных поменяли между проверкой и публикацией.\nВладелец записи: deleted_research_attribution.\nНомер дела: BW-059.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A dataset's attribution changed between its review and publication.\nRecord owner: deleted_research_attribution.\nCase reference: BW-059.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_deleted_research_attribution_2"
     }

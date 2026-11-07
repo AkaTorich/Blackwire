@@ -1,11 +1,14 @@
 {
   "name": "Панели управления лифтами",
+  "name_en": "Elevator Control Panels",
   "family": "device",
   "kind": "badge",
   "service": "lift_service",
   "file": "visits.log",
   "story": "Служебная панель зафиксировала внеплановую остановку на закрытом этаже.",
+  "story_en": "The service panel recorded an unscheduled stop on the closed floor.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 112,
   "id": "elevator_control_panels",
   "number": 14,
@@ -21,8 +24,10 @@
       "service": "lift_service",
       "port": 7039,
       "os": "Панели управления лифтами OS 1.0",
+      "os_en": "Elevator Control Panels OS 1.0",
       "file": "/srv/records/visits.log",
       "text": "Служебная панель зафиксировала внеплановую остановку на закрытом этаже.\nВладелец записи: elevator_control_panels.\nНомер дела: BW-014.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The service panel recorded an unscheduled stop on the closed floor.\nRecord owner: elevator_control_panels.\nCase reference: BW-014.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_elevator_control_panels_1"
     }

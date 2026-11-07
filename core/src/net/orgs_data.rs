@@ -14,35 +14,46 @@ const fn nv(
     tag: &'static str,
     domain: &'static str,
     description: &'static str,
+    name_en: &'static str,
+    description_en: &'static str,
 ) -> NameVariant {
-    NameVariant { name, tag, domain, description }
+    NameVariant { name, tag, domain, description, name_en, description_en }
 }
 
 // --- Корпорации --------------------------------------------------------------
 
 const CORP_ENERGY: &[NameVariant] = &[
     nv("Хельветика Энерго", "helvet", "helvetica-energo.net",
-       "Энергетический концерн: сети, подстанции, добыча."),
+       "Энергетический концерн: сети, подстанции, добыча.",
+       "Helvetica Energo", "Energy group: grids, substations, extraction."),
     nv("Нордваль Пауэр", "nordval", "nordval.net",
-       "Энергетика северных регионов, гидростанции и сети."),
+       "Энергетика северных регионов, гидростанции и сети.",
+       "Nordval Power", "Power for the northern regions: hydro plants and grids."),
     nv("Торнгат Энергетикс", "torngat", "torngat-en.net",
-       "Тепловые и ветровые станции, продажа мощности."),
+       "Тепловые и ветровые станции, продажа мощности.",
+       "Torngat Energetics", "Thermal and wind plants, capacity sales."),
 ];
 const CORP_BIOTECH: &[NameVariant] = &[
     nv("Авиценна Биолаб", "avicenna", "avicenna-bio.net",
-       "Биотехнологии: ферменты, вакцины, генетика."),
+       "Биотехнологии: ферменты, вакцины, генетика.",
+       "Avicenna Biolab", "Biotech: enzymes, vaccines, genetics."),
     nv("Мидгард Фарма", "midgard", "midgard-pharma.net",
-       "Фармацевтика и лабораторные исследования."),
+       "Фармацевтика и лабораторные исследования.",
+       "Midgard Pharma", "Pharmaceuticals and laboratory research."),
     nv("Кёльвин Биотех", "kelvin", "kelvin-biotech.net",
-       "Клеточные культуры и биореакторы."),
+       "Клеточные культуры и биореакторы.",
+       "Kelvin Biotech", "Cell cultures and bioreactors."),
 ];
 const CORP_LOGISTICS: &[NameVariant] = &[
     nv("Сильфида Логистик", "silfida", "silfida-log.net",
-       "Логистика и грузоперевозки, складские сети."),
+       "Логистика и грузоперевозки, складские сети.",
+       "Silfida Logistics", "Logistics and freight, warehouse networks."),
     nv("Караван Транзит", "karavan", "karavan-transit.net",
-       "Международные перевозки и таможенные склады."),
+       "Международные перевозки и таможенные склады.",
+       "Karavan Transit", "International shipping and bonded warehouses."),
     nv("Орлан Карго", "orlan", "orlan-cargo.net",
-       "Авиационная и морская логистика."),
+       "Авиационная и морская логистика.",
+       "Orlan Cargo", "Air and sea logistics."),
 ];
 // Пул имён для ИИ-корпораций вошёл в «энергетику» и «логистику» выше; отдельный
 // шаблон ИИ-стартапа убран, чтобы мир оставался в пределах 60–120 машин.
@@ -61,13 +72,17 @@ const CORP_ROLES: &[Role] = &[
 
 const BANK_VARIANTS: &[NameVariant] = &[
     nv("Банк Аргентум", "argentum", "argentum-bank.net",
-       "Коммерческий банк: вклады, кредиты, карты."),
+       "Коммерческий банк: вклады, кредиты, карты.",
+       "Argentum Bank", "Commercial bank: deposits, loans, cards."),
     nv("Деметра Кредит", "demetra", "demetra-credit.net",
-       "Кредитная организация и расчётный центр."),
+       "Кредитная организация и расчётный центр.",
+       "Demetra Credit", "Credit institution and settlement center."),
     nv("Остзее Банк", "ostzee", "ostzee-bank.net",
-       "Банк с сетью банкоматов и отделений."),
+       "Банк с сетью банкоматов и отделений.",
+       "Ostzee Bank", "Bank with a network of ATMs and branches."),
     nv("Сольвей Финанс", "solvey", "solvey-finance.net",
-       "Платежи, переводы, обслуживание предприятий."),
+       "Платежи, переводы, обслуживание предприятий.",
+       "Solvey Finance", "Payments, transfers, business services."),
 ];
 const BANK_ROLES: &[Role] = &[
     role(K::Workstation, "ws-{name}", 1, 1, false),
@@ -83,11 +98,14 @@ const BANK_ROLES: &[Role] = &[
 
 const HOSP_VARIANTS: &[NameVariant] = &[
     nv("Клиника Гиппократа", "gippokrat", "gippokrat-clinic.net",
-       "Многопрофильная клиника и диагностический центр."),
+       "Многопрофильная клиника и диагностический центр.",
+       "Hippocrates Clinic", "General clinic and diagnostic center."),
     nv("Медцентр Авалон", "avalon", "avalon-med.net",
-       "Больница с отделениями хирургии и терапии."),
+       "Больница с отделениями хирургии и терапии.",
+       "Avalon Medical Center", "Hospital with surgery and internal medicine wards."),
     nv("Госпиталь Святой Бригитты", "brigitta", "brigitta-hosp.net",
-       "Городская больница и станция скорой помощи."),
+       "Городская больница и станция скорой помощи.",
+       "St. Brigitta Hospital", "City hospital and ambulance station."),
 ];
 const HOSP_ROLES: &[Role] = &[
     role(K::Workstation, "ws-{name}", 1, 1, false),
@@ -102,9 +120,11 @@ const HOSP_ROLES: &[Role] = &[
 
 const SOC_VARIANTS: &[NameVariant] = &[
     nv("Центр «Сентинель»", "sentinel", "sentinel-soc.net",
-       "Центр мониторинга безопасности: следит за сетями клиентов."),
+       "Центр мониторинга безопасности: следит за сетями клиентов.",
+       "Sentinel Center", "Security monitoring center: watches client networks."),
     nv("Аргус Секьюрити", "argus", "argus-sec.net",
-       "Служба наблюдения и реагирования на инциденты."),
+       "Служба наблюдения и реагирования на инциденты.",
+       "Argus Security", "Surveillance and incident response service."),
 ];
 const SOC_ROLES: &[Role] = &[
     role(K::Server, "monitor", 1, 1, false),
@@ -117,7 +137,8 @@ const SOC_ROLES: &[Role] = &[
 
 const POLICE_VARIANTS: &[NameVariant] = &[
     nv("Управление киберполиции", "cyberpol", "cyberpol.gov.net",
-       "Государственное управление по киберпреступлениям."),
+       "Государственное управление по киберпреступлениям.",
+       "Cyber Police Department", "State department for cybercrime."),
 ];
 const POLICE_ROLES: &[Role] = &[
     role(K::Server, "case", 1, 1, false),
@@ -130,7 +151,8 @@ const POLICE_ROLES: &[Role] = &[
 
 const ISP_VARIANTS: &[NameVariant] = &[
     nv("Провайдер «Меридиан»", "meridian", "meridian.net",
-       "Интернет-провайдер: доступ, имена, биллинг."),
+       "Интернет-провайдер: доступ, имена, биллинг.",
+       "Meridian ISP", "Internet provider: access, names, billing."),
 ];
 const ISP_ROLES: &[Role] = &[
     role(K::Dns, "dns", 1, 1, true),
@@ -144,7 +166,8 @@ const ISP_ROLES: &[Role] = &[
 
 const UNI_VARIANTS: &[NameVariant] = &[
     nv("Университет Теслы", "tesla-u", "tesla-univ.net",
-       "Технический университет: факультеты, лаборатории, библиотека."),
+       "Технический университет: факультеты, лаборатории, библиотека.",
+       "Tesla University", "Technical university: faculties, labs, library."),
 ];
 const UNI_ROLES: &[Role] = &[
     role(K::Web, "www", 1, 1, true),
@@ -159,7 +182,8 @@ const UNI_ROLES: &[Role] = &[
 
 const HOST_VARIANTS: &[NameVariant] = &[
     nv("Хостинг «Грифон»", "grifon", "grifon-host.net",
-       "Хостинг-провайдер: много маленьких сайтов на общих серверах."),
+       "Хостинг-провайдер: много маленьких сайтов на общих серверах.",
+       "Grifon Hosting", "Hosting provider: many small sites on shared servers."),
 ];
 const HOST_ROLES: &[Role] = &[
     role(K::Web, "node", 1, 2, true),
@@ -172,7 +196,8 @@ const HOST_ROLES: &[Role] = &[
 
 const GOV_VARIANTS: &[NameVariant] = &[
     nv("Городская управа", "uprava", "uprava.gov.net",
-       "Муниципальное учреждение: услуги, реестры, документы."),
+       "Муниципальное учреждение: услуги, реестры, документы.",
+       "City Hall", "Municipal office: services, registries, documents."),
 ];
 const GOV_ROLES: &[Role] = &[
     role(K::Web, "portal", 1, 1, true),
@@ -186,7 +211,8 @@ const GOV_ROLES: &[Role] = &[
 
 const MEDIA_VARIANTS: &[NameVariant] = &[
     nv("Вестник «Гермес»", "germes", "germes-news.net",
-       "Информационное издание: новости, расследования."),
+       "Информационное издание: новости, расследования.",
+       "Hermes Herald", "News outlet: news, investigations."),
 ];
 const MEDIA_ROLES: &[Role] = &[
     role(K::Web, "www", 1, 1, true),
@@ -199,7 +225,8 @@ const MEDIA_ROLES: &[Role] = &[
 
 const SHOP_VARIANTS: &[NameVariant] = &[
     nv("Магазин «Агора»", "agora", "agora-shop.net",
-       "Интернет-магазин: товары, заказы, оплата."),
+       "Интернет-магазин: товары, заказы, оплата.",
+       "Agora Shop", "Online shop: goods, orders, payment."),
 ];
 const SHOP_ROLES: &[Role] = &[
     role(K::Web, "shop", 1, 1, true),
@@ -211,18 +238,18 @@ const SHOP_ROLES: &[Role] = &[
 // --- Домашние компьютеры -----------------------------------------------------
 
 const HOME_VARIANTS: &[NameVariant] = &[
-    nv("Марат", "marat", "marat.home.net", "Домашний компьютер."),
-    nv("Лейла", "leyla", "leyla.home.net", "Домашний компьютер."),
-    nv("Эйнар", "einar", "einar.home.net", "Домашний компьютер."),
-    nv("Сольвейг", "solveyg", "solveyg.home.net", "Домашний компьютер."),
-    nv("Тэмуджин", "temuchin", "temuchin.home.net", "Домашний компьютер."),
-    nv("Ядвига", "yadviga", "yadviga.home.net", "Домашний компьютер."),
-    nv("Касым", "kasym", "kasym.home.net", "Домашний компьютер."),
-    nv("Нанна", "nanna", "nanna.home.net", "Домашний компьютер."),
-    nv("Рашид", "rashid", "rashid.home.net", "Домашний компьютер."),
-    nv("Бьёрн", "bjorn", "bjorn.home.net", "Домашний компьютер."),
-    nv("Зухра", "zuhra", "zuhra.home.net", "Домашний компьютер."),
-    nv("Освальд", "osvald", "osvald.home.net", "Домашний компьютер."),
+    nv("Марат", "marat", "marat.home.net", "Домашний компьютер.", "Marat", "Home computer."),
+    nv("Лейла", "leyla", "leyla.home.net", "Домашний компьютер.", "Leyla", "Home computer."),
+    nv("Эйнар", "einar", "einar.home.net", "Домашний компьютер.", "Einar", "Home computer."),
+    nv("Сольвейг", "solveyg", "solveyg.home.net", "Домашний компьютер.", "Solveig", "Home computer."),
+    nv("Тэмуджин", "temuchin", "temuchin.home.net", "Домашний компьютер.", "Temujin", "Home computer."),
+    nv("Ядвига", "yadviga", "yadviga.home.net", "Домашний компьютер.", "Jadwiga", "Home computer."),
+    nv("Касым", "kasym", "kasym.home.net", "Домашний компьютер.", "Kasym", "Home computer."),
+    nv("Нанна", "nanna", "nanna.home.net", "Домашний компьютер.", "Nanna", "Home computer."),
+    nv("Рашид", "rashid", "rashid.home.net", "Домашний компьютер.", "Rashid", "Home computer."),
+    nv("Бьёрн", "bjorn", "bjorn.home.net", "Домашний компьютер.", "Bjorn", "Home computer."),
+    nv("Зухра", "zuhra", "zuhra.home.net", "Домашний компьютер.", "Zuhra", "Home computer."),
+    nv("Освальд", "osvald", "osvald.home.net", "Домашний компьютер.", "Oswald", "Home computer."),
 ];
 const HOME_ROLES: &[Role] = &[role(K::HomePc, "pc", 1, 1, true)];
 
@@ -230,7 +257,8 @@ const HOME_ROLES: &[Role] = &[role(K::HomePc, "pc", 1, 1, true)];
 
 const HONEY_VARIANTS: &[NameVariant] = &[
     nv("Файловый архив «Либер»", "liber", "liber-archive.net",
-       "Открытый файловый сервер — слишком открытый."),
+       "Открытый файловый сервер — слишком открытый.",
+       "Liber File Archive", "Open file server — too open."),
 ];
 const HONEY_ROLES: &[Role] = &[role(K::Honeypot, "srv", 1, 1, true)];
 
@@ -238,7 +266,8 @@ const HONEY_ROLES: &[Role] = &[role(K::Honeypot, "srv", 1, 1, true)];
 
 const HW_VARIANTS: &[NameVariant] = &[
     nv("hello-world", "hw", "hw",
-       "Скрытая сеть группы hello-world."),
+       "Скрытая сеть группы hello-world.",
+       "hello-world", "Hidden network of the hello-world group."),
 ];
 const HW_ROLES: &[Role] = &[
     role(K::Server, "board.hw", 1, 1, false),

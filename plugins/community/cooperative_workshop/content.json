@@ -1,12 +1,15 @@
 {
   "name": "Кооперативная мастерская",
+  "name_en": "Cooperative Workshop",
   "family": "network",
   "org_kind": "home",
   "kind": "database",
   "service": "workshop_archive",
   "file": "tool-register.csv",
   "story": "В журнале общего инструмента числится оборудование, которого в мастерской никогда не было.",
+  "story_en": "The shared tool ledger records equipment that never reached the workshop.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 246,
   "id": "cooperative_workshop",
   "number": 37,
@@ -22,8 +25,10 @@
       "service": "workshop_archive_gate",
       "port": 7108,
       "os": "Кооперативная мастерская OS 1.0",
+      "os_en": "Cooperative Workshop OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "В журнале общего инструмента числится оборудование, которого в мастерской никогда не было.\nВладелец записи: cooperative_workshop.\nНомер дела: BW-037.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The shared tool ledger records equipment that never reached the workshop.\nRecord owner: cooperative_workshop.\nCase reference: BW-037.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_cooperative_workshop_1"
     },
@@ -36,8 +41,10 @@
       "service": "workshop_archive_ops",
       "port": 7109,
       "os": "Кооперативная мастерская OS 1.0",
+      "os_en": "Cooperative Workshop OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "В журнале общего инструмента числится оборудование, которого в мастерской никогда не было.\nВладелец записи: cooperative_workshop.\nНомер дела: BW-037.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The shared tool ledger records equipment that never reached the workshop.\nRecord owner: cooperative_workshop.\nCase reference: BW-037.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_cooperative_workshop_2"
     },
@@ -50,8 +57,10 @@
       "service": "workshop_archive",
       "port": 7110,
       "os": "Кооперативная мастерская OS 1.0",
+      "os_en": "Cooperative Workshop OS 1.0",
       "file": "/srv/records/tool-register.csv",
       "text": "В журнале общего инструмента числится оборудование, которого в мастерской никогда не было.\nВладелец записи: cooperative_workshop.\nНомер дела: BW-037.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The shared tool ledger records equipment that never reached the workshop.\nRecord owner: cooperative_workshop.\nCase reference: BW-037.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_cooperative_workshop_3"
     }

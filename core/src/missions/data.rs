@@ -151,3 +151,86 @@ pub const CHAIN: &[MissionDef] = &[
                 hello-world не выдумка. И ты теперь тоже.\n\nДобро пожаловать.",
     },
 ];
+
+/// Тексты задания на английском (параллельно `CHAIN`, по тому же индексу).
+#[derive(Clone, Copy, Debug)]
+pub struct MissionTextEn {
+    pub title: &'static str,
+    pub objective: &'static str,
+    pub brief: &'static str,
+    pub reply: &'static str,
+}
+
+/// Английская цепочка — тот же порядок, что и `CHAIN`.
+pub const CHAIN_EN: &[MissionTextEn] = &[
+    MissionTextEn {
+        title: "A Knock at the Door",
+        objective: "Read the file {path} on {host} ({ip}) and send its contents to {to}",
+        brief: "You found the door. Now show us you can get through it.\n\n\
+                The machine {host} ({ip}) holds a file {path}. Get in however you can — there is a weak spot, — \
+                read it and mail its contents to {to}.\n\n\
+                This is not theft. It's a test. Start with probe {ip}.",
+        reply: "Received. You didn't freeze at the very first door — that's a good start.\n\
+                We pay for the work: this isn't charity, it's a cause.",
+    },
+    MissionTextEn {
+        title: "A Paper with a Stamp",
+        objective: "Pull the transaction log {path} from {host} ({ip}) and send it to {to}",
+        brief: "They stripped you bare over a paper with a stamp. That's how their whole order works.\n\n\
+                {host} ({ip}) is the bank's core. In {path} are the transactions that show who crushes people like you, and how. \
+                Get them and send them to {to}.\n\n\
+                The bank is weak in an old corner — look for an outdated service. Remember: you'll leave traces, watch your heat.",
+        reply: "Good. These lines are worth more than their stamps — we know where to put them.\n\
+                From here on it gets finer. Don't go out from your own address again.",
+    },
+    MissionTextEn {
+        title: "Someone Else's Hands",
+        objective: "Gain access to the internal machine {host} ({ip}) — only through their gateway",
+        brief: "Remember the rule: you don't walk up to a locked place from the doorstep.\n\n\
+                The machine {host} ({ip}) sits on the internal network — it can't be reached from outside. \
+                Take their gateway first, then work your way inside from it and gain access to {host}.\n\n\
+                That way your real address stays out of it. Check your chain with the proxy command.",
+        reply: "Now we can see a steady hand. You went through their own machine — and they blame it, not you.\n\
+                That is the craft.",
+    },
+    MissionTextEn {
+        title: "Medical Records",
+        objective: "Take {path} from {host} ({ip}) and send it to {to}",
+        brief: "Someone's pain was sold wholesale. In {path} on {host} ({ip}) are records that someone is leaking to the side.\n\n\
+                We don't need the people on those lists — we need whoever trades in them. Get the file and send it to {to} — \
+                we'll find the seller's name ourselves.\n\n\
+                Go through a chain, as you were taught. And clean up the logs.",
+        reply: "Got it. We won't let those people be harmed — and we'll drag the trader into the light.\n\
+                Looks like you're starting to understand what we stand for.",
+    },
+    MissionTextEn {
+        title: "Clean Slate",
+        objective: "Bring heat below 15 and remove evidence from every host",
+        brief: "You made noise. Department K is already sniffing around — check trace.\n\n\
+                Go through the hosts where your trail remains (the heat command shows the evidence), log in to each and clearlogs. \
+                Get your heat below 15 and leave no evidence behind.\n\n\
+                A good master isn't the one who got in, but the one nobody came for.",
+        reply: "Clean. Nothing trails behind you now.\n\
+                Time to say louder who we are.",
+    },
+    MissionTextEn {
+        title: "The Voice",
+        objective: "Create the file {path} on {host} ({ip}) containing the word hello-world",
+        brief: "There's no reason to stay silent anymore. Take the public host {host} ({ip}) and leave our sign on it.\n\n\
+                Get the rights, create the file {path} and write the line hello-world in it (and a few words of your own, if you like). \
+                Let them see the shadow is back.\n\n\
+                You'll need root access — remember privesc.",
+        reply: "Now it's their problem. By morning half the city will read one word — ours.\n\
+                Only the boldest part is left.",
+    },
+    MissionTextEn {
+        title: "Blowback",
+        objective: "Break into the watchers' machine {host} ({ip})",
+        brief: "The ones who built a case against you have holes of their own. {host} ({ip}) is a host of those who watch everyone.\n\n\
+                Get inside. Not for revenge — so they know that watching works both ways. \
+                In their logs you'll find the case on yourself too.\n\n\
+                Go quietly, through a chain. This is your graduation.",
+        reply: "You got in where few ever do. From now on you are one of us.\n\
+                hello-world is not a fiction. And neither are you now.\n\nWelcome.",
+    },
+];

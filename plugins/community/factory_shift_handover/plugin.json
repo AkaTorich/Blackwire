@@ -1,6 +1,7 @@
 {
   "id": "factory_shift_handover",
   "name": "Передача смены на заводе",
+  "name_en": "Factory Shift Handover",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

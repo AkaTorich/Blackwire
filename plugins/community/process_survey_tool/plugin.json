@@ -1,6 +1,7 @@
 {
   "id": "process_survey_tool",
   "name": "Инструмент: обзор процессов",
+  "name_en": "Process Survey Tool",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

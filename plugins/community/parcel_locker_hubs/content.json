@@ -1,11 +1,14 @@
 {
   "name": "Постаматы",
+  "name_en": "Parcel Locker Hubs",
   "family": "device",
   "kind": "badge",
   "service": "parcel_dispatch",
   "file": "deliveries.csv",
   "story": "Ячейка 42 открылась дважды по одному и тому же коду получения.",
+  "story_en": "Locker 42 opened twice for the same pickup code.",
   "objective": "Разобраться с контроллером и восстановить его рабочую запись.",
+  "objective_en": "Audit the controller and recover its operational record.",
   "reward": 100,
   "id": "parcel_locker_hubs",
   "number": 11,
@@ -21,8 +24,10 @@
       "service": "parcel_dispatch",
       "port": 7030,
       "os": "Постаматы OS 1.0",
+      "os_en": "Parcel Locker Hubs OS 1.0",
       "file": "/srv/records/deliveries.csv",
       "text": "Ячейка 42 открылась дважды по одному и тому же коду получения.\nВладелец записи: parcel_locker_hubs.\nНомер дела: BW-011.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Locker 42 opened twice for the same pickup code.\nRecord owner: parcel_locker_hubs.\nCase reference: BW-011.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_parcel_locker_hubs_1"
     }

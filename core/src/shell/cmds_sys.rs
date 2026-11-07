@@ -21,8 +21,9 @@ pub fn whoami(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
 pub fn id(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let user = ctx.user();
     match ctx.machine().users.get(&user) {
-        Some(u) => CmdOutput::text(format!(
+        Some(u) => CmdOutput::text(trf!(
             "uid={}({}) gid={}({}) группы={}{}",
+            "uid={}({}) gid={}({}) groups={}{}",
             u.uid,
             u.name,
             u.uid,
@@ -59,9 +60,10 @@ pub fn date(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     }
     let (y, m, d, _, _, _) = GameClock::civil(now);
     let wd = GameClock::weekday(y, m, d);
-    CmdOutput::text(format!(
+    CmdOutput::text(trf!(
         "{}, {} {} {} г., {}",
-        GameClock::weekday_name_ru(wd),
+        "{}, {} {} {}, {}",
+        weekday_name(wd),
         d,
         genitive_month(m),
         y,
@@ -69,19 +71,30 @@ pub fn date(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     ))
 }
 
+fn weekday_name(wd: u32) -> &'static str {
+    const W_EN: [&str; 7] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    if crate::i18n::is_en() { W_EN[(wd % 7) as usize] } else { GameClock::weekday_name_ru(wd) }
+}
+
 fn genitive_month(m: u32) -> &'static str {
     const M: [&str; 12] = [
         "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
         "декабря",
     ];
-    M[((m.max(1) - 1) % 12) as usize]
+    const M_EN: [&str; 12] = [
+        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+        "December",
+    ];
+    let i = ((m.max(1) - 1) % 12) as usize;
+    if crate::i18n::is_en() { M_EN[i] } else { M[i] }
 }
 
 pub fn uptime(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let st = crate::sysinfo::status(ctx.world, ctx.mid());
     let load = st.cpu / 100.0 * 4.0;
-    CmdOutput::text(format!(
+    CmdOutput::text(trf!(
         " {} работает {}, пользователей: 1, нагрузка: {:.2}, {:.2}, {:.2}",
+        " {} up {}, 1 user, load average: {:.2}, {:.2}, {:.2}",
         GameClock::format_hms(ctx.now()),
         GameClock::format_duration(st.uptime),
         load,
@@ -97,10 +110,10 @@ fn proc_rows(ctx: &Ctx<'_>, all: bool, sort_cpu: bool, limit: usize) -> Vec<Vec<
     if sort_cpu {
         procs.sort_by(|a, b| b.cpu.partial_cmp(&a.cpu).unwrap_or(std::cmp::Ordering::Equal));
     }
-    let mut rows = vec![vec!["PID".to_string(), "ПОЛЬЗ.".into(), "%CPU".into(), "ПАМ.МБ".into(), "ЗАПУЩЕН".into(), "КОМАНДА".into()]];
+    let mut rows = vec![vec!["PID".to_string(), tr!("ПОЛЬЗ.", "USER").into(), "%CPU".into(), tr!("ПАМ.МБ", "MEM.MB").into(), tr!("ЗАПУЩЕН", "STARTED").into(), tr!("КОМАНДА", "COMMAND").into()]];
     for p in procs.into_iter().take(limit) {
         let name = match p.kind {
-            ProcKind::Script { .. } if p.killed => format!("{} (останавливается)", p.name),
+            ProcKind::Script { .. } if p.killed => trf!("{} (останавливается)", "{} (stopping)", p.name),
             _ => p.name.clone(),
         };
         rows.push(vec![
@@ -135,8 +148,9 @@ pub fn top(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let st = crate::sysinfo::status(ctx.world, ctx.mid());
     let mut out = CmdOutput::ok();
     out.push_kind(
-        format!(
+        trf!(
             "top - {}  работает {}  задач: {}  нагрузка: {:.2}",
+            "top - {}  up {}  tasks: {}  load average: {:.2}",
             GameClock::format_hms(ctx.now()),
             GameClock::format_duration(st.uptime),
             st.procs.len(),
@@ -144,8 +158,8 @@ pub fn top(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
         ),
         OutKind::Accent,
     );
-    out.push(format!("%Cpu: {:5.1} польз., {:5.1} сист., {:5.1} свободно", st.cpu * 0.7, st.cpu * 0.3, 100.0 - st.cpu));
-    out.push(format!("Память МБ: {:6} всего, {:6} занято, {:6} свободно", st.mem_total, st.mem_used, st.mem_total - st.mem_used));
+    out.push(trf!("%Cpu: {:5.1} польз., {:5.1} сист., {:5.1} свободно", "%Cpu: {:5.1} us, {:5.1} sy, {:5.1} id", st.cpu * 0.7, st.cpu * 0.3, 100.0 - st.cpu));
+    out.push(trf!("Память МБ: {:6} всего, {:6} занято, {:6} свободно", "MiB Mem: {:6} total, {:6} used, {:6} free", st.mem_total, st.mem_used, st.mem_total - st.mem_used));
     out.push("");
     let rows = proc_rows(ctx, true, true, 15);
     for (i, l) in table(&rows, &[true, false, true, true, false, false]).into_iter().enumerate() {
@@ -161,7 +175,7 @@ pub fn top(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
 pub fn kill(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.is_empty() {
-        return CmdOutput::err("kill: укажите pid (список — ps)");
+        return CmdOutput::err(tr!("kill: укажите pid (список — ps)", "kill: specify a pid (list — ps)"));
     }
     let user = ctx.user();
     let mut out = CmdOutput::ok();
@@ -169,14 +183,14 @@ pub fn kill(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         let pid: u32 = match p.parse() {
             Ok(n) => n,
             Err(_) => {
-                out.push_err(format!("kill: не число: {}", p));
+                out.push_err(trf!("kill: не число: {}", "kill: not a number: {}", p));
                 continue;
             }
         };
         let (is_script, name) = match ctx.machine().procs.get(pid) {
             Some(pr) => (matches!(pr.kind, ProcKind::Script { .. }), pr.name.clone()),
             None => {
-                out.push_err(format!("kill: нет процесса с pid {}", pid));
+                out.push_err(trf!("kill: нет процесса с pid {}", "kill: no process with pid {}", pid));
                 continue;
             }
         };
@@ -184,7 +198,7 @@ pub fn kill(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
             // проверка прав как при снятии, но процесс остаётся до остановки потока
             if let Err(e) = ctx.machine().procs.list().iter().find(|x| x.pid == pid).map(|x| {
                 if user != "root" && x.user != user {
-                    Err(format!("отказано в доступе: процесс {} принадлежит {}", pid, x.user))
+                    Err(trf!("отказано в доступе: процесс {} принадлежит {}", "permission denied: process {} belongs to {}", pid, x.user))
                 } else {
                     Ok(())
                 }
@@ -193,11 +207,11 @@ pub fn kill(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
                 continue;
             }
             ctx.machine_mut().procs.mark_killed(pid);
-            out.push_kind(format!("скрипту {} (pid {}) велено остановиться", name, pid), OutKind::Dim);
+            out.push_kind(trf!("скрипту {} (pid {}) велено остановиться", "script {} (pid {}) told to stop", name, pid), OutKind::Dim);
         } else {
             match ctx.machine_mut().procs.kill_as(pid, &user) {
                 Ok(()) => {
-                    ctx.log(LogKind::Exec, &format!("{} снял процесс {} ({})", user, pid, name));
+                    ctx.log(LogKind::Exec, &trf!("{} снял процесс {} ({})", "{} killed process {} ({})", user, pid, name));
                 }
                 Err(e) => out.push_err(format!("kill: {}", e)),
             }
@@ -212,9 +226,9 @@ pub fn free(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let st = crate::sysinfo::status(ctx.world, ctx.mid());
     let f = |mb: u32| if human { human_size(mb as u64 * 1024 * 1024) } else { (mb as u64 * 1024).to_string() };
     let rows = vec![
-        vec!["".to_string(), "всего".into(), "занято".into(), "свободно".into(), "кэш".into()],
-        vec!["Память:".to_string(), f(st.mem_total), f(st.mem_used), f(st.mem_total - st.mem_used), f(st.mem_used / 4)],
-        vec!["Подкачка:".to_string(), f(st.mem_total / 2), f(0), f(st.mem_total / 2), f(0)],
+        vec!["".to_string(), tr!("всего", "total").into(), tr!("занято", "used").into(), tr!("свободно", "free").into(), tr!("кэш", "cache").into()],
+        vec![tr!("Память:", "Mem:").to_string(), f(st.mem_total), f(st.mem_used), f(st.mem_total - st.mem_used), f(st.mem_used / 4)],
+        vec![tr!("Подкачка:", "Swap:").to_string(), f(st.mem_total / 2), f(0), f(st.mem_total / 2), f(0)],
     ];
     let mut out = CmdOutput::ok();
     out.push_lines(table(&rows, &[false, true, true, true, true]));
@@ -243,7 +257,7 @@ pub fn export(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
                 if !ctx.session.env.contains_key(a) {
                     ctx.session.env.insert(a.clone(), String::new());
                 }
-                out.push_kind(format!("{}: значение не задано (export ИМЯ=значение)", a), OutKind::Dim);
+                out.push_kind(trf!("{}: значение не задано (export ИМЯ=значение)", "{}: no value set (export NAME=value)", a), OutKind::Dim);
             }
         }
     }
@@ -273,7 +287,7 @@ pub fn alias(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         }
         _ => match ctx.session.aliases.get(&joined) {
             Some(v) => out.push(format!("alias {}='{}'", joined, v)),
-            None => out.push_err(format!("alias: {}: не найден", joined)),
+            None => out.push_err(trf!("alias: {}: не найден", "alias: {}: not found", joined)),
         },
     }
     out
@@ -283,7 +297,7 @@ pub fn unalias(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let mut out = CmdOutput::ok();
     for a in args {
         if ctx.session.aliases.remove(a).is_none() {
-            out.push_err(format!("unalias: {}: не найден", a));
+            out.push_err(trf!("unalias: {}: не найден", "unalias: {}: not found", a));
         }
     }
     out
@@ -311,12 +325,12 @@ pub fn help(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.has("w") || a.has("window") {
         ctx.actions.push(UiAction::OpenApp { app: "help".to_string(), arg: None });
-        return CmdOutput::text("открываю окно справки");
+        return CmdOutput::text(tr!("открываю окно справки", "opening the help window"));
     }
     if let Some(name) = a.pos.first() {
         return match cmdtable::lookup(name) {
             Some(info) => help::command_help(info),
-            None => CmdOutput::err(format!("help: нет команды «{}»", name)),
+            None => CmdOutput::err(trf!("help: нет команды «{}»", "help: no command '{}'", name)),
         };
     }
     let mut out = CmdOutput::ok();
@@ -332,12 +346,12 @@ pub fn help(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn man(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     match args.first() {
-        None => CmdOutput::err("man: какую страницу показать? Например: man ls"),
+        None => CmdOutput::err(tr!("man: какую страницу показать? Например: man ls", "man: which page? For example: man ls")),
         Some(name) => match cmdtable::lookup(name) {
             Some(info) => help::command_help(info),
             None => {
                 let _ = ctx;
-                CmdOutput::err(format!("man: нет справки для «{}»", name))
+                CmdOutput::err(trf!("man: нет справки для «{}»", "man: no manual entry for '{}'", name))
             }
         },
     }
@@ -347,18 +361,18 @@ pub fn which(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let mut out = CmdOutput::ok();
     for name in args {
         if ctx.session.aliases.contains_key(name) {
-            out.push(format!("{}: псевдоним → {}", name, ctx.session.aliases[name]));
+            out.push(trf!("{}: псевдоним → {}", "{}: alias → {}", name, ctx.session.aliases[name]));
         } else if cmdtable::lookup(name).is_some() {
             let path = if ctx.fs().exists(&format!("/bin/{}", name)) {
                 format!("/bin/{}", name)
             } else if ctx.fs().exists(&format!("/usr/bin/{}", name)) {
                 format!("/usr/bin/{}", name)
             } else {
-                format!("/bin/{} (встроенная)", name)
+                trf!("/bin/{} (встроенная)", "/bin/{} (built-in)", name)
             };
             out.push(path);
         } else {
-            out.push_err(format!("{}: не найдено", name));
+            out.push_err(trf!("{}: не найдено", "{}: not found", name));
         }
     }
     out
@@ -367,37 +381,37 @@ pub fn which(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn passwd(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let me = ctx.user();
     let (target, newpass) = match args.len() {
-        0 => return CmdOutput::err("passwd: укажите новый пароль: passwd новый_пароль (или passwd пользователь новый_пароль)"),
+        0 => return CmdOutput::err(tr!("passwd: укажите новый пароль: passwd новый_пароль (или passwd пользователь новый_пароль)", "passwd: specify a new password: passwd new_password (or passwd user new_password)")),
         1 => (me.clone(), args[0].clone()),
         _ => (args[0].clone(), args[1].clone()),
     };
     if target != me && me != "root" {
-        return CmdOutput::err(format!("passwd: сменить пароль {} может только root", target));
+        return CmdOutput::err(trf!("passwd: сменить пароль {} может только root", "passwd: only root can change the password of {}", target));
     }
     if !ctx.machine().users.exists(&target) {
-        return CmdOutput::err(format!("passwd: нет пользователя «{}»", target));
+        return CmdOutput::err(trf!("passwd: нет пользователя «{}»", "passwd: no user '{}'", target));
     }
     ctx.machine_mut().users.set_password(&target, &newpass);
-    ctx.log(LogKind::Warn, &format!("{} сменил пароль пользователя {}", me, target));
+    ctx.log(LogKind::Warn, &trf!("{} сменил пароль пользователя {}", "{} changed the password of user {}", me, target));
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("passwd: пароль пользователя {} обновлён", target), OutKind::Success);
+    out.push_kind(trf!("passwd: пароль пользователя {} обновлён", "passwd: password for user {} updated", target), OutKind::Success);
     out
 }
 
 pub fn useradd(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if !ctx.is_admin() {
-        return CmdOutput::err("useradd: нужны права администратора (sudo useradd …)");
+        return CmdOutput::err(tr!("useradd: нужны права администратора (sudo useradd …)", "useradd: administrator rights required (sudo useradd …)"));
     }
     let name = match a.pos.first() {
         Some(n) => n.clone(),
-        None => return CmdOutput::err("useradd: укажите имя: useradd имя [пароль]"),
+        None => return CmdOutput::err(tr!("useradd: укажите имя: useradd имя [пароль]", "useradd: specify a name: useradd name [password]")),
     };
     if !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') || name.is_empty() {
-        return CmdOutput::err("useradd: имя — латинские буквы, цифры, «_» и «-»");
+        return CmdOutput::err(tr!("useradd: имя — латинские буквы, цифры, «_» и «-»", "useradd: name may contain Latin letters, digits, '_' and '-'"));
     }
     if ctx.machine().users.exists(&name) {
-        return CmdOutput::err(format!("useradd: пользователь «{}» уже есть", name));
+        return CmdOutput::err(trf!("useradd: пользователь «{}» уже есть", "useradd: user '{}' already exists", name));
     }
     let password = a.pos.get(1).cloned().unwrap_or_default();
     let admin = a.has("a") || a.has("admin");
@@ -405,35 +419,35 @@ pub fn useradd(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     ctx.fs_mut().add_user_home(&name);
     sync_passwd(ctx);
     let me = ctx.user();
-    ctx.log(LogKind::Warn, &format!("{} добавил пользователя {}", me, name));
+    ctx.log(LogKind::Warn, &trf!("{} добавил пользователя {}", "{} added user {}", me, name));
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("пользователь {} создан, дом /home/{}", name, name), OutKind::Success);
+    out.push_kind(trf!("пользователь {} создан, дом /home/{}", "user {} created, home /home/{}", name, name), OutKind::Success);
     if password.is_empty() {
-        out.push_kind("пароль пустой — задайте его: passwd имя пароль", OutKind::Dim);
+        out.push_kind(tr!("пароль пустой — задайте его: passwd имя пароль", "password is empty — set it: passwd name password"), OutKind::Dim);
     }
     out
 }
 
 pub fn userdel(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if !ctx.is_admin() {
-        return CmdOutput::err("userdel: нужны права администратора");
+        return CmdOutput::err(tr!("userdel: нужны права администратора", "userdel: administrator rights required"));
     }
     let name = match args.first() {
         Some(n) => n.clone(),
-        None => return CmdOutput::err("userdel: укажите имя"),
+        None => return CmdOutput::err(tr!("userdel: укажите имя", "userdel: specify a name")),
     };
     if name == "root" {
-        return CmdOutput::err("userdel: root удалить нельзя");
+        return CmdOutput::err(tr!("userdel: root удалить нельзя", "userdel: root cannot be deleted"));
     }
     if name == ctx.session.user() {
-        return CmdOutput::err("userdel: нельзя удалить себя");
+        return CmdOutput::err(tr!("userdel: нельзя удалить себя", "userdel: you cannot delete yourself"));
     }
     if !ctx.machine_mut().users.remove(&name) {
-        return CmdOutput::err(format!("userdel: нет пользователя «{}»", name));
+        return CmdOutput::err(trf!("userdel: нет пользователя «{}»", "userdel: no user '{}'", name));
     }
     sync_passwd(ctx);
     let me = ctx.user();
-    ctx.log(LogKind::Warn, &format!("{} удалил пользователя {}", me, name));
+    ctx.log(LogKind::Warn, &trf!("{} удалил пользователя {}", "{} deleted user {}", me, name));
     CmdOutput::ok()
 }
 
@@ -443,7 +457,7 @@ pub fn users(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
         .users
         .list()
         .iter()
-        .map(|u| vec![u.name.clone(), u.uid.to_string(), u.home.clone(), if u.is_admin { "администратор".into() } else { String::new() }])
+        .map(|u| vec![u.name.clone(), u.uid.to_string(), u.home.clone(), if u.is_admin { tr!("администратор", "administrator").into() } else { String::new() }])
         .collect();
     let mut out = CmdOutput::ok();
     out.push_lines(table(&rows, &[false, true, false, false]));
@@ -452,10 +466,10 @@ pub fn users(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
 
 pub fn su(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let (target, password) = match args.len() {
-        0 => return CmdOutput::err("su: укажите пароль: su [пользователь] пароль"),
+        0 => return CmdOutput::err(tr!("su: укажите пароль: su [пользователь] пароль", "su: specify a password: su [user] password")),
         1 => {
             if ctx.machine().users.exists(&args[0]) {
-                return CmdOutput::err(format!("su: укажите пароль третьим словом: su {} пароль", args[0]));
+                return CmdOutput::err(trf!("su: укажите пароль третьим словом: su {} пароль", "su: give the password as the third word: su {} password", args[0]));
             }
             ("root".to_string(), args[0].clone())
         }
@@ -463,11 +477,11 @@ pub fn su(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     };
     let me = ctx.user();
     if !ctx.machine().users.exists(&target) {
-        return CmdOutput::err(format!("su: нет пользователя «{}»", target));
+        return CmdOutput::err(trf!("su: нет пользователя «{}»", "su: no user '{}'", target));
     }
     if !ctx.machine().users.check_password(&target, &password) && me != "root" {
-        ctx.log(LogKind::LoginFailed, &format!("su: {} → {}: неверный пароль", me, target));
-        return CmdOutput::err("su: неверный пароль");
+        ctx.log(LogKind::LoginFailed, &trf!("su: {} → {}: неверный пароль", "su: {} → {}: wrong password", me, target));
+        return CmdOutput::err(tr!("su: неверный пароль", "su: wrong password"));
     }
     ctx.log(LogKind::Login, &format!("su: {} → {}", me, target));
     let home = ctx.machine().users.home_of(&target);
@@ -480,12 +494,12 @@ pub fn su(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn sudo(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.is_empty() {
-        return CmdOutput::err("sudo: укажите команду");
+        return CmdOutput::err(tr!("sudo: укажите команду", "sudo: specify a command"));
     }
     let me = ctx.user();
     if !ctx.is_admin() {
-        ctx.log(LogKind::Warn, &format!("sudo: {} не в списке sudoers: {}", me, args.join(" ")));
-        return CmdOutput::err(format!("sudo: пользователь {} не в списке sudoers. Об этом будет сообщено.", me));
+        ctx.log(LogKind::Warn, &trf!("sudo: {} не в списке sudoers: {}", "sudo: {} is not in the sudoers file: {}", me, args.join(" ")));
+        return CmdOutput::err(trf!("sudo: пользователь {} не в списке sudoers. Об этом будет сообщено.", "sudo: user {} is not in the sudoers file. This incident will be reported.", me));
     }
     ctx.log(LogKind::Exec, &format!("sudo: {} → {}", me, args.join(" ")));
     ctx.sudo = true;
@@ -498,36 +512,36 @@ fn power(ctx: &mut Ctx<'_>, reboot: bool) -> CmdOutput {
     let mut out = CmdOutput::ok();
     let me = ctx.user();
     if !ctx.is_admin() {
-        return CmdOutput::err(format!("{}: нужны права администратора", if reboot { "reboot" } else { "shutdown" }));
+        return CmdOutput::err(trf!("{}: нужны права администратора", "{}: administrator rights required", if reboot { "reboot" } else { "shutdown" }));
     }
     if ctx.mid() == 0 {
-        ctx.log(LogKind::Service, &format!("{}: {}", if reboot { "перезагрузка" } else { "выключение" }, me));
+        ctx.log(LogKind::Service, &format!("{}: {}", if reboot { tr!("перезагрузка", "reboot") } else { tr!("выключение", "shutdown") }, me));
         if !reboot {
-            out.push_kind("Сохранение прогресса и выход из игры…", OutKind::Warn);
+            out.push_kind(tr!("Сохранение прогресса и выход из игры…", "Saving progress and quitting the game…"), OutKind::Warn);
             ctx.actions.push(UiAction::QuitGame);
             return out;
         }
-        out.push_kind("Система уходит на перезагрузку…", OutKind::Warn);
-        out.lines.push(crate::types::OutLine::dim("[ ок ] остановка служб").after(300));
-        out.lines.push(crate::types::OutLine::dim("[ ок ] отключение сети").after(300));
-        out.lines.push(crate::types::OutLine::dim("[ ок ] синхронизация дисков").after(300));
-        out.lines.push(crate::types::OutLine::success("Blackwire OS 1.0 — система запущена").after(900));
+        out.push_kind(tr!("Система уходит на перезагрузку…", "The system is going down for reboot…"), OutKind::Warn);
+        out.lines.push(crate::types::OutLine::dim(tr!("[ ок ] остановка служб", "[ ok ] stopping services")).after(300));
+        out.lines.push(crate::types::OutLine::dim(tr!("[ ок ] отключение сети", "[ ok ] bringing down network")).after(300));
+        out.lines.push(crate::types::OutLine::dim(tr!("[ ок ] синхронизация дисков", "[ ok ] syncing disks")).after(300));
+        out.lines.push(crate::types::OutLine::success(tr!("Blackwire OS 1.0 — система запущена", "Blackwire OS 1.0 — system started")).after(900));
         ctx.world.reboot_player();
         ctx.actions.push(UiAction::Clear);
         return out;
     }
     let secs = if reboot { 90 } else { 600 };
     let host = ctx.machine().hostname.clone();
-    ctx.log(LogKind::Service, &format!("{} выполнил {}", me, if reboot { "reboot" } else { "shutdown" }));
+    ctx.log(LogKind::Service, &trf!("{} выполнил {}", "{} ran {}", me, if reboot { "reboot" } else { "shutdown" }));
     let id = ctx.mid();
     ctx.world.shutdown_machine(id, secs);
     ctx.session.pop_hop(ctx.world);
-    out.push_kind(format!("{}: система останавливается…", host), OutKind::Warn);
-    out.lines.push(crate::types::OutLine::dim(format!("Соединение с {} закрыто удалённой стороной.", host)).after(600));
+    out.push_kind(trf!("{}: система останавливается…", "{}: the system is going down…", host), OutKind::Warn);
+    out.lines.push(crate::types::OutLine::dim(trf!("Соединение с {} закрыто удалённой стороной.", "Connection to {} closed by remote host.", host)).after(600));
     if reboot {
-        out.push_kind("машина поднимется через полторы минуты игрового времени", OutKind::Dim);
+        out.push_kind(tr!("машина поднимется через полторы минуты игрового времени", "the machine will be back up in a minute and a half of game time"), OutKind::Dim);
     } else {
-        out.push_kind("машина выключена; её включат через десять минут игрового времени", OutKind::Dim);
+        out.push_kind(tr!("машина выключена; её включат через десять минут игрового времени", "the machine is off; it will be powered on in ten minutes of game time"), OutKind::Dim);
     }
     out
 }
@@ -543,7 +557,7 @@ pub fn reboot(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
 pub fn logs(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &["n", "f"]);
     if !ctx.is_admin() {
-        return CmdOutput::err("logs: журнал читает только администратор (sudo logs)");
+        return CmdOutput::err(tr!("logs: журнал читает только администратор (sudo logs)", "logs: only an administrator can read the log (sudo logs)"));
     }
     let n = a.opt_usize("n", 25);
     let mut out = CmdOutput::ok();
@@ -551,7 +565,7 @@ pub fn logs(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         let path = match f {
             "auth" => "/var/log/auth.log",
             "system" | "sys" => "/var/log/system.log",
-            other => return CmdOutput::err(format!("logs: нет журнала «{}» (auth или system)", other)),
+            other => return CmdOutput::err(trf!("logs: нет журнала «{}» (auth или system)", "logs: no log '{}' (auth or system)", other)),
         };
         let text = ctx.fs().read_text(path).unwrap_or_default();
         let lines: Vec<&str> = text.lines().collect();
@@ -561,7 +575,7 @@ pub fn logs(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     }
     let logs = &ctx.machine().logs;
     if logs.is_empty() {
-        out.push_kind("журнал пуст", OutKind::Dim);
+        out.push_kind(tr!("журнал пуст", "log is empty"), OutKind::Dim);
         return out;
     }
     let skip = logs.len().saturating_sub(n);
@@ -579,14 +593,14 @@ pub fn logs(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn exit(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     if ctx.session.at_home() {
         ctx.actions.push(UiAction::Exit);
-        return CmdOutput::text("выход");
+        return CmdOutput::text(tr!("выход", "logout"));
     }
     let me = ctx.session.user().to_string();
     let host = ctx.machine().hostname.clone();
-    ctx.log(LogKind::Logout, &format!("{} отключился", me));
+    ctx.log(LogKind::Logout, &trf!("{} отключился", "{} disconnected", me));
     ctx.session.pop_hop(ctx.world);
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("Соединение с {} закрыто.", host), OutKind::Dim);
+    out.push_kind(trf!("Соединение с {} закрыто.", "Connection to {} closed.", host), OutKind::Dim);
     out
 }
 

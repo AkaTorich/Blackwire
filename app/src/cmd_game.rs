@@ -31,6 +31,20 @@ const THEMES: &[ThemeInfo] = &[
     ThemeInfo { id: "gold", name: "Золото", accent: "#e6c66e" },
 ];
 
+/// Те же темы с английскими названиями (порядок как в `THEMES`).
+const THEMES_EN: &[ThemeInfo] = &[
+    ThemeInfo { id: "swordfish", name: "Swordfish", accent: "#35d6ff" },
+    ThemeInfo { id: "ice", name: "Ice", accent: "#8fd3ff" },
+    ThemeInfo { id: "amber", name: "Amber", accent: "#ffb347" },
+    ThemeInfo { id: "phosphor", name: "Phosphor", accent: "#4cff7a" },
+    ThemeInfo { id: "violet", name: "Violet", accent: "#b48cff" },
+    ThemeInfo { id: "crimson", name: "Crimson", accent: "#ff4d6d" },
+    ThemeInfo { id: "paper", name: "Paper", accent: "#1b5fb3" },
+    ThemeInfo { id: "midnight", name: "Midnight", accent: "#5b8def" },
+    ThemeInfo { id: "steel", name: "Steel", accent: "#a9b7c6" },
+    ThemeInfo { id: "gold", name: "Gold", accent: "#e6c66e" },
+];
+
 #[derive(Serialize)]
 pub struct BootInfo {
     has_save: bool,
@@ -49,7 +63,7 @@ fn boot_info(st: &AppState) -> BootInfo {
     } else {
         (None, Settings::default())
     };
-    BootInfo { has_save: st.has_save(), handle, os_name: OS_NAME, version: OS_VERSION, settings, theme_list: THEMES }
+    BootInfo { has_save: st.has_save(), handle, os_name: OS_NAME, version: OS_VERSION, settings, theme_list: tr!(THEMES, THEMES_EN) }
 }
 
 #[tauri::command]
@@ -72,7 +86,7 @@ fn seed_from_handle(handle: &str) -> u64 {
 pub fn new_game(st: State<'_, AppState>, handle: String, password: Option<String>, seed: Option<u64>) -> Result<BootInfo, String> {
     let handle = handle.trim().to_string();
     if handle.len() < 3 || handle.len() > 16 || !handle.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') {
-        return Err("имя — латиница, цифры, «_» и «-», от 3 до 16 знаков".into());
+        return Err(tr!("имя — латиница, цифры, «_» и «-», от 3 до 16 знаков", "name: Latin letters, digits, \"_\" and \"-\", 3 to 16 characters").into());
     }
     let seed = seed.unwrap_or_else(|| seed_from_handle(&handle));
     let world = World::new(seed, &handle, password.as_deref().unwrap_or(""));
@@ -83,7 +97,7 @@ pub fn new_game(st: State<'_, AppState>, handle: String, password: Option<String
 
 #[tauri::command]
 pub fn load_game(st: State<'_, AppState>) -> Result<BootInfo, String> {
-    let text = std::fs::read_to_string(&st.save_path).map_err(|_| "сохранение не найдено".to_string())?;
+    let text = std::fs::read_to_string(&st.save_path).map_err(|_| tr!("сохранение не найдено", "save not found").to_string())?;
     let world = World::from_json(&text)?;
     st.set_game(Game::new(world));
     Ok(boot_info(&st))
@@ -137,7 +151,7 @@ pub fn scenario_list(st: State<'_, AppState>) -> Vec<crate::state::ScenarioInfo>
 #[tauri::command]
 pub fn scenario_save(st: State<'_, AppState>, scenario: blackwire_core::scenarios::Scenario) -> Result<Vec<crate::state::ScenarioInfo>, String> {
     if scenario.name.trim().is_empty() {
-        return Err("у сценария должно быть имя".into());
+        return Err(tr!("у сценария должно быть имя", "the scenario must have a name").into());
     }
     st.save_scenario(&scenario)?;
     Ok(st.list_scenarios())
@@ -216,6 +230,28 @@ pub fn save_and_quit(app: &AppHandle, st: &AppState) -> Result<(), String> {
     }
     app.exit(0);
     Ok(())
+}
+
+/// Выбранный язык интерфейса; `None` — ещё не выбирали (окно возьмёт язык системы).
+#[tauri::command]
+pub fn lang_get(st: State<'_, AppState>) -> Option<String> {
+    if st.lang_forced || crate::state::read_lang(&st.prefs_path).is_some() {
+        Some(blackwire_core::i18n::code().to_string())
+    } else {
+        None
+    }
+}
+
+/// Сменить язык: запомнить, переключить движок и сообщить всем окнам.
+#[tauri::command]
+pub fn lang_set(app: AppHandle, st: State<'_, AppState>, lang: String) -> Result<String, String> {
+    blackwire_core::i18n::set(&lang);
+    let code = blackwire_core::i18n::code().to_string();
+    if !st.lang_forced {
+        crate::state::write_lang(&st.prefs_path, &code)?;
+    }
+    let _ = app.emit("lang_changed", serde_json::json!({ "lang": code }));
+    Ok(code)
 }
 
 #[tauri::command]

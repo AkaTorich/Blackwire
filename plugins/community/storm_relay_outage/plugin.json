@@ -1,6 +1,7 @@
 {
   "id": "storm_relay_outage",
   "name": "Шторм на прибрежном реле",
+  "name_en": "Storm Relay Outage",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

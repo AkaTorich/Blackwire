@@ -41,10 +41,10 @@ impl Host for TauriHost {
                 Ok(s) => return Ok(s),
                 Err(mpsc::RecvTimeoutError::Timeout) => {
                     if self.should_stop() {
-                        return Err(LangError::runtime(0, "прервано"));
+                        return Err(LangError::runtime(0, tr!("прервано", "interrupted")));
                     }
                 }
-                Err(mpsc::RecvTimeoutError::Disconnected) => return Err(LangError::runtime(0, "прервано")),
+                Err(mpsc::RecvTimeoutError::Disconnected) => return Err(LangError::runtime(0, tr!("прервано", "interrupted"))),
             }
         }
     }

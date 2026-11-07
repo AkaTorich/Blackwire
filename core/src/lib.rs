@@ -17,6 +17,10 @@
 //! - `world`   — весь мир целиком: машины, часы, игрок, настройки; сохранение и загрузка.
 //! - `game`    — мир + сеансы терминалов; точка входа для оболочки Tauri.
 
+#[macro_use]
+extern crate blackwire_lang;
+pub use blackwire_lang::i18n;
+
 pub mod plugins;
 pub mod types;
 pub mod rng;

@@ -24,9 +24,9 @@ pub enum ImplantKind {
 impl ImplantKind {
     pub fn title(self) -> &'static str {
         match self {
-            ImplantKind::Tracker => "маяк (тянет следствие)",
-            ImplantKind::Backdoor => "чёрный ход",
-            ImplantKind::Miner => "майнер (крадёт ₵)",
+            ImplantKind::Tracker => tr!("маяк (тянет следствие)", "tracker (feeds the investigation)"),
+            ImplantKind::Backdoor => tr!("чёрный ход", "backdoor"),
+            ImplantKind::Miner => tr!("майнер (крадёт ₵)", "miner (steals ₵)"),
         }
     }
 }
@@ -101,8 +101,8 @@ pub fn tick(world: &mut World, dt: u64) {
 
     // файрвол отражает (если нет чёрного хода)
     if world.defense.shield && !has_backdoor(world) {
-        world.machines[0].log(now, LogKind::Warn, "входящая атака отражена файрволом");
-        world.defense.pending = Some(DefenseEvent { title: "Защита".to_string(), text: "Атаку на твою машину отразил файрвол.".to_string() });
+        world.machines[0].log(now, LogKind::Warn, tr!("входящая атака отражена файрволом", "incoming attack blocked by the firewall"));
+        world.defense.pending = Some(DefenseEvent { title: tr!("Защита", "Defense").to_string(), text: tr!("Атаку на твою машину отразил файрвол.", "Your firewall blocked an attack on your machine.").to_string() });
         return;
     }
 
@@ -125,11 +125,11 @@ fn plant_implant(world: &mut World) {
     };
     let path = format!("/tmp/.sys{}", id);
     let _ = world.machines[0].fs.write_text(&path, "watcher implant\n", "root");
-    world.machines[0].log(now, LogKind::Warn, "на машину подсажена закладка");
+    world.machines[0].log(now, LogKind::Warn, tr!("на машину подсажена закладка", "an implant was planted on the machine"));
     world.defense.implants.push(Implant { id, path: path.clone(), kind, planted: now });
     world.defense.pending = Some(DefenseEvent {
-        title: "Внимание".to_string(),
-        text: "Тебе подсадили закладку на машину. Проверь: implants, вычисти: clean.".to_string(),
+        title: tr!("Внимание", "Warning").to_string(),
+        text: tr!("Тебе подсадили закладку на машину. Проверь: implants, вычисти: clean.", "An implant was planted on your machine. Check: implants, remove: clean.").to_string(),
     });
 }
 
@@ -153,13 +153,13 @@ fn fine(world: &mut World) {
         id: 0,
         from: format!("court@{}", domain),
         to,
-        subject: "Судебное взыскание".to_string(),
-        body: format!("По результатам проверки с вашего счёта списано {} ₵. Прекратите противоправную активность.", pay),
+        subject: tr!("Судебное взыскание", "Court-ordered penalty").to_string(),
+        body: trf!("По результатам проверки с вашего счёта списано {} ₵. Прекратите противоправную активность.", "Following an audit, {} ₵ has been debited from your account. Cease your unlawful activity.", pay),
         time: now,
         read: false,
         folder: MailFolder::Inbox,
     });
-    world.defense.pending = Some(DefenseEvent { title: "Суд".to_string(), text: format!("Штраф: списано {} ₵.", pay) });
+    world.defense.pending = Some(DefenseEvent { title: tr!("Суд", "Court").to_string(), text: trf!("Штраф: списано {} ₵.", "Fine: {} ₵ debited.", pay) });
 }
 
 /// Эффекты активных закладок (каждую секунду).
@@ -189,7 +189,7 @@ fn apply_implants(world: &mut World, dt: u64) {
 pub fn set_shield(world: &mut World, on: bool) {
     world.defense.shield = on;
     let now = world.now();
-    world.machines[0].log(now, LogKind::Service, if on { "файрвол поднят" } else { "файрвол снят" });
+    world.machines[0].log(now, LogKind::Service, if on { tr!("файрвол поднят", "firewall up") } else { tr!("файрвол снят", "firewall down") });
 }
 
 /// Убрать закладку по пути (или все). Возвращает число убранных.

@@ -18,7 +18,7 @@ fn player_exploit(game:&mut Game,sid:u32,address:&str,selector:&str) {
 
 fn game()->Game{Game::new(crate::World::new(42,"sdk_test",""))}
 fn install(g:&mut Game,id:&str,source:&str,events:&[(&str,&str)],commands:&[(&str,&str)],permissions:&[&str]){
-    let manifest=Manifest{id:id.into(),name:id.into(),version:"1.0".into(),api:1,entry:"main.adr".into(),libraries:Vec::new(),assets:Vec::new(),requires:Vec::new(),permissions:permissions.iter().map(|s|s.to_string()).collect(),events:events.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect(),commands:commands.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect()};
+    let manifest=Manifest{id:id.into(),name:id.into(),name_en:None,version:"1.0".into(),api:1,entry:"main.adr".into(),libraries:Vec::new(),assets:Vec::new(),requires:Vec::new(),permissions:permissions.iter().map(|s|s.to_string()).collect(),events:events.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect(),commands:commands.iter().map(|(a,b)|(a.to_string(),b.to_string())).collect()};
     manifest.validate().unwrap();g.plugins.loaded.insert(id.into(),Plugin{manifest,source:source.into(),assets:Default::default(),error:None});
 }
 #[test]

@@ -1,12 +1,15 @@
 {
   "name": "Подправленные киоски выборов",
+  "name_en": "Tampered Election Kiosks",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "kiosk_records",
   "file": "maintenance-audit.csv",
   "story": "Вымышленный городской киоск отчитался о работах за учётку, которая давно закрыта.",
+  "story_en": "A fictional city kiosk reports maintenance performed by a retired service account.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 245,
   "id": "tampered_election_kiosks",
   "number": 52,
@@ -22,8 +25,10 @@
       "service": "kiosk_records_gate",
       "port": 7153,
       "os": "Подправленные киоски выборов OS 1.0",
+      "os_en": "Tampered Election Kiosks OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Вымышленный городской киоск отчитался о работах за учётку, которая давно закрыта.\nВладелец записи: tampered_election_kiosks.\nНомер дела: BW-052.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A fictional city kiosk reports maintenance performed by a retired service account.\nRecord owner: tampered_election_kiosks.\nCase reference: BW-052.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_tampered_election_kiosks_1"
     },
@@ -36,8 +41,10 @@
       "service": "kiosk_records",
       "port": 7154,
       "os": "Подправленные киоски выборов OS 1.0",
+      "os_en": "Tampered Election Kiosks OS 1.0",
       "file": "/srv/records/maintenance-audit.csv",
       "text": "Вымышленный городской киоск отчитался о работах за учётку, которая давно закрыта.\nВладелец записи: tampered_election_kiosks.\nНомер дела: BW-052.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "A fictional city kiosk reports maintenance performed by a retired service account.\nRecord owner: tampered_election_kiosks.\nCase reference: BW-052.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_tampered_election_kiosks_2"
     }

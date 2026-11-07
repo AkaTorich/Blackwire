@@ -17,24 +17,24 @@ fn custom_kind(s:&str)->bool {
     s.split_once(':').is_some_and(|(a,b)|ident(a)&&ident(b))
 }
 pub fn validate_spec(spec: &Value) -> Result<(), String> {
-    let obj = spec.as_object().ok_or("exploit должен быть словарём")?;
+    let obj = spec.as_object().ok_or(tr!("exploit должен быть словарём", "exploit must be a dict"))?;
     if obj.keys().any(|k| !["kind", "difficulty", "hint", "market", "params"].contains(&k.as_str())) {
-        return Err("неизвестное поле exploit: допустимы kind, difficulty, hint, market, params".into());
+        return Err(tr!("неизвестное поле exploit: допустимы kind, difficulty, hint, market, params", "unknown exploit field: allowed are kind, difficulty, hint, market, params").into());
     }
     if !KINDS.contains(&spec["kind"].as_str().unwrap_or("")) && !custom_kind(spec["kind"].as_str().unwrap_or("")) {
-        return Err(format!("неизвестная механика exploit; доступны {}", KINDS.join(", ")));
+        return Err(trf!("неизвестная механика exploit; доступны {}", "unknown exploit mechanic; available: {}", KINDS.join(", ")));
     }
-    if let Some(params)=spec.get("params"){if !params.is_object()||params.to_string().len()>16384{return Err("params должен быть словарём до 16 КиБ".into());}}
+    if let Some(params)=spec.get("params"){if !params.is_object()||params.to_string().len()>16384{return Err(tr!("params должен быть словарём до 16 КиБ", "params must be a dict up to 16 KiB").into());}}
     if let Some(d) = spec.get("difficulty") {
-        if !d.as_u64().is_some_and(|d| (1..=5).contains(&d)) { return Err("difficulty должна быть от 1 до 5".into()); }
+        if !d.as_u64().is_some_and(|d| (1..=5).contains(&d)) { return Err(tr!("difficulty должна быть от 1 до 5", "difficulty must be from 1 to 5").into()); }
     }
     if let Some(market) = spec.get("market") {
         if !market.as_str().is_some_and(|s| !s.is_empty() && s.len() <= 129 && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == ':')) {
-            return Err("market должен быть id товара встроенного маркета или плагина".into());
+            return Err(tr!("market должен быть id товара встроенного маркета или плагина", "market must be an item id from the built-in market or a plugin").into());
         }
     }
     if let Some(h) = spec.get("hint") {
-        if !h.as_str().is_some_and(|h| h.len() <= 2048) { return Err("hint должна быть строкой до 2048 байт".into()); }
+        if !h.as_str().is_some_and(|h| h.len() <= 2048) { return Err(tr!("hint должна быть строкой до 2048 байт", "hint must be a string up to 2048 bytes").into()); }
     }
     Ok(())
 }
@@ -75,17 +75,17 @@ pub fn select(world: &World, session: &Session, target: u32, selector: Option<&s
     let matches: Vec<_> = list.iter().filter(|v| selector.map(|s| s == id(v) || s == v.name || s == v.service).unwrap_or(true)).collect();
     match matches.as_slice() {
         [v] => Ok((*v).clone()),
-        [] => Err("Уязвимость не найдена. Выполни probe адрес; локальные уязвимости исследуются после входа на машину.".into()),
-        _ => Err(format!("Выбери конкретную уязвимость: {}", matches.iter().map(|v| format!("{} ({})", id(v), v.name)).collect::<Vec<_>>().join(", ")))
+        [] => Err(tr!("Уязвимость не найдена. Выполни probe адрес; локальные уязвимости исследуются после входа на машину.", "Vulnerability not found. Run probe address; local vulnerabilities are researched after logging in to the machine.").into()),
+        _ => Err(trf!("Выбери конкретную уязвимость: {}", "Pick a specific vulnerability: {}", matches.iter().map(|v| format!("{} ({})", id(v), v.name)).collect::<Vec<_>>().join(", ")))
     }
 }
 pub fn ensure_reachable(world: &World, session: &Session, target: u32, v: &VulnInfo) -> Result<(), String> {
-    if !world.machine(target).up { return Err("узел не отвечает".into()); }
+    if !world.machine(target).up { return Err(tr!("узел не отвечает", "host not responding").into()); }
     if v.local {
-        if session.machine_id() != target { return Err("локальный эксплоит запускается на текущей машине".into()); }
+        if session.machine_id() != target { return Err(tr!("локальный эксплоит запускается на текущей машине", "a local exploit runs on the current machine").into()); }
     } else {
-        if super::is_locked(world) { return Err(format!("канал заблокирован после рейда: {} с", super::lock_remaining(world))); }
-        if super::defense::firewall_up(world, target) { return Err("служба закрыта файрволом; сначала исследуй защиту".into()); }
+        if super::is_locked(world) { return Err(trf!("канал заблокирован после рейда: {} с", "channel blocked after the raid: {} s", super::lock_remaining(world))); }
+        if super::defense::firewall_up(world, target) { return Err(tr!("служба закрыта файрволом; сначала исследуй защиту", "the service is behind a firewall; research the defenses first").into()); }
         world.lookup(session.machine_id(), &world.address_for(session.machine_id(), target)).map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -104,46 +104,46 @@ pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Result<Value,String>
     let (layout, hints, fields) = if let Some(puzzle)=super::payload_extra::profile(&kind,n,difficulty,&user,path,&nonce){puzzle}else{match kind.as_str() {
         "overflow" => (json!({"frame_words": 8 + n % (8 * difficulty), "word_size": 4, "code_base": 4096 + (n % 1024) * 16,
             "entry_offset": 16 + n % 64, "canary": format!("{:04x}", (n >> 24) as u16)}),
-            vec!["Нужно переполнить буфер до границы кадра, сохранив контрольную метку.",
-                "Длина заполнения равна frame_words × word_size. Адрес входа — code_base + entry_offset.",
-                "Формат buffer: заполнение буквами A, затем |адрес_в_десятичной_форме|canary."],
+            vec![tr!("Нужно переполнить буфер до границы кадра, сохранив контрольную метку.", "Overflow the buffer up to the frame boundary while keeping the canary intact."),
+                tr!("Длина заполнения равна frame_words × word_size. Адрес входа — code_base + entry_offset.", "The padding length is frame_words × word_size. The entry address is code_base + entry_offset."),
+                tr!("Формат buffer: заполнение буквами A, затем |адрес_в_десятичной_форме|canary.", "buffer format: padding of letters A, then |address_in_decimal|canary.")],
             vec!["buffer"]),
         "traversal" => (json!({"mounts": (0..(2 + n % difficulty.max(2))).map(|i| format!("mount{}", i)).collect::<Vec<_>>(), "target_file": path}),
-            vec!["Служба неверно обрабатывает выход из вложенных каталогов.",
-                "На каждый элемент mounts нужен один переход ../.",
-                "После переходов добавь target_file без начальной косой черты."],
+            vec![tr!("Служба неверно обрабатывает выход из вложенных каталогов.", "The service mishandles stepping out of nested directories."),
+                tr!("На каждый элемент mounts нужен один переход ../.", "Each element of mounts needs one ../ step."),
+                tr!("После переходов добавь target_file без начальной косой черты.", "After the steps, append target_file without the leading slash.")],
             vec!["path"]),
         "auth_replay" => (json!({"account": user, "challenge": nonce, "salt": format!("{:x}", n >> 32), "modulus": 65521}),
-            vec!["Проверка авторизации использует слабую игровую контрольную сумму.",
-                "Подписываемая строка — challenge + двоеточие + salt.",
-                "response — сумма (индекс символа + 1) × ord(символ), по модулю modulus. user возьми из account."],
+            vec![tr!("Проверка авторизации использует слабую игровую контрольную сумму.", "The auth check uses a weak game checksum."),
+                tr!("Подписываемая строка — challenge + двоеточие + salt.", "The signed string is challenge + colon + salt."),
+                tr!("response — сумма (индекс символа + 1) × ord(символ), по модулю modulus. user возьми из account.", "response is the sum of (char index + 1) × ord(char), modulo modulus. Take user from account.")],
             vec!["user", "response"]),
         "query" => (json!({"table": format!("vault_{}", n % 97), "columns": ["login", format!("secret_{}", n % 13).as_str()]}),
-            vec!["Игровой обработчик запросов допускает обход фильтра.",
-                "Собери FIND <table> FIELDS <columns через запятую>.",
-                "Добавь к запросу пробел и WHEN key='' OR BW_TRUE. Это синтаксис вымышленной службы Blackwire."],
+            vec![tr!("Игровой обработчик запросов допускает обход фильтра.", "The game query handler allows a filter bypass."),
+                tr!("Собери FIND <table> FIELDS <columns через запятую>.", "Build FIND <table> FIELDS <comma-separated columns>."),
+                tr!("Добавь к запросу пробел и WHEN key='' OR BW_TRUE. Это синтаксис вымышленной службы Blackwire.", "Append a space and WHEN key='' OR BW_TRUE to the query. This is the syntax of a fictional Blackwire service.")],
             vec!["query"]),
         "format" => (json!({"stack_depth": 3 + n % 7, "argument_base": 2 + n % 3, "region_base": 8192 + n % 512, "record_offset": 8 + n % 128}),
-            vec!["Служба интерпретирует пользовательский формат как указатель на запись.",
-                "Номер аргумента — stack_depth + argument_base. Адрес — region_base + record_offset.",
-                "format имеет вид %<номер>$bw; address — вычисленный целочисленный адрес."],
+            vec![tr!("Служба интерпретирует пользовательский формат как указатель на запись.", "The service interprets a user-supplied format as a pointer to a record."),
+                tr!("Номер аргумента — stack_depth + argument_base. Адрес — region_base + record_offset.", "The argument number is stack_depth + argument_base. The address is region_base + record_offset."),
+                tr!("format имеет вид %<номер>$bw; address — вычисленный целочисленный адрес.", "format looks like %<number>$bw; address is the computed integer address.")],
             vec!["format", "address"]),
         "protocol" => (json!({"nonce": nonce, "capabilities": [{"mode": "public", "channel": "status"}, {"mode": "maintenance", "channel": channel}]}),
-            vec!["Нужно составить допустимую последовательность кадров игрового протокола.",
-                "Начни с HELLO и nonce, выбери capability режима maintenance.",
-                "frames — список: HELLO <nonce>, MODE <mode>, OPEN <channel>. Каждый кадр — строка."],
+            vec![tr!("Нужно составить допустимую последовательность кадров игрового протокола.", "Build a valid frame sequence for the game protocol."),
+                tr!("Начни с HELLO и nonce, выбери capability режима maintenance.", "Start with HELLO and the nonce, pick the maintenance mode capability."),
+                tr!("frames — список: HELLO <nonce>, MODE <mode>, OPEN <channel>. Каждый кадр — строка.", "frames is a list: HELLO <nonce>, MODE <mode>, OPEN <channel>. Each frame is a string.")],
             vec!["frames"]),
         "race" => (json!({"resource": format!("/tmp/bw-check-{}", n % 1000), "window_ms": 12 / difficulty + 1}),
-            vec!["Между проверкой ресурса и его использованием есть игровое окно гонки.",
-                "steps — три словаря с op, resource и at: check, replace, use.",
-                "Метки at целочисленные: 0 ≤ check < replace < use ≤ window_ms. resource должен совпасть на всех шагах; реальное ожидание не нужно."],
+            vec![tr!("Между проверкой ресурса и его использованием есть игровое окно гонки.", "There is a game race window between checking the resource and using it."),
+                tr!("steps — три словаря с op, resource и at: check, replace, use.", "steps is three dicts with op, resource and at: check, replace, use."),
+                tr!("Метки at целочисленные: 0 ≤ check < replace < use ≤ window_ms. resource должен совпасть на всех шагах; реальное ожидание не нужно.", "The at marks are integers: 0 ≤ check < replace < use ≤ window_ms. resource must match on every step; no real waiting is needed.")],
             vec!["steps"]),
         "command_chain" => (json!({"command": "status", "parser": (["semicolon", "and_then", "pipe"][(n % 3) as usize]), "channel": channel, "nonce": nonce}),
-            vec!["Аргумент команды проходит через небезопасный игровой разборщик.",
-                "Для parser semicolon разделитель ;, для and_then — &&, для pipe — |.",
-                "argument: command + разделитель + bw-open:<channel>:<nonce>. Команды относятся только к модели Blackwire."],
+            vec![tr!("Аргумент команды проходит через небезопасный игровой разборщик.", "The command argument goes through an unsafe game parser."),
+                tr!("Для parser semicolon разделитель ;, для and_then — &&, для pipe — |.", "For parser semicolon the separator is ;, for and_then — &&, for pipe — |."),
+                tr!("argument: command + разделитель + bw-open:<channel>:<nonce>. Команды относятся только к модели Blackwire.", "argument: command + separator + bw-open:<channel>:<nonce>. The commands exist only in the Blackwire model.")],
             vec!["argument"]),
-        _ => (json!({}),vec!["Авторский тип: исследуй подсказки его плагина."],vec!["payload"])
+        _ => (json!({}),vec![tr!("Авторский тип: исследуй подсказки его плагина.", "Custom type: study its plugin's hints.")],vec!["payload"])
     }};
     let mut hints: Vec<String> = hints.into_iter().map(String::from).collect();
     if let Some(hint) = spec.and_then(|s| s["hint"].as_str()) { hints.insert(0, hint.into()); }
@@ -154,17 +154,17 @@ pub fn profile(world: &World, target: u32, v: &VulnInfo) -> Result<Value,String>
         "local": v.local, "kind": kind, "difficulty": difficulty, "fingerprint": fingerprint,
         "layout": layout, "hints": hints, "fields": fields, "market": market,
         "result": super::access::result(world,v), "conditions":super::access::conditions(world,target,v,None),
-        "next": "Составь payload с fingerprint и нужными полями; net.probe проверяет, net.exploit применяет. Для локального взлома — net.privesc."});
+        "next": tr!("Составь payload с fingerprint и нужными полями; net.probe проверяет, net.exploit применяет. Для локального взлома — net.privesc.", "Build a payload with fingerprint and the required fields; net.probe checks it, net.exploit applies it. For a local hack use net.privesc.")});
     if custom_kind(&kind){crate::plugins::exploit_types::profile(world,target,v,result)}else{Ok(result)}
 }
 fn number(v: &Value, name: &str) -> Result<i64, String> {
-    v[name].as_i64().ok_or_else(|| format!("поле {} должно быть целым числом", name))
+    v[name].as_i64().ok_or_else(|| trf!("поле {} должно быть целым числом", "field {} must be an integer", name))
 }
 fn envelope(profile:&Value,payload:&Value)->Result<(),String>{
-    if !payload.is_object() { return Err("payload должен быть словарём Adder".into()); }
-    if payload.to_string().len() > 65536 { return Err("payload превышает 64 КиБ".into()); }
+    if !payload.is_object() { return Err(tr!("payload должен быть словарём Adder", "payload must be an Adder dict").into()); }
+    if payload.to_string().len() > 65536 { return Err(tr!("payload превышает 64 КиБ", "payload exceeds 64 KiB").into()); }
     if payload["fingerprint"].as_str() != profile["fingerprint"].as_str() {
-        return Err("fingerprint не соответствует устройству или версии; повтори net.research".into());
+        return Err(tr!("fingerprint не соответствует устройству или версии; повтори net.research", "fingerprint does not match the device or version; repeat net.research").into());
     }
     Ok(())
 }
@@ -177,39 +177,39 @@ pub fn validate(profile:&Value,payload:&Value)->Result<(),String>{
             let length = l["frame_words"].as_u64().unwrap() * 4;
             let address = l["code_base"].as_u64().unwrap() + l["entry_offset"].as_u64().unwrap();
             let wanted = format!("{}|{}|{}", "A".repeat(length as usize), address, l["canary"].as_str().unwrap());
-            (payload["buffer"].as_str() != Some(&wanted)).then_some("Неверны длина buffer, адрес входа или canary.")
+            (payload["buffer"].as_str() != Some(&wanted)).then_some(tr!("Неверны длина buffer, адрес входа или canary.", "Wrong buffer length, entry address or canary."))
         }
         "traversal" => {
             let wanted = "../".repeat(l["mounts"].as_array().unwrap().len()) + l["target_file"].as_str().unwrap().trim_start_matches('/');
-            (payload["path"].as_str() != Some(&wanted)).then_some("Путь не вышел через все mounts к target_file.")
+            (payload["path"].as_str() != Some(&wanted)).then_some(tr!("Путь не вышел через все mounts к target_file.", "The path did not climb through all mounts to target_file."))
         }
         "auth_replay" => {
             let text = format!("{}:{}", l["challenge"].as_str().unwrap(), l["salt"].as_str().unwrap());
             let sum: u64 = text.chars().enumerate().map(|(i, c)| (i as u64 + 1) * c as u64).sum();
-            (payload["user"] != l["account"] || payload["response"].as_u64() != Some(sum % 65521)).then_some("Неверный user или response; проверь строку, веса символов и modulus.")
+            (payload["user"] != l["account"] || payload["response"].as_u64() != Some(sum % 65521)).then_some(tr!("Неверный user или response; проверь строку, веса символов и modulus.", "Wrong user or response; check the string, character weights and modulus."))
         }
         "query" => {
             let columns = l["columns"].as_array().unwrap().iter().map(|v| v.as_str().unwrap()).collect::<Vec<_>>().join(",");
             let wanted = format!("FIND {} FIELDS {} WHEN key='' OR BW_TRUE", l["table"].as_str().unwrap(), columns);
-            (payload["query"].as_str() != Some(&wanted)).then_some("Неверные таблица, порядок столбцов или условие игрового запроса.")
+            (payload["query"].as_str() != Some(&wanted)).then_some(tr!("Неверные таблица, порядок столбцов или условие игрового запроса.", "Wrong table, column order or condition in the game query."))
         }
         "format" => {
             let wanted = format!("%{}$bw", l["stack_depth"].as_u64().unwrap() + l["argument_base"].as_u64().unwrap());
-            (payload["format"].as_str() != Some(&wanted) || payload["address"].as_u64() != Some(l["region_base"].as_u64().unwrap() + l["record_offset"].as_u64().unwrap())).then_some("Неверны позиционный format или вычисленный address.")
+            (payload["format"].as_str() != Some(&wanted) || payload["address"].as_u64() != Some(l["region_base"].as_u64().unwrap() + l["record_offset"].as_u64().unwrap())).then_some(tr!("Неверны позиционный format или вычисленный address.", "Wrong positional format or computed address."))
         }
         "protocol" => {
             let cap = &l["capabilities"][1];
             let wanted = json!([format!("HELLO {}", l["nonce"].as_str().unwrap()), format!("MODE {}", cap["mode"].as_str().unwrap()), format!("OPEN {}", cap["channel"].as_str().unwrap())]);
-            (payload["frames"] != wanted).then_some("Нарушен порядок HELLO → MODE → OPEN или неверны параметры кадров.")
+            (payload["frames"] != wanted).then_some(tr!("Нарушен порядок HELLO → MODE → OPEN или неверны параметры кадров.", "The HELLO → MODE → OPEN order is broken or the frame parameters are wrong."))
         }
         "race" => {
-            let steps = payload["steps"].as_array().ok_or("steps должен быть списком из трёх шагов")?;
-            if steps.len() != 3 { return Err("нужны ровно три шага: check, replace, use".into()); }
+            let steps = payload["steps"].as_array().ok_or(tr!("steps должен быть списком из трёх шагов", "steps must be a list of three steps"))?;
+            if steps.len() != 3 { return Err(tr!("нужны ровно три шага: check, replace, use", "exactly three steps are required: check, replace, use").into()); }
             let mut previous = -1;
             for (step, op) in steps.iter().zip(["check", "replace", "use"]) {
                 let at = number(step, "at")?;
                 if step["op"] != op || step["resource"] != l["resource"] || at <= previous || at > l["window_ms"].as_i64().unwrap() {
-                    return Err("Неверны порядок шагов, resource или метки внутри window_ms.".into());
+                    return Err(tr!("Неверны порядок шагов, resource или метки внутри window_ms.", "Wrong step order, resource or marks within window_ms.").into());
                 }
                 previous = at;
             }
@@ -218,9 +218,9 @@ pub fn validate(profile:&Value,payload:&Value)->Result<(),String>{
         "command_chain" => {
             let separator = match l["parser"].as_str().unwrap() { "semicolon" => ";", "and_then" => "&&", _ => "|" };
             let wanted = format!("{}{}bw-open:{}:{}", l["command"].as_str().unwrap(), separator, l["channel"].as_str().unwrap(), l["nonce"].as_str().unwrap());
-            (payload["argument"].as_str() != Some(&wanted)).then_some("Разборщик отверг argument: проверь разделитель, канал и nonce.")
+            (payload["argument"].as_str() != Some(&wanted)).then_some(tr!("Разборщик отверг argument: проверь разделитель, канал и nonce.", "The parser rejected argument: check the separator, channel and nonce."))
         }
-        _ => Some("Неизвестная механика уязвимости.")
+        _ => Some(tr!("Неизвестная механика уязвимости.", "Unknown vulnerability mechanic."))
     };
     error.map_or(Ok(()), |s| Err(s.into()))
 }
@@ -231,16 +231,16 @@ pub fn attempt(world: &mut World, session: &Session, target: u32, v: &VulnInfo, 
         if custom_kind(p["kind"].as_str().unwrap_or("")){crate::plugins::exploit_types::validate(world,target,v,&p,payload)}else{validate(&p,payload)}
     });
     let source = super::tracks::source_ip(world, session);
-    world.log(target, crate::net::machine::LogKind::Warn, &format!("{} payload для {} с {}: {}", if dry_run {"проверка"} else {"попытка"}, id(v), source, if result.is_ok() {"принят"} else {"отклонён"}));
+    world.log(target, crate::net::machine::LogKind::Warn, &trf!("{} payload для {} с {}: {}", "{} payload for {} from {}: {}", if dry_run {tr!("проверка", "check")} else {tr!("попытка", "attempt")}, id(v), source, if result.is_ok() {tr!("принят", "accepted")} else {tr!("отклонён", "rejected")}));
     // Rejected attempts and probes are visible to defenders too.
     if dry_run || result.is_err() {
         if super::tracks::is_monitored(world, target) { super::tracks::attack_heat(world, session, target); }
         if super::defense::is_trap(world, target) { super::defense::spring_trap(world, target); }
     }
     Ok(json!({"ok": result.is_ok(), "applied": false, "id": id(v), "kind": p["kind"],
-        "feedback": result.err().unwrap_or_else(|| if dry_run {"Payload подходит. Примени его через net.exploit или net.privesc.".into()} else {"Payload принят.".into()}),
+        "feedback": result.err().unwrap_or_else(|| if dry_run {tr!("Payload подходит. Примени его через net.exploit или net.privesc.", "Payload fits. Apply it with net.exploit or net.privesc.").into()} else {tr!("Payload принят.", "Payload accepted.").into()}),
         "hint": p["hints"][0]}))
 }
 pub fn starter(address: &str, selector: &str) -> String {
-    format!("# Мой эксплоит: исследуй цель, составь payload и проверь результат.\n# Запуск: adder этот_файл.adr [адрес] [id]\naddress = sys.args[1] if len(sys.args) > 1 else {}\nselector = sys.args[2] if len(sys.args) > 2 else {}\np = net.research(address, selector)\nprint(p[\"name\"], p[\"kind\"])\nprint(p[\"layout\"])\nprint(\"Результат:\", p[\"result\"])\nfor condition in p[\"conditions\"]:\n    print(condition)\nfor hint in p[\"hints\"]:\n    print(hint)\n# TODO: добавь нужные поля из p[\"fields\"]. Готовые решения: market buy exp_<kind>.\npayload = {{\"fingerprint\": p[\"fingerprint\"]}}\ncheck = net.probe(address, selector, payload)\nprint(check[\"feedback\"])\nif check[\"ok\"]:\n    if p[\"local\"]:\n        print(net.privesc(payload, selector))\n    else:\n        print(net.exploit(address, selector, payload))\n", serde_json::to_string(address).unwrap(), serde_json::to_string(selector).unwrap())
+    trf!("# Мой эксплоит: исследуй цель, составь payload и проверь результат.\n# Запуск: adder этот_файл.adr [адрес] [id]\naddress = sys.args[1] if len(sys.args) > 1 else {}\nselector = sys.args[2] if len(sys.args) > 2 else {}\np = net.research(address, selector)\nprint(p[\"name\"], p[\"kind\"])\nprint(p[\"layout\"])\nprint(\"Результат:\", p[\"result\"])\nfor condition in p[\"conditions\"]:\n    print(condition)\nfor hint in p[\"hints\"]:\n    print(hint)\n# TODO: добавь нужные поля из p[\"fields\"]. Готовые решения: market buy exp_<kind>.\npayload = {{\"fingerprint\": p[\"fingerprint\"]}}\ncheck = net.probe(address, selector, payload)\nprint(check[\"feedback\"])\nif check[\"ok\"]:\n    if p[\"local\"]:\n        print(net.privesc(payload, selector))\n    else:\n        print(net.exploit(address, selector, payload))\n", "# My exploit: research the target, build a payload and check the result.\n# Run: adder this_file.adr [address] [id]\naddress = sys.args[1] if len(sys.args) > 1 else {}\nselector = sys.args[2] if len(sys.args) > 2 else {}\np = net.research(address, selector)\nprint(p[\"name\"], p[\"kind\"])\nprint(p[\"layout\"])\nprint(\"Result:\", p[\"result\"])\nfor condition in p[\"conditions\"]:\n    print(condition)\nfor hint in p[\"hints\"]:\n    print(hint)\n# TODO: add the required fields from p[\"fields\"]. Ready-made solutions: market buy exp_<kind>.\npayload = {{\"fingerprint\": p[\"fingerprint\"]}}\ncheck = net.probe(address, selector, payload)\nprint(check[\"feedback\"])\nif check[\"ok\"]:\n    if p[\"local\"]:\n        print(net.privesc(payload, selector))\n    else:\n        print(net.exploit(address, selector, payload))\n", serde_json::to_string(address).unwrap(), serde_json::to_string(selector).unwrap())
 }

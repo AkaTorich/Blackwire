@@ -71,7 +71,7 @@ fn ssh_service() -> Service {
 /// Арендовать новый релей. Игрок получает его адрес и пароль root.
 pub fn rent(world: &mut World) -> Result<RentedRelay, String> {
     if world.player.money < RENT_PRICE {
-        return Err(format!("аренда стоит {} ₵, а на счету {} ₵", RENT_PRICE, world.player.money));
+        return Err(trf!("аренда стоит {} ₵, а на счету {} ₵", "rent costs {} ₵, balance is {} ₵", RENT_PRICE, world.player.money));
     }
     world.player.money -= RENT_PRICE;
     let id = next_id(world);
@@ -83,7 +83,7 @@ pub fn rent(world: &mut World) -> Result<RentedRelay, String> {
 
     let mut fs = Vfs::new_unix("root");
     fs.set_clock(now);
-    let _ = fs.write_text("/etc/motd", "Личный релей. Только для своих.\n", "root");
+    let _ = fs.write_text("/etc/motd", tr!("Личный релей. Только для своих.\n", "Private relay. Friends only.\n"), "root");
     let mut procs = ProcTable::new();
     procs.set_clock(now);
 
@@ -116,7 +116,7 @@ pub fn rent(world: &mut World) -> Result<RentedRelay, String> {
     world.machines.push(m);
     world.player.owned.push(id);
     world.mark_known(id);
-    world.log(id, LogKind::Service, "релей запущен");
+    world.log(id, LogKind::Service, tr!("релей запущен", "relay started"));
 
     let relay = RentedRelay { machine: id, host, ip, password };
     world.base.rented.push(relay.clone());
@@ -126,7 +126,7 @@ pub fn rent(world: &mut World) -> Result<RentedRelay, String> {
 /// Отказаться от релея по адресу.
 pub fn release(world: &mut World, addr: &str) -> Result<String, String> {
     let pos = world.base.rented.iter().position(|r| r.ip == addr || r.host == addr);
-    let pos = pos.ok_or_else(|| "нет такого релея".to_string())?;
+    let pos = pos.ok_or_else(|| tr!("нет такого релея", "no such relay").to_string())?;
     let r = world.base.rented.remove(pos);
     world.machines.retain(|m| m.id != r.machine);
     world.player.owned.retain(|id| *id != r.machine);
@@ -137,7 +137,7 @@ fn reclaim_one(world: &mut World) {
     if let Some(r) = world.base.rented.pop() {
         world.machines.retain(|m| m.id != r.machine);
         world.player.owned.retain(|id| *id != r.machine);
-        world.base.pending = Some(BaseEvent { title: "Аренда".to_string(), text: format!("Нечем платить — релей {} забрали.", r.host) });
+        world.base.pending = Some(BaseEvent { title: tr!("Аренда", "Rent").to_string(), text: trf!("Нечем платить — релей {} забрали.", "Couldn't pay — relay {} was taken back.", r.host) });
     }
 }
 

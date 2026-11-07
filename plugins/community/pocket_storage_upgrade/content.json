@@ -1,14 +1,17 @@
 {
   "name": "Карманный накопитель",
+  "name_en": "Pocket Storage Upgrade",
   "family": "economy",
   "mode": "hardware",
   "field": "disk_mb",
   "amount": 2048,
   "price": 40,
   "story": "Добавляет 2 ГБ виртуального диска.",
+  "story_en": "Add 2 GB of virtual disk capacity.",
   "id": "pocket_storage_upgrade",
   "number": 80,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Увеличить диск на 2 ГБ."
+  "objective": "Увеличить диск на 2 ГБ.",
+  "objective_en": "Add 2 GB of disk."
 }

@@ -13,15 +13,34 @@ pub struct ShopItem {
     pub name: &'static str,
     pub price: i64,
     pub desc: &'static str,
+    pub name_en: &'static str,
+    pub desc_en: &'static str,
+}
+
+impl ShopItem {
+    /// Название на текущем языке.
+    pub fn name(&self) -> &'static str {
+        tr!(self.name, self.name_en)
+    }
+    /// Описание на текущем языке.
+    pub fn desc(&self) -> &'static str {
+        tr!(self.desc, self.desc_en)
+    }
 }
 
 pub const ITEMS: &[ShopItem] = &[
-    ShopItem { id: "wordlist", name: "Большой словарь", price: 300, desc: "пополняет ~/wordlist.txt — подбор берёт больше паролей" },
-    ShopItem { id: "map", name: "Карта провайдера", price: 400, desc: "открывает на карте ещё несколько узлов города" },
-    ShopItem { id: "rig", name: "Железо", price: 500, desc: "апгрейд процессора и памяти твоей машины" },
-    ShopItem { id: "scrubber", name: "Чистильщик", price: 600, desc: "подозрение спадает заметно быстрее" },
-    ShopItem { id: "vpn", name: "Туннель", price: 800, desc: "подозрение за атаки растёт вдвое медленнее" },
-    ShopItem { id: "rootkit", name: "Руткит", price: 1000, desc: "локальный эксплоит rootkit.adr; работает и на свежем ядре" },
+    ShopItem { id: "wordlist", name: "Большой словарь", price: 300, desc: "пополняет ~/wordlist.txt — подбор берёт больше паролей",
+        name_en: "Big wordlist", desc_en: "extends ~/wordlist.txt — cracking tries more passwords" },
+    ShopItem { id: "map", name: "Карта провайдера", price: 400, desc: "открывает на карте ещё несколько узлов города",
+        name_en: "ISP map", desc_en: "reveals several more city hosts on the map" },
+    ShopItem { id: "rig", name: "Железо", price: 500, desc: "апгрейд процессора и памяти твоей машины",
+        name_en: "Hardware", desc_en: "CPU and memory upgrade for your machine" },
+    ShopItem { id: "scrubber", name: "Чистильщик", price: 600, desc: "подозрение спадает заметно быстрее",
+        name_en: "Scrubber", desc_en: "heat drops noticeably faster" },
+    ShopItem { id: "vpn", name: "Туннель", price: 800, desc: "подозрение за атаки растёт вдвое медленнее",
+        name_en: "Tunnel", desc_en: "heat from attacks grows half as fast" },
+    ShopItem { id: "rootkit", name: "Руткит", price: 1000, desc: "локальный эксплоит rootkit.adr; работает и на свежем ядре",
+        name_en: "Rootkit", desc_en: "local exploit rootkit.adr; works even on a fresh kernel" },
 ];
 
 pub fn item(id: &str) -> Option<&'static ShopItem> {
@@ -52,7 +71,7 @@ pub fn apply(world: &mut World, id: &str) -> String {
             text.push_str(&EXTRA_WORDS.join("\n"));
             text.push('\n');
             let _ = world.machines[0].fs.write_text(&path, &text, &world.player.handle);
-            format!("Словарь пополнен: +{} паролей.", EXTRA_WORDS.len())
+            trf!("Словарь пополнен: +{} паролей.", "Wordlist extended: +{} passwords.", EXTRA_WORDS.len())
         }
         "map" => {
             let public: Vec<_> = world
@@ -68,25 +87,26 @@ pub fn apply(world: &mut World, id: &str) -> String {
                     added += 1;
                 }
             }
-            format!("Открыто узлов: {}. Посмотри карту сети.", added)
+            trf!("Открыто узлов: {}. Посмотри карту сети.", "Hosts revealed: {}. Check the network map.", added)
         }
         "rig" => {
             let m = &mut world.machines[0];
-            m.cpu = "Ryzen 9 (разогнан)".to_string();
+            m.cpu = tr!("Ryzen 9 (разогнан)", "Ryzen 9 (overclocked)").to_string();
             m.ram_mb = m.ram_mb.max(8192) * 2;
-            "Железо обновлено: смотри монитор.".to_string()
+            tr!("Железо обновлено: смотри монитор.", "Hardware upgraded: check the system monitor.").to_string()
         }
-        "scrubber" => "Чистильщик активен: подозрение спадает быстрее.".to_string(),
-        "vpn" => "Туннель поднят: следы тише.".to_string(),
+        "scrubber" => tr!("Чистильщик активен: подозрение спадает быстрее.", "Scrubber active: heat drops faster.").to_string(),
+        "vpn" => tr!("Туннель поднят: следы тише.", "Tunnel up: your traces are quieter.").to_string(),
         "rootkit" => {
             let user = world.player.handle.clone();
             let home = world.machines[0].users.home_of(&user);
             let path = format!("{}/scripts/rootkit.adr", home);
             if !world.machines[0].fs.exists(&path) {
                 let _ = world.machines[0].fs.mkdir_all(&format!("{}/scripts", home), &user);
-                let _ = world.machines[0].fs.write_text(&path, include_str!("../hack/exploits/race.adr"), &user);
+                let _ = world.machines[0].fs.write_text(&path, tr!(include_str!("../hack/exploits/race.adr"), include_str!("../hack/exploits/en/race.adr")), &user);
             }
-            "Rootkit установлен: privesc ~/scripts/rootkit.adr id. Найди id: probe текущий_хост; подсказки — research.".to_string()
+            tr!("Rootkit установлен: privesc ~/scripts/rootkit.adr id. Найди id: probe текущий_хост; подсказки — research.",
+                "Rootkit installed: privesc ~/scripts/rootkit.adr id. Find the id: probe current_host; hints — research.").to_string()
         },
         _ => String::new(),
     }

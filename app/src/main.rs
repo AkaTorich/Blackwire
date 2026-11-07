@@ -14,6 +14,9 @@
 
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+#[macro_use]
+extern crate blackwire_lang;
+
 mod cmd_plugins;
 mod sdk_qa;
 mod checks;
@@ -82,6 +85,8 @@ fn main() {
             cmd_game::login,
             cmd_game::start_desktop,
             cmd_game::quit,
+            cmd_game::lang_get,
+            cmd_game::lang_set,
             cmd_game::settings_get,
             cmd_game::settings_set,
             // сетевая игра

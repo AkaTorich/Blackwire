@@ -326,3 +326,51 @@ pub const VULNS: &[(&str, &str, &str, &str, &str, &str)] = &[
     ("ssh", "OpenSSH_7.2", "Предсказуемый генератор токенов", "payload:weak_rng", "creds", "remote"),
     ("kernel", "Windows Server 2012", "Усечение маски прав ядра", "payload:permission_mask", "root", "local"),
 ];
+/// Английские названия уязвимостей из `VULNS`: (русское название, английское).
+pub const VULN_NAMES_EN: &[(&str, &str)] = &[
+    ("Устаревшая версия ssh", "Outdated ssh version"),
+    ("Бэкдор в ftp-сервере", "Backdoor in ftp server"),
+    ("Открытый протокол без шифрования", "Plaintext protocol without encryption"),
+    ("Устаревший почтовый сервер", "Outdated mail server"),
+    ("Чтение файлов через веб-сервер", "File read via web server"),
+    ("Утечка учёток из базы", "Account leak from database"),
+    ("Выполнение команд через общие папки", "Command execution via shared folders"),
+    ("Устаревший удалённый рабочий стол", "Outdated remote desktop"),
+    ("Устаревший VNC", "Outdated VNC"),
+    ("Открытый брокер сообщений", "Open message broker"),
+    ("Устаревший сервер имён", "Outdated name server"),
+    ("Устаревший медицинский шлюз", "Outdated medical gateway"),
+    ("Утечка проводок из банковского ядра", "Transaction leak from banking core"),
+    ("Устаревший агент банкомата", "Outdated ATM agent"),
+    ("Устаревшая пропускная система", "Outdated access control system"),
+    ("Доступ к панели мониторинга", "Monitoring dashboard access"),
+    ("Уязвимое ядро (повышение прав)", "Vulnerable kernel (privilege escalation)"),
+    ("Переполнение размера HTTP-записи", "HTTP record size overflow"),
+    ("Знаковый индекс таблицы ядра", "Signed kernel table index"),
+    ("Разная длина символов и байтов письма", "Mail character/byte length mismatch"),
+    ("Ссылка ядра после освобождения", "Kernel use after free"),
+    ("Повторное освобождение объекта ядра", "Kernel object double free"),
+    ("Путаница типов объектов ядра", "Kernel object type confusion"),
+    ("Доступ к чужой записи реестра", "Access to another's registry record"),
+    ("Массовое присваивание роли пропуска", "Badge role mass assignment"),
+    ("Путаница получателя игрового токена", "Game token audience confusion"),
+    ("Разные границы HTTP-запроса", "HTTP request boundary mismatch"),
+    ("Подмена записи общего кеша", "Shared cache record poisoning"),
+    ("Внедрение служебного заголовка", "Service header injection"),
+    ("Восстановление небезопасного объекта", "Unsafe object deserialization"),
+    ("Изменение наследуемого флага брокера", "Broker inherited flag pollution"),
+    ("Вычисление шаблона в служебном контексте", "Template evaluation in service context"),
+    ("Внешняя сущность отчёта мониторинга", "Monitoring report external entity"),
+    ("Перебор состояний фильтра запроса", "Request filter state backtracking"),
+    ("Перекрытие фрагментов сообщения", "Message fragment overlap"),
+    ("Предсказуемый генератор токенов", "Predictable token generator"),
+    ("Усечение маски прав ядра", "Kernel permission mask truncation"),
+];
+
+/// Название уязвимости на языке игры (русское — ключ таблицы `VULNS`).
+pub fn vuln_name(ru: &'static str) -> &'static str {
+    if !crate::i18n::is_en() {
+        return ru;
+    }
+    VULN_NAMES_EN.iter().find(|(r, _)| *r == ru).map(|(_, e)| *e).unwrap_or(ru)
+}

@@ -38,23 +38,23 @@ impl MachineKind {
     /// Человеческое название вида — для карты и `neofetch`.
     pub fn title(self) -> &'static str {
         match self {
-            MachineKind::Player => "компьютер игрока",
-            MachineKind::HomePc => "домашний компьютер",
-            MachineKind::Router => "маршрутизатор",
-            MachineKind::Gateway => "шлюз",
-            MachineKind::Server => "сервер",
-            MachineKind::Workstation => "рабочая станция",
-            MachineKind::Database => "база данных",
-            MachineKind::FileServer => "файловый сервер",
-            MachineKind::Mail => "почтовый сервер",
-            MachineKind::Web => "веб-сервер",
-            MachineKind::Camera => "камера",
-            MachineKind::Badge => "пропускная система",
-            MachineKind::Atm => "банкомат",
-            MachineKind::MedicalDevice => "медицинский прибор",
-            MachineKind::Dns => "сервер имён",
-            MachineKind::Isp => "узел провайдера",
-            MachineKind::Honeypot => "сервер",
+            MachineKind::Player => tr!("компьютер игрока", "player computer"),
+            MachineKind::HomePc => tr!("домашний компьютер", "home computer"),
+            MachineKind::Router => tr!("маршрутизатор", "router"),
+            MachineKind::Gateway => tr!("шлюз", "gateway"),
+            MachineKind::Server => tr!("сервер", "server"),
+            MachineKind::Workstation => tr!("рабочая станция", "workstation"),
+            MachineKind::Database => tr!("база данных", "database"),
+            MachineKind::FileServer => tr!("файловый сервер", "file server"),
+            MachineKind::Mail => tr!("почтовый сервер", "mail server"),
+            MachineKind::Web => tr!("веб-сервер", "web server"),
+            MachineKind::Camera => tr!("камера", "camera"),
+            MachineKind::Badge => tr!("пропускная система", "access control system"),
+            MachineKind::Atm => tr!("банкомат", "ATM"),
+            MachineKind::MedicalDevice => tr!("медицинский прибор", "medical device"),
+            MachineKind::Dns => tr!("сервер имён", "name server"),
+            MachineKind::Isp => tr!("узел провайдера", "ISP node"),
+            MachineKind::Honeypot => tr!("сервер", "server"),
         }
     }
 
@@ -253,4 +253,17 @@ pub fn fmt_date_ru(secs: u64) -> String {
     ];
     let (y, m, d, _, _, _) = civil(secs);
     format!("{} {} {}", d, MONTHS[(m - 1) as usize], y)
+}
+
+/// Дата на языке игры: `12 марта 2031` или `March 12, 2031`.
+pub fn fmt_date(secs: u64) -> String {
+    const MONTHS_EN: [&str; 12] = [
+        "January", "February", "March", "April", "May", "June", "July", "August", "September",
+        "October", "November", "December",
+    ];
+    if !crate::i18n::is_en() {
+        return fmt_date_ru(secs);
+    }
+    let (y, m, d, _, _, _) = civil(secs);
+    format!("{} {}, {}", MONTHS_EN[(m - 1) as usize], d, y)
 }

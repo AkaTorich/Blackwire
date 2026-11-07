@@ -1,6 +1,7 @@
 {
   "id": "neighborhood_isp",
   "name": "Районный провайдер",
+  "name_en": "Neighborhood ISP",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

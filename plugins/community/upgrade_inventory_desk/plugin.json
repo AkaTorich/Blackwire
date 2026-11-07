@@ -1,6 +1,7 @@
 {
   "id": "upgrade_inventory_desk",
   "name": "Инвентарь улучшений",
+  "name_en": "Upgrade Inventory Desk",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

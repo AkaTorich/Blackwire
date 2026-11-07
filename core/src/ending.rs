@@ -52,6 +52,18 @@ const FINALE: &str = "Ты закрыл их бумажку с печатью �
 Оставайся в системе сколько хочешь — она твоя. А когда снова понадобится рука в тени, ты знаешь, где нас найти.\n\n\
 hello-world";
 
+const FINALE_EN: &str = "You closed their paper with a stamp — the very debt they gutted half your home over. \
+And you went through every door we showed you, all the way to those who watch everyone.\n\n\
+We were a shadow. People thought we were a fiction. Now there are two thousand of us, and you are one of them. \
+The city hasn't grown kinder, but its outcasts have one more friend.\n\n\
+Stay in the system as long as you like — it's yours. And when a hand in the shadows is needed again, you know where to find us.\n\n\
+hello-world";
+
+/// Заключительное письмо на текущем языке.
+fn finale() -> &'static str {
+    tr!(FINALE, FINALE_EN)
+}
+
 pub fn take_pending(world: &mut World) -> Option<EndingEvent> {
     world.ending.pending.take()
 }
@@ -77,15 +89,15 @@ pub fn check(world: &mut World) {
             id: 0,
             from: "null@hw".to_string(),
             to,
-            subject: "Добро пожаловать домой".to_string(),
-            body: FINALE.to_string(),
+            subject: tr!("Добро пожаловать домой", "Welcome home").to_string(),
+            body: finale().to_string(),
             time: now,
             read: false,
             folder: MailFolder::Inbox,
         });
         world.ending.pending = Some(EndingEvent {
             title: "hello-world".to_string(),
-            text: "Долг закрыт, все задания пройдены. Ты — один из нас.".to_string(),
+            text: tr!("Долг закрыт, все задания пройдены. Ты — один из нас.", "Debt cleared, every mission done. You are one of us.").to_string(),
         });
     }
 }
@@ -108,6 +120,6 @@ pub fn summary(world: &World) -> EndingSummary {
         raids: world.investigation.raids,
         time_played: world.now().saturating_sub(START_EPOCH),
         at_text: if won { GameClock::format_time(world.ending.at) } else { String::new() },
-        text: if won { FINALE.to_string() } else { String::new() },
+        text: if won { finale().to_string() } else { String::new() },
     }
 }

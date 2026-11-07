@@ -40,7 +40,7 @@ var Win = (function () {
     Promise.all([current().isMaximized(), current().isFullscreen()]).then(function (states) {
       var m = states[0] || states[1];
       maxBtn.innerHTML = Icons.get(m ? 'restore' : 'max', 16);
-      maxBtn.title = m ? 'Восстановить' : 'Развернуть';
+      maxBtn.title = m ? L('Восстановить', 'Restore') : L('Развернуть', 'Maximize');
       if (frame) frame.classList.toggle('maximized', !!m);
     }, swallow);
   }
@@ -52,23 +52,23 @@ var Win = (function () {
     var minB = el('button', 'min', Icons.get('min', 16));
     var maxB = el('button', 'max', Icons.get('max', 16));
     var closeB = el('button', 'close', Icons.get('close', 16));
-    [[minB, 'Свернуть'], [maxB, 'Развернуть'], [closeB, options.closeLabel || 'Закрыть']].forEach(function (entry) {
+    [[minB, L('Свернуть', 'Minimize')], [maxB, L('Развернуть', 'Maximize')], [closeB, options.closeLabel || L('Закрыть', 'Close')]].forEach(function (entry) {
       entry[0].type = 'button';
       entry[0].title = entry[1];
       entry[0].setAttribute('aria-label', entry[1]);
       buttons.appendChild(entry[0]);
     });
     maxBtn = maxB;
-    function failed(action, error) { toast('Не удалось ' + action + ': ' + String(error), 'err'); }
+    function failed(action, error) { toast(L('Не удалось ', 'Failed to ') + action + ': ' + String(error), 'err'); }
     minB.addEventListener('click', function (e) {
       e.stopPropagation(); BW.sound('click');
-      current().minimize().catch(function (error) { failed('свернуть окно', error); });
+      current().minimize().catch(function (error) { failed(L('свернуть окно', 'minimize the window'), error); });
     });
     maxB.addEventListener('click', function (e) {
       e.stopPropagation(); BW.sound('click');
       var w = current();
       w.isFullscreen().then(function (f) { return f ? w.setFullscreen(false) : w.toggleMaximize(); })
-        .then(refreshMaxIcon, function (error) { failed('развернуть окно', error); });
+        .then(refreshMaxIcon, function (error) { failed(L('развернуть окно', 'maximize the window'), error); });
     });
     closeB.addEventListener('click', function (e) {
       e.stopPropagation(); (options.close || close)();
@@ -205,9 +205,9 @@ var Win = (function () {
       }
       var row = el('div', 'dialog-btns');
       var ok = el('button', 'btn btn-primary');
-      ok.textContent = withInput ? 'Готово' : 'Да';
+      ok.textContent = withInput ? L('Готово', 'OK') : L('Да', 'Yes');
       var cancel = el('button', 'btn');
-      cancel.textContent = withInput ? 'Отмена' : 'Нет';
+      cancel.textContent = withInput ? L('Отмена', 'Cancel') : L('Нет', 'No');
       row.appendChild(cancel); row.appendChild(ok);
       d.appendChild(row);
       o.appendChild(d);

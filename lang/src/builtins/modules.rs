@@ -46,14 +46,14 @@ fn to_int_value(c: &Call, f: f64) -> R<Value> {
     if f.is_finite() && f.abs() < 9.2e18 {
         Ok(Value::Int(f as i64))
     } else {
-        Err(c.err("число не помещается в int"))
+        Err(c.err(tr!("число не помещается в int", "number does not fit in int")))
     }
 }
 
 fn math_sqrt(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let x = one(&c, "math.sqrt")?;
     if x < 0.0 {
-        return Err(c.err("math.sqrt(): корень из отрицательного числа"));
+        return Err(c.err(tr!("math.sqrt(): корень из отрицательного числа", "math.sqrt(): square root of a negative number")));
     }
     Ok(Value::Float(x.sqrt()))
 }
@@ -110,13 +110,13 @@ fn math_log(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     c.check("math.log", 1, 2)?;
     let x = arg_float(&c.args[0], c.line)?;
     if x <= 0.0 {
-        return Err(c.err("math.log(): аргумент должен быть положительным"));
+        return Err(c.err(tr!("math.log(): аргумент должен быть положительным", "math.log(): argument must be positive")));
     }
     match c.arg(1) {
         Some(b) => {
             let base = arg_float(b, c.line)?;
             if base <= 0.0 || base == 1.0 {
-                return Err(c.err("math.log(): недопустимое основание"));
+                return Err(c.err(tr!("math.log(): недопустимое основание", "math.log(): invalid base")));
             }
             Ok(Value::Float(x.ln() / base.ln()))
         }
@@ -127,7 +127,7 @@ fn math_log(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
 fn math_log2(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let x = one(&c, "math.log2")?;
     if x <= 0.0 {
-        return Err(c.err("math.log2(): аргумент должен быть положительным"));
+        return Err(c.err(tr!("math.log2(): аргумент должен быть положительным", "math.log2(): argument must be positive")));
     }
     Ok(Value::Float(x.log2()))
 }
@@ -135,7 +135,7 @@ fn math_log2(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
 fn math_log10(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let x = one(&c, "math.log10")?;
     if x <= 0.0 {
-        return Err(c.err("math.log10(): аргумент должен быть положительным"));
+        return Err(c.err(tr!("math.log10(): аргумент должен быть положительным", "math.log10(): argument must be positive")));
     }
     Ok(Value::Float(x.log10()))
 }
@@ -235,7 +235,7 @@ fn time_format(_: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value> {
     let ts = arg_float(&c.args[0], c.line)? as i64;
     let fmt = match c.arg(1) {
         Some(Value::Str(s)) => s.to_string(),
-        Some(other) => return Err(c.err(format!("time.format(): шаблон должен быть строкой, а не {}", other.type_name()))),
+        Some(other) => return Err(c.err(trf!("time.format(): шаблон должен быть строкой, а не {}", "time.format(): template must be a string, not {}", other.type_name()))),
         None => "%Y-%m-%d %H:%M:%S".to_string(),
     };
     Ok(Value::str(&format_time(ts, &fmt)))
@@ -290,7 +290,7 @@ fn random_randint(interp: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Valu
     let a = arg_int(&c.args[0], c.line)?;
     let b = arg_int(&c.args[1], c.line)?;
     if b < a {
-        return Err(c.err("random.randint(): нижняя граница больше верхней"));
+        return Err(c.err(tr!("random.randint(): нижняя граница больше верхней", "random.randint(): lower bound is greater than upper bound")));
     }
     let span = (b - a) as u64 + 1;
     Ok(Value::Int(a + (next_u64(interp) % span) as i64))
@@ -300,7 +300,7 @@ fn random_choice(interp: &mut Interpreter, _: &mut dyn Host, c: Call) -> R<Value
     c.check("random.choice", 1, 1)?;
     let items = crate::interp::ops::iter_to_vec(&c.args[0], c.line)?;
     if items.is_empty() {
-        return Err(c.err("random.choice(): пустой список"));
+        return Err(c.err(tr!("random.choice(): пустой список", "random.choice(): empty list")));
     }
     let i = (next_u64(interp) % items.len() as u64) as usize;
     Ok(items[i].clone())

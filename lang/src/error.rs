@@ -35,11 +35,11 @@ impl LangError {
 impl fmt::Display for LangError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.line == 0 {
-            write!(f, "Ошибка: {}", self.message)
+            write!(f, "{}", trf!("Ошибка: {}", "Error: {}", self.message))
         } else if self.col == 0 {
-            write!(f, "Ошибка (строка {}): {}", self.line, self.message)
+            write!(f, "{}", trf!("Ошибка (строка {}): {}", "Error (line {}): {}", self.line, self.message))
         } else {
-            write!(f, "Ошибка (строка {}, позиция {}): {}", self.line, self.col, self.message)
+            write!(f, "{}", trf!("Ошибка (строка {}, позиция {}): {}", "Error (line {}, col {}): {}", self.line, self.col, self.message))
         }
     }
 }

@@ -1,6 +1,7 @@
 {
   "id": "regional_data_center",
   "name": "Региональный ЦОД",
+  "name_en": "Regional Data Center",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

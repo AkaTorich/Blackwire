@@ -2,19 +2,19 @@
 /* Настройки: темы с предпросмотром, эффекты, шрифт, прозрачность, звук, мониторы, игра, о программе. */
 (function () {
   var FALLBACK_THEMES = [
-    { id: 'swordfish', name: 'Рыба-меч' }, { id: 'ice', name: 'Лёд' }, { id: 'amber', name: 'Янтарь' },
-    { id: 'phosphor', name: 'Фосфор' }, { id: 'violet', name: 'Фиалка' }, { id: 'crimson', name: 'Кармин' },
-    { id: 'paper', name: 'Бумага' }, { id: 'midnight', name: 'Полночь' }, { id: 'steel', name: 'Сталь' },
-    { id: 'gold', name: 'Золото' }, { id: 'aurora', name: 'Аврора' }, { id: 'ember', name: 'Уголь' }
+    { id: 'swordfish', name: L('Рыба-меч', 'Swordfish') }, { id: 'ice', name: L('Лёд', 'Ice') }, { id: 'amber', name: L('Янтарь', 'Amber') },
+    { id: 'phosphor', name: L('Фосфор', 'Phosphor') }, { id: 'violet', name: L('Фиалка', 'Violet') }, { id: 'crimson', name: L('Кармин', 'Crimson') },
+    { id: 'paper', name: L('Бумага', 'Paper') }, { id: 'midnight', name: L('Полночь', 'Midnight') }, { id: 'steel', name: L('Сталь', 'Steel') },
+    { id: 'gold', name: L('Золото', 'Gold') }, { id: 'aurora', name: L('Аврора', 'Aurora') }, { id: 'ember', name: L('Уголь', 'Ember') }
   ];
   var FX_ITEMS = [
-    { key: 'wireframe', label: 'Проволочные фигуры', hint: 'многогранники на рабочем столе' },
-    { key: 'hexrain', label: 'Поток цифр', hint: 'шестнадцатеричные колонки' },
-    { key: 'scanlines', label: 'Сканлайны', hint: 'тонкие горизонтальные линии' },
-    { key: 'glass', label: 'Стекло', hint: 'размытие за окнами' }
+    { key: 'wireframe', label: L('Проволочные фигуры', 'Wireframe shapes'), hint: L('многогранники на рабочем столе', 'polyhedra on the desktop') },
+    { key: 'hexrain', label: L('Поток цифр', 'Digit rain'), hint: L('шестнадцатеричные колонки', 'hexadecimal columns') },
+    { key: 'scanlines', label: L('Сканлайны', 'Scanlines'), hint: L('тонкие горизонтальные линии', 'thin horizontal lines') },
+    { key: 'glass', label: L('Стекло', 'Glass'), hint: L('размытие за окнами', 'blur behind windows') }
   ];
   var LAYOUTS = [
-    { id: 'grid', label: 'Сетка' }, { id: 'columns', label: 'Колонки' }, { id: 'rows', label: 'Ряды' }, { id: 'cascade', label: 'Каскад' }
+    { id: 'grid', label: L('Сетка', 'Grid') }, { id: 'columns', label: L('Колонки', 'Columns') }, { id: 'rows', label: L('Ряды', 'Rows') }, { id: 'cascade', label: L('Каскад', 'Cascade') }
   ];
 
   var cur = null, bootInfo = null, monitors = [], els = {}, saveTimer = null;
@@ -30,7 +30,7 @@
 
   function save(immediate) {
     clearTimeout(saveTimer);
-    var run = function () { BW.saveSettings(clone(cur)).catch(function (e) { Win.toast('Не сохранилось: ' + e, 'err'); }); };
+    var run = function () { BW.saveSettings(clone(cur)).catch(function (e) { Win.toast(L('Не сохранилось: ', 'Not saved: ') + e, 'err'); }); };
     if (immediate) run(); else saveTimer = setTimeout(run, 120);
   }
 
@@ -121,54 +121,54 @@
 
   /* ---------- мониторы ---------- */
   function monitorOptions() {
-    if (!monitors.length) return [{ value: 0, label: 'Основной' }];
+    if (!monitors.length) return [{ value: 0, label: L('Основной', 'Primary') }];
     return monitors.map(function (m) {
-      return { value: m.index, label: (m.name || ('Монитор ' + (m.index + 1))) + ' · ' + m.width + '×' + m.height + (m.primary ? ' · основной' : '') };
+      return { value: m.index, label: (m.name || (L('Монитор ', 'Monitor ') + (m.index + 1))) + ' · ' + m.width + '×' + m.height + (m.primary ? L(' · основной', ' · primary') : '') };
     });
   }
 
   function buildMonitors() {
     els.monSection.innerHTML = '';
-    els.monSection.appendChild(section('Мониторы', 'monitor-screen').firstChild);
+    els.monSection.appendChild(section(L('Мониторы', 'Monitors'), 'monitor-screen').firstChild);
     var def = select(monitorOptions(), cur.default_monitor || 0, function (v) { cur.default_monitor = parseInt(v, 10) || 0; save(true); });
-    els.monSection.appendChild(row('Монитор по умолчанию', def, 'новые окна открываются на нём'));
+    els.monSection.appendChild(row(L('Монитор по умолчанию', 'Default monitor'), def, L('новые окна открываются на нём', 'new windows open on it')));
 
     var arr = el('div', 'set-arrange');
     var layoutSel = select(LAYOUTS.map(function (l) { return { value: l.id, label: l.label }; }), 'grid', swallow);
     var monSel = select(monitorOptions(), cur.default_monitor || 0, swallow);
-    var btn = el('button', 'btn', Icons.get('layout', 16) + '<span>Разложить окна</span>');
+    var btn = el('button', 'btn', Icons.get('layout', 16) + '<span>' + L('Разложить окна', 'Arrange windows') + '</span>');
     btn.addEventListener('click', function () {
       BW.sound('click');
-      BW.arrange_windows(parseInt(monSel.value, 10) || 0, layoutSel.value).then(function () { Win.toast('Окна разложены'); }, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+      BW.arrange_windows(parseInt(monSel.value, 10) || 0, layoutSel.value).then(function () { Win.toast(L('Окна разложены', 'Windows arranged')); }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
     });
     arr.appendChild(layoutSel); arr.appendChild(monSel); arr.appendChild(btn);
-    els.monSection.appendChild(row('Раскладка открытых окон', arr));
+    els.monSection.appendChild(row(L('Раскладка открытых окон', 'Arrange open windows'), arr));
   }
 
   /* ---------- игра ---------- */
   function buildGame(s) {
     var btns = el('div', 'set-btns');
-    var saveB = el('button', 'btn btn-primary', Icons.get('save', 16) + '<span>Сохранить игру</span>');
+    var saveB = el('button', 'btn btn-primary', Icons.get('save', 16) + '<span>' + L('Сохранить игру', 'Save game') + '</span>');
     saveB.addEventListener('click', function () {
       BW.sound('click');
-      BW.save_game().then(function () { Win.toast('Игра сохранена', 'ok'); }, function (e) { Win.toast('Не сохранилось: ' + e, 'err'); });
+      BW.save_game().then(function () { Win.toast(L('Игра сохранена', 'Game saved'), 'ok'); }, function (e) { Win.toast(L('Не сохранилось: ', 'Not saved: ') + e, 'err'); });
     });
-    var loadB = el('button', 'btn', Icons.get('reload', 16) + '<span>Загрузить</span>');
+    var loadB = el('button', 'btn', Icons.get('reload', 16) + '<span>' + L('Загрузить', 'Load') + '</span>');
     loadB.addEventListener('click', function () {
-      Win.confirm('Загрузить последнее сохранение? Несохранённое пропадёт.').then(function (ok) {
+      Win.confirm(L('Загрузить последнее сохранение? Несохранённое пропадёт.', 'Load the last save? Unsaved progress will be lost.')).then(function (ok) {
         if (!ok) return;
-        BW.load_game().then(function () { Win.toast('Сохранение загружено', 'ok'); }, function (e) { Win.toast('Не загрузилось: ' + e, 'err'); });
+        BW.load_game().then(function () { Win.toast(L('Сохранение загружено', 'Save loaded'), 'ok'); }, function (e) { Win.toast(L('Не загрузилось: ', 'Failed to load: ') + e, 'err'); });
       });
     });
-    var newB = el('button', 'btn btn-danger', Icons.get('user', 16) + '<span>Новая личность</span>');
+    var newB = el('button', 'btn btn-danger', Icons.get('user', 16) + '<span>' + L('Новая личность', 'New identity') + '</span>');
     newB.addEventListener('click', function () {
-      Win.confirm('Начать заново? Текущее сохранение будет заменено.').then(function (ok) {
+      Win.confirm(L('Начать заново? Текущее сохранение будет заменено.', 'Start over? The current save will be replaced.')).then(function (ok) {
         if (!ok) return;
-        return Win.prompt('Имя в сети (латиница, 3–16 знаков)', '').then(function (handle) {
+        return Win.prompt(L('Имя в сети (латиница, 3–16 знаков)', 'Handle (Latin letters, 3–16 characters)'), '').then(function (handle) {
           if (handle === null) return;
           handle = handle.trim();
-          if (!/^[A-Za-z][A-Za-z0-9_-]{2,15}$/.test(handle)) { Win.toast('Имя не подходит', 'err'); return; }
-          return BW.new_game(handle).then(function () { Win.toast('Новый мир построен: ' + handle, 'ok'); }, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+          if (!/^[A-Za-z][A-Za-z0-9_-]{2,15}$/.test(handle)) { Win.toast(L('Имя не подходит', 'Invalid handle'), 'err'); return; }
+          return BW.new_game(handle).then(function () { Win.toast(L('Новый мир построен: ', 'New world built: ') + handle, 'ok'); }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
         });
       });
     });
@@ -181,7 +181,7 @@
     if (!els.slotList) return;
     els.slotList.innerHTML = '';
     if (!list || !list.length) {
-      els.slotList.appendChild(el('div', 'set-row-hint', 'Слотов пока нет. «Новый слот» сделает снимок текущей игры.'));
+      els.slotList.appendChild(el('div', 'set-row-hint', L('Слотов пока нет. «Новый слот» сделает снимок текущей игры.', 'No slots yet. "New slot" takes a snapshot of the current game.')));
       return;
     }
     list.forEach(function (sl) {
@@ -194,26 +194,26 @@
       r.appendChild(text);
 
       var btns = el('div', 'slot-btns');
-      var loadB = el('button', 'btn btn-sm', Icons.get('reload', 14) + '<span>Загрузить</span>');
+      var loadB = el('button', 'btn btn-sm', Icons.get('reload', 14) + '<span>' + L('Загрузить', 'Load') + '</span>');
       loadB.addEventListener('click', function () {
         BW.sound('click');
-        Win.confirm('Загрузить слот «' + sl.name + '»? Несохранённое пропадёт.').then(function (ok) {
+        Win.confirm(L('Загрузить слот «' + sl.name + '»? Несохранённое пропадёт.', 'Load slot "' + sl.name + '"? Unsaved progress will be lost.')).then(function (ok) {
           if (!ok) return;
-          BW.load_slot(sl.name).then(function () { Win.toast('Слот загружен: ' + sl.name, 'ok'); }, function (e) { Win.toast('Не загрузилось: ' + e, 'err'); });
+          BW.load_slot(sl.name).then(function () { Win.toast(L('Слот загружен: ', 'Slot loaded: ') + sl.name, 'ok'); }, function (e) { Win.toast(L('Не загрузилось: ', 'Failed to load: ') + e, 'err'); });
         });
       });
-      var overB = el('button', 'btn btn-sm', Icons.get('save', 14) + '<span>Перезаписать</span>');
+      var overB = el('button', 'btn btn-sm', Icons.get('save', 14) + '<span>' + L('Перезаписать', 'Overwrite') + '</span>');
       overB.addEventListener('click', function () {
         BW.sound('click');
-        BW.save_to_slot(sl.name).then(function (ls) { renderSlots(ls); Win.toast('Слот перезаписан', 'ok'); }, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+        BW.save_to_slot(sl.name).then(function (ls) { renderSlots(ls); Win.toast(L('Слот перезаписан', 'Slot overwritten'), 'ok'); }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
       });
       var delB = el('button', 'btn btn-sm btn-danger', Icons.get('trash', 14) + '<span></span>');
-      delB.title = 'Удалить';
+      delB.title = L('Удалить', 'Delete');
       delB.addEventListener('click', function () {
         BW.sound('click');
-        Win.confirm('Удалить слот «' + sl.name + '»?').then(function (ok) {
+        Win.confirm(L('Удалить слот «' + sl.name + '»?', 'Delete slot "' + sl.name + '"?')).then(function (ok) {
           if (!ok) return;
-          BW.delete_slot(sl.name).then(function (ls) { renderSlots(ls); Win.toast('Слот удалён', 'ok'); }, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+          BW.delete_slot(sl.name).then(function (ls) { renderSlots(ls); Win.toast(L('Слот удалён', 'Slot deleted'), 'ok'); }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
         });
       });
       btns.appendChild(loadB); btns.appendChild(overB); btns.appendChild(delB);
@@ -227,14 +227,14 @@
   }
 
   function buildSlots(s) {
-    var newBtn = el('button', 'btn btn-primary', Icons.get('save', 16) + '<span>Новый слот</span>');
+    var newBtn = el('button', 'btn btn-primary', Icons.get('save', 16) + '<span>' + L('Новый слот', 'New slot') + '</span>');
     newBtn.addEventListener('click', function () {
       BW.sound('click');
-      Win.prompt('Название сохранения', '').then(function (name) {
+      Win.prompt(L('Название сохранения', 'Save name'), '').then(function (name) {
         if (name === null) return;
         name = (name || '').trim();
-        if (!name) { Win.toast('Пустое название', 'err'); return; }
-        BW.save_to_slot(name).then(function (ls) { renderSlots(ls); Win.toast('Сохранено: ' + name, 'ok'); }, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+        if (!name) { Win.toast(L('Пустое название', 'Empty name'), 'err'); return; }
+        BW.save_to_slot(name).then(function (ls) { renderSlots(ls); Win.toast(L('Сохранено: ', 'Saved: ') + name, 'ok'); }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
       });
     });
     var head = el('div', 'set-btns');
@@ -251,8 +251,8 @@
     box.innerHTML =
       '<div class="set-about-logo">BLACKWIRE</div>' +
       '<div class="set-about-ver mono"></div>' +
-      '<p>Игра о взломе. Каждое приложение — настоящее окно системы; мир живёт в ядре и не зависит от окон.</p>' +
-      '<p class="dim">Горячие клавиши: Ctrl+Shift+T — терминал, Ctrl+Shift+E — редактор, Ctrl+Shift+F — файлы, Ctrl+Shift+M — почта, F11 — во весь экран, Ctrl+W — закрыть окно.</p>';
+      '<p>' + L('Игра о взломе. Каждое приложение — настоящее окно системы; мир живёт в ядре и не зависит от окон.', 'A hacking game. Every application is a real system window; the world lives in the core and does not depend on the windows.') + '</p>' +
+      '<p class="dim">' + L('Горячие клавиши: Ctrl+Shift+T — терминал, Ctrl+Shift+E — редактор, Ctrl+Shift+F — файлы, Ctrl+Shift+M — почта, F11 — во весь экран, Ctrl+W — закрыть окно.', 'Hotkeys: Ctrl+Shift+T — terminal, Ctrl+Shift+E — editor, Ctrl+Shift+F — files, Ctrl+Shift+M — mail, F11 — full screen, Ctrl+W — close window.') + '</p>';
     s.appendChild(box);
     els.aboutVer = box.querySelector('.set-about-ver');
   }
@@ -275,13 +275,17 @@
     body.innerHTML = '';
     var wrap = el('div', 'settings');
 
-    var sTheme = section('Тема', 'grid');
+    var sLang = section(L('Язык', 'Language'), 'browser');
+    sLang.appendChild(row(L('Язык интерфейса', 'Interface language'), I18N.picker(), L('окна и сообщения игры', 'game windows and messages')));
+    wrap.appendChild(sLang);
+
+    var sTheme = section(L('Тема', 'Theme'), 'grid');
     els.themes = el('div', 'theme-grid');
     sTheme.appendChild(els.themes);
     buildThemes(FALLBACK_THEMES);
     wrap.appendChild(sTheme);
 
-    var sFx = section('Эффекты', 'hexagon');
+    var sFx = section(L('Эффекты', 'Effects'), 'hexagon');
     FX_ITEMS.forEach(function (f) {
       var t = toggle(cur.fx[f.key] !== false, function (v) { cur.fx[f.key] = v; save(true); });
       els.fx[f.key] = t;
@@ -289,38 +293,38 @@
     });
     wrap.appendChild(sFx);
 
-    var sView = section('Вид', 'eye');
+    var sView = section(L('Вид', 'Appearance'), 'eye');
     els.font = slider(12, 20, 1, cur.font_size, function (v) { return v + ' px'; }, function (v) { cur.font_size = v; save(false); });
-    sView.appendChild(row('Размер шрифта', els.font.el, 'для всех окон'));
+    sView.appendChild(row(L('Размер шрифта', 'Font size'), els.font.el, L('для всех окон', 'for all windows')));
     els.opacity = slider(40, 100, 5, Math.round(cur.terminal_opacity * 100), function (v) { return v + ' %'; }, function (v) { cur.terminal_opacity = v / 100; save(false); });
-    sView.appendChild(row('Плотность фона терминала', els.opacity.el));
+    sView.appendChild(row(L('Плотность фона терминала', 'Terminal background opacity'), els.opacity.el));
     els.winop = slider(0, 70, 5, Math.round((1 - cur.window_opacity) * 100), function (v) { return v + ' %'; }, function (v) { cur.window_opacity = 1 - v / 100; save(false); });
-    sView.appendChild(row('Прозрачность окон', els.winop.el, 'сквозь окна виден рабочий стол'));
+    sView.appendChild(row(L('Прозрачность окон', 'Window transparency'), els.winop.el, L('сквозь окна виден рабочий стол', 'the desktop shows through windows')));
     wrap.appendChild(sView);
 
-    var sSound = section('Звук', 'sound');
+    var sSound = section(L('Звук', 'Sound'), 'sound');
     els.sound = toggle(cur.sound, function (v) { cur.sound = v; save(true); if (v) setTimeout(function () { BW.sound('notify'); }, 150); });
     var soundRow = el('div', 'set-inline');
     soundRow.appendChild(els.sound.el);
-    var test = el('button', 'btn', Icons.get('bell', 16) + '<span>Проверить</span>');
+    var test = el('button', 'btn', Icons.get('bell', 16) + '<span>' + L('Проверить', 'Test') + '</span>');
     test.addEventListener('click', function () { BW.sound('notify'); });
     soundRow.appendChild(test);
-    sSound.appendChild(row('Звуки интерфейса', soundRow, 'короткие сигналы на щелчки и события'));
+    sSound.appendChild(row(L('Звуки интерфейса', 'Interface sounds'), soundRow, L('короткие сигналы на щелчки и события', 'short beeps on clicks and events')));
     wrap.appendChild(sSound);
 
-    els.monSection = section('Мониторы', 'monitor-screen');
+    els.monSection = section(L('Мониторы', 'Monitors'), 'monitor-screen');
     wrap.appendChild(els.monSection);
     buildMonitors();
 
-    var sGame = section('Игра', 'disk');
+    var sGame = section(L('Игра', 'Game'), 'disk');
     buildGame(sGame);
     wrap.appendChild(sGame);
 
-    var sSlots = section('Сохранения', 'save');
+    var sSlots = section(L('Сохранения', 'Saves'), 'save');
     buildSlots(sSlots);
     wrap.appendChild(sSlots);
 
-    var sAbout = section('О программе', 'info');
+    var sAbout = section(L('О программе', 'About'), 'info');
     buildAbout(sAbout);
     wrap.appendChild(sAbout);
 
@@ -329,7 +333,7 @@
     BW.boot().then(function (b) {
       bootInfo = b || {};
       if (bootInfo.theme_list && bootInfo.theme_list.length) buildThemes(bootInfo.theme_list);
-      if (els.aboutVer) els.aboutVer.textContent = (bootInfo.os_name || 'BLACKWIRE') + (bootInfo.version ? ' · версия ' + bootInfo.version : '');
+      if (els.aboutVer) els.aboutVer.textContent = (bootInfo.os_name || 'BLACKWIRE') + (bootInfo.version ? L(' · версия ', ' · version ') + bootInfo.version : '');
     }, swallow);
     BW.monitors().then(function (m) { monitors = m || []; buildMonitors(); }, swallow);
     refreshSlots();
@@ -341,5 +345,5 @@
     });
   }
 
-  Apps.register('settings', { title: 'Настройки', icon: 'settings', minWidth: 520, minHeight: 400, mount: mount });
+  Apps.register('settings', { title: L('Настройки', 'Settings'), icon: 'settings', minWidth: 520, minHeight: 400, mount: mount });
 })();

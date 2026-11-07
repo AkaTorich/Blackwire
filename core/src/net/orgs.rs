@@ -30,20 +30,20 @@ pub enum OrgKind {
 impl OrgKind {
     pub fn title(self) -> &'static str {
         match self {
-            OrgKind::Corporation => "корпорация",
-            OrgKind::Bank => "банк",
-            OrgKind::Hospital => "больница",
-            OrgKind::SecurityCenter => "центр безопасности",
-            OrgKind::CyberPolice => "киберполиция",
-            OrgKind::Isp => "провайдер",
-            OrgKind::University => "университет",
-            OrgKind::Hosting => "хостинг",
-            OrgKind::Government => "государственное учреждение",
-            OrgKind::Media => "СМИ",
-            OrgKind::Shop => "магазин",
-            OrgKind::Home => "домашняя сеть",
-            OrgKind::Honeypot => "сервер-приманка",
-            OrgKind::Underground => "скрытая сеть",
+            OrgKind::Corporation => tr!("корпорация", "corporation"),
+            OrgKind::Bank => tr!("банк", "bank"),
+            OrgKind::Hospital => tr!("больница", "hospital"),
+            OrgKind::SecurityCenter => tr!("центр безопасности", "security center"),
+            OrgKind::CyberPolice => tr!("киберполиция", "cyber police"),
+            OrgKind::Isp => tr!("провайдер", "ISP"),
+            OrgKind::University => tr!("университет", "university"),
+            OrgKind::Hosting => tr!("хостинг", "hosting"),
+            OrgKind::Government => tr!("государственное учреждение", "government office"),
+            OrgKind::Media => tr!("СМИ", "media"),
+            OrgKind::Shop => tr!("магазин", "shop"),
+            OrgKind::Home => tr!("домашняя сеть", "home network"),
+            OrgKind::Honeypot => tr!("сервер-приманка", "honeypot server"),
+            OrgKind::Underground => tr!("скрытая сеть", "hidden network"),
         }
     }
 }
@@ -115,6 +115,19 @@ pub struct NameVariant {
     pub tag: &'static str,
     pub domain: &'static str,
     pub description: &'static str,
+    pub name_en: &'static str,
+    pub description_en: &'static str,
+}
+
+impl NameVariant {
+    /// Имя на языке игры.
+    pub fn title(&self) -> &'static str {
+        if crate::i18n::is_en() { self.name_en } else { self.name }
+    }
+    /// Описание на языке игры.
+    pub fn about(&self) -> &'static str {
+        if crate::i18n::is_en() { self.description_en } else { self.description }
+    }
 }
 
 /// Роль машины в составе организации.

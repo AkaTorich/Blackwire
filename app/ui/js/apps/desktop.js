@@ -2,24 +2,24 @@
 /* Рабочий стол: фон на canvas, полоса состояния, док с приложениями и открытыми окнами, уведомления, меню. */
 (function () {
   var DOCK_APPS = [
-    { id: 'terminal', label: 'Терминал', multi: true },
-    { id: 'editor', label: 'Редактор', multi: true },
-    { id: 'files', label: 'Файлы', multi: true },
-    { id: 'browser', label: 'Браузер', multi: true },
-    { id: 'mail', label: 'Почта' },
-    { id: 'monitor', label: 'Монитор' },
-    { id: 'map', label: 'Карта сети' },
-    { id: 'plugins', label: 'Плагины' },
-    { id: 'scenario', label: 'Редактор сценариев' },
-    { id: 'duel', label: 'Сетевая игра' },
-    { id: 'settings', label: 'Настройки' },
-    { id: 'help', label: 'Справка' }
+    { id: 'terminal', label: L('Терминал', 'Terminal'), multi: true },
+    { id: 'editor', label: L('Редактор', 'Editor'), multi: true },
+    { id: 'files', label: L('Файлы', 'Files'), multi: true },
+    { id: 'browser', label: L('Браузер', 'Browser'), multi: true },
+    { id: 'mail', label: L('Почта', 'Mail') },
+    { id: 'monitor', label: L('Монитор', 'System monitor') },
+    { id: 'map', label: L('Карта сети', 'Network map') },
+    { id: 'plugins', label: L('Плагины', 'Plugins') },
+    { id: 'scenario', label: L('Редактор сценариев', 'Scenario editor') },
+    { id: 'duel', label: L('Сетевая игра', 'Multiplayer') },
+    { id: 'settings', label: L('Настройки', 'Settings') },
+    { id: 'help', label: L('Справка', 'Help') }
   ];
   var LAYOUTS = [
-    { id: 'grid', label: 'Сетка', icon: 'grid' },
-    { id: 'columns', label: 'Колонки', icon: 'columns' },
-    { id: 'rows', label: 'Ряды', icon: 'rows' },
-    { id: 'cascade', label: 'Каскад', icon: 'cascade' }
+    { id: 'grid', label: L('Сетка', 'Grid'), icon: 'grid' },
+    { id: 'columns', label: L('Колонки', 'Columns'), icon: 'columns' },
+    { id: 'rows', label: L('Ряды', 'Rows'), icon: 'rows' },
+    { id: 'cascade', label: L('Каскад', 'Cascade'), icon: 'cascade' }
   ];
   var HISTORY = 60;
 
@@ -36,7 +36,7 @@
     // Native app windows can cover an HTML confirmation on the desktop.
     // The quit command saves the world before closing every game window.
     BW.invoke('quit').catch(function (e) {
-      Win.toast('Не удалось выйти: ' + String(e), 'err');
+      Win.toast(L('Не удалось выйти: ', 'Failed to quit: ') + String(e), 'err');
     }).finally(function () { quitPending = false; });
   }
 
@@ -72,18 +72,18 @@
     ['cpu', 'mem', 'net'].forEach(function (k) {
       var m = el('div', 'meter meter-' + k);
       m.innerHTML = '<span class="meter-ico">' + Icons.get(k, 14) + '</span><canvas class="meter-graph"></canvas><span class="meter-val mono">—</span>';
-      m.title = k === 'cpu' ? 'Процессор' : k === 'mem' ? 'Память' : 'Сеть';
+      m.title = k === 'cpu' ? L('Процессор', 'CPU') : k === 'mem' ? L('Память', 'Memory') : L('Сеть', 'Network');
       right.appendChild(m);
       meters[k] = { canvas: m.querySelector('canvas'), val: m.querySelector('.meter-val'), data: [] };
     });
 
-    var exitButton = el('button', 'desk-exit', Icons.get('power', 16) + '<span>Выйти</span>');
+    var exitButton = el('button', 'desk-exit', Icons.get('power', 16) + '<span>' + L('Выйти', 'Quit') + '</span>');
     exitButton.type = 'button';
-    exitButton.title = 'Сохранить и выйти из игры';
+    exitButton.title = L('Сохранить и выйти из игры', 'Save and quit the game');
     exitButton.setAttribute('aria-label', exitButton.title);
     exitButton.addEventListener('click', quitGame);
     right.appendChild(exitButton);
-    right.appendChild(Win.windowControls({ close: quitGame, closeLabel: 'Сохранить и выйти из игры' }));
+    right.appendChild(Win.windowControls({ close: quitGame, closeLabel: L('Сохранить и выйти из игры', 'Save and quit the game') }));
 
     var notify = el('aside', 'desk-notify');
     desk.appendChild(notify);
@@ -106,7 +106,7 @@
       });
       b.addEventListener('contextmenu', function (e) {
         e.preventDefault(); e.stopPropagation();
-        Win.menu([{ label: 'Открыть новое окно', icon: 'plus', action: function () { BW.open_app(a.id); } }], e.clientX, e.clientY);
+        Win.menu([{ label: L('Открыть новое окно', 'Open new window'), icon: 'plus', action: function () { BW.open_app(a.id); } }], e.clientX, e.clientY);
       });
       apps.appendChild(b);
     });
@@ -138,9 +138,9 @@
       b.addEventListener('contextmenu', function (e) {
         e.preventDefault(); e.stopPropagation();
         Win.menu([
-          { label: 'Поднять', icon: 'up', action: function () { BW.focus_window(w.label).catch(swallow); } },
+          { label: L('Поднять', 'Bring to front'), icon: 'up', action: function () { BW.focus_window(w.label).catch(swallow); } },
           null,
-          { label: 'Закрыть', icon: 'close', action: function () { BW.close_window(w.label).catch(swallow); } }
+          { label: L('Закрыть', 'Close'), icon: 'close', action: function () { BW.close_window(w.label).catch(swallow); } }
         ], e.clientX, e.clientY);
       });
       els.wins.appendChild(b);
@@ -168,7 +168,7 @@
     if (!p) return;
     var card = el('div', 'notice');
     card.innerHTML = '<span class="notice-ico">' + Icons.get('bell', 16) + '</span><div class="notice-body"><div class="notice-title ellipsis"></div><div class="notice-text"></div></div>';
-    card.querySelector('.notice-title').textContent = p.title || 'Сообщение';
+    card.querySelector('.notice-title').textContent = p.title || L('Сообщение', 'Message');
     card.querySelector('.notice-text').textContent = p.text || '';
     els.notify.appendChild(card);
     while (els.notify.children.length > 5) els.notify.removeChild(els.notify.firstChild);
@@ -198,7 +198,7 @@
       } else {
         var s = Math.floor(t), days = Math.floor(s / 86400);
         els.clock.textContent = pad(Math.floor(s / 3600) % 24) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60);
-        els.date.textContent = 'день ' + (days + 1);
+        els.date.textContent = L('день ', 'day ') + (days + 1);
       }
     } else if (t != null) {
       els.clock.textContent = String(t);
@@ -248,8 +248,8 @@
   }
 
   function fmtRate(v) {
-    if (v >= 1024) return (v / 1024).toFixed(1) + ' МБ/с';
-    return Math.round(v) + ' КБ/с';
+    if (v >= 1024) return (v / 1024).toFixed(1) + L(' МБ/с', ' MB/s');
+    return Math.round(v) + L(' КБ/с', ' KB/s');
   }
 
   function tick(p) {
@@ -288,7 +288,7 @@
       var cur = currentMonitorIndex(mons);
       var monItems = mons.map(function (m) {
         return {
-          label: (m.name || ('Монитор ' + (m.index + 1))) + ' · ' + m.width + '×' + m.height + (m.primary ? ' · основной' : ''),
+          label: (m.name || (L('Монитор ', 'Monitor ') + (m.index + 1))) + ' · ' + m.width + '×' + m.height + (m.primary ? L(' · основной', ' · primary') : ''),
           icon: 'monitor-screen',
           disabled: m.index === cur,
           action: function () {
@@ -299,15 +299,15 @@
         };
       });
       Win.menu([
-        { label: 'Новый терминал', icon: 'terminal', action: function () { BW.open_app('terminal'); } },
-        { label: 'Редактор', icon: 'editor', action: function () { BW.open_app('editor'); } },
-        { label: 'Файлы', icon: 'files', action: function () { BW.open_app('files'); } },
+        { label: L('Новый терминал', 'New terminal'), icon: 'terminal', action: function () { BW.open_app('terminal'); } },
+        { label: L('Редактор', 'Editor'), icon: 'editor', action: function () { BW.open_app('editor'); } },
+        { label: L('Файлы', 'Files'), icon: 'files', action: function () { BW.open_app('files'); } },
         null,
-        { label: 'Разложить окна', icon: 'layout', children: layoutItems },
-        { label: 'Настройки', icon: 'settings', action: function () { Apps.openOrFocus('settings', null); } },
-        { label: 'Сменить монитор подложки', icon: 'monitor-screen', children: monItems.length ? monItems : [{ label: 'Один монитор', disabled: true }] },
+        { label: L('Разложить окна', 'Arrange windows'), icon: 'layout', children: layoutItems },
+        { label: L('Настройки', 'Settings'), icon: 'settings', action: function () { Apps.openOrFocus('settings', null); } },
+        { label: L('Сменить монитор подложки', 'Move desktop to monitor'), icon: 'monitor-screen', children: monItems.length ? monItems : [{ label: L('Один монитор', 'Single monitor'), disabled: true }] },
         null,
-        { label: 'Выйти из игры', icon: 'power', action: quitGame }
+        { label: L('Выйти из игры', 'Quit game'), icon: 'power', action: quitGame }
       ], x, y);
     }, swallow);
   }
@@ -359,5 +359,5 @@
     });
   }
 
-  Apps.register('desktop', { title: 'Рабочий стол', icon: 'grid', mount: mount });
+  Apps.register('desktop', { title: L('Рабочий стол', 'Desktop'), icon: 'grid', mount: mount });
 })();

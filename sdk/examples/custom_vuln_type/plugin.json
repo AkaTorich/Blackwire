@@ -1,6 +1,7 @@
 {
   "id": "custom_vuln_type",
   "name": "Лаборатория авторских уязвимостей",
+  "name_en": "Custom Vulnerability Lab",
   "version": "1.0.0",
   "api": 1,
   "entry": "main.adr",

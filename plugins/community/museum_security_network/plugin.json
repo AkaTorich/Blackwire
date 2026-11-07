@@ -1,6 +1,7 @@
 {
   "id": "museum_security_network",
   "name": "Сеть охраны музея",
+  "name_en": "Museum Security Network",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

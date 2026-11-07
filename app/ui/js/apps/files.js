@@ -45,10 +45,10 @@ const FilesApp = (function () {
 
   function fmtSize(n) {
     if (n == null) return '';
-    if (n < 1024) return n + ' Б';
-    if (n < 1024 * 1024) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' КБ';
-    if (n < 1024 * 1024 * 1024) return (n / 1048576).toFixed(1) + ' МБ';
-    return (n / 1073741824).toFixed(2) + ' ГБ';
+    if (n < 1024) return n + L(' Б', ' B');
+    if (n < 1024 * 1024) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + L(' КБ', ' KB');
+    if (n < 1024 * 1024 * 1024) return (n / 1048576).toFixed(1) + L(' МБ', ' MB');
+    return (n / 1073741824).toFixed(2) + L(' ГБ', ' GB');
   }
 
   function two(n) { return n < 10 ? '0' + n : String(n); }
@@ -84,22 +84,22 @@ const FilesApp = (function () {
     // --- разметка ---
     const root = el('div', 'fm');
     const bar = el('div', 'fm-bar');
-    const btnBack = iconBtn('back', 'Назад — Alt+←');
-    const btnFwd = iconBtn('forward', 'Вперёд — Alt+→');
-    const btnUp = iconBtn('up', 'Вверх — Backspace');
-    const btnHome = iconBtn('home', 'Домой');
-    const btnReload = iconBtn('reload', 'Обновить — F5');
+    const btnBack = iconBtn('back', L('Назад — Alt+←', 'Back — Alt+←'));
+    const btnFwd = iconBtn('forward', L('Вперёд — Alt+→', 'Forward — Alt+→'));
+    const btnUp = iconBtn('up', L('Вверх — Backspace', 'Up — Backspace'));
+    const btnHome = iconBtn('home', L('Домой', 'Home'));
+    const btnReload = iconBtn('reload', L('Обновить — F5', 'Refresh — F5'));
     const sep1 = el('span', 'fm-sep');
-    const btnNewDir = iconBtn('folder', 'Новая папка — Ctrl+Shift+N');
-    const btnNewFile = iconBtn('file', 'Новый файл — Ctrl+N');
-    const btnRename = iconBtn('rename', 'Переименовать — F2');
-    const btnDelete = iconBtn('trash', 'Удалить — Del');
-    const btnCopy = iconBtn('copy', 'Копировать — Ctrl+C');
-    const btnPaste = iconBtn('paste', 'Вставить — Ctrl+V');
-    const btnProps = iconBtn('info', 'Свойства — Alt+Enter');
+    const btnNewDir = iconBtn('folder', L('Новая папка — Ctrl+Shift+N', 'New folder — Ctrl+Shift+N'));
+    const btnNewFile = iconBtn('file', L('Новый файл — Ctrl+N', 'New file — Ctrl+N'));
+    const btnRename = iconBtn('rename', L('Переименовать — F2', 'Rename — F2'));
+    const btnDelete = iconBtn('trash', L('Удалить — Del', 'Delete — Del'));
+    const btnCopy = iconBtn('copy', L('Копировать — Ctrl+C', 'Copy — Ctrl+C'));
+    const btnPaste = iconBtn('paste', L('Вставить — Ctrl+V', 'Paste — Ctrl+V'));
+    const btnProps = iconBtn('info', L('Свойства — Alt+Enter', 'Properties — Alt+Enter'));
     const sep2 = el('span', 'fm-sep fm-grow');
-    const btnHidden = iconBtn('eye-off', 'Скрытые файлы — Ctrl+H');
-    const btnView = iconBtn('grid', 'Плитка / список');
+    const btnHidden = iconBtn('eye-off', L('Скрытые файлы — Ctrl+H', 'Hidden files — Ctrl+H'));
+    const btnView = iconBtn('grid', L('Плитка / список', 'Tiles / list'));
     bar.append(btnBack, btnFwd, btnUp, btnHome, btnReload, sep1, btnNewDir, btnNewFile, btnRename, btnDelete, btnCopy, btnPaste, btnProps, sep2, btnHidden, btnView);
 
     const crumbsBar = el('div', 'fm-crumbs');
@@ -107,7 +107,7 @@ const FilesApp = (function () {
     const addr = el('input', 'fm-addr');
     addr.type = 'text';
     addr.spellcheck = false;
-    addr.placeholder = '/путь';
+    addr.placeholder = L('/путь', '/path');
     crumbsBar.append(crumbs, addr);
 
     const main = el('div', 'fm-main');
@@ -115,7 +115,7 @@ const FilesApp = (function () {
     const listWrap = el('div', 'fm-list-wrap');
     listWrap.tabIndex = 0;
     const header = el('div', 'fm-head');
-    const cols = [['name', 'Имя'], ['size', 'Размер'], ['owner', 'Владелец'], ['mode', 'Права'], ['modified', 'Изменено']];
+    const cols = [['name', L('Имя', 'Name')], ['size', L('Размер', 'Size')], ['owner', L('Владелец', 'Owner')], ['mode', L('Права', 'Mode')], ['modified', L('Изменено', 'Modified')]];
     for (const c of cols) {
       const h = el('div', 'fm-h fm-c-' + c[0], c[1]);
       h.dataset.key = c[0];
@@ -123,13 +123,13 @@ const FilesApp = (function () {
       header.appendChild(h);
     }
     const list = el('div', 'fm-list');
-    const emptyNote = el('div', 'fm-empty', 'Пусто');
+    const emptyNote = el('div', 'fm-empty', L('Пусто', 'Empty'));
     listWrap.append(header, list, emptyNote);
     main.append(tree, listWrap);
 
     const props = el('div', 'fm-props');
     const propsBody = el('div', 'fm-props-body');
-    const propsClose = iconBtn('close', 'Закрыть');
+    const propsClose = iconBtn('close', L('Закрыть', 'Close'));
     props.append(propsBody, propsClose);
 
     const statusBar = el('div', 'fm-status');
@@ -261,7 +261,7 @@ const FilesApp = (function () {
       st.anchor = null;
       st.loading = false;
       root.classList.remove('loading');
-      Win.setTitle(path === '/' ? 'Файлы — /' : 'Файлы — ' + baseName(path));
+      Win.setTitle(path === '/' ? L('Файлы — /', 'Files — /') : L('Файлы — ', 'Files — ') + baseName(path));
       renderCrumbs();
       renderList();
       renderProps();
@@ -441,16 +441,17 @@ const FilesApp = (function () {
     }
 
     function renderStatus(count) {
-      stCount.textContent = count + ' ' + plural(count, 'элемент', 'элемента', 'элементов');
+      stCount.textContent = count + ' ' + plural(count, 'элемент', 'элемента', 'элементов', 'item', 'items');
       const sel = selectedEntries();
       if (sel.length) {
         const total = sel.reduce(function (s, e) { return s + (e.is_dir ? 0 : (e.size || 0)); }, 0);
-        stSel.textContent = 'выбрано ' + sel.length + (total ? ' · ' + fmtSize(total) : '');
+        stSel.textContent = L('выбрано ', 'selected ') + sel.length + (total ? ' · ' + fmtSize(total) : '');
       } else stSel.textContent = '';
-      stClip.textContent = st.clip.length ? 'в буфере: ' + st.clip.length : '';
+      stClip.textContent = st.clip.length ? L('в буфере: ', 'in clipboard: ') + st.clip.length : '';
     }
 
-    function plural(n, a, b, c) {
+    function plural(n, a, b, c, en1, enN) {
+      if (I18N.en) return n === 1 ? en1 : enN;
       const m10 = n % 10, m100 = n % 100;
       if (m10 === 1 && m100 !== 11) return a;
       if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return b;
@@ -472,33 +473,33 @@ const FilesApp = (function () {
       if (!e) {
         if (sel.length > 1) {
           const total = sel.reduce(function (s, x) { return s + (x.is_dir ? 0 : (x.size || 0)); }, 0);
-          row('Выбрано', sel.length + ' ' + plural(sel.length, 'элемент', 'элемента', 'элементов'));
-          row('Размер', fmtSize(total));
+          row(L('Выбрано', 'Selected'), sel.length + ' ' + plural(sel.length, 'элемент', 'элемента', 'элементов', 'item', 'items'));
+          row(L('Размер', 'Size'), fmtSize(total));
         } else {
-          row('Папка', st.cwd);
-          row('Содержимое', st.entries.length + ' ' + plural(st.entries.length, 'элемент', 'элемента', 'элементов'));
+          row(L('Папка', 'Folder'), st.cwd);
+          row(L('Содержимое', 'Contents'), st.entries.length + ' ' + plural(st.entries.length, 'элемент', 'элемента', 'элементов', 'item', 'items'));
         }
         return;
       }
-      row('Имя', e.name);
-      row('Путь', e.path);
-      row('Тип', e.is_dir ? 'Папка' : (extOf(e.name) ? 'Файл .' + extOf(e.name) : 'Файл'));
-      row('Размер', e.is_dir ? '—' : fmtSize(e.size) + (e.size >= 1024 ? ' (' + e.size + ' Б)' : ''));
-      row('Владелец', e.owner || '—');
-      row('Права', e.mode || '—');
-      row('Изменено', fmtTime(e.modified) || '—');
+      row(L('Имя', 'Name'), e.name);
+      row(L('Путь', 'Path'), e.path);
+      row(L('Тип', 'Type'), e.is_dir ? L('Папка', 'Folder') : (extOf(e.name) ? L('Файл .', 'File .') + extOf(e.name) : L('Файл', 'File')));
+      row(L('Размер', 'Size'), e.is_dir ? '—' : fmtSize(e.size) + (e.size >= 1024 ? ' (' + e.size + L(' Б)', ' B)') : ''));
+      row(L('Владелец', 'Owner'), e.owner || '—');
+      row(L('Права', 'Mode'), e.mode || '—');
+      row(L('Изменено', 'Modified'), fmtTime(e.modified) || '—');
     }
 
     // --- действия ---
     async function newFolder() {
-      const name = await Win.prompt('Имя новой папки', 'Новая папка');
+      const name = await Win.prompt(L('Имя новой папки', 'New folder name'), L('Новая папка', 'New folder'));
       if (!name || !name.trim()) return;
       try { await BW.fs_mkdir(null, joinPath(st.cwd, name.trim())); await reload(); }
       catch (e) { Win.toast(String(e)); BW.sound('error'); }
     }
 
     async function newFile() {
-      const name = await Win.prompt('Имя нового файла', 'новый.adr');
+      const name = await Win.prompt(L('Имя нового файла', 'New file name'), L('новый.adr', 'untitled.adr'));
       if (!name || !name.trim()) return;
       const path = joinPath(st.cwd, name.trim());
       try { await BW.fs_write(null, path, ''); await reload(); selectPath(path); }
@@ -516,7 +517,7 @@ const FilesApp = (function () {
       const sel = selectedEntries();
       if (sel.length !== 1) return;
       const e = sel[0];
-      const name = await Win.prompt('Новое имя', e.name);
+      const name = await Win.prompt(L('Новое имя', 'New name'), e.name);
       if (!name || !name.trim() || name.trim() === e.name) return;
       try { await BW.fs_rename(null, e.path, joinPath(parentOf(e.path), name.trim())); await reload(); }
       catch (err) { Win.toast(String(err)); BW.sound('error'); }
@@ -525,7 +526,7 @@ const FilesApp = (function () {
     async function deleteSel() {
       const sel = selectedEntries();
       if (!sel.length) return;
-      const text = sel.length === 1 ? 'Удалить «' + sel[0].name + '»?' : 'Удалить ' + sel.length + ' ' + plural(sel.length, 'элемент', 'элемента', 'элементов') + '?';
+      const text = sel.length === 1 ? L('Удалить «' + sel[0].name + '»?', 'Delete "' + sel[0].name + '"?') : L('Удалить ', 'Delete ') + sel.length + ' ' + plural(sel.length, 'элемент', 'элемента', 'элементов', 'item', 'items') + '?';
       if (!(await Win.confirm(text))) return;
       for (const e of sel) {
         try { await BW.fs_delete(null, e.path); }
@@ -539,7 +540,7 @@ const FilesApp = (function () {
       if (!sel.length) return;
       st.clip = sel.map(function (e) { return e.path; });
       renderStatus(list.children.length);
-      Win.toast('Скопировано: ' + st.clip.length);
+      Win.toast(L('Скопировано: ', 'Copied: ') + st.clip.length);
     }
 
     async function pasteClip() {
@@ -549,7 +550,7 @@ const FilesApp = (function () {
         if (dst === src || st.entries.some(function (e) { return e.path === dst; })) {
           const nm = baseName(src);
           const i = nm.lastIndexOf('.');
-          dst = joinPath(st.cwd, i > 0 ? nm.slice(0, i) + ' (копия)' + nm.slice(i) : nm + ' (копия)');
+          dst = joinPath(st.cwd, i > 0 ? nm.slice(0, i) + L(' (копия)', ' (copy)') + nm.slice(i) : nm + L(' (копия)', ' (copy)'));
         }
         try { await BW.fs_copy(null, src, dst); }
         catch (err) { Win.toast(String(err)); BW.sound('error'); }
@@ -580,38 +581,38 @@ const FilesApp = (function () {
       const sel = selectedEntries();
       const one = sel.length === 1 ? sel[0] : null;
       const items = [];
-      if (one) items.push({ label: one.is_dir ? 'Открыть' : 'Открыть в редакторе', icon: one.is_dir ? 'folder-open' : 'editor', action: function () { openEntry(one); } });
-      if (one && one.is_dir) items.push({ label: 'Терминал здесь', icon: 'terminal', action: function () { BW.open_app('terminal', 'cd ' + one.path).catch(function () {}); } });
+      if (one) items.push({ label: one.is_dir ? L('Открыть', 'Open') : L('Открыть в редакторе', 'Open in editor'), icon: one.is_dir ? 'folder-open' : 'editor', action: function () { openEntry(one); } });
+      if (one && one.is_dir) items.push({ label: L('Терминал здесь', 'Terminal here'), icon: 'terminal', action: function () { BW.open_app('terminal', 'cd ' + one.path).catch(function () {}); } });
       if (items.length) items.push(null);
-      items.push({ label: 'Копировать', icon: 'copy', action: copySel });
-      if (one) items.push({ label: 'Переименовать', icon: 'rename', action: renameSel });
-      items.push({ label: 'Удалить', icon: 'trash', action: deleteSel });
+      items.push({ label: L('Копировать', 'Copy'), icon: 'copy', action: copySel });
+      if (one) items.push({ label: L('Переименовать', 'Rename'), icon: 'rename', action: renameSel });
+      items.push({ label: L('Удалить', 'Delete'), icon: 'trash', action: deleteSel });
       items.push(null);
-      items.push({ label: 'Свойства', icon: 'info', action: function () { if (!st.props) toggleProps(); else renderProps(); } });
+      items.push({ label: L('Свойства', 'Properties'), icon: 'info', action: function () { if (!st.props) toggleProps(); else renderProps(); } });
       Win.menu(items, x, y);
     }
 
     function bgMenu(x, y) {
       Win.menu([
-        { label: 'Новая папка', icon: 'folder', action: newFolder },
-        { label: 'Новый файл', icon: 'file', action: newFile },
+        { label: L('Новая папка', 'New folder'), icon: 'folder', action: newFolder },
+        { label: L('Новый файл', 'New file'), icon: 'file', action: newFile },
         null,
-        { label: 'Вставить', icon: 'paste', action: pasteClip },
-        { label: 'Обновить', icon: 'reload', action: reload },
+        { label: L('Вставить', 'Paste'), icon: 'paste', action: pasteClip },
+        { label: L('Обновить', 'Refresh'), icon: 'reload', action: reload },
         null,
-        { label: 'Терминал здесь', icon: 'terminal', action: openTerminalHere },
-        { label: st.view === 'list' ? 'Плитка' : 'Список', icon: st.view === 'list' ? 'grid' : 'layout', action: toggleView },
-        { label: st.showHidden ? 'Скрыть скрытые' : 'Показать скрытые', icon: st.showHidden ? 'eye-off' : 'eye', action: toggleHidden },
-        { label: 'Свойства папки', icon: 'info', action: function () { st.selected.clear(); updateSelectionClasses(); if (!st.props) toggleProps(); } }
+        { label: L('Терминал здесь', 'Terminal here'), icon: 'terminal', action: openTerminalHere },
+        { label: st.view === 'list' ? L('Плитка', 'Tiles') : L('Список', 'List'), icon: st.view === 'list' ? 'grid' : 'layout', action: toggleView },
+        { label: st.showHidden ? L('Скрыть скрытые', 'Hide hidden files') : L('Показать скрытые', 'Show hidden files'), icon: st.showHidden ? 'eye-off' : 'eye', action: toggleHidden },
+        { label: L('Свойства папки', 'Folder properties'), icon: 'info', action: function () { st.selected.clear(); updateSelectionClasses(); if (!st.props) toggleProps(); } }
       ], x, y);
     }
 
     function treeMenu(node, x, y) {
       Win.menu([
-        { label: 'Открыть', icon: 'folder-open', action: function () { go(node.path); } },
-        { label: node.expanded ? 'Свернуть' : 'Развернуть', icon: node.expanded ? 'chevron-down' : 'chevron-right', action: function () { toggleNode(node); } },
+        { label: L('Открыть', 'Open'), icon: 'folder-open', action: function () { go(node.path); } },
+        { label: node.expanded ? L('Свернуть', 'Collapse') : L('Развернуть', 'Expand'), icon: node.expanded ? 'chevron-down' : 'chevron-right', action: function () { toggleNode(node); } },
         null,
-        { label: 'Терминал здесь', icon: 'terminal', action: function () { BW.open_app('terminal', 'cd ' + node.path).catch(function () {}); } }
+        { label: L('Терминал здесь', 'Terminal here'), icon: 'terminal', action: function () { BW.open_app('terminal', 'cd ' + node.path).catch(function () {}); } }
       ], x, y);
     }
 
@@ -713,6 +714,6 @@ const FilesApp = (function () {
 })();
 
 Apps.register('files', {
-  title: 'Файлы', icon: 'files', minWidth: 640, minHeight: 400,
+  title: L('Файлы', 'Files'), icon: 'files', minWidth: 640, minHeight: 400,
   mount: function (body, arg) { FilesApp.mount(body, arg); }
 });

@@ -1,12 +1,15 @@
 {
   "name": "Пропавший журнал прототипов",
+  "name_en": "Stolen Prototype Logs",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "prototype_store",
   "file": "bench-access.log",
   "story": "Стендом для прототипов пользовались уже после того, как инвентарь опечатал лабораторию.",
+  "story_en": "The prototype bench was used after the inventory team sealed the laboratory.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 200,
   "id": "stolen_prototype_logs",
   "number": 43,
@@ -22,8 +25,10 @@
       "service": "prototype_store_gate",
       "port": 7126,
       "os": "Пропавший журнал прототипов OS 1.0",
+      "os_en": "Stolen Prototype Logs OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Стендом для прототипов пользовались уже после того, как инвентарь опечатал лабораторию.\nВладелец записи: stolen_prototype_logs.\nНомер дела: BW-043.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The prototype bench was used after the inventory team sealed the laboratory.\nRecord owner: stolen_prototype_logs.\nCase reference: BW-043.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_stolen_prototype_logs_1"
     },
@@ -36,8 +41,10 @@
       "service": "prototype_store",
       "port": 7127,
       "os": "Пропавший журнал прототипов OS 1.0",
+      "os_en": "Stolen Prototype Logs OS 1.0",
       "file": "/srv/records/bench-access.log",
       "text": "Стендом для прототипов пользовались уже после того, как инвентарь опечатал лабораторию.\nВладелец записи: stolen_prototype_logs.\nНомер дела: BW-043.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The prototype bench was used after the inventory team sealed the laboratory.\nRecord owner: stolen_prototype_logs.\nCase reference: BW-043.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_stolen_prototype_logs_2"
     }

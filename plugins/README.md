@@ -1,5 +1,7 @@
 # Плагины сообщества Blackwire
 
+[English version](README.en.md)
+
 100 независимых плагинов на Adder для Blackwire, SDK API 1.
 
 ## Установка

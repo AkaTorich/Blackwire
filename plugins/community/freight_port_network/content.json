@@ -1,12 +1,15 @@
 {
   "name": "Сеть грузового порта",
+  "name_en": "Freight Port Network",
   "family": "network",
   "org_kind": "corporation",
   "kind": "database",
   "service": "cargo_registry",
   "file": "cargo-manifest.csv",
   "story": "Докерские записи расходятся с описью контейнеров из диспетчерского архива.",
+  "story_en": "Dock records disagree with the container inventory held in the dispatch archive.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 156,
   "id": "freight_port_network",
   "number": 22,
@@ -22,8 +25,10 @@
       "service": "cargo_registry_gate",
       "port": 7063,
       "os": "Сеть грузового порта OS 1.0",
+      "os_en": "Freight Port Network OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Докерские записи расходятся с описью контейнеров из диспетчерского архива.\nВладелец записи: freight_port_network.\nНомер дела: BW-022.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Dock records disagree with the container inventory held in the dispatch archive.\nRecord owner: freight_port_network.\nCase reference: BW-022.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_freight_port_network_1"
     },
@@ -36,8 +41,10 @@
       "service": "cargo_registry_ops",
       "port": 7064,
       "os": "Сеть грузового порта OS 1.0",
+      "os_en": "Freight Port Network OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "Докерские записи расходятся с описью контейнеров из диспетчерского архива.\nВладелец записи: freight_port_network.\nНомер дела: BW-022.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Dock records disagree with the container inventory held in the dispatch archive.\nRecord owner: freight_port_network.\nCase reference: BW-022.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_freight_port_network_2"
     },
@@ -50,8 +57,10 @@
       "service": "cargo_registry",
       "port": 7065,
       "os": "Сеть грузового порта OS 1.0",
+      "os_en": "Freight Port Network OS 1.0",
       "file": "/srv/records/cargo-manifest.csv",
       "text": "Докерские записи расходятся с описью контейнеров из диспетчерского архива.\nВладелец записи: freight_port_network.\nНомер дела: BW-022.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Dock records disagree with the container inventory held in the dispatch archive.\nRecord owner: freight_port_network.\nCase reference: BW-022.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_freight_port_network_3"
     }

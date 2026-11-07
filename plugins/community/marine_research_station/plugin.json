@@ -1,6 +1,7 @@
 {
   "id": "marine_research_station",
   "name": "Морская исследовательская станция",
+  "name_en": "Marine Research Station",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

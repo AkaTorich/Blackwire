@@ -1,6 +1,7 @@
 {
   "id": "access_lab",
   "name": "Access Lab",
+  "name_en": "Access Lab",
   "version": "1.0.0",
   "api": 1,
   "entry": "main.adr",

@@ -1,12 +1,15 @@
 {
   "name": "Испорченная калибровка датчиков",
+  "name_en": "Corrupted Sensor Calibration",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "sensor_archive",
   "file": "calibration-chain.csv",
   "story": "Показания правдоподобны, но подписи калибровки не сходятся между собой.",
+  "story_en": "Sensor measurements are plausible but their calibration signatures do not agree.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 255,
   "id": "corrupted_sensor_calibration",
   "number": 54,
@@ -22,8 +25,10 @@
       "service": "sensor_archive_gate",
       "port": 7159,
       "os": "Испорченная калибровка датчиков OS 1.0",
+      "os_en": "Corrupted Sensor Calibration OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Показания правдоподобны, но подписи калибровки не сходятся между собой.\nВладелец записи: corrupted_sensor_calibration.\nНомер дела: BW-054.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Sensor measurements are plausible but their calibration signatures do not agree.\nRecord owner: corrupted_sensor_calibration.\nCase reference: BW-054.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_corrupted_sensor_calibration_1"
     },
@@ -36,8 +41,10 @@
       "service": "sensor_archive",
       "port": 7160,
       "os": "Испорченная калибровка датчиков OS 1.0",
+      "os_en": "Corrupted Sensor Calibration OS 1.0",
       "file": "/srv/records/calibration-chain.csv",
       "text": "Показания правдоподобны, но подписи калибровки не сходятся между собой.\nВладелец записи: corrupted_sensor_calibration.\nНомер дела: BW-054.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "Sensor measurements are plausible but their calibration signatures do not agree.\nRecord owner: corrupted_sensor_calibration.\nCase reference: BW-054.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_corrupted_sensor_calibration_2"
     }

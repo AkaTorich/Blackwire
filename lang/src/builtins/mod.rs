@@ -53,7 +53,7 @@ pub fn module_attr(interp: &Interpreter, module: &str, attr: &str, line: u32) ->
         "json" => json::attr(attr),
         _ => None,
     };
-    found.ok_or_else(|| rt(line, format!("модуль {} не имеет атрибута '{}'", module, attr)))
+    found.ok_or_else(|| rt(line, trf!("модуль {} не имеет атрибута '{}'", "module {} has no attribute '{}'", module, attr)))
 }
 
 /// Есть ли у строки/списка/словаря метод с таким именем.
@@ -69,10 +69,10 @@ pub fn has_method(obj: &Value, name: &str) -> bool {
 /// «у списка», «у строки», «у словаря» — для текста ошибок.
 pub fn type_genitive(obj: &Value) -> &'static str {
     match obj {
-        Value::Str(_) => "строки",
-        Value::List(_) => "списка",
-        Value::Dict(_) => "словаря",
-        _ => "значения",
+        Value::Str(_) => tr!("строки", "str"),
+        Value::List(_) => tr!("списка", "list"),
+        Value::Dict(_) => tr!("словаря", "dict"),
+        _ => tr!("значения", "value"),
     }
 }
 
@@ -89,11 +89,11 @@ impl Call {
             let expected = if min == max {
                 format!("{}", min)
             } else {
-                format!("от {} до {}", min, max)
+                trf!("от {} до {}", "{} to {}", min, max)
             };
             return Err(rt(
                 self.line,
-                format!("функция {}() принимает {} аргументов, передано {}", fname, expected, n),
+                trf!("функция {}() принимает {} аргументов, передано {}", "{}() takes {} arguments, {} given", fname, expected, n),
             ));
         }
         Ok(())
@@ -103,7 +103,7 @@ impl Call {
     pub fn allow_kwargs(&self, fname: &str, allowed: &[&str]) -> R<()> {
         for (k, _) in &self.kwargs {
             if !allowed.contains(&&**k) {
-                return Err(rt(self.line, format!("функция {}() не имеет параметра '{}'", fname, k)));
+                return Err(rt(self.line, trf!("функция {}() не имеет параметра '{}'", "{}() has no parameter '{}'", fname, k)));
             }
         }
         Ok(())
@@ -132,35 +132,35 @@ pub fn arg_int(v: &Value, line: u32) -> R<i64> {
         Value::Int(n) => Ok(*n),
         Value::Bool(b) => Ok(*b as i64),
         Value::Float(f) if f.fract() == 0.0 => Ok(*f as i64),
-        other => Err(rt(line, format!("ожидалось целое число, получено {}", other.type_name()))),
+        other => Err(rt(line, trf!("ожидалось целое число, получено {}", "expected an integer, got {}", other.type_name()))),
     }
 }
 
 pub fn arg_float(v: &Value, line: u32) -> R<f64> {
     match v.as_number() {
         Some(n) => Ok(n.as_f64()),
-        None => Err(rt(line, format!("ожидалось число, получено {}", v.type_name()))),
+        None => Err(rt(line, trf!("ожидалось число, получено {}", "expected a number, got {}", v.type_name()))),
     }
 }
 
 pub fn arg_str(v: &Value, line: u32) -> R<Rc<str>> {
     match v {
         Value::Str(s) => Ok(s.clone()),
-        other => Err(rt(line, format!("ожидалась строка, получено {}", other.type_name()))),
+        other => Err(rt(line, trf!("ожидалась строка, получено {}", "expected a string, got {}", other.type_name()))),
     }
 }
 
 pub fn arg_list(v: &Value, line: u32) -> R<crate::value::ListRef> {
     match v {
         Value::List(l) => Ok(l.clone()),
-        other => Err(rt(line, format!("ожидался список, получено {}", other.type_name()))),
+        other => Err(rt(line, trf!("ожидался список, получено {}", "expected a list, got {}", other.type_name()))),
     }
 }
 
 pub fn arg_dict(v: &Value, line: u32) -> R<crate::value::DictRef> {
     match v {
         Value::Dict(d) => Ok(d.clone()),
-        other => Err(rt(line, format!("ожидался словарь, получено {}", other.type_name()))),
+        other => Err(rt(line, trf!("ожидался словарь, получено {}", "expected a dict, got {}", other.type_name()))),
     }
 }
 
@@ -195,7 +195,7 @@ pub fn sort_values(
         }
     });
     if let Some((a, b)) = failed {
-        return Err(rt(line, format!("нельзя сравнить {} и {}", a, b)));
+        return Err(rt(line, trf!("нельзя сравнить {} и {}", "cannot compare {} and {}", a, b)));
     }
     if reverse {
         order.reverse();

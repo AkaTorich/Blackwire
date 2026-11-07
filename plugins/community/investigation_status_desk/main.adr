@@ -1,5 +1,16 @@
 C = json.loads(plugin.asset("content.json"))
 
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
+# Поле на языке игры: name / story, английское — из "<поле>_en".
+def F(item, key):
+    if plugin.lang() == "en" and item.get(key + "_en", null) != null:
+        return item[key + "_en"]
+    return item[key]
+
 def report():
     world = plugin.world("overview")
     player = world["player"]
@@ -23,7 +34,7 @@ def report():
         elif mode == "routes" and visible:
             rows.append([machine["hostname"], machine["ip"], machine["router"], machine["lan_ip"]])
         elif mode == "hardware" and visible:
-            rows.append([machine["hostname"], str(machine["ram_mb"]) + " МБ ОЗУ", str(machine["disk_mb"]) + " МБ диска"])
+            rows.append([machine["hostname"], str(machine["ram_mb"]) + tr(" МБ ОЗУ", " MB RAM"), str(machine["disk_mb"]) + tr(" МБ диска", " MB disk")])
         elif mode == "logs" and (machine["id"] in owned or machine["id"] == 0):
             for entry in machine["logs"][-4:]:
                 rows.append([machine["hostname"], json.dumps(entry)])
@@ -38,8 +49,8 @@ def report():
         for key, quest in world["plugins"]["quests"].items():
             rows.append([quest["title"], quest["done"], quest["reward"]])
     elif mode == "budget":
-        rows.append(["Наличные", player["money"]])
-        rows.append(["Финансы", json.dumps(world["finance"])])
+        rows.append([tr("Наличные", "Cash"), player["money"]])
+        rows.append([tr("Финансы", "Finance"), json.dumps(world["finance"])])
         for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
             rows.append([key, item["price"]])
     elif mode == "investigation":
@@ -54,13 +65,13 @@ def report():
             rows.append([str(note)])
     elif mode == "upgrades":
         for item in player["upgrades"]:
-            rows.append(["В наличии", item])
+            rows.append([tr("В наличии", "Owned"), item])
         for key, item in world["plugins"]["catalogs"].get("shop", {}).items():
-            rows.append(["Магазин", key, item["name"], item["price"]])
+            rows.append([tr("Магазин", "Shop"), key, item["name"], item["price"]])
     return rows
 
 def panel(rows):
-    plugin.window("guide", {"title": C["name"], "text": C["story"] + "\nОбновить — перечитывает мир. Выгрузить — пишет отчёт в домашний каталог внутри игры.", "rows": rows[:100], "buttons": [{"id": "refresh", "label": "Обновить"}, {"id": "export", "label": "Выгрузить отчёт"}]})
+    plugin.window("guide", {"title": F(C, "name"), "text": F(C, "story") + tr("\nОбновить — перечитывает мир. Выгрузить — пишет отчёт в домашний каталог внутри игры.", "\nRefresh re-reads the world. Export writes a report to your home folder inside the game."), "rows": rows[:100], "buttons": [{"id": "refresh", "label": tr("Обновить", "Refresh")}, {"id": "export", "label": tr("Выгрузить отчёт", "Export report")}]})
 
 def load(event):
     panel([])
@@ -68,24 +79,24 @@ def load(event):
 def refresh(event):
     rows = report()
     panel(rows)
-    print(C["name"], "|", len(rows), "строк")
+    print(F(C, "name"), "|", len(rows), tr("строк", "rows"))
     for row in rows[:20]:
         print(json.dumps(row))
     if len(rows) == 0:
-        print("Записей пока нет. Разведай узлы или продвинься по сюжету и обнови.")
+        print(tr("Записей пока нет. Разведай узлы или продвинься по сюжету и обнови.", "No records yet. Scout some hosts or progress the story, then refresh."))
     return rows
 
 def export_report(event):
     rows = report()
     world = plugin.world("overview")
     path = "/home/" + world["player"]["handle"] + "/reports/" + C["id"] + ".txt"
-    text = C["name"] + "\n" + C["story"] + "\n"
+    text = F(C, "name") + "\n" + F(C, "story") + "\n"
     for row in rows:
         text = text + json.dumps(row) + "\n"
     plugin.write(0, path, text)
     plugin.set("last_export", path)
     panel(rows)
-    print("Отчёт в игре:", path)
+    print(tr("Отчёт в игре:", "Report in game:"), path)
 
 def open_window(event):
     panel(report())

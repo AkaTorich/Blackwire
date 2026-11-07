@@ -1,6 +1,7 @@
 {
   "id": "radio_interference_burst",
   "name": "Радиопомеха",
+  "name_en": "Radio Interference Burst",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -25,18 +25,18 @@ const BOT_PER_NODE_MIN: f64 = 1.0;
 /// Поставить кейлоггер на захваченную машину.
 pub fn plant_keylog(world: &mut World, id: MachineId) -> Result<(), String> {
     if !world.has_machine(id) {
-        return Err("нет такой машины".to_string());
+        return Err(tr!("нет такой машины", "no such machine").to_string());
     }
     if !world.player.owned.contains(&id) {
-        return Err("нужен доступ к машине — сначала взломай её".to_string());
+        return Err(tr!("нужен доступ к машине — сначала взломай её", "you need access to the machine — hack it first").to_string());
     }
     if world.keyloggers.iter().any(|k| k.machine == id) {
-        return Err("перехватчик уже стоит на этой машине".to_string());
+        return Err(tr!("перехватчик уже стоит на этой машине", "a keylogger is already installed on this machine").to_string());
     }
     let now = world.now();
     let _ = world.machine_mut(id).fs.write_text("/tmp/.klog", "input capture running\n", "root");
     world.keyloggers.push(Keylogger { machine: id, planted: now, captured: None });
-    world.log(id, LogKind::Warn, "установлен перехватчик ввода");
+    world.log(id, LogKind::Warn, tr!("установлен перехватчик ввода", "input interceptor installed"));
     Ok(())
 }
 
@@ -61,7 +61,7 @@ pub fn tick_keyloggers(world: &mut World, _dt: u64) {
         };
         if let Some((user, pw)) = cred {
             let host = world.machine(mid).hostname.clone();
-            let c = FoundCred { machine: mid, user, password: pw, note: format!("перехват ({})", host) };
+            let c = FoundCred { machine: mid, user, password: pw, note: trf!("перехват ({})", "intercepted ({})", host) };
             world.add_found_cred(c.clone());
             world.keyloggers[i].captured = Some(c);
         }
@@ -71,17 +71,17 @@ pub fn tick_keyloggers(world: &mut World, _dt: u64) {
 /// Захватить машину в ботнет.
 pub fn botnet_add(world: &mut World, id: MachineId) -> Result<(), String> {
     if !world.has_machine(id) {
-        return Err("нет такой машины".to_string());
+        return Err(tr!("нет такой машины", "no such machine").to_string());
     }
     if !world.player.owned.contains(&id) {
-        return Err("нужен доступ к машине — сначала взломай её".to_string());
+        return Err(tr!("нужен доступ к машине — сначала взломай её", "you need access to the machine — hack it first").to_string());
     }
     if world.botnet.contains(&id) {
-        return Err("машина уже в сети".to_string());
+        return Err(tr!("машина уже в сети", "machine is already in the botnet").to_string());
     }
     let _ = world.machine_mut(id).fs.write_text("/tmp/.bot", "node enlisted\n", "root");
     world.botnet.push(id);
-    world.log(id, LogKind::Warn, "узел подключён к сети");
+    world.log(id, LogKind::Warn, tr!("узел подключён к сети", "node joined the network"));
     Ok(())
 }
 

@@ -31,9 +31,11 @@ def version():
 
 
 def common_files():
-    files = {"README.md": ROOT / "sdk/README.md", "Blackwire.chm": ROOT / "Blackwire.chm"}
+    files = {"README.md": ROOT / "sdk/README.md", "README.en.md": ROOT / "sdk/README.en.md", "Blackwire.chm": ROOT / "Blackwire.chm"}
     for name in DOCS:
         files["docs/" + name] = ROOT / "docs" / name
+        if (ROOT / "docs/en" / name).is_file():
+            files["docs/en/" + name] = ROOT / "docs/en" / name
     for folder in ("examples", "schema"):
         for source in sorted((ROOT / "sdk" / folder).rglob("*")):
             if source.is_file():

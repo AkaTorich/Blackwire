@@ -41,7 +41,10 @@ pub fn build_player(
     fs.add_user_home(handle);
 
     // Домашние файлы.
-    let readme = pd::readme(handle) + "\nСвои эксплоиты: probe адрес → research адрес id → exploit new ~/scripts/my_exploit.adr адрес id.\nПодсказки: research -h 3 адрес id. Готовые эксплоиты: market, затем market buy exp_<механика>.\n";
+    let readme = pd::readme(handle) + tr!(
+        "\nСвои эксплоиты: probe адрес → research адрес id → exploit new ~/scripts/my_exploit.adr адрес id.\nПодсказки: research -h 3 адрес id. Готовые эксплоиты: market, затем market buy exp_<механика>.\n",
+        "\nYour own exploits: probe address → research address id → exploit new ~/scripts/my_exploit.adr address id.\nHints: research -h 3 address id. Ready-made exploits: market, then market buy exp_<mechanic>.\n"
+    );
     let _ = fs.write_text(&format!("{}/readme.txt", home), &readme, handle);
     let _ = fs.mkdir_all(&format!("{}/scripts", home), handle);
     let _ = fs.write_text(&format!("{}/scripts/hello.adr", home), pd::script_hello(), handle);
@@ -103,8 +106,8 @@ pub fn build_player(
         y,
     };
 
-    m.log(epoch - DAY, LogKind::Login, format!("вход {} с 127.0.0.1", handle));
-    m.log(epoch - 2 * 3600, LogKind::Service, "система загружена".to_string());
+    m.log(epoch - DAY, LogKind::Login, trf!("вход {} с 127.0.0.1", "login {} from 127.0.0.1", handle));
+    m.log(epoch - 2 * 3600, LogKind::Service, tr!("система загружена", "system booted").to_string());
     m
 }
 
@@ -161,6 +164,6 @@ pub fn build_router(
         x,
         y,
     };
-    m.log(epoch - 5 * DAY, LogKind::Service, "маршрутизатор перезагружен".to_string());
+    m.log(epoch - 5 * DAY, LogKind::Service, tr!("маршрутизатор перезагружен", "router rebooted").to_string());
     m
 }

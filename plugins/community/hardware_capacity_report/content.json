@@ -1,11 +1,14 @@
 {
   "name": "Отчёт по мощности железа",
+  "name_en": "Hardware Capacity Report",
   "family": "utility",
   "mode": "hardware",
   "story": "Сравнивает память и диск на известных машинах.",
+  "story_en": "Compare memory and storage on discovered machines.",
   "id": "hardware_capacity_report",
   "number": 69,
   "version": "0.1.1",
   "api": 1,
-  "objective": "Сравнить железо разведанных машин."
+  "objective": "Сравнить железо разведанных машин.",
+  "objective_en": "Compare hardware of scouted machines."
 }

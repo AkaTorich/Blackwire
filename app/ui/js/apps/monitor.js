@@ -14,14 +14,14 @@ const MonitorApp = (function () {
 
   function fmtMb(mb) {
     if (mb == null) return '—';
-    if (mb >= 1024) return (mb / 1024).toFixed(2) + ' ГБ';
-    return Math.round(mb) + ' МБ';
+    if (mb >= 1024) return (mb / 1024).toFixed(2) + L(' ГБ', ' GB');
+    return Math.round(mb) + L(' МБ', ' MB');
   }
 
   function fmtKbs(v) {
     if (v == null) return '—';
-    if (v >= 1024) return (v / 1024).toFixed(1) + ' МБ/с';
-    return (v < 10 ? v.toFixed(1) : Math.round(v)) + ' кБ/с';
+    if (v >= 1024) return (v / 1024).toFixed(1) + L(' МБ/с', ' MB/s');
+    return (v < 10 ? v.toFixed(1) : Math.round(v)) + L(' кБ/с', ' kB/s');
   }
 
   function two(n) { return n < 10 ? '0' + n : String(n); }
@@ -29,7 +29,7 @@ const MonitorApp = (function () {
   function fmtUptime(sec) {
     sec = Math.max(0, Math.floor(sec || 0));
     const d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
-    return (d ? d + ' д ' : '') + two(h) + ':' + two(m) + ':' + two(s);
+    return (d ? d + L(' д ', 'd ') : '') + two(h) + ':' + two(m) + ':' + two(s);
   }
 
   // Цвета темы для canvas
@@ -184,17 +184,17 @@ const MonitorApp = (function () {
       cards.appendChild(c);
       return { el: c, value: v, sub: s, canvas: cv };
     }
-    const cCpu = card('Процессор', 'cpu');
-    const cMem = card('Память', 'mem');
-    const cNet = card('Сеть', 'net');
+    const cCpu = card(L('Процессор', 'CPU'), 'cpu');
+    const cMem = card(L('Память', 'Memory'), 'mem');
+    const cNet = card(L('Сеть', 'Network'), 'net');
     const legend = el('span', 'mon-legend');
-    legend.innerHTML = '<i class="in"></i>вход <i class="out"></i>выход';
+    legend.innerHTML = '<i class="in"></i>' + L('вход', 'in') + ' <i class="out"></i>' + L('выход', 'out');
     cNet.el.querySelector('.mon-card-head').appendChild(legend);
 
     const lower = el('div', 'mon-lower');
     const machine = el('div', 'mon-machine');
     const mTitle = el('div', 'mon-machine-title');
-    mTitle.innerHTML = Icons.get('cpu', 16) + '<span>Машина</span>';
+    mTitle.innerHTML = Icons.get('cpu', 16) + '<span>' + L('Машина', 'Machine') + '</span>';
     const mBody = el('div', 'mon-machine-body');
     machine.append(mTitle, mBody);
     function mrow(k) {
@@ -205,27 +205,27 @@ const MonitorApp = (function () {
       mBody.appendChild(r);
       return vv;
     }
-    const mHost = mrow('Имя');
+    const mHost = mrow(L('Имя', 'Name'));
     const mIp = mrow('IP');
-    const mUp = mrow('Работает');
-    const mMem = mrow('Память');
-    const mProcs = mrow('Процессов');
-    const mLoad = mrow('Нагрузка');
+    const mUp = mrow(L('Работает', 'Uptime'));
+    const mMem = mrow(L('Память', 'Memory'));
+    const mProcs = mrow(L('Процессов', 'Processes'));
+    const mLoad = mrow(L('Нагрузка', 'Load'));
 
     const procs = el('div', 'mon-procs');
     const pHead = el('div', 'mon-procs-head');
-    const pTitle = el('span', 'mon-procs-title', 'Процессы');
+    const pTitle = el('span', 'mon-procs-title', L('Процессы', 'Processes'));
     const pCount = el('span', 'mon-procs-count', '');
     const btnKill = el('button', 'mon-kill');
     btnKill.type = 'button';
-    btnKill.innerHTML = Icons.get('stop', 14) + '<span>Снять</span>';
+    btnKill.innerHTML = Icons.get('stop', 14) + '<span>' + L('Снять', 'Kill') + '</span>';
     btnKill.disabled = true;
     pHead.append(pTitle, pCount, btnKill);
     const tableWrap = el('div', 'mon-table-wrap');
     const table = el('table', 'mon-table');
     const thead = el('thead');
     const trh = el('tr');
-    const cols = [['pid', 'PID'], ['name', 'Имя'], ['user', 'Пользователь'], ['cpu', 'CPU %'], ['mem', 'Память']];
+    const cols = [['pid', 'PID'], ['name', L('Имя', 'Name')], ['user', L('Пользователь', 'User')], ['cpu', 'CPU %'], ['mem', L('Память', 'Memory')]];
     for (const c of cols) {
       const th = el('th', 'col-' + c[0], c[1]);
       th.dataset.key = c[0];
@@ -271,8 +271,8 @@ const MonitorApp = (function () {
       cCpu.value.textContent = Math.round(s.cpu) + ' %';
       cCpu.sub.textContent = '';
       cMem.value.textContent = fmtMb(s.mem_used);
-      cMem.value.title = Math.round(s.mem_used) + ' МБ';
-      cMem.sub.textContent = 'из ' + fmtMb(s.mem_total);
+      cMem.value.title = Math.round(s.mem_used) + L(' МБ', ' MB');
+      cMem.sub.textContent = L('из ', 'of ') + fmtMb(s.mem_total);
       cNet.value.textContent = fmtKbs(s.net_in);
       cNet.sub.textContent = '↑ ' + fmtKbs(s.net_out);
       drawChart(cCpu.canvas, [{ data: st.cpu.data, color: c.accent }], 100, c, function (v) { return Math.round(v) + '%'; });
@@ -331,7 +331,7 @@ const MonitorApp = (function () {
           st.selected = p.pid;
           for (const row of tbody.children) row.classList.toggle('sel', Number(row.dataset.pid) === st.selected);
           btnKill.disabled = false;
-          Win.menu([{ label: 'Снять процесс ' + p.pid, icon: 'stop', action: killSelected }], e.clientX, e.clientY);
+          Win.menu([{ label: L('Снять процесс ', 'Kill process ') + p.pid, icon: 'stop', action: killSelected }], e.clientX, e.clientY);
         });
         frag.appendChild(tr);
       }
@@ -344,10 +344,10 @@ const MonitorApp = (function () {
       if (st.selected == null) return;
       const p = (st.status.procs || []).find(function (x) { return x.pid === st.selected; });
       const name = p ? p.name + ' (' + p.pid + ')' : String(st.selected);
-      if (!(await Win.confirm('Снять процесс ' + name + '?'))) return;
+      if (!(await Win.confirm(L('Снять процесс ', 'Kill process ') + name + '?'))) return;
       try {
         await BW.sys_kill(st.selected);
-        Win.toast('Процесс снят: ' + name);
+        Win.toast(L('Процесс снят: ', 'Process killed: ') + name);
         st.selected = null;
         poll();
       } catch (e) {
@@ -389,6 +389,6 @@ const MonitorApp = (function () {
 })();
 
 Apps.register('monitor', {
-  title: 'Монитор', icon: 'monitor', minWidth: 620, minHeight: 420,
+  title: L('Монитор', 'System monitor'), icon: 'monitor', minWidth: 620, minHeight: 420,
   mount: function (body, arg) { MonitorApp.mount(body, arg); }
 });

@@ -45,7 +45,7 @@ pub fn apply_vulnerability(world: &mut World, session: &mut Session, v: Option<V
     if !world.player.owned.contains(&mid) {
         world.player.owned.push(mid);
     }
-    world.log(mid, LogKind::Warn, &format!("повышение прав до root (было: {})", was));
+    world.log(mid, LogKind::Warn, &trf!("повышение прав до root (было: {})", "privilege escalation to root (was: {})", was));
     if let Some(vuln) = &v {
         world.plugin_events.push(("on_hack".into(), serde_json::json!({
             "target": mid, "target_host": host, "vuln": vuln,

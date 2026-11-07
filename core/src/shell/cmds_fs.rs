@@ -92,7 +92,7 @@ pub fn cd(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let user = ctx.user();
     match ctx.fs().stat(&target) {
         Err(e) => CmdOutput::err(format!("cd: {}", e)),
-        Ok(st) if !st.is_dir => CmdOutput::err(format!("cd: не каталог: {}", target)),
+        Ok(st) if !st.is_dir => CmdOutput::err(trf!("cd: не каталог: {}", "cd: not a directory: {}", target)),
         Ok(_) => {
             // право входа: список каталога доступен или хотя бы проходим
             if let Err(e) = ctx.fs().list(&target, &user) {
@@ -153,7 +153,7 @@ pub fn cat(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn touch(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.is_empty() {
-        return CmdOutput::err("touch: укажите файл");
+        return CmdOutput::err(tr!("touch: укажите файл", "touch: specify a file"));
     }
     let user = ctx.user();
     let mut out = CmdOutput::ok();
@@ -169,7 +169,7 @@ pub fn touch(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn mkdir(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.is_empty() {
-        return CmdOutput::err("mkdir: укажите имя папки");
+        return CmdOutput::err(tr!("mkdir: укажите имя папки", "mkdir: specify a directory name"));
     }
     let parents = a.has("p");
     let user = ctx.user();
@@ -177,7 +177,7 @@ pub fn mkdir(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     for d in &a.pos {
         let path = ctx.path(d);
         if let Err(e) = ctx.fs_mut().mkdir(&path, &user, parents) {
-            out.push_err(format!("mkdir: не удалось создать «{}»: {}", d, e));
+            out.push_err(trf!("mkdir: не удалось создать «{}»: {}", "mkdir: cannot create '{}': {}", d, e));
         }
     }
     out
@@ -186,7 +186,7 @@ pub fn mkdir(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn rm(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.is_empty() {
-        return CmdOutput::err("rm: укажите, что удалить");
+        return CmdOutput::err(tr!("rm: укажите, что удалить", "rm: specify what to remove"));
     }
     let recursive = a.has("r") || a.has("R");
     let force = a.has("f");
@@ -195,7 +195,7 @@ pub fn rm(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     for p in &a.pos {
         let path = ctx.path(p);
         match ctx.fs_mut().remove(&path, &user, recursive) {
-            Ok(()) => ctx.log(LogKind::FileChange, &format!("{} удалил {}", user, path)),
+            Ok(()) => ctx.log(LogKind::FileChange, &trf!("{} удалил {}", "{} deleted {}", user, path)),
             Err(vfs::FsError::NotFound(_)) if force => {}
             Err(e) => out.push_err(format!("rm: {}", e)),
         }
@@ -205,14 +205,14 @@ pub fn rm(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn rmdir(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.is_empty() {
-        return CmdOutput::err("rmdir: укажите папку");
+        return CmdOutput::err(tr!("rmdir: укажите папку", "rmdir: specify a directory"));
     }
     let user = ctx.user();
     let mut out = CmdOutput::ok();
     for p in args {
         let path = ctx.path(p);
         if !ctx.fs().is_dir(&path) {
-            out.push_err(format!("rmdir: не каталог: {}", path));
+            out.push_err(trf!("rmdir: не каталог: {}", "rmdir: not a directory: {}", path));
             continue;
         }
         if let Err(e) = ctx.fs_mut().remove(&path, &user, false) {
@@ -224,19 +224,19 @@ pub fn rmdir(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn mv(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.len() < 2 {
-        return CmdOutput::err("mv: нужно указать откуда и куда");
+        return CmdOutput::err(tr!("mv: нужно указать откуда и куда", "mv: specify source and destination"));
     }
     let user = ctx.user();
     let dst = ctx.path(&args[args.len() - 1]);
     let srcs = &args[..args.len() - 1];
     if srcs.len() > 1 && !ctx.fs().is_dir(&dst) {
-        return CmdOutput::err(format!("mv: при нескольких источниках «{}» должен быть каталогом", dst));
+        return CmdOutput::err(trf!("mv: при нескольких источниках «{}» должен быть каталогом", "mv: with multiple sources '{}' must be a directory", dst));
     }
     let mut out = CmdOutput::ok();
     for s in srcs {
         let src = ctx.path(s);
         match ctx.fs_mut().rename(&src, &dst, &user) {
-            Ok(new) => ctx.log(LogKind::FileChange, &format!("{} переместил {} → {}", user, src, new)),
+            Ok(new) => ctx.log(LogKind::FileChange, &trf!("{} переместил {} → {}", "{} moved {} → {}", user, src, new)),
             Err(e) => out.push_err(format!("mv: {}", e)),
         }
     }
@@ -246,21 +246,21 @@ pub fn mv(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn cp(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.len() < 2 {
-        return CmdOutput::err("cp: нужно указать откуда и куда");
+        return CmdOutput::err(tr!("cp: нужно указать откуда и куда", "cp: specify source and destination"));
     }
     let recursive = a.has("r") || a.has("R");
     let user = ctx.user();
     let dst = ctx.path(&a.pos[a.pos.len() - 1]);
     let srcs = &a.pos[..a.pos.len() - 1];
     if srcs.len() > 1 && !ctx.fs().is_dir(&dst) {
-        return CmdOutput::err(format!("cp: при нескольких источниках «{}» должен быть каталогом", dst));
+        return CmdOutput::err(trf!("cp: при нескольких источниках «{}» должен быть каталогом", "cp: with multiple sources '{}' must be a directory", dst));
     }
     let mut out = CmdOutput::ok();
     for s in srcs {
         let src = ctx.path(s);
         match ctx.fs_mut().copy(&src, &dst, &user, recursive) {
             Ok(_) => {}
-            Err(vfs::FsError::IsDir(p)) => out.push_err(format!("cp: {} — каталог, нужен -r", p)),
+            Err(vfs::FsError::IsDir(p)) => out.push_err(trf!("cp: {} — каталог, нужен -r", "cp: {} is a directory, -r needed", p)),
             Err(e) => out.push_err(format!("cp: {}", e)),
         }
     }
@@ -270,7 +270,7 @@ pub fn cp(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn ln(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let a = Args::parse(args, &[]);
     if a.pos.len() != 2 {
-        return CmdOutput::err("ln: нужно указать цель и имя");
+        return CmdOutput::err(tr!("ln: нужно указать цель и имя", "ln: specify target and link name"));
     }
     let user = ctx.user();
     let (src, dst) = (ctx.path(&a.pos[0]), ctx.path(&a.pos[1]));
@@ -344,14 +344,14 @@ pub fn find(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
                 kind = args[i + 1].chars().next();
                 i += 1;
             }
-            s if s.starts_with('-') => return CmdOutput::err(format!("find: неизвестный ключ {}", s)),
+            s if s.starts_with('-') => return CmdOutput::err(trf!("find: неизвестный ключ {}", "find: unknown option {}", s)),
             s => root = s.to_string(),
         }
         i += 1;
     }
     let root_abs = ctx.path(&root);
     if !ctx.fs().exists(&root_abs) {
-        return CmdOutput::err(format!("find: нет такого файла или каталога: {}", root));
+        return CmdOutput::err(trf!("find: нет такого файла или каталога: {}", "find: no such file or directory: {}", root));
     }
     let mut out = CmdOutput::ok();
     let found = ctx.fs().find(&root_abs, &pattern);
@@ -377,7 +377,7 @@ pub fn du(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let user = ctx.user();
     let mut out = CmdOutput::ok();
     if !ctx.fs().exists(&target) {
-        return CmdOutput::err(format!("du: нет такого файла или каталога: {}", target));
+        return CmdOutput::err(trf!("du: нет такого файла или каталога: {}", "du: no such file or directory: {}", target));
     }
     let mut rows: Vec<Vec<String>> = Vec::new();
     if !summary && ctx.fs().is_dir(&target) {
@@ -406,7 +406,7 @@ pub fn df(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let pct = if total > 0 { used * 100 / total } else { 0 };
     let f = |v: u64| if human { human_size(v) } else { (v / 1024).to_string() };
     let rows = vec![
-        vec!["Файловая система".to_string(), if human { "Размер".into() } else { "1K-блоков".into() }, "Занято".into(), "Свободно".into(), "Исп%".into(), "Точка".into()],
+        vec![tr!("Файловая система", "Filesystem").to_string(), if human { tr!("Размер", "Size").into() } else { tr!("1K-блоков", "1K-blocks").into() }, tr!("Занято", "Used").into(), tr!("Свободно", "Avail").into(), tr!("Исп%", "Use%").into(), tr!("Точка", "Mounted on").into()],
         vec!["/dev/sda1".to_string(), f(total), f(used), f(avail), format!("{}%", pct), "/".into()],
         vec!["tmpfs".to_string(), f(ctx.machine().ram_mb as u64 * 1024 * 512), f(0), f(ctx.machine().ram_mb as u64 * 1024 * 512), "0%".into(), "/tmp".into()],
     ];
@@ -417,7 +417,7 @@ pub fn df(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn chmod(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.len() < 2 {
-        return CmdOutput::err("chmod: укажите режим и файл (например chmod 755 run.adr)");
+        return CmdOutput::err(tr!("chmod: укажите режим и файл (например chmod 755 run.adr)", "chmod: specify mode and file (e.g. chmod 755 run.adr)"));
     }
     let user = ctx.user();
     let spec = &args[0];
@@ -433,7 +433,7 @@ pub fn chmod(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         };
         let mode = match vfs::parse_mode(spec, cur) {
             Some(m) => m,
-            None => return CmdOutput::err(format!("chmod: непонятный режим «{}»", spec)),
+            None => return CmdOutput::err(trf!("chmod: непонятный режим «{}»", "chmod: invalid mode '{}'", spec)),
         };
         if let Err(e) = ctx.fs_mut().chmod(&path, mode, &user) {
             out.push_err(format!("chmod: {}", e));
@@ -444,18 +444,18 @@ pub fn chmod(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn chown(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.len() < 2 {
-        return CmdOutput::err("chown: укажите пользователя и файл");
+        return CmdOutput::err(tr!("chown: укажите пользователя и файл", "chown: specify user and file"));
     }
     let user = ctx.user();
     let owner = args[0].split(':').next().unwrap_or("").to_string();
     if !ctx.machine().users.exists(&owner) {
-        return CmdOutput::err(format!("chown: нет пользователя «{}»", owner));
+        return CmdOutput::err(trf!("chown: нет пользователя «{}»", "chown: no such user '{}'", owner));
     }
     let mut out = CmdOutput::ok();
     for f in &args[1..] {
         let path = ctx.path(f);
         if !ctx.fs().exists(&path) {
-            out.push_err(format!("chown: нет такого файла или каталога: {}", path));
+            out.push_err(trf!("chown: нет такого файла или каталога: {}", "chown: no such file or directory: {}", path));
             continue;
         }
         if let Err(e) = ctx.fs_mut().chown(&path, &owner, &user) {
@@ -469,32 +469,32 @@ pub fn chown(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn describe_file(ctx: &Ctx<'_>, path: &str) -> Result<String, vfs::FsError> {
     let st = ctx.fs().stat(path)?;
     if st.is_dir {
-        return Ok("каталог".to_string());
+        return Ok(tr!("каталог", "directory").to_string());
     }
     if st.is_binary {
-        return Ok(if st.size == 0 { "пустой".to_string() } else { "двоичный файл (исполняемый)".to_string() });
+        return Ok(if st.size == 0 { tr!("пустой", "empty").to_string() } else { tr!("двоичный файл (исполняемый)", "binary file (executable)").to_string() });
     }
     if st.size == 0 {
-        return Ok("пустой".to_string());
+        return Ok(tr!("пустой", "empty").to_string());
     }
     let ext = st.name.rsplit('.').next().unwrap_or("").to_lowercase();
     Ok(match ext.as_str() {
-        "adr" => "скрипт Adder, текст UTF-8",
-        "log" => "журнал, текст UTF-8",
-        "conf" | "cfg" | "ini" => "файл настроек, текст UTF-8",
-        "json" => "данные JSON, текст UTF-8",
-        "html" | "htm" => "документ HTML, текст UTF-8",
-        "tar" | "zip" => "архив Blackwire",
-        "md" => "документ Markdown, текст UTF-8",
-        "csv" => "таблица CSV, текст UTF-8",
-        _ => "текст UTF-8",
+        "adr" => tr!("скрипт Adder, текст UTF-8", "Adder script, UTF-8 text"),
+        "log" => tr!("журнал, текст UTF-8", "log, UTF-8 text"),
+        "conf" | "cfg" | "ini" => tr!("файл настроек, текст UTF-8", "config file, UTF-8 text"),
+        "json" => tr!("данные JSON, текст UTF-8", "JSON data, UTF-8 text"),
+        "html" | "htm" => tr!("документ HTML, текст UTF-8", "HTML document, UTF-8 text"),
+        "tar" | "zip" => tr!("архив Blackwire", "Blackwire archive"),
+        "md" => tr!("документ Markdown, текст UTF-8", "Markdown document, UTF-8 text"),
+        "csv" => tr!("таблица CSV, текст UTF-8", "CSV table, UTF-8 text"),
+        _ => tr!("текст UTF-8", "UTF-8 text"),
     }
     .to_string())
 }
 
 pub fn file(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.is_empty() {
-        return CmdOutput::err("file: укажите файл");
+        return CmdOutput::err(tr!("file: укажите файл", "file: specify a file"));
     }
     let mut out = CmdOutput::ok();
     let rows: Vec<Vec<String>> = args
@@ -511,18 +511,18 @@ pub fn file(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 
 pub fn stat(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     if args.is_empty() {
-        return CmdOutput::err("stat: укажите файл");
+        return CmdOutput::err(tr!("stat: укажите файл", "stat: specify a file"));
     }
     let mut out = CmdOutput::ok();
     for f in args {
         let path = ctx.path(f);
         match ctx.fs().stat(&path) {
             Ok(st) => {
-                out.push_kind(format!("  Файл: {}", st.path), OutKind::Accent);
-                out.push(format!("  Вид: {}", if st.is_dir { "каталог" } else if st.is_binary { "двоичный файл" } else { "текстовый файл" }));
-                out.push(format!("  Размер: {} байт", st.size));
-                out.push(format!("  Права: {} ({:o})   Владелец: {}", mode_string(st.mode, st.is_dir), st.mode, st.owner));
-                out.push(format!("  Изменён: {}", GameClock::format_time(st.modified)));
+                out.push_kind(trf!("  Файл: {}", "  File: {}", st.path), OutKind::Accent);
+                out.push(trf!("  Вид: {}", "  Type: {}", if st.is_dir { tr!("каталог", "directory") } else if st.is_binary { tr!("двоичный файл", "binary file") } else { tr!("текстовый файл", "text file") }));
+                out.push(trf!("  Размер: {} байт", "  Size: {} bytes", st.size));
+                out.push(trf!("  Права: {} ({:o})   Владелец: {}", "  Access: {} ({:o})   Owner: {}", mode_string(st.mode, st.is_dir), st.mode, st.owner));
+                out.push(trf!("  Изменён: {}", "  Modified: {}", GameClock::format_time(st.modified)));
             }
             Err(e) => out.push_err(format!("stat: {}", e)),
         }
@@ -537,7 +537,7 @@ pub fn tree(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let root = ctx.path(a.pos.first().map(|s| s.as_str()).unwrap_or("."));
     let user = ctx.user();
     if !ctx.fs().is_dir(&root) {
-        return CmdOutput::err(format!("tree: не каталог: {}", root));
+        return CmdOutput::err(trf!("tree: не каталог: {}", "tree: not a directory: {}", root));
     }
     let mut out = CmdOutput::ok();
     out.push_kind(a.pos.first().cloned().unwrap_or_else(|| ".".to_string()), OutKind::Accent);
@@ -545,7 +545,7 @@ pub fn tree(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let mut files = 0usize;
     tree_rec(ctx, &root, &user, "", 1, max_depth, all, &mut out, &mut dirs, &mut files);
     out.push("");
-    out.push_kind(format!("{} каталогов, {} файлов", dirs, files), OutKind::Dim);
+    out.push_kind(trf!("{} каталогов, {} файлов", "{} directories, {} files", dirs, files), OutKind::Dim);
     out
 }
 
@@ -573,7 +573,7 @@ fn tree_rec(
             v
         }
         Err(_) => {
-            out.push_kind(format!("{}└── [нет доступа]", prefix), OutKind::Dim);
+            out.push_kind(trf!("{}└── [нет доступа]", "{}└── [access denied]", prefix), OutKind::Dim);
             return;
         }
     };

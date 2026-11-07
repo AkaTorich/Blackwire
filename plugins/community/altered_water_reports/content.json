@@ -1,12 +1,15 @@
 {
   "name": "Подправленные отчёты по воде",
+  "name_en": "Altered Water Reports",
   "family": "case",
   "kind": "file_server",
   "org_kind": "corporation",
   "service": "water_records",
   "file": "sample-chain.csv",
   "story": "Подписанные результаты лаборатории расходятся с цифрами на публичном табло.",
+  "story_en": "The signed laboratory results differ from the values on the public dashboard.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 205,
   "id": "altered_water_reports",
   "number": 44,
@@ -22,8 +25,10 @@
       "service": "water_records_gate",
       "port": 7129,
       "os": "Подправленные отчёты по воде OS 1.0",
+      "os_en": "Altered Water Reports OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Подписанные результаты лаборатории расходятся с цифрами на публичном табло.\nВладелец записи: altered_water_reports.\nНомер дела: BW-044.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The signed laboratory results differ from the values on the public dashboard.\nRecord owner: altered_water_reports.\nCase reference: BW-044.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_altered_water_reports_1"
     },
@@ -36,8 +41,10 @@
       "service": "water_records",
       "port": 7130,
       "os": "Подправленные отчёты по воде OS 1.0",
+      "os_en": "Altered Water Reports OS 1.0",
       "file": "/srv/records/sample-chain.csv",
       "text": "Подписанные результаты лаборатории расходятся с цифрами на публичном табло.\nВладелец записи: altered_water_reports.\nНомер дела: BW-044.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The signed laboratory results differ from the values on the public dashboard.\nRecord owner: altered_water_reports.\nCase reference: BW-044.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_altered_water_reports_2"
     }

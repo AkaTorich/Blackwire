@@ -17,7 +17,7 @@ fn allowed() -> Result<(), String> {
     if has_test && has_dir {
         Ok(())
     } else {
-        Err("тестовый режим не включён".into())
+        Err(tr!("тестовый режим не включён", "test mode is not enabled").into())
     }
 }
 
@@ -33,7 +33,7 @@ pub fn sdk_ui_report(
 ) -> Result<(), String> {
     allowed()?;
     if !STAGES.contains(&stage.as_str()) || result.to_string().len() > MAX_REPORT {
-        return Err("неверный отчёт".into());
+        return Err(tr!("неверный отчёт", "invalid report").into());
     }
     let path = st.save_path.with_file_name("sdk-ui-test-report.json");
     let mut report: serde_json::Value = std::fs::read_to_string(&path)

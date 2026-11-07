@@ -1,12 +1,15 @@
 {
   "name": "Распределительный центр торговли",
+  "name_en": "Retail Distribution Hub",
   "family": "network",
   "org_kind": "shop",
   "kind": "database",
   "service": "supply_archive",
   "file": "supply-ledger.csv",
   "story": "Складская система помечает возвращённый товар как новый.",
+  "story_en": "The warehouse system marks returned goods as new stock.",
   "objective": "Пройти через шлюз и забрать внутренний архив.",
+  "objective_en": "Traverse the gateway and recover the internal archive.",
   "reward": 204,
   "id": "retail_distribution_hub",
   "number": 30,
@@ -22,8 +25,10 @@
       "service": "supply_archive_gate",
       "port": 7087,
       "os": "Распределительный центр торговли OS 1.0",
+      "os_en": "Retail Distribution Hub OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Складская система помечает возвращённый товар как новый.\nВладелец записи: retail_distribution_hub.\nНомер дела: BW-030.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The warehouse system marks returned goods as new stock.\nRecord owner: retail_distribution_hub.\nCase reference: BW-030.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_retail_distribution_hub_1"
     },
@@ -36,8 +41,10 @@
       "service": "supply_archive_ops",
       "port": 7088,
       "os": "Распределительный центр торговли OS 1.0",
+      "os_en": "Retail Distribution Hub OS 1.0",
       "file": "/srv/records/operations.log",
       "text": "Складская система помечает возвращённый товар как новый.\nВладелец записи: retail_distribution_hub.\nНомер дела: BW-030.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The warehouse system marks returned goods as new stock.\nRecord owner: retail_distribution_hub.\nCase reference: BW-030.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_retail_distribution_hub_2"
     },
@@ -50,8 +57,10 @@
       "service": "supply_archive",
       "port": 7089,
       "os": "Распределительный центр торговли OS 1.0",
+      "os_en": "Retail Distribution Hub OS 1.0",
       "file": "/srv/records/supply-ledger.csv",
       "text": "Складская система помечает возвращённый товар как новый.\nВладелец записи: retail_distribution_hub.\nНомер дела: BW-030.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The warehouse system marks returned goods as new stock.\nRecord owner: retail_distribution_hub.\nCase reference: BW-030.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_retail_distribution_hub_3"
     }

@@ -1,6 +1,7 @@
 {
   "id": "unlisted_server_rack",
   "name": "Безучётная серверная стойка",
+  "name_en": "Unlisted Server Rack",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

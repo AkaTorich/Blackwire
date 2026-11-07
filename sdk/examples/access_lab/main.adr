@@ -1,4 +1,12 @@
 # Access Lab — разные результаты и условия взлома, заданные на Adder.
+# Access Lab — various hack outcomes and conditions, defined in Adder.
+
+# Строка на языке игры. / A string in the game language.
+def tr(ru, en):
+    if plugin.lang() == "en":
+        return en
+    return ru
+
 def load(event):
     template = plugin.template("router")
     template["os"] = "AccessOS 1.0"
@@ -23,37 +31,38 @@ def load(event):
     ]
     keys = ["guest","user","root","computer","router","file","partial_shell","partial_computer","partial_router","partial_file"]
     conditions = [{"type":"active_admin"},{"type":"active_user","user":"operator"},{"type":"connections_min","count":2},{"type":"forwarded_ports_min","count":1},{"type":"plugin_state","key":"ready","equals":true}]
+    hint = tr("Учебный стенд: access_ready создаёт нужную активность. После access_reset условия снова не выполнены.", "Training rig: access_ready creates the required activity. After access_reset the conditions are unmet again.")
     for index in range(len(keys)):
-        plugin.vulnerability(keys[index],{"device_type":device,"service":"accesslab","version_prefix":"1.","access":"info","result":outcomes[index],"conditions":conditions,"exploit":{"kind":"protocol","hint":"Учебный стенд: access_ready создаёт нужную активность. После access_reset условия снова не выполнены."}})
+        plugin.vulnerability(keys[index],{"device_type":device,"service":"accesslab","version_prefix":"1.","access":"info","result":outcomes[index],"conditions":conditions,"exploit":{"kind":"protocol","hint":hint}})
 
 def create(event):
     mid = plugin.get("machine",null)
     if mid == null:
         mid = plugin.spawn("access_lab:access_node",{"hostname":"access-lab","ip":"198.18.249.1","up":true})
         plugin.user(mid,"operator","accesslab",false)
-        plugin.write(mid,"/tmp/access-note.txt","This file belongs to the Access Lab exercise.\n")
+        plugin.write(mid,"/tmp/access-note.txt",tr("Этот файл — часть упражнения Access Lab.\n","This file belongs to the Access Lab exercise.\n"))
         plugin.set("machine",mid)
         plugin.set("ready",false)
-    print("Учебный узел: 198.18.249.1")
-    print("1. probe 198.18.249.1 — выбери результат взлома.")
-    print("2. research -h 3 198.18.249.1 access_lab:partial_file — посмотри условия.")
-    print("3. access_ready — включи учебную активность пользователей и соединений.")
-    print("4. market buy exp_protocol — купи исходник; затем exploit -f ~/scripts/exp_protocol.adr -s access_lab:partial_file 198.18.249.1")
-    print("5. В своём Adder-коде сохрани r = net.exploit(...); затем net.access(r['handle'], 'read').")
-    print("Объект работает 300 игровых секунд и только в том же окне терминала.")
+    print(tr("Учебный узел: 198.18.249.1","Training host: 198.18.249.1"))
+    print(tr("1. probe 198.18.249.1 — выбери результат взлома.","1. probe 198.18.249.1 — pick a hack outcome."))
+    print(tr("2. research -h 3 198.18.249.1 access_lab:partial_file — посмотри условия.","2. research -h 3 198.18.249.1 access_lab:partial_file — check the conditions."))
+    print(tr("3. access_ready — включи учебную активность пользователей и соединений.","3. access_ready — turn on the training activity of users and connections."))
+    print(tr("4. market buy exp_protocol — купи исходник; затем exploit -f ~/scripts/exp_protocol.adr -s access_lab:partial_file 198.18.249.1","4. market buy exp_protocol — buy the source; then exploit -f ~/scripts/exp_protocol.adr -s access_lab:partial_file 198.18.249.1"))
+    print(tr("5. В своём Adder-коде сохрани r = net.exploit(...); затем net.access(r['handle'], 'read').","5. In your own Adder code keep r = net.exploit(...); then net.access(r['handle'], 'read')."))
+    print(tr("Объект работает 300 игровых секунд и только в том же окне терминала.","The object lasts 300 game seconds and only in the same terminal window."))
 
 def ready(event):
     mid = plugin.get("machine",null)
     if mid == null:
-        print("Сначала access_create")
+        print(tr("Сначала access_create","Run access_create first"))
         return
     plugin.host_activity(mid,{"users":["root","operator"],"connections":2,"forwarded_ports":[7002]})
     plugin.set("ready",true)
-    print("Условия учебного стенда выполнены. Выбери один результат и запусти эксплоит.")
+    print(tr("Условия учебного стенда выполнены. Выбери один результат и запусти эксплоит.","The training rig conditions are met. Pick one outcome and run the exploit."))
 
 def reset(event):
     mid = plugin.get("machine",null)
     if mid != null:
         plugin.host_activity(mid,{"users":[],"connections":0,"forwarded_ports":[]})
     plugin.set("ready",false)
-    print("Учебная активность сброшена. Уже полученные объекты живут до истечения срока или смены службы.")
+    print(tr("Учебная активность сброшена. Уже полученные объекты живут до истечения срока или смены службы.","Training activity reset. Objects already obtained live until they expire or the service changes."))

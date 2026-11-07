@@ -64,7 +64,7 @@ pub fn known_vulns() -> Vec<Vuln> {
         .map(|(service, prefix, name, effect, access, scope)| Vuln {
             service: service.to_string(),
             version_prefix: prefix.to_string(),
-            name: name.to_string(),
+            name: services_data::vuln_name(*name).to_string(),
             effect: effect.to_string(),
             access: access.to_string(),
             scope: scope.to_string(),

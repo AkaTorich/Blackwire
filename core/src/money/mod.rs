@@ -61,7 +61,7 @@ pub fn ensure_init(world: &mut World) {
         .iter()
         .find(|o| matches!(o.kind, OrgKind::Bank))
         .map(|o| (o.name.clone(), o.domain.clone()))
-        .unwrap_or_else(|| ("Банк".to_string(), "bank.net".to_string()));
+        .unwrap_or_else(|| (tr!("Банк", "Bank").to_string(), "bank.net".to_string()));
     world.finance = Finance {
         started: true,
         debt: START_DEBT,
@@ -111,14 +111,14 @@ fn push_bank_mail(world: &mut World, subject: &str, body: &str) {
 /// Погасить часть долга. `amount` — сколько хочет заплатить (уже число).
 pub fn pay(world: &mut World, amount: i64) -> Result<(i64, i64), String> {
     if world.finance.cleared || world.finance.debt <= 0 {
-        return Err("долг уже закрыт".to_string());
+        return Err(tr!("долг уже закрыт", "debt already cleared").to_string());
     }
     let pay = amount.min(world.player.money).min(world.finance.debt);
     if pay <= 0 {
         if world.player.money <= 0 {
-            return Err("на счету пусто".to_string());
+            return Err(tr!("на счету пусто", "balance is empty").to_string());
         }
-        return Err("нечего платить".to_string());
+        return Err(tr!("нечего платить", "nothing to pay").to_string());
     }
     world.player.money -= pay;
     world.finance.debt -= pay;
@@ -130,13 +130,13 @@ pub fn pay(world: &mut World, amount: i64) -> Result<(i64, i64), String> {
         world.finance.cleared = true;
         push_bank_mail(
             world,
-            "Кредит закрыт",
-            &format!("{}: ваш долг погашен полностью. Удержание имущества снято. Счёт закрыт.", creditor),
+            tr!("Кредит закрыт", "Loan closed"),
+            &trf!("{}: ваш долг погашен полностью. Удержание имущества снято. Счёт закрыт.", "{}: your debt has been paid in full. The lien on your property is lifted. Account closed.", creditor),
         );
         world.player.flags.insert("debt_cleared".to_string(), "1".to_string());
-        world.finance.pending = Some(FinanceEvent { title: creditor, text: "Долг погашен — ты свободен.".to_string() });
+        world.finance.pending = Some(FinanceEvent { title: creditor, text: tr!("Долг погашен — ты свободен.", "Debt paid off — you're free.").to_string() });
     } else {
-        push_bank_mail(world, "Платёж принят", &format!("{}: получено {} ₵. Остаток долга: {} ₵.", creditor, pay, remaining));
+        push_bank_mail(world, tr!("Платёж принят", "Payment received"), &trf!("{}: получено {} ₵. Остаток долга: {} ₵.", "{}: received {} ₵. Remaining debt: {} ₵.", creditor, pay, remaining));
     }
     Ok((pay, world.finance.debt))
 }
@@ -144,17 +144,17 @@ pub fn pay(world: &mut World, amount: i64) -> Result<(i64, i64), String> {
 /// Купить улучшение по id.
 pub fn buy(world: &mut World, id: &str) -> Result<String, String> {
     if let Some(result)=crate::plugins::catalog::buy(world,"shop",id){return result;}
-    let item = shop::item(id).ok_or_else(|| format!("нет такого товара: {}", id))?;
+    let item = shop::item(id).ok_or_else(|| trf!("нет такого товара: {}", "no such item: {}", id))?;
     if world.player.upgrades.contains(id) {
-        return Err(format!("«{}» уже куплено", item.name));
+        return Err(trf!("«{}» уже куплено", "\"{}\" already owned", item.name()));
     }
     if world.player.money < item.price {
-        return Err(format!("не хватает: нужно {} ₵, есть {} ₵", item.price, world.player.money));
+        return Err(trf!("не хватает: нужно {} ₵, есть {} ₵", "not enough: need {} ₵, have {} ₵", item.price, world.player.money));
     }
     world.player.money -= item.price;
     world.player.upgrades.insert(id.to_string());
     let note = shop::apply(world, id);
-    Ok(format!("Куплено: {} (−{} ₵). {}", item.name, item.price, note))
+    Ok(trf!("Куплено: {} (−{} ₵). {}", "Bought: {} (−{} ₵). {}", item.name(), item.price, note))
 }
 
 /// Сбыть найденные логины за ₵.
@@ -168,15 +168,19 @@ pub fn sell_creds(world: &mut World) -> (usize, i64) {
 
 /// Страница магазина (HTML) — узел `gate.hw/shop`.
 pub fn shop_html(world: &World) -> String {
-    let mut s = String::from("<header><h1>Барахолка</h1></header><nav><a href=\"/board\">Доска</a> <a href=\"/manifesto\">Манифест</a></nav><main>");
-    s.push_str(&format!(
+    let mut s = String::from(tr!(
+        "<header><h1>Барахолка</h1></header><nav><a href=\"/board\">Доска</a> <a href=\"/manifesto\">Манифест</a></nav><main>",
+        "<header><h1>Flea Market</h1></header><nav><a href=\"/board\">Board</a> <a href=\"/manifesto\">Manifesto</a></nav><main>"
+    ));
+    s.push_str(&trf!(
         "<p>На счету: <b>{} ₵</b> · Долг: <b>{} ₵</b></p><p><small>Покупка — в терминале: <code>buy id</code>. Оплата долга: <code>pay сумма</code>.</small></p><ul>",
+        "<p>Balance: <b>{} ₵</b> · Debt: <b>{} ₵</b></p><p><small>Buy in the terminal: <code>buy id</code>. Pay the debt: <code>pay amount</code>.</small></p><ul>",
         world.player.money, world.finance.debt
     ));
     for it in shop::ITEMS {
         let owned = world.player.upgrades.contains(it.id);
-        let mark = if owned { " — <i>куплено</i>" } else { "" };
-        s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name, it.id, it.price, it.desc, mark));
+        let mark = if owned { tr!(" — <i>куплено</i>", " — <i>owned</i>") } else { "" };
+        s.push_str(&format!("<li><b>{}</b> ({}) — {} ₵ · {}{}</li>", it.name(), it.id, it.price, it.desc(), mark));
     }
     s.push_str(&crate::plugins::catalog::html(world,"shop"));
     s.push_str("</ul></main>");

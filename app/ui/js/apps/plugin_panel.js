@@ -21,7 +21,7 @@
     function render(spec) {
       content.replaceChildren();
       if (!spec || typeof spec !== 'object') {
-        content.appendChild(el('div', 'plug-empty', 'Плагин не передал данные для окна.'));
+        content.appendChild(el('div', 'plug-empty', L('Плагин не передал данные для окна.', 'The plugin sent no data for the window.')));
         return;
       }
       if (spec.title) content.appendChild(el('h2', 'plug-panel-title', spec.title));
@@ -56,7 +56,7 @@
           cells.forEach(function (v) {
             var td = el('td');
             if (typeof v === 'boolean') {
-              td.textContent = v ? 'да' : 'нет';
+              td.textContent = v ? L('да', 'yes') : L('нет', 'no');
               td.className = v ? 'ok' : 'off';
             } else {
               td.textContent = String(v);
@@ -83,7 +83,7 @@
           BW.plugins_ui(id, b.id, data).then(function (lines) {
             log.textContent = (lines || []).map(function (l) { return l.text; }).join('\n');
             return refresh();
-          }, function (e) { Win.toast('Не удалось: ' + e, 'err'); }).finally(function () { btn.disabled = false; });
+          }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); }).finally(function () { btn.disabled = false; });
         });
         btnRow.appendChild(btn);
       });
@@ -102,5 +102,5 @@
     refresh();
   }
 
-  Apps.register('plugin_panel', { title: 'Окно плагина', icon: 'plugins', minWidth: 560, minHeight: 380, mount: mount });
+  Apps.register('plugin_panel', { title: L('Окно плагина', 'Plugin window'), icon: 'plugins', minWidth: 560, minHeight: 380, mount: mount });
 })();

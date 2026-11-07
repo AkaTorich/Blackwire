@@ -84,7 +84,7 @@ impl Key {
                     Ok(Key::Float(f.to_bits()))
                 }
             }
-            other => Err(format!("ключ словаря должен быть строкой или числом, а не {}", other.type_name())),
+            other => Err(trf!("ключ словаря должен быть строкой или числом, а не {}", "dict key must be a string or a number, not {}", other.type_name())),
         }
     }
 
@@ -301,11 +301,11 @@ impl Value {
             Value::Float(f) => fmt_float(*f),
             Value::Str(s) => s.to_string(),
             Value::List(_) | Value::Dict(_) => self.repr(),
-            Value::Func(f) => format!("<функция {}>", f.def.name),
-            Value::Builtin(b) => format!("<встроенная функция {}>", b.name),
-            Value::Method(m) => format!("<метод {}>", m.name),
-            Value::Native(n) => format!("<функция {}>", n),
-            Value::Module(m) => format!("<модуль {}>", m),
+            Value::Func(f) => trf!("<функция {}>", "<function {}>", f.def.name),
+            Value::Builtin(b) => trf!("<встроенная функция {}>", "<builtin function {}>", b.name),
+            Value::Method(m) => trf!("<метод {}>", "<method {}>", m.name),
+            Value::Native(n) => trf!("<функция {}>", "<function {}>", n),
+            Value::Module(m) => trf!("<модуль {}>", "<module {}>", m),
         }
     }
 

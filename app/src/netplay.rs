@@ -161,7 +161,7 @@ fn host_recompute_and_broadcast(app: &AppHandle, net: &mut NetState) {
                 net.snap.phase = "done".to_string();
             }
         } else if !net.snap.targets.is_empty() && net.snap.captured.len() >= net.snap.targets.len() {
-            net.snap.winner = Some("команда".to_string());
+            net.snap.winner = Some(tr!("команда", "team").to_string());
             net.snap.phase = "done".to_string();
         }
     }
@@ -202,7 +202,7 @@ fn spawn_client_reader(app: AppHandle, stream: TcpStream, stop: Arc<AtomicBool>)
             let Ok(mut net) = st.net.lock() else { break };
             match v.get("t").and_then(|t| t.as_str()) {
                 Some("join") => {
-                    name = v.get("name").and_then(|x| x.as_str()).unwrap_or("гость").to_string();
+                    name = v.get("name").and_then(|x| x.as_str()).unwrap_or(tr!("гость", "guest")).to_string();
                     if !net.snap.peers.iter().any(|p| p.name == name) {
                         net.snap.peers.push(PeerView { name: name.clone(), stage: 0, score: 0 });
                     }
@@ -281,7 +281,7 @@ fn spawn_host_reader(app: AppHandle, stream: TcpStream, stop: Arc<AtomicBool>) {
         let locked = st.net.lock();
         if let Ok(mut net) = locked {
             if net.role == Role::Client {
-                net.error = Some("связь с хостом потеряна".to_string());
+                net.error = Some(tr!("связь с хостом потеряна", "connection to host lost").to_string());
                 let _ = app.emit("net_event", serde_json::json!({ "snap": net.snap, "error": net.error }));
             }
         }
@@ -318,11 +318,11 @@ pub fn net_host(app: AppHandle, st: State<'_, AppState>, mode: String, port: u16
 /// Открыть игру хостом. Отдельно от команды — чтобы звать из проверочного запуска.
 pub fn do_host(app: &AppHandle, st: &AppState, mode: &str, port: u16) -> Result<serde_json::Value, String> {
     let port = if port == 0 { 7777 } else { port };
-    let listener = TcpListener::bind(("0.0.0.0", port)).map_err(|e| format!("не удалось открыть порт {}: {}", port, e))?;
+    let listener = TcpListener::bind(("0.0.0.0", port)).map_err(|e| trf!("не удалось открыть порт {}: {}", "failed to open port {}: {}", port, e))?;
     let name = my_handle(st);
     let stop = Arc::new(AtomicBool::new(false));
     {
-        let mut net = st.net.lock().map_err(|_| "сеть занята".to_string())?;
+        let mut net = st.net.lock().map_err(|_| tr!("сеть занята", "network busy").to_string())?;
         net.reset();
         net.role = Role::Host;
         net.my_name = name.clone();
@@ -368,13 +368,13 @@ pub fn net_join(app: AppHandle, st: State<'_, AppState>, addr: String) -> Result
 pub fn do_join(app: &AppHandle, st: &AppState, addr: &str) -> Result<(), String> {
     let addr = addr.trim();
     let addr = if addr.contains(':') { addr.to_string() } else { format!("{}:7777", addr) };
-    let stream = TcpStream::connect(&addr).map_err(|e| format!("не удалось подключиться к {}: {}", addr, e))?;
+    let stream = TcpStream::connect(&addr).map_err(|e| trf!("не удалось подключиться к {}: {}", "failed to connect to {}: {}", addr, e))?;
     let _ = stream.set_nodelay(true);
     let name = my_handle(st);
     let shared = Arc::new(Mutex::new(stream.try_clone().map_err(|e| e.to_string())?));
     let stop = Arc::new(AtomicBool::new(false));
     {
-        let mut net = st.net.lock().map_err(|_| "сеть занята".to_string())?;
+        let mut net = st.net.lock().map_err(|_| tr!("сеть занята", "network busy").to_string())?;
         net.reset();
         net.role = Role::Client;
         net.my_name = name.clone();
@@ -390,12 +390,12 @@ pub fn do_join(app: &AppHandle, st: &AppState, addr: &str) -> Result<(), String>
 pub fn net_start(app: AppHandle, st: State<'_, AppState>) -> Result<(), String> {
     let seed;
     {
-        let mut net = st.net.lock().map_err(|_| "сеть занята".to_string())?;
+        let mut net = st.net.lock().map_err(|_| tr!("сеть занята", "network busy").to_string())?;
         if net.role != Role::Host {
-            return Err("начать партию может только хост".into());
+            return Err(tr!("начать партию может только хост", "only the host can start the match").into());
         }
         if net.snap.peers.len() < 2 {
-            return Err("нужен хотя бы один соперник".into());
+            return Err(tr!("нужен хотя бы один соперник", "at least one opponent is required").into());
         }
         // зерно — из времени, чтобы мир был новый
         seed = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(7) ^ 0x9e37_79b9;
@@ -413,13 +413,13 @@ pub fn net_start(app: AppHandle, st: State<'_, AppState>) -> Result<(), String> 
         let trophy_world = World::new(seed, "host", "");
         let all = blackwire_core::scenarios::targets(&trophy_world);
         let want = {
-            let net = st.net.lock().map_err(|_| "сеть занята".to_string())?;
+            let net = st.net.lock().map_err(|_| tr!("сеть занята", "network busy").to_string())?;
             if net.snap.mode == "team" { TEAM_TARGETS } else { 1 }
         };
         all.into_iter().take(want).collect::<Vec<_>>()
     };
     {
-        let mut net = st.net.lock().map_err(|_| "сеть занята".to_string())?;
+        let mut net = st.net.lock().map_err(|_| tr!("сеть занята", "network busy").to_string())?;
         net.snap.targets = targets;
         host_recompute_and_broadcast(&app, &mut net);
     }

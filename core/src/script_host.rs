@@ -15,7 +15,7 @@ type R = Result<Value, String>;
 fn arg_str(args: &[Value], i: usize, what: &str) -> Result<String, String> {
     match args.get(i) {
         Some(Value::String(s)) => Ok(s.clone()),
-        Some(Value::Null) | None => Err(format!("нужен аргумент: {}", what)),
+        Some(Value::Null) | None => Err(trf!("нужен аргумент: {}", "argument required: {}", what)),
         Some(v) => Ok(v.to_string().trim_matches('"').to_string()),
     }
 }
@@ -30,9 +30,9 @@ fn arg_str_or(args: &[Value], i: usize, default: &str) -> String {
 
 fn arg_int(args: &[Value], i: usize, what: &str) -> Result<i64, String> {
     match args.get(i) {
-        Some(Value::Number(n)) => n.as_i64().or_else(|| n.as_f64().map(|f| f as i64)).ok_or_else(|| format!("нужно число: {}", what)),
-        Some(Value::String(s)) => s.trim().parse::<i64>().map_err(|_| format!("нужно число: {}", what)),
-        _ => Err(format!("нужно число: {}", what)),
+        Some(Value::Number(n)) => n.as_i64().or_else(|| n.as_f64().map(|f| f as i64)).ok_or_else(|| trf!("нужно число: {}", "number required: {}", what)),
+        Some(Value::String(s)) => s.trim().parse::<i64>().map_err(|_| trf!("нужно число: {}", "number required: {}", what)),
+        _ => Err(trf!("нужно число: {}", "number required: {}", what)),
     }
 }
 
@@ -44,7 +44,7 @@ fn whoami(game: &Game, session: u32) -> (MachineId, String) {
 /// Вызов игровой функции по полному имени.
 pub fn call(game: &mut Game, session: u32, pid: u32, name: &str, args: Vec<Value>) -> R {
     game.sync_exploit_presence();
-    let (module, func) = name.split_once('.').ok_or_else(|| format!("неизвестная функция: {}", name))?;
+    let (module, func) = name.split_once('.').ok_or_else(|| trf!("неизвестная функция: {}", "unknown function: {}", name))?;
     let stamp=crate::plugins::events::Stamp::new(&game.world);
     let result = match module {
         "sys" => call_sys(game, session, pid, func, &args),
@@ -53,9 +53,9 @@ pub fn call(game: &mut Game, session: u32, pid: u32, name: &str, args: Vec<Value
         "shell" => call_shell(game, session, func, &args),
         "time" => match func {
             "now" => Ok(json!(game.world.now())),
-            _ => Err(format!("нет функции time.{}", func)),
+            _ => Err(trf!("нет функции time.{}", "no function time.{}", func)),
         },
-        _ => Err(format!("неизвестный модуль: {}", module)),
+        _ => Err(trf!("неизвестный модуль: {}", "unknown module: {}", module)),
     };
     game.plugin_changes(stamp);
     if module=="fs" && !["read","list","exists","is_dir"].contains(&func) && result.is_ok(){game.plugin_event("on_file",json!({"operation":func,"args":args,"session":session}));}
@@ -72,11 +72,11 @@ fn call_sys(game: &mut Game, session: u32, pid: u32, func: &str, args: &[Value])
         "is_root" => Ok(json!(user == "root" || game.world.machine(mid).users.is_admin(&user))),
         "cwd" => Ok(json!(game.sessions.get(&session).map(|s| s.cwd.clone()).unwrap_or_else(|| "/".into()))),
         "env" => {
-            let key = arg_str(args, 0, "имя переменной")?;
+            let key = arg_str(args, 0, tr!("имя переменной", "variable name"))?;
             Ok(game.sessions.get(&session).and_then(|s| s.env.get(&key)).map(|v| json!(v)).unwrap_or(Value::Null))
         }
         "set_env" => {
-            let key = arg_str(args, 0, "имя переменной")?;
+            let key = arg_str(args, 0, tr!("имя переменной", "variable name"))?;
             let val = arg_str_or(args, 1, "");
             if let Some(s) = game.sessions.get_mut(&session) {
                 s.env.insert(key, val);
@@ -98,25 +98,26 @@ fn call_sys(game: &mut Game, session: u32, pid: u32, func: &str, args: &[Value])
         "kill" => {
             let target = arg_int(args, 0, "pid")? as u32;
             if target == pid {
-                return Err("скрипт не может снять сам себя — используйте exit()".into());
+                return Err(tr!("скрипт не может снять сам себя — используйте exit()", "a script cannot kill itself — use exit()").into());
             }
             game.world.machine_mut(mid).procs.kill_as(target, &user)?;
             Ok(json!(true))
         }
         "uptime" => Ok(json!(game.world.uptime())),
         "notify" => {
-            let title = arg_str(args, 0, "заголовок")?;
+            let title = arg_str(args, 0, tr!("заголовок", "title"))?;
             let text = arg_str_or(args, 1, "");
             game.notify(&title, &text);
             Ok(Value::Null)
         }
         "open" => {
-            let app = arg_str(args, 0, "имя приложения")?;
+            let app = arg_str(args, 0, tr!("имя приложения", "app name"))?;
             let arg = args.get(1).and_then(|v| v.as_str()).map(|s| s.to_string());
             game.pending_ui.push(UiAction::OpenApp { app, arg });
             Ok(Value::Null)
         }
         "pid" => Ok(json!(pid)),
+        "lang" => Ok(json!(crate::i18n::code())),
         "money" => Ok(json!(crate::missions::money(&game.world))),
         "debt" => Ok(json!(game.world.finance.debt)),
         "missions" => {
@@ -134,7 +135,7 @@ fn call_sys(game: &mut Game, session: u32, pid: u32, func: &str, args: &[Value])
                 .collect();
             Ok(Value::Array(list))
         }
-        _ => Err(format!("нет функции sys.{}", func)),
+        _ => Err(trf!("нет функции sys.{}", "no function sys.{}", func)),
     }
 }
 
@@ -143,14 +144,14 @@ fn call_sys(game: &mut Game, session: u32, pid: u32, func: &str, args: &[Value])
 fn call_fs(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
     let s = Some(session);
     match func {
-        "read" => Ok(json!(game.fs_read(s, &arg_str(args, 0, "путь")?)?)),
+        "read" => Ok(json!(game.fs_read(s, &arg_str(args, 0, tr!("путь", "path"))?)?)),
         "write" => {
-            game.fs_write(s, &arg_str(args, 0, "путь")?, &arg_str_or(args, 1, ""))?;
+            game.fs_write(s, &arg_str(args, 0, tr!("путь", "path"))?, &arg_str_or(args, 1, ""))?;
             Ok(Value::Null)
         }
         "append" => {
             let (mid, user) = whoami(game, session);
-            let p = game.fs_path(s, &arg_str(args, 0, "путь")?);
+            let p = game.fs_path(s, &arg_str(args, 0, tr!("путь", "path"))?);
             game.world.machine_mut(mid).fs.append(&p, &arg_str_or(args, 1, ""), &user).map_err(|e| e.to_string())?;
             Ok(Value::Null)
         }
@@ -163,45 +164,45 @@ fn call_fs(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 .collect();
             Ok(Value::Array(list))
         }
-        "exists" => Ok(json!(game.fs_exists(s, &arg_str(args, 0, "путь")?))),
+        "exists" => Ok(json!(game.fs_exists(s, &arg_str(args, 0, tr!("путь", "path"))?))),
         "is_dir" => {
             let (mid, _) = whoami(game, session);
-            let p = game.fs_path(s, &arg_str(args, 0, "путь")?);
+            let p = game.fs_path(s, &arg_str(args, 0, tr!("путь", "path"))?);
             Ok(json!(game.world.machine(mid).fs.is_dir(&p)))
         }
         "mkdir" => {
-            game.fs_mkdir(s, &arg_str(args, 0, "путь")?)?;
+            game.fs_mkdir(s, &arg_str(args, 0, tr!("путь", "path"))?)?;
             Ok(Value::Null)
         }
         "delete" => {
-            game.fs_delete(s, &arg_str(args, 0, "путь")?)?;
+            game.fs_delete(s, &arg_str(args, 0, tr!("путь", "path"))?)?;
             Ok(Value::Null)
         }
         "move" => {
-            game.fs_rename(s, &arg_str(args, 0, "откуда")?, &arg_str(args, 1, "куда")?)?;
+            game.fs_rename(s, &arg_str(args, 0, tr!("откуда", "source"))?, &arg_str(args, 1, tr!("куда", "destination"))?)?;
             Ok(Value::Null)
         }
         "copy" => {
-            game.fs_copy(s, &arg_str(args, 0, "откуда")?, &arg_str(args, 1, "куда")?)?;
+            game.fs_copy(s, &arg_str(args, 0, tr!("откуда", "source"))?, &arg_str(args, 1, tr!("куда", "destination"))?)?;
             Ok(Value::Null)
         }
         "chmod" => {
             let (mid, user) = whoami(game, session);
-            let p = game.fs_path(s, &arg_str(args, 0, "путь")?);
-            let mode_s = arg_str(args, 1, "права")?;
+            let p = game.fs_path(s, &arg_str(args, 0, tr!("путь", "path"))?);
+            let mode_s = arg_str(args, 1, tr!("права", "mode"))?;
             let current = game.world.machine(mid).fs.stat(&p).map(|st| st.mode).unwrap_or(0o644);
-            let mode = crate::vfs::parse_mode(&mode_s, current).ok_or_else(|| format!("непонятные права: {}", mode_s))?;
+            let mode = crate::vfs::parse_mode(&mode_s, current).ok_or_else(|| trf!("непонятные права: {}", "invalid mode: {}", mode_s))?;
             game.world.machine_mut(mid).fs.chmod(&p, mode, &user).map_err(|e| e.to_string())?;
             Ok(Value::Null)
         }
         "chown" => {
             let (mid, user) = whoami(game, session);
-            let p = game.fs_path(s, &arg_str(args, 0, "путь")?);
-            let owner = arg_str(args, 1, "владелец")?;
+            let p = game.fs_path(s, &arg_str(args, 0, tr!("путь", "path"))?);
+            let owner = arg_str(args, 1, tr!("владелец", "owner"))?;
             game.world.machine_mut(mid).fs.chown(&p, &owner, &user).map_err(|e| e.to_string())?;
             Ok(Value::Null)
         }
-        _ => Err(format!("нет функции fs.{}", func)),
+        _ => Err(trf!("нет функции fs.{}", "no function fs.{}", func)),
     }
 }
 
@@ -211,16 +212,16 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
     let (mid, _user) = whoami(game, session);
     // при активном рейде исходящие атаки заблокированы
     if matches!(func, "connect" | "exploit" | "crack") && crate::hack::is_locked(&game.world) {
-        return Err(format!("канал под наблюдением после рейда — ещё {} с", crate::hack::lock_remaining(&game.world)));
+        return Err(trf!("канал под наблюдением после рейда — ещё {} с", "channel under surveillance after the raid — another {} s", crate::hack::lock_remaining(&game.world)));
     }
     match func {
         "my_ip" => {
             let m = game.world.machine(mid);
             Ok(json!(m.lan_ip.clone().unwrap_or_else(|| m.ip.clone())))
         }
-        "resolve" => Ok(game.world.resolve(&arg_str(args, 0, "имя")?).map(|ip| json!(ip)).unwrap_or(Value::Null)),
+        "resolve" => Ok(game.world.resolve(&arg_str(args, 0, tr!("имя", "name"))?).map(|ip| json!(ip)).unwrap_or(Value::Null)),
         "ping" => {
-            let addr = arg_str(args, 0, "адрес")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
             match game.world.lookup(mid, &addr) {
                 Ok(id) => {
                     game.world.mark_known(id);
@@ -231,7 +232,7 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             }
         }
         "scan" => {
-            let addr = arg_str(args, 0, "адрес")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             game.world.mark_scanned(id);
             let list: Vec<Value> = game
@@ -241,21 +242,21 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 .iter()
                 .map(|sv| json!({ "port": sv.port, "service": sv.name, "version": sv.version, "state": if sv.running { "open" } else { "closed" }, "banner": sv.banner }))
                 .collect();
-            let text = format!("сканирование с {}", game.world.machine(mid).hostname);
+            let text = trf!("сканирование с {}", "scan from {}", game.world.machine(mid).hostname);
             game.world.log(id, LogKind::Net, &text);
             Ok(Value::Array(list))
         }
         "connect" => {
-            let addr = arg_str(args, 0, "адрес")?;
-            let user = arg_str(args, 1, "пользователь")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
+            let user = arg_str(args, 1, tr!("пользователь", "user"))?;
             let pass = arg_str_or(args, 2, "");
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             let has_ssh = game.world.machine(id).services.iter().any(|s| s.name == "ssh" && s.running);
             if !has_ssh {
-                return Err(format!("{}: порт 22 закрыт", addr));
+                return Err(trf!("{}: порт 22 закрыт", "{}: port 22 closed", addr));
             }
             if crate::hack::defense::firewall_up(&game.world, id) {
-                return Err(format!("{}: узел закрыт файрволом", addr));
+                return Err(trf!("{}: узел закрыт файрволом", "{}: host blocked by firewall", addr));
             }
             let from_host = game.world.machine(mid).hostname.clone();
             if game.world.machine(id).users.check_password(&user, &pass) {
@@ -264,10 +265,10 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                     s.push_hop(id, &user, &home);
                 }
                 game.world.mark_known(id);
-                game.world.log(id, LogKind::Login, &format!("ssh: вход {} с {}", user, from_host));
+                game.world.log(id, LogKind::Login, &trf!("ssh: вход {} с {}", "ssh: login {} from {}", user, from_host));
                 Ok(json!(true))
             } else {
-                game.world.log(id, LogKind::LoginFailed, &format!("ssh: неверный пароль для {} с {}", user, from_host));
+                game.world.log(id, LogKind::LoginFailed, &trf!("ssh: неверный пароль для {} с {}", "ssh: wrong password for {} from {}", user, from_host));
                 Ok(json!(false))
             }
         }
@@ -277,7 +278,7 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
                 game.sessions.get_mut(&session).and_then(|s| if s.hops.len() > 1 { s.pop_hop(world) } else { None })
             };
             if let Some(hop) = popped {
-                game.world.log(hop.machine, LogKind::Logout, &format!("ssh: выход {}", hop.user));
+                game.world.log(hop.machine, LogKind::Logout, &trf!("ssh: выход {}", "ssh: logout {}", hop.user));
                 Ok(json!(true))
             } else {
                 Ok(json!(false))
@@ -292,20 +293,20 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             Ok(json!(names))
         }
         "http" => {
-            let url = arg_str(args, 0, "адрес")?;
+            let url = arg_str(args, 0, tr!("адрес", "address"))?;
             let page = game.world.http(mid, &url);
             Ok(json!({ "status": page.status, "title": page.title, "body": page.body }))
         }
         "access" => crate::hack::access::use_object(game, session, args),
         "research" | "probe" => {
-            let addr = arg_str(args, 0, "адрес")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
             let selector = args.get(1).and_then(Value::as_str);
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
-            let sess = game.sessions.get(&session).ok_or("нет сеанса")?;
+            let sess = game.sessions.get(&session).ok_or(tr!("нет сеанса", "no session"))?;
             let v = crate::hack::payload::select(&game.world, sess, id, selector)?;
             crate::hack::payload::ensure_reachable(&game.world, sess, id, &v)?;
             if func == "probe" {
-                let payload = args.get(2).ok_or("net.probe(адрес, id, payload): нужен payload")?;
+                let payload = args.get(2).ok_or(tr!("net.probe(адрес, id, payload): нужен payload", "net.probe(address, id, payload): payload required"))?;
                 return crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, true);
             }
             let mut result = crate::hack::payload::profile(&game.world, id, &v)?;
@@ -315,10 +316,10 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
         }
         // ---- взлом (второй этап)
         "vulns" => {
-            let addr = arg_str(args, 0, "адрес")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             game.world.mark_scanned(id);
-            let sess = game.sessions.get(&session).ok_or("нет сеанса")?;
+            let sess = game.sessions.get(&session).ok_or(tr!("нет сеанса", "no session"))?;
             let list: Vec<Value> = crate::hack::payload::available(&game.world, sess, id)
                 .iter()
                 .filter(|v| !v.local || mid == id)
@@ -328,13 +329,14 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             Ok(Value::Array(list))
         }
         "exploit" => {
-            let addr = arg_str(args, 0, "адрес")?;
-            let selector = arg_str(args, 1, "id уязвимости")?;
-            let payload = args.get(2).ok_or("Автоматический взлом отключён: net.exploit(адрес, id, payload). Начни с research и exploit new; готовые инструменты — market.")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
+            let selector = arg_str(args, 1, tr!("id уязвимости", "vulnerability id"))?;
+            let payload = args.get(2).ok_or(tr!("Автоматический взлом отключён: net.exploit(адрес, id, payload). Начни с research и exploit new; готовые инструменты — market.",
+                "Automatic hacking is disabled: net.exploit(address, id, payload). Start with research and exploit new; ready-made tools — market."))?;
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
-            let sess = game.sessions.get_mut(&session).ok_or_else(|| "нет сеанса".to_string())?;
+            let sess = game.sessions.get_mut(&session).ok_or_else(|| tr!("нет сеанса", "no session").to_string())?;
             let v = crate::hack::payload::select(&game.world, sess, id, Some(&selector))?;
-            if v.local { return Err("для локальной уязвимости используй net.privesc(payload, id)".into()); }
+            if v.local { return Err(tr!("для локальной уязвимости используй net.privesc(payload, id)", "for a local vulnerability use net.privesc(payload, id)").into()); }
             let check = crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, false)?;
             if check["ok"] != json!(true) { return Ok(check); }
             let r = crate::hack::exploit::exploit_selected(&mut game.world, sess, id, v)?;
@@ -349,12 +351,12 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             Ok(out)
         }
         "crack" => {
-            let addr = arg_str(args, 0, "адрес")?;
-            let user = arg_str(args, 1, "пользователь")?;
+            let addr = arg_str(args, 0, tr!("адрес", "address"))?;
+            let user = arg_str(args, 1, tr!("пользователь", "user"))?;
             let wl_path = arg_str_or(args, 2, "~/wordlist.txt");
             let id = game.world.lookup(mid, &addr).map_err(|e| e.to_string())?;
             let words = read_wordlist(game, session, &wl_path)?;
-            let sess = game.sessions.get(&session).ok_or_else(|| "нет сеанса".to_string())?;
+            let sess = game.sessions.get(&session).ok_or_else(|| tr!("нет сеанса", "no session").to_string())?;
             let r = crate::hack::crack(&mut game.world, sess, id, &user, &words)?;
             Ok(match r.found {
                 Some(p) => json!(p),
@@ -362,20 +364,21 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             })
         }
         "privesc" => {
-            let sess = game.sessions.get_mut(&session).ok_or_else(|| "нет сеанса".to_string())?;
-            let payload = args.first().ok_or("Нужен локальный payload: net.privesc(payload, id); исследуй текущую машину через research.")?;
-            let selector = arg_str(args, 1, "id локальной уязвимости")?;
+            let sess = game.sessions.get_mut(&session).ok_or_else(|| tr!("нет сеанса", "no session").to_string())?;
+            let payload = args.first().ok_or(tr!("Нужен локальный payload: net.privesc(payload, id); исследуй текущую машину через research.",
+                "A local payload is required: net.privesc(payload, id); investigate the current machine with research."))?;
+            let selector = arg_str(args, 1, tr!("id локальной уязвимости", "local vulnerability id"))?;
             let id = sess.machine_id();
             let v = crate::hack::payload::select(&game.world, sess, id, Some(&selector))?;
-            if !v.local { return Err("privesc требует локальную уязвимость текущей машины".into()); }
+            if !v.local { return Err(tr!("privesc требует локальную уязвимость текущей машины", "privesc requires a local vulnerability of the current machine").into()); }
             let check = crate::hack::payload::attempt(&mut game.world, sess, id, &v, payload, false)?;
             if check["ok"] != json!(true) { return Ok(check); }
             let r = crate::hack::privesc::apply_vulnerability(&mut game.world, sess, Some(v))?;
-            Ok(json!({"ok": r.ok, "access": if r.ok {"root"} else {"none"}, "host": r.host, "feedback": if r.ok {"Права повышены до root."} else {"Вы уже root."}}))
+            Ok(json!({"ok": r.ok, "access": if r.ok {"root"} else {"none"}, "host": r.host, "feedback": if r.ok {tr!("Права повышены до root.", "Privileges escalated to root.")} else {tr!("Вы уже root.", "You are already root.")}}))
         }
         "clear_logs" => {
             let pat = args.first().and_then(|v| v.as_str()).map(|s| s.to_string());
-            let sess = game.sessions.get(&session).ok_or_else(|| "нет сеанса".to_string())?;
+            let sess = game.sessions.get(&session).ok_or_else(|| tr!("нет сеанса", "no session").to_string())?;
             let r = crate::hack::clear_logs(&mut game.world, sess, pat.as_deref())?;
             Ok(json!(if r.denied { -1i64 } else { r.removed as i64 }))
         }
@@ -390,12 +393,12 @@ fn call_net(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             Ok(json!(names))
         }
         "proxy" => {
-            let sess = game.sessions.get(&session).ok_or_else(|| "нет сеанса".to_string())?;
+            let sess = game.sessions.get(&session).ok_or_else(|| tr!("нет сеанса", "no session").to_string())?;
             let p = crate::hack::proxy_info(&game.world, sess);
             let chain: Vec<Value> = p.chain.iter().map(|(id, u)| json!({ "host": game.world.machine(*id).hostname, "user": u })).collect();
             Ok(json!({ "chain": chain, "exit_ip": p.exit_ip, "hidden": p.hidden, "monitored": !p.monitored_hops.is_empty() }))
         }
-        _ => Err(format!("нет функции net.{}", func)),
+        _ => Err(trf!("нет функции net.{}", "no function net.{}", func)),
     }
 }
 
@@ -422,7 +425,7 @@ fn read_wordlist(game: &Game, session: u32, path: &str) -> Result<Vec<String>, S
 fn call_shell(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
     match func {
         "exec" => {
-            let line = arg_str(args, 0, "команда")?;
+            let line = arg_str(args, 0, tr!("команда", "command"))?;
             let res = game.exec(session, &line);
             let ok = !res.lines.iter().any(|l| l.kind == OutKind::Error);
             let out: Vec<String> = res.lines.iter().map(|l| l.text.clone()).collect();
@@ -435,6 +438,6 @@ fn call_shell(game: &mut Game, session: u32, func: &str, args: &[Value]) -> R {
             }
             Ok(json!({ "out": out.join("\n"), "ok": ok }))
         }
-        _ => Err(format!("нет функции shell.{}", func)),
+        _ => Err(trf!("нет функции shell.{}", "no function shell.{}", func)),
     }
 }

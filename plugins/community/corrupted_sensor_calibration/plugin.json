@@ -1,6 +1,7 @@
 {
   "id": "corrupted_sensor_calibration",
   "name": "Испорченная калибровка датчиков",
+  "name_en": "Corrupted Sensor Calibration",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

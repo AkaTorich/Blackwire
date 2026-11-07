@@ -1,99 +1,117 @@
 # Blackwire
+[Русская версия](README.ru.md)
 
-**Хакерский симулятор с собственной операционной системой, живой игровой сетью и языком программирования Adder.**
+**A hacking simulator with its own operating system, a living game network and the Adder programming language.**
 
-[Скачать игру](https://github.com/AkaTorich/Blackwire/releases/latest) · [Сайт](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Руководство игрока](docs/GAME.md)
+[Download the game](https://github.com/AkaTorich/Blackwire/releases/latest) · [Website](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Player's guide](docs/en/GAME.md)
 
-После увольнения из корпорации у тебя остались компьютер, старый маршрутизатор и долг перед банком. В почте появляется приглашение от группы **hello-world**. За ним — скрытая сеть, первые задания и возможность вернуть себе свободу.
+After being fired from the corporation, all you have left is a computer, an old router and a debt to the bank. An invitation from the **hello-world** group shows up in your mail. Behind it lie a hidden network, the first missions and a chance to win back your freedom.
 
-Blackwire разворачивается на виртуальном рабочем столе. Терминал, почта, браузер, редактор и карта сети открываются в отдельных окнах: их можно раскладывать по экрану и переносить между мониторами. Все приложения работают с одним игровым миром, где у машин есть владельцы, службы, файлы, учётные записи и история событий.
+Blackwire unfolds on a virtual desktop. The terminal, mail, browser, editor and network map open in separate windows: you can arrange them across the screen and move them between monitors. All applications work with one game world, where machines have owners, services, files, accounts and a history of events.
 
-## Что можно делать
+## What you can do
 
-- **Исследовать сеть.** Находить узлы корпораций, банков, клиник и университетов, изучать службы, проходить через шлюзы во внутренние подсети.
-- **Выполнять задания.** Искать сведения в письмах и файлах, получать доступ к системам, доставлять данные и продвигаться по истории hello-world. После сюжета можно продолжать свободную игру.
-- **Управлять последствиями.** Следить за подозрением, выстраивать цепочки прокси, работать с журналами и уходить от расследования служб безопасности.
-- **Развивать свой компьютер.** Зарабатывать на заказах, покупать оборудование и инструменты, обустраивать собственную базу.
-- **Создавать собственные эксплоиты.** Исследовать игровые уязвимости, собирать payload на Adder и проверять его по подсказкам в игре. Готовые редактируемые инструменты можно купить на маркете; это работает и с уязвимостями плагинов. Доступны 28 моделей уязвимостей. Результатом может быть вход guest/user/root, утечка данных или частичный доступ к файлу, компьютеру либо маршрутизатору; условия взлома видны при исследовании.
-- **Писать программы на Adder.** Автоматизировать действия, создавать инструменты для терминала и работать с игровыми файлами и сетью. В игре есть редактор с подсветкой и проверкой ошибок.
-- **Играть вместе.** Создавать сетевые партии: соревноваться за цель или совместно проходить набор заданий.
-- **Расширять мир плагинами.** Добавлять устройства, их уязвимости, организации, задания, события, магазины и собственные окна.
+- **Explore the network.** Find hosts of corporations, banks, clinics and universities, study their services, pass through gateways into internal subnets.
+- **Complete missions.** Look for information in mail and files, gain access to systems, deliver data and advance through the hello-world story. After the story you can keep playing freely.
+- **Manage the consequences.** Watch your heat, build proxy chains, work with logs and evade security investigations.
+- **Upgrade your computer.** Earn money on jobs, buy hardware and tools, set up your own base.
+- **Create your own exploits.** Research in-game vulnerabilities, build a payload in Adder and test it against the in-game hints. Ready-made editable tools can be bought on the market; this also works with plugin vulnerabilities. 28 vulnerability models are available. The result can be a guest/user/root login, a data leak or partial access to a file, computer or router; the conditions of a hack are visible during research.
+- **Write programs in Adder.** Automate actions, create terminal tools and work with game files and the network. The game has an editor with syntax highlighting and error checking.
+- **Play together.** Create multiplayer games: compete for a target or complete a set of missions together.
+- **Extend the world with plugins.** Add devices, their vulnerabilities, organisations, missions, events, shops and your own windows.
 
-Оформление включает 12 тем, настройку шрифтов, прозрачности, эффектов и расположения окон. Компьютеры, адреса и действия в терминале относятся к вымышленному миру игры.
+The look includes 12 themes and settings for fonts, transparency, effects and window layout. The game is bilingual, Russian and English: choose the language on the login screen or in Settings → Language. Computers, addresses and terminal actions belong to the game's fictional world.
 
-## Скачать и установить
+## Download and install
 
-Открой [последний релиз](https://github.com/AkaTorich/Blackwire/releases/latest) и выбери файл для своей системы в разделе **Assets**:
+Open the [latest release](https://github.com/AkaTorich/Blackwire/releases/latest) and pick the file for your system under **Assets**:
 
-| Система | Файл | Установка |
+| System | File | Installation |
 | --- | --- | --- |
-| Windows 10/11, x64 | `Blackwire_<версия>_x64-setup.exe` | Запусти установщик |
-| Debian / Ubuntu, x64 | `Blackwire_<версия>_amd64.deb` | Установи пакет через менеджер приложений |
-| macOS, Intel и Apple Silicon | `Blackwire_<версия>_universal.dmg` | Открой образ и перенеси игру в Applications |
+| Windows 10/11, x64 | `Blackwire_<version>_x64-setup.exe` | Run the installer |
+| Debian / Ubuntu, x64 | `Blackwire_<version>_amd64.deb` | Install the package via the app manager |
+| macOS, Intel and Apple Silicon | `Blackwire_<version>_universal.dmg` | Open the image and move the game to Applications |
 
-В том же релизе доступны два отдельных архива:
+The same release also offers separate archives:
 
-- **`Blackwire-SDK-<версия>.zip`** — SDK с документацией, примерами, схемами данных и инструментами проверки плагинов для Windows, Linux и macOS.
-- **`Blackwire-Plugins-<версия>.zip`** — набор из 100 плагинов с инструкцией для каждого.
-- **`Blackwire-Vulnerability-Plugins-<версия>.zip`** — 10 дополнительных сюжетных плагинов: 30 уязвимостей, включая 10 авторских типов на Adder. Описание и START_HERE.md каждого плагина — на русском.
+- **`Blackwire-SDK-<version>.zip`** — the SDK with documentation, examples, data schemas and plugin checker tools for Windows, Linux and macOS.
+- **`Blackwire-Plugins-<version>.zip`** — a set of 100 plugins with instructions for each.
+- **`Blackwire-Vulnerability-Plugins-<version>.zip`** — 10 additional story plugins: 30 vulnerabilities, including 10 custom types in Adder. Each plugin's description and START_HERE.md are in Russian.
 
-Установщик игры также включает SDK в каталоге `sdk`. Для обычной игры устанавливать инструменты разработки не требуется.
+The game installer also includes the SDK in the `sdk` directory. You don't need to install development tools for ordinary play.
 
-## Первые шаги
+## First steps
 
-1. Запусти Blackwire и создай новую личность.
-2. Открой почту и прочитай письмо **hello-world**.
-3. Перейди по приглашению в **игровом браузере** — оно приведёт к первому испытанию.
-4. Осмотрись в домашней папке: там находятся файлы и готовые скрипты.
-5. Открой терминал. Команда `help` показывает доступные команды, а `man имя_команды` — справку по выбранной.
-6. Читай брифинги на доске заданий `gate.hw/board` внутри игры. Адреса и подсказки ищи в письмах, документах и на карте сети.
+1. Launch Blackwire and create a new identity.
+2. Open your mail and read the **hello-world** letter.
+3. Follow the invitation in the **game browser** — it leads to the first challenge.
+4. Look around your home folder: it holds files and ready-made scripts.
+5. Open the terminal. The `help` command shows the available commands, and `man command_name` shows help for a specific one.
+6. Read the briefings on the job board `gate.hw/board` inside the game. Look for addresses and hints in mail, documents and on the network map.
 
-Игра автоматически сохраняется раз в минуту и при штатном выходе. Для отдельных прохождений и экспериментов доступны именованные слоты сохранений.
+The game saves automatically once a minute and on a normal exit. Named save slots are available for separate playthroughs and experiments.
 
-Подробности о терминале, доступе к узлам, экономике и расследованиях — в [руководстве игрока](docs/GAME.md).
+Details on the terminal, host access, the economy and investigations are in the [player's guide](docs/en/GAME.md).
 
-## Плагины
+## Plugins
 
-Плагины написаны на **Adder** и подключаются через приложение **«Плагины»** на игровом рабочем столе.
+Plugins are written in **Adder** and are connected through the **Plugins** app on the game desktop.
 
-1. Скачай архив плагинов из [релиза](https://github.com/AkaTorich/Blackwire/releases/latest) и распакуй его.
-2. В игре открой **Плагины → Открыть папку**.
-3. Скопируй туда папки выбранных плагинов из каталога `plugins` архива. Внутри каждой папки должны находиться `plugin.json` и исходник `main.adr`.
-4. Нажми **«Перечитать»**.
-5. Открой `START_HERE.md` в папке выбранного плагина. В нём указаны завязка, первый шаг и команды; подсказки также доступны в игровом окне плагина.
+1. Download the plugin archive from the [release](https://github.com/AkaTorich/Blackwire/releases/latest) and unpack it.
+2. In the game, open **Plugins → Open folder**.
+3. Copy the folders of the chosen plugins from the archive's `plugins` directory there. Each folder must contain `plugin.json` and the `main.adr` source.
+4. Press **Reload**.
+5. Open `START_HERE.md` in the folder of the chosen plugin. It gives the setup, the first step and the commands; hints are also available in the plugin's game window.
 
-Устанавливай те плагины, которые хочешь попробовать. Генераторы добавляют свой контент после команды запуска, указанной в инструкции. Утилиты и магазины доступны после загрузки. Созданные устройства и задания сохраняются в мире даже после отключения плагина.
+Install the plugins you want to try. Generators add their content after the start command given in the instructions. Utilities and shops are available after loading. Created devices and missions stay in the world even after the plugin is disabled.
 
-В набор входят устройства, сети организаций, расследования, панели инструментов, дополнения к магазинам и события. Названия плагинов — на английском. Описание каждого и команда начала собраны в [каталоге плагинов](plugins/README.md).
+The set includes devices, organisation networks, investigations, tool panels, shop add-ons and events. Plugin names are in English. The description of each and its start command are collected in the [plugin catalog](plugins/README.en.md).
 
-## Создание своих плагинов
+## Creating your own plugins
 
-**Blackwire SDK, API 1** позволяет создавать контент и игровую логику на Adder:
+**Blackwire SDK, API 1** lets you create content and game logic in Adder:
 
-- собственные типы устройств и отдельные машины со службами, пользователями и файлами;
-- уязвимости для типа устройств или конкретного устройства;
-- организации, подсети, задания, награды, магазины и достижения;
-- команды терминала, окна, обработчики событий и таймеры;
-- состояние плагина, сохраняемое вместе с игрой, и обмен сообщениями в сетевой партии.
+- your own device types and individual machines with services, users and files;
+- vulnerabilities for a device type or a specific device;
+- organisations, subnets, missions, rewards, shops and achievements;
+- terminal commands, windows, event handlers and timers;
+- plugin state saved together with the game, and messaging in a multiplayer game.
 
-Начни с [руководства SDK](docs/SDK.md) и [описания языка Adder](docs/ADDER.md). Готовые примеры: [Device Lab](sdk/examples/device_lab) с устройствами и уязвимостями и [District](sdk/examples/district) с районом, заданием, магазином и окном.
+Start with the [SDK guide](docs/en/SDK.md) and the [Adder language description](docs/en/ADDER.md). Ready examples: [Device Lab](sdk/examples/device_lab) with devices and vulnerabilities and [District](sdk/examples/district) with a district, a mission, a shop and a window.
 
-В SDK входит `plugin-check`: он проверяет плагины на отдельном игровом мире без загрузки сохранений игрока. Команды запуска и состав пакета описаны в [README SDK](sdk/README.md).
+The SDK includes `plugin-check`: it checks plugins on a separate game world without loading the player's saves. Launch commands and package contents are described in the [SDK README](sdk/README.en.md).
 
-## Документация
+## Documentation
 
-| Руководство | Содержание |
+| Guide | Contents |
 | --- | --- |
-| [Игра](docs/GAME.md) | Начало, приложения, сеть, задания, экономика и сохранения |
-| [Команды терминала](docs/COMMANDS.md) | Справочник команд игровой оболочки |
-| [Adder](docs/ADDER.md) | Синтаксис языка, функции и игровые модули |
-| [SDK](docs/SDK.md) | Создание плагинов, API, события и генерация контента |
-| [Механики взлома](docs/HACK.md) | Разведка, доступ, уязвимости и противодействие защите |
-| [Blackwire.chm](Blackwire.chm) | Скомпилированная справка по игре и SDK для Windows |
+| [Game](docs/en/GAME.md) | Getting started, applications, network, missions, economy and saves |
+| [Terminal commands](docs/en/COMMANDS.md) | Reference of the game shell commands |
+| [Adder](docs/en/ADDER.md) | Language syntax, functions and game modules |
+| [SDK](docs/en/SDK.md) | Creating plugins, API, events and content generation |
+| [Hacking mechanics](docs/HACK.md) | Reconnaissance, access, vulnerabilities and countering defences |
+| [Blackwire.chm](Blackwire.chm) | Compiled game and SDK help for Windows |
 
-## Сборка из исходников
+## Languages
 
-Движок и язык написаны на **Rust**, оболочка использует **Tauri 2**, интерфейс — HTML, CSS и JavaScript. Для сборки нужны Rust stable, Python 3.11+ и [системные зависимости Tauri](https://v2.tauri.app/start/prerequisites/).
+Russian is the primary language, English is the second one; they switch on the fly and the choice is kept in `prefs.json` in the game's data folder.
+
+| What | Where |
+| --- | --- |
+| Engine language switch, macros `tr!("ru", "en")` and `trf!(…)` | `lang/src/i18n.rs` (imported in every crate) |
+| Language in the windows, `L('ru', 'en')` | `app/ui/js/i18n.js`; commands `lang_get` / `lang_set` in `app/src/cmd_game.rs` |
+| Engine, world, mission and window texts | in pairs on the spot; data tables carry English fields next to Russian ones |
+| English help | `docs/en/` (GAME, COMMANDS, HACK, ADDER, SDK, STORY) |
+| English market scripts | `core/src/hack/exploits/en/` and the `*_EN` scripts in `core/src/market.rs` |
+| Plugins | `<field>_en` in `content.json`, `name_en` in `plugin.json`, `plugin.lang()` in the templates; `START_HERE.en.md` |
+| Generating the English plugin texts | `tools/localize_plugins.py` (100 community plugins), `tools/generate_vulnerability_cases.py` + `tools/vulnerability_cases_en.py` (10 cases) |
+| Test | `core/tests/english.rs` — English world, help and command output contain no Cyrillic |
+
+A new world is generated in the chosen language; mail, files and logs of an existing world stay in the language they appeared in.
+
+## Building from source
+
+The engine and the language are written in **Rust**, the shell uses **Tauri 2**, the interface is HTML, CSS and JavaScript. To build you need Rust stable, Python 3.11+ and the [Tauri system dependencies](https://v2.tauri.app/start/prerequisites/).
 
 ```sh
 git clone https://github.com/AkaTorich/Blackwire.git
@@ -102,19 +120,19 @@ cargo install tauri-cli --version "^2" --locked
 cd app
 ```
 
-Запусти команду для своей системы:
+Run the command for your system:
 
-| Система | Команда |
+| System | Command |
 | --- | --- |
 | Windows | `cargo tauri build --bundles nsis` |
 | Linux | `cargo tauri build --bundles deb` |
 | macOS | `cargo tauri build --target universal-apple-darwin --bundles dmg` |
 
-Для универсальной сборки macOS предварительно установи обе цели Rust: `rustup target add aarch64-apple-darwin x86_64-apple-darwin`.
+For a universal macOS build, first install both Rust targets: `rustup target add aarch64-apple-darwin x86_64-apple-darwin`.
 
-Сборка автоматически подготавливает SDK и включает его в установочный пакет. Параметры сборки всех платформ находятся в [GitHub Actions](.github/workflows/build.yml).
+The build prepares the SDK automatically and includes it in the installation package. Build settings for all platforms are in [GitHub Actions](.github/workflows/build.yml).
 
-Исходники распределены по каталогам: `lang/` — Adder, `core/` — игровой движок, `app/` — приложение и интерфейс, `sdk/` — материалы для авторов плагинов, `plugins/` — готовые плагины. Тесты движка и языка запускаются из корня репозитория:
+The sources are spread across directories: `lang/` — Adder, `core/` — the game engine, `app/` — the application and interface, `sdk/` — materials for plugin authors, `plugins/` — ready-made plugins. Engine and language tests are run from the repository root:
 
 ```sh
 cargo test --locked -p blackwire-core -p blackwire-lang

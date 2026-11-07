@@ -1,12 +1,15 @@
 {
   "name": "Подменённые строительные заявки",
+  "name_en": "Swapped Construction Bids",
   "family": "case",
   "kind": "file_server",
   "org_kind": "media",
   "service": "bid_store",
   "file": "bid-history.csv",
   "story": "Поданная заявка отличается от редакции, которую хранит приёмная комиссия.",
+  "story_en": "The submitted bid differs from the revision kept by the review committee.",
   "objective": "Отследить обоих свидетелей и восстановить цепочку хранения.",
+  "objective_en": "Follow both evidence hosts and establish the custody trail.",
   "reward": 270,
   "id": "swapped_construction_bids",
   "number": 57,
@@ -22,8 +25,10 @@
       "service": "bid_store_gate",
       "port": 7168,
       "os": "Подменённые строительные заявки OS 1.0",
+      "os_en": "Swapped Construction Bids OS 1.0",
       "file": "/srv/records/routing-note.txt",
       "text": "Поданная заявка отличается от редакции, которую хранит приёмная комиссия.\nВладелец записи: swapped_construction_bids.\nНомер дела: BW-057.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The submitted bid differs from the revision kept by the review committee.\nRecord owner: swapped_construction_bids.\nCase reference: BW-057.\nStatus: preserved for in-game review.",
       "access": "shell",
       "password": "bw_swapped_construction_bids_1"
     },
@@ -36,8 +41,10 @@
       "service": "bid_store",
       "port": 7169,
       "os": "Подменённые строительные заявки OS 1.0",
+      "os_en": "Swapped Construction Bids OS 1.0",
       "file": "/srv/records/bid-history.csv",
       "text": "Поданная заявка отличается от редакции, которую хранит приёмная комиссия.\nВладелец записи: swapped_construction_bids.\nНомер дела: BW-057.\nСтатус: сохранено для разбора в игре.",
+      "text_en": "The submitted bid differs from the revision kept by the review committee.\nRecord owner: swapped_construction_bids.\nCase reference: BW-057.\nStatus: preserved for in-game review.",
       "access": "root",
       "password": "bw_swapped_construction_bids_2"
     }

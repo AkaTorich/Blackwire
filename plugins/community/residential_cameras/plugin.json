@@ -1,6 +1,7 @@
 {
   "id": "residential_cameras",
   "name": "Камеры жилого дома",
+  "name_en": "Residential Cameras",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

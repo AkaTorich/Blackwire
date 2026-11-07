@@ -28,7 +28,7 @@ pub fn parse_expression(tokens: Vec<Token>) -> PResult<Expr> {
         p.advance();
     }
     if !matches!(p.peek(), Tok::Eof) {
-        return Err(p.err(format!("лишний текст в выражении: {}", describe(p.peek()))));
+        return Err(p.err(trf!("лишний текст в выражении: {}", "extra text in expression: {}", describe(p.peek()))));
     }
     Ok(e)
 }
@@ -42,14 +42,14 @@ fn describe(t: &Tok) -> String {
     match t {
         Tok::Int(n) => format!("'{}'", n),
         Tok::Float(f) => format!("'{}'", f),
-        Tok::Str(_) | Tok::FStr(_) => "строка".to_string(),
+        Tok::Str(_) | Tok::FStr(_) => tr!("строка", "string").to_string(),
         Tok::Name(n) => format!("'{}'", n),
         Tok::Kw(k) => format!("'{}'", k),
         Tok::Op(o) => format!("'{}'", o),
-        Tok::Newline => "конец строки".to_string(),
-        Tok::Indent => "отступ".to_string(),
-        Tok::Dedent => "конец блока".to_string(),
-        Tok::Eof => "конец файла".to_string(),
+        Tok::Newline => tr!("конец строки", "end of line").to_string(),
+        Tok::Indent => tr!("отступ", "indent").to_string(),
+        Tok::Dedent => tr!("конец блока", "end of block").to_string(),
+        Tok::Eof => tr!("конец файла", "end of file").to_string(),
     }
 }
 
@@ -129,7 +129,7 @@ impl Parser {
         if self.eat_op(s) {
             Ok(())
         } else {
-            Err(self.err(format!("ожидалось '{}', найдено {}", s, describe(self.peek()))))
+            Err(self.err(trf!("ожидалось '{}', найдено {}", "expected '{}', found {}", s, describe(self.peek()))))
         }
     }
 
@@ -137,7 +137,7 @@ impl Parser {
         if self.eat_kw(s) {
             Ok(())
         } else {
-            Err(self.err(format!("ожидалось '{}', найдено {}", s, describe(self.peek()))))
+            Err(self.err(trf!("ожидалось '{}', найдено {}", "expected '{}', found {}", s, describe(self.peek()))))
         }
     }
 
@@ -148,7 +148,7 @@ impl Parser {
                 self.advance();
                 Ok(n)
             }
-            other => Err(self.err(format!("ожидалось имя, найдено {}", describe(other)))),
+            other => Err(self.err(trf!("ожидалось имя, найдено {}", "expected a name, found {}", describe(other)))),
         }
     }
 
@@ -159,7 +159,7 @@ impl Parser {
                 Ok(())
             }
             Tok::Eof => Ok(()),
-            other => Err(self.err(format!("ожидался конец строки, найдено {}", describe(other)))),
+            other => Err(self.err(trf!("ожидался конец строки, найдено {}", "expected end of line, found {}", describe(other)))),
         }
     }
 
@@ -177,7 +177,7 @@ impl Parser {
         }
         self.advance();
         if !matches!(self.peek(), Tok::Indent) {
-            return Err(self.err("ожидался отступ"));
+            return Err(self.err(tr!("ожидался отступ", "expected an indented block")));
         }
         self.advance();
         let mut body = Vec::new();
@@ -192,7 +192,7 @@ impl Parser {
 
     fn parse_stmt(&mut self) -> PResult<Stmt> {
         match self.peek() {
-            Tok::Indent => Err(self.err("неожиданный отступ")),
+            Tok::Indent => Err(self.err(tr!("неожиданный отступ", "unexpected indent"))),
             Tok::Kw("if") => self.parse_if(),
             Tok::Kw("while") => self.parse_while(),
             Tok::Kw("for") => self.parse_for(),
@@ -242,7 +242,7 @@ impl Parser {
                 StmtKind::Continue
             }
             Tok::Kw(k @ ("elif" | "else" | "except" | "finally")) => {
-                return Err(self.err(format!("'{}' без соответствующего начала блока", k)));
+                return Err(self.err(trf!("'{}' без соответствующего начала блока", "'{}' without a matching block start", k)));
             }
             _ => self.parse_expr_stmt()?,
         };
@@ -275,7 +275,7 @@ impl Parser {
             self.advance();
             match first.kind {
                 ExprKind::Name(_) | ExprKind::Index(..) => {}
-                _ => return Err(LangError::syntax(first.line, first.col, "недопустимая цель присваивания")),
+                _ => return Err(LangError::syntax(first.line, first.col, tr!("недопустимая цель присваивания", "invalid assignment target"))),
             }
             let value = self.parse_expr_list()?;
             return Ok(StmtKind::AugAssign { target: first, op, value });
@@ -292,7 +292,7 @@ impl Parser {
                 }
                 Ok(())
             }
-            _ => Err(LangError::syntax(e.line, e.col, "недопустимая цель присваивания")),
+            _ => Err(LangError::syntax(e.line, e.col, tr!("недопустимая цель присваивания", "invalid assignment target"))),
         }
     }
 
@@ -359,10 +359,10 @@ impl Parser {
             let name = self.expect_name()?;
             let default = if self.eat_op("=") { Some(self.parse_expr()?) } else { None };
             if default.is_none() && params.iter().any(|p| p.default.is_some()) {
-                return Err(self.err("параметр без значения по умолчанию после параметра со значением"));
+                return Err(self.err(tr!("параметр без значения по умолчанию после параметра со значением", "non-default parameter follows default parameter")));
             }
             if params.iter().any(|p| p.name == name) {
-                return Err(self.err(format!("повторяющийся параметр '{}'", name)));
+                return Err(self.err(trf!("повторяющийся параметр '{}'", "duplicate parameter '{}'", name)));
             }
             params.push(Param { name, default });
             if !self.eat_op(",") {
@@ -394,7 +394,7 @@ impl Parser {
             finally = Some(self.parse_block()?);
         }
         if handlers.is_empty() && finally.is_none() {
-            return Err(self.err("после try ожидался except или finally"));
+            return Err(self.err(tr!("после try ожидался except или finally", "expected except or finally after try")));
         }
         Ok(Stmt { line, kind: StmtKind::Try { body, handlers, finally } })
     }
@@ -634,12 +634,12 @@ impl Parser {
                 self.advance();
                 self.advance();
                 if kwargs.iter().any(|(k, _)| *k == name) {
-                    return Err(self.err(format!("именованный аргумент '{}' передан дважды", name)));
+                    return Err(self.err(trf!("именованный аргумент '{}' передан дважды", "keyword argument '{}' repeated", name)));
                 }
                 kwargs.push((name, self.parse_expr()?));
             } else {
                 if !kwargs.is_empty() {
-                    return Err(self.err("позиционный аргумент после именованного"));
+                    return Err(self.err(tr!("позиционный аргумент после именованного", "positional argument follows keyword argument")));
                 }
                 let (line, col) = (self.line(), self.col());
                 let mut e = self.parse_expr()?;
@@ -717,7 +717,7 @@ impl Parser {
             Tok::Op("[") => return self.parse_list(line, col),
             Tok::Op("{") => return self.parse_dict(line, col),
             other => {
-                return Err(LangError::syntax(line, col, format!("неожиданный токен: {}", describe(&other))));
+                return Err(LangError::syntax(line, col, trf!("неожиданный токен: {}", "unexpected token: {}", describe(&other))));
             }
         };
         Ok(self.mk(line, col, kind))
@@ -790,7 +790,7 @@ impl Parser {
         }
         let key = self.parse_expr()?;
         if !self.eat_op(":") {
-            return Err(self.err("ожидалось ':' между ключом и значением словаря"));
+            return Err(self.err(tr!("ожидалось ':' между ключом и значением словаря", "expected ':' between dict key and value")));
         }
         let value = self.parse_expr()?;
         if self.is_kw("for") {

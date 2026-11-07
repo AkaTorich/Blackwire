@@ -228,14 +228,14 @@ impl Lexer {
                 _ => {}
             }
             if has_tab && has_space {
-                return Err(self.err("смешение табов и пробелов в отступе"));
+                return Err(self.err(tr!("смешение табов и пробелов в отступе", "mixed tabs and spaces in indentation")));
             }
             if width > 0 {
                 let ch = if has_tab { '\t' } else { ' ' };
                 match self.indent_char {
                     None => self.indent_char = Some(ch),
                     Some(prev) if prev != ch => {
-                        return Err(self.err("в файле смешаны отступы табами и пробелами"));
+                        return Err(self.err(tr!("в файле смешаны отступы табами и пробелами", "the file mixes tab and space indentation")));
                     }
                     _ => {}
                 }
@@ -245,7 +245,7 @@ impl Lexer {
             let (line, col) = (self.line, self.col);
             if width > top {
                 if self.tokens.is_empty() {
-                    return Err(self.err("неожиданный отступ"));
+                    return Err(self.err(tr!("неожиданный отступ", "unexpected indent")));
                 }
                 self.indents.push(width);
                 self.push(Tok::Indent, line, col);
@@ -255,7 +255,7 @@ impl Lexer {
                     self.push(Tok::Dedent, line, col);
                 }
                 if *self.indents.last().unwrap() != width {
-                    return Err(self.err("несогласованный отступ"));
+                    return Err(self.err(tr!("несогласованный отступ", "inconsistent indentation")));
                 }
             }
             return Ok(());
@@ -285,7 +285,7 @@ impl Lexer {
                     }
                 }
                 let value = i64::from_str_radix(&text, radix)
-                    .map_err(|_| LangError::syntax(line, col, "неверная запись числа"))?;
+                    .map_err(|_| LangError::syntax(line, col, tr!("неверная запись числа", "invalid number literal")))?;
                 self.push(Tok::Int(value), line, col);
                 return Ok(());
             }
@@ -314,12 +314,12 @@ impl Lexer {
             }
         }
         if is_float {
-            let v: f64 = text.parse().map_err(|_| LangError::syntax(line, col, "неверная запись числа"))?;
+            let v: f64 = text.parse().map_err(|_| LangError::syntax(line, col, tr!("неверная запись числа", "invalid number literal")))?;
             self.push(Tok::Float(v), line, col);
         } else {
             match text.parse::<i64>() {
                 Ok(v) => self.push(Tok::Int(v), line, col),
-                Err(_) => return Err(LangError::syntax(line, col, "слишком большое целое число")),
+                Err(_) => return Err(LangError::syntax(line, col, tr!("слишком большое целое число", "integer too large"))),
             }
         }
         Ok(())
@@ -372,7 +372,7 @@ impl Lexer {
             }
         }
         let c = self.peek().unwrap_or(' ');
-        Err(self.err(format!("неизвестный символ '{}'", c)))
+        Err(self.err(trf!("неизвестный символ '{}'", "unknown character '{}'", c)))
     }
 
     /// Строка или f-строка; открывающая кавычка ещё не прочитана.
@@ -419,10 +419,10 @@ impl Lexer {
             }
             let c = match self.peek() {
                 Some(c) => c,
-                None => return Err(self.err("незакрытая строка")),
+                None => return Err(self.err(tr!("незакрытая строка", "unterminated string"))),
             };
             if c == '\n' && !triple {
-                return Err(self.err("незакрытая строка"));
+                return Err(self.err(tr!("незакрытая строка", "unterminated string")));
             }
             if c == '\\' {
                 self.bump();
@@ -438,7 +438,7 @@ impl Lexer {
     fn escape(&mut self, out: &mut String) -> Result<(), LangError> {
         let c = match self.bump() {
             Some(c) => c,
-            None => return Err(self.err("незакрытая строка")),
+            None => return Err(self.err(tr!("незакрытая строка", "unterminated string"))),
         };
         match c {
             'n' => out.push('\n'),
@@ -456,12 +456,12 @@ impl Lexer {
                     let d = self.bump().and_then(|d| d.to_digit(16));
                     match d {
                         Some(d) => code = code * 16 + d,
-                        None => return Err(self.err("неверная экранированная последовательность")),
+                        None => return Err(self.err(tr!("неверная экранированная последовательность", "invalid escape sequence"))),
                     }
                 }
                 match char::from_u32(code) {
                     Some(ch) => out.push(ch),
-                    None => return Err(self.err("неверный код символа")),
+                    None => return Err(self.err(tr!("неверный код символа", "invalid character code"))),
                 }
             }
             other => {
@@ -484,10 +484,10 @@ impl Lexer {
             }
             let c = match self.peek() {
                 Some(c) => c,
-                None => return Err(self.err("незакрытая f-строка")),
+                None => return Err(self.err(tr!("незакрытая f-строка", "unterminated f-string"))),
             };
             match c {
-                '\n' if !triple => return Err(self.err("незакрытая f-строка")),
+                '\n' if !triple => return Err(self.err(tr!("незакрытая f-строка", "unterminated f-string"))),
                 '\\' => {
                     self.bump();
                     self.escape(&mut lit)?;
@@ -502,7 +502,7 @@ impl Lexer {
                     self.bump();
                     lit.push('}');
                 }
-                '}' => return Err(self.err("одиночная '}' в f-строке")),
+                '}' => return Err(self.err(tr!("одиночная '}' в f-строке", "single '}' in f-string"))),
                 '{' => {
                     if !lit.is_empty() {
                         parts.push(FPart::Lit(std::mem::take(&mut lit)));
@@ -511,7 +511,7 @@ impl Lexer {
                     let (line, col) = (self.line, self.col);
                     let (src, conv, spec) = self.fexpr()?;
                     if src.trim().is_empty() {
-                        return Err(LangError::syntax(line, col, "пустое выражение в f-строке"));
+                        return Err(LangError::syntax(line, col, tr!("пустое выражение в f-строке", "empty expression in f-string")));
                     }
                     parts.push(FPart::Expr { src, conv, spec, line, col });
                 }
@@ -532,7 +532,7 @@ impl Lexer {
         loop {
             let c = match self.peek() {
                 Some(c) => c,
-                None => return Err(self.err("незакрытая '{' в f-строке")),
+                None => return Err(self.err(tr!("незакрытая '{' в f-строке", "unclosed '{' in f-string"))),
             };
             match c {
                 '(' | '[' | '{' => {
@@ -560,7 +560,7 @@ impl Lexer {
                     loop {
                         let d = match self.bump() {
                             Some(d) => d,
-                            None => return Err(self.err("незакрытая строка в f-строке")),
+                            None => return Err(self.err(tr!("незакрытая строка в f-строке", "unterminated string in f-string"))),
                         };
                         src.push(d);
                         if d == '\\' {
@@ -585,13 +585,13 @@ impl Lexer {
                     loop {
                         match self.bump() {
                             Some('}') => break,
-                            Some('\n') | None => return Err(self.err("незакрытая '{' в f-строке")),
+                            Some('\n') | None => return Err(self.err(tr!("незакрытая '{' в f-строке", "unclosed '{' in f-string"))),
                             Some(d) => spec.push(d),
                         }
                     }
                     return Ok((src, conv, Some(spec)));
                 }
-                '\n' => return Err(self.err("перенос строки внутри выражения f-строки")),
+                '\n' => return Err(self.err(tr!("перенос строки внутри выражения f-строки", "newline inside f-string expression"))),
                 _ => {
                     src.push(c);
                     self.bump();

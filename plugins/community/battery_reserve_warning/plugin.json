@@ -1,6 +1,7 @@
 {
   "id": "battery_reserve_warning",
   "name": "Предупреждение о резерве батареи",
+  "name_en": "Battery Reserve Warning",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

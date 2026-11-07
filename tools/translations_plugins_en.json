@@ -1,0 +1,502 @@
+{
+  "residential_cameras": {
+    "name": "Residential Cameras",
+    "story": "Lobby camera footage has a 14-minute gap before the courier arrives.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "parking_terminals": {
+    "name": "Parking Terminals",
+    "story": "Space B17 was billed twice; reconcile the terminal transaction log.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "transit_card_readers": {
+    "name": "Transit Card Readers",
+    "story": "A maintenance card appears on three buses at the same timestamp.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "smart_door_locks": {
+    "name": "Smart Door Locks",
+    "story": "Apartment 407 has an obsolete guest access token.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "rooftop_weather_stations": {
+    "name": "Rooftop Weather Stations",
+    "story": "Wind readings stay identical while independent stations report a storm.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "warehouse_barcode_scanners": {
+    "name": "Warehouse Barcode Scanners",
+    "story": "Pallet CR-204 moved to a loading dock without an outbound scan.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "hotel_keycard_encoders": {
+    "name": "Hotel Keycard Encoders",
+    "story": "The encoder issued a master key during an unstaffed night shift.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "cafe_payment_kiosks": {
+    "name": "Cafe Payment Kiosks",
+    "story": "Receipt 184 contains a refund to a decommissioned till.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "solar_inverters": {
+    "name": "Solar Inverters",
+    "story": "One inverter reports midnight generation and conceals a bypass circuit.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "water_quality_sensors": {
+    "name": "Water Quality Sensors",
+    "story": "Three sample batches disagree with the signed calibration record.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "parcel_locker_hubs": {
+    "name": "Parcel Locker Hubs",
+    "story": "Locker 42 opened twice for the same pickup code.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "library_checkout_stations": {
+    "name": "Library Checkout Stations",
+    "story": "A restricted atlas was checked out using an expired staff account.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "ev_charging_controllers": {
+    "name": "EV Charging Controllers",
+    "story": "A charging bay kept billing after its contactor was disconnected.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "elevator_control_panels": {
+    "name": "Elevator Control Panels",
+    "story": "The service panel recorded an unscheduled stop on the closed floor.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "factory_inspection_cameras": {
+    "name": "Factory Inspection Cameras",
+    "story": "Rejected batch K12 was relabeled as accepted after inspection.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "cinema_ticket_gates": {
+    "name": "Cinema Ticket Gates",
+    "story": "A reseller issued duplicate passes for an already full screening.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "medical_refrigeration_units": {
+    "name": "Medical Refrigeration Units",
+    "story": "The overnight temperature alarm was acknowledged before it was raised.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "campus_print_stations": {
+    "name": "Campus Print Stations",
+    "story": "A confidential exam remained in the shared print queue.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "farm_irrigation_controllers": {
+    "name": "Farm Irrigation Controllers",
+    "story": "Zone 6 waters continuously despite the published irrigation schedule.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "traffic_signal_cabinets": {
+    "name": "Traffic Signal Cabinets",
+    "story": "The maintenance schedule contains an unauthorized priority route.",
+    "objective": "Audit the controller and recover its operational record."
+  },
+  "private_clinic_network": {
+    "name": "Private Clinic Network",
+    "story": "A private clinic moved its appointment archive behind a forgotten maintenance gateway.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "freight_port_network": {
+    "name": "Freight Port Network",
+    "story": "Dock records disagree with the container inventory held in the dispatch archive.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "university_research_network": {
+    "name": "University Research Network",
+    "story": "A laboratory grant was redirected through a retired research project.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "independent_newsroom": {
+    "name": "Independent Newsroom",
+    "story": "An editor needs the original notes behind a silently changed public report.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "credit_union_branch": {
+    "name": "Credit Union Branch",
+    "story": "An internal ledger contains a loan approved after its signatory left the bank.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "public_records_office": {
+    "name": "Public Records Office",
+    "story": "The public permit portal omits an amendment stored on the internal records host.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "regional_data_center": {
+    "name": "Regional Data Center",
+    "story": "Rack allocation logs show an unlisted tenant using reserved capacity.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "neighborhood_isp": {
+    "name": "Neighborhood ISP",
+    "story": "The subscriber archive records a private route absent from the provider map.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "museum_security_network": {
+    "name": "Museum Security Network",
+    "story": "A protected exhibit was moved while the security roster was empty.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "retail_distribution_hub": {
+    "name": "Retail Distribution Hub",
+    "story": "The warehouse system marks returned goods as new stock.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "municipal_power_office": {
+    "name": "Municipal Power Office",
+    "story": "A planned outage was removed from the internal maintenance calendar.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "railway_dispatch_network": {
+    "name": "Railway Dispatch Network",
+    "story": "A freight route changed after its dispatcher signed off.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "city_housing_agency": {
+    "name": "City Housing Agency",
+    "story": "An apartment allocation was reassigned without a board decision.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "emergency_training_center": {
+    "name": "Emergency Training Center",
+    "story": "A simulation alarm was copied into the official incident register.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "film_production_studio": {
+    "name": "Film Production Studio",
+    "story": "An unreleased production schedule identifies an unexplained night shoot.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "community_internet_exchange": {
+    "name": "Community Internet Exchange",
+    "story": "A hidden peer uses an obsolete exchange agreement.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "cooperative_workshop": {
+    "name": "Cooperative Workshop",
+    "story": "The shared tool ledger records equipment that never reached the workshop.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "regional_court_archive": {
+    "name": "Regional Court Archive",
+    "story": "A sealed case appears in the index with an altered custody date.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "marine_research_station": {
+    "name": "Marine Research Station",
+    "story": "A survey vessel's route conflicts with the downloaded buoy readings.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "underground_radio_station": {
+    "name": "Underground Radio Station",
+    "story": "A broadcast was replaced while the station controller was unattended.",
+    "objective": "Traverse the gateway and recover the internal archive."
+  },
+  "missing_courier_ledger": {
+    "name": "Missing Courier Ledger",
+    "story": "A courier vanished between two depots; the handoff ledger names the final receiving clerk.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "counterfeit_payroll_trail": {
+    "name": "Counterfeit Payroll Trail",
+    "story": "Payroll adjustments match a vendor account that should have been closed.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "stolen_prototype_logs": {
+    "name": "Stolen Prototype Logs",
+    "story": "The prototype bench was used after the inventory team sealed the laboratory.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "altered_water_reports": {
+    "name": "Altered Water Reports",
+    "story": "The signed laboratory results differ from the values on the public dashboard.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "ghost_shipping_orders": {
+    "name": "Ghost Shipping Orders",
+    "story": "Containers were billed to an address that no customer account owns.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "erased_visitor_records": {
+    "name": "Erased Visitor Records",
+    "story": "The front desk and access controller disagree about an after-hours visitor.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "duplicate_insurance_claims": {
+    "name": "Duplicate Insurance Claims",
+    "story": "Two claims reference the same inspection photo and different incident dates.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "black_market_exam_papers": {
+    "name": "Black Market Exam Papers",
+    "story": "Exam custody records show an unauthorized print request before release.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "forged_safety_certificates": {
+    "name": "Forged Safety Certificates",
+    "story": "A certificate was signed by an account whose authority had expired.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "diverted_relief_supplies": {
+    "name": "Diverted Relief Supplies",
+    "story": "Relief parcels were marked delivered before reaching the regional depot.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "vanishing_art_inventory": {
+    "name": "Vanishing Art Inventory",
+    "story": "A gallery's private inventory contains a replacement with a copied catalog number.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "tampered_election_kiosks": {
+    "name": "Tampered Election Kiosks",
+    "story": "A fictional city kiosk reports maintenance performed by a retired service account.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "leaked_patient_referrals": {
+    "name": "Leaked Patient Referrals",
+    "story": "An anonymized referral index was exported outside its scheduled reporting window.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "corrupted_sensor_calibration": {
+    "name": "Corrupted Sensor Calibration",
+    "story": "Sensor measurements are plausible but their calibration signatures do not agree.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "unauthorized_night_shift": {
+    "name": "Unauthorized Night Shift",
+    "story": "Three badge holders entered during a shift that staffing records say never existed.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "hidden_warehouse_tenant": {
+    "name": "Hidden Warehouse Tenant",
+    "story": "A sealed storage room receives power under a nonexistent lease.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "swapped_construction_bids": {
+    "name": "Swapped Construction Bids",
+    "story": "The submitted bid differs from the revision kept by the review committee.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "phantom_subscription_charges": {
+    "name": "Phantom Subscription Charges",
+    "story": "Dormant accounts are charged for a service absent from the public price list.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "deleted_research_attribution": {
+    "name": "Deleted Research Attribution",
+    "story": "A dataset's attribution changed between its review and publication.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "unlisted_server_rack": {
+    "name": "Unlisted Server Rack",
+    "story": "Power readings reveal an occupied rack missing from the inventory.",
+    "objective": "Follow both evidence hosts and establish the custody trail."
+  },
+  "known_host_inventory": {
+    "name": "Known Host Inventory",
+    "story": "List discovered hosts and their live status.",
+    "objective": ""
+  },
+  "owned_machine_inventory": {
+    "name": "Owned Machine Inventory",
+    "story": "List machines already under the player's control.",
+    "objective": ""
+  },
+  "service_exposure_map": {
+    "name": "Service Exposure Map",
+    "story": "Inspect running services on discovered machines.",
+    "objective": ""
+  },
+  "custom_vulnerability_ledger": {
+    "name": "Custom Vulnerability Ledger",
+    "story": "List plugin-defined weaknesses on discovered devices.",
+    "objective": ""
+  },
+  "network_route_atlas": {
+    "name": "Network Route Atlas",
+    "story": "Show gateway relationships and internal addresses.",
+    "objective": ""
+  },
+  "device_type_catalog": {
+    "name": "Device Type Catalog",
+    "story": "List registered plugin device types and firmware.",
+    "objective": ""
+  },
+  "quest_progress_board": {
+    "name": "Quest Progress Board",
+    "story": "Summarize independent plugin quests and rewards.",
+    "objective": ""
+  },
+  "mail_triage_desk": {
+    "name": "Mail Triage Desk",
+    "story": "Summarize unread mail on the player's computer.",
+    "objective": ""
+  },
+  "hardware_capacity_report": {
+    "name": "Hardware Capacity Report",
+    "story": "Compare memory and storage on discovered machines.",
+    "objective": ""
+  },
+  "budget_planning_desk": {
+    "name": "Budget Planning Desk",
+    "story": "Show cash, loan balance and available upgrade prices.",
+    "objective": ""
+  },
+  "investigation_status_desk": {
+    "name": "Investigation Status Desk",
+    "story": "Display the current in-game investigation state.",
+    "objective": ""
+  },
+  "incident_log_viewer": {
+    "name": "Incident Log Viewer",
+    "story": "Review recent logs on owned machines.",
+    "objective": ""
+  },
+  "organization_directory": {
+    "name": "Organization Directory",
+    "story": "List discovered organizations and their gateways.",
+    "objective": ""
+  },
+  "session_notes_exporter": {
+    "name": "Session Notes Exporter",
+    "story": "Export player notes into an in-game report.",
+    "objective": ""
+  },
+  "upgrade_inventory_desk": {
+    "name": "Upgrade Inventory Desk",
+    "story": "List purchased upgrades and registered shop items.",
+    "objective": ""
+  },
+  "pocket_memory_upgrade": {
+    "name": "Pocket Memory Upgrade",
+    "story": "Add 256 MB of memory for lightweight terminal work.",
+    "objective": ""
+  },
+  "developer_memory_upgrade": {
+    "name": "Developer Memory Upgrade",
+    "story": "Add 1 GB of memory for script development.",
+    "objective": ""
+  },
+  "workstation_memory_upgrade": {
+    "name": "Workstation Memory Upgrade",
+    "story": "Add 2 GB of memory for parallel game workloads.",
+    "objective": ""
+  },
+  "analyst_memory_upgrade": {
+    "name": "Analyst Memory Upgrade",
+    "story": "Add 4 GB of memory for a larger virtual workstation.",
+    "objective": ""
+  },
+  "pocket_storage_upgrade": {
+    "name": "Pocket Storage Upgrade",
+    "story": "Add 2 GB of virtual disk capacity.",
+    "objective": ""
+  },
+  "archive_storage_upgrade": {
+    "name": "Archive Storage Upgrade",
+    "story": "Add 8 GB of virtual disk capacity for evidence.",
+    "objective": ""
+  },
+  "research_storage_upgrade": {
+    "name": "Research Storage Upgrade",
+    "story": "Add 16 GB of virtual disk capacity for research.",
+    "objective": ""
+  },
+  "cold_storage_upgrade": {
+    "name": "Cold Storage Upgrade",
+    "story": "Add 32 GB of virtual disk capacity for long-term archives.",
+    "objective": ""
+  },
+  "host_identity_tool": {
+    "name": "Host Identity Tool",
+    "story": "Report the current host, address and access level.",
+    "objective": ""
+  },
+  "route_trace_tool": {
+    "name": "Route Trace Tool",
+    "story": "Report the current connection chain and proxy exit.",
+    "objective": ""
+  },
+  "cashflow_summary_tool": {
+    "name": "Cashflow Summary Tool",
+    "story": "Report available funds and outstanding debt.",
+    "objective": ""
+  },
+  "mission_checklist_tool": {
+    "name": "Mission Checklist Tool",
+    "story": "Print the active mission checklist.",
+    "objective": ""
+  },
+  "process_survey_tool": {
+    "name": "Process Survey Tool",
+    "story": "Print process ownership, CPU use and memory use.",
+    "objective": ""
+  },
+  "directory_audit_tool": {
+    "name": "Directory Audit Tool",
+    "story": "Inspect file ownership and permissions in the current directory.",
+    "objective": ""
+  },
+  "heat_watch_tool": {
+    "name": "Heat Watch Tool",
+    "story": "Report suspicion and investigation progress.",
+    "objective": ""
+  },
+  "storm_relay_outage": {
+    "name": "Storm Relay Outage",
+    "story": "A coastal relay loses its uplink as a simulated storm approaches.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "rolling_backup_leak": {
+    "name": "Rolling Backup Leak",
+    "story": "A rotating backup exposes an obsolete manifest before a new snapshot replaces it.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "expired_badge_incident": {
+    "name": "Expired Badge Incident",
+    "story": "A temporary badge remains active after its shift expires.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "factory_shift_handover": {
+    "name": "Factory Shift Handover",
+    "story": "An unattended control desk receives the next shift's maintenance handover.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "radio_interference_burst": {
+    "name": "Radio Interference Burst",
+    "story": "A radio controller reports a short interference burst and a failed relay test.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "cold_chain_alarm": {
+    "name": "Cold Chain Alarm",
+    "story": "A simulated refrigerator alarm appears while its monitoring endpoint goes silent.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "parcel_queue_surge": {
+    "name": "Parcel Queue Surge",
+    "story": "A parcel router accumulates delayed pickups during an intake surge.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "battery_reserve_warning": {
+    "name": "Battery Reserve Warning",
+    "story": "A backup battery controller reports a declining reserve during a grid drill.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "audit_window_countdown": {
+    "name": "Audit Window Countdown",
+    "story": "A temporary audit service is available during a short scheduled inspection.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  },
+  "maintenance_credential_rollover": {
+    "name": "Maintenance Credential Rollover",
+    "story": "A service gateway rotates its maintenance credentials at the end of a shift.",
+    "objective": "Recover the incident record and follow the timed incident log."
+  }
+}

@@ -32,9 +32,9 @@ fn start_script(ctx: &mut Ctx<'_>, path: &str, src: String, args: Vec<String>) -
         args,
     });
     ctx.actions.push(UiAction::ScriptStarted { pid, name: name.clone() });
-    ctx.log(LogKind::Exec, &format!("{} запустил скрипт {}", user, name));
+    ctx.log(LogKind::Exec, &trf!("{} запустил скрипт {}", "{} started script {}", user, name));
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("запуск {} (pid {})", name, pid), OutKind::Dim);
+    out.push_kind(trf!("запуск {} (pid {})", "starting {} (pid {})", name, pid), OutKind::Dim);
     out
 }
 
@@ -57,13 +57,13 @@ fn read_script(ctx: &Ctx<'_>, arg: &str) -> Result<(String, String), String> {
                 }
             }
         }
-        return Err(format!("adder: нет такого файла: {}. Купленные инструменты: ~/scripts/", arg));
+        return Err(trf!("adder: нет такого файла: {}. Купленные инструменты: ~/scripts/", "adder: no such file: {}. Purchased tools: ~/scripts/", arg));
     }
     if ctx.fs().is_dir(&path) {
-        return Err(format!("adder: это каталог: {}", arg));
+        return Err(trf!("adder: это каталог: {}", "adder: is a directory: {}", arg));
     }
     if !path.ends_with(".adr") {
-        return Err(format!("adder: {} — не скрипт Adder (нужно расширение .adr)", arg));
+        return Err(trf!("adder: {} — не скрипт Adder (нужно расширение .adr)", "adder: {} is not an Adder script (.adr extension required)", arg));
     }
     let src = ctx.fs().read(&path, &user).map_err(|e| format!("adder: {}", e))?;
     Ok((path, src))
@@ -72,12 +72,12 @@ fn read_script(ctx: &Ctx<'_>, arg: &str) -> Result<(String, String), String> {
 pub fn adder(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let first = match args.first() {
         Some(f) => f.as_str(),
-        None => return CmdOutput::err("adder: использование: adder файл.adr [аргументы] | adder -c \"код\" | adder --check файл"),
+        None => return CmdOutput::err(tr!("adder: использование: adder файл.adr [аргументы] | adder -c \"код\" | adder --check файл", "adder: usage: adder file.adr [args] | adder -c \"code\" | adder --check file")),
     };
     match first {
         "-c" => {
             if args.len() < 2 {
-                return CmdOutput::err("adder: после -c нужен код");
+                return CmdOutput::err(tr!("adder: после -c нужен код", "adder: -c needs code"));
             }
             let code = args[1..].join(" ");
             start_script(ctx, "<cmd>", code, vec!["<cmd>".to_string()])
@@ -85,13 +85,13 @@ pub fn adder(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         "--check" => {
             let file = match args.get(1) {
                 Some(f) => f,
-                None => return CmdOutput::err("adder: укажите файл для проверки"),
+                None => return CmdOutput::err(tr!("adder: укажите файл для проверки", "adder: specify a file to check")),
             };
             match read_script(ctx, file) {
                 Ok((path, src)) => {
                     ctx.actions.push(UiAction::CheckScript { path: path.clone(), src });
                     let mut out = CmdOutput::ok();
-                    out.push_kind(format!("проверка: {}", path), OutKind::Dim);
+                    out.push_kind(trf!("проверка: {}", "checking: {}", path), OutKind::Dim);
                     out
                 }
                 Err(e) => CmdOutput::err(e),
@@ -112,17 +112,17 @@ pub fn adder(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn run_path(ctx: &mut Ctx<'_>, name: &str, args: &[String]) -> CmdOutput {
     let path = ctx.path(name);
     if !ctx.fs().exists(&path) {
-        return CmdOutput::err(format!("{}: нет такого файла или каталога", name));
+        return CmdOutput::err(trf!("{}: нет такого файла или каталога", "{}: no such file or directory", name));
     }
     if ctx.fs().is_dir(&path) {
-        return CmdOutput::err(format!("{}: это каталог", name));
+        return CmdOutput::err(trf!("{}: это каталог", "{}: is a directory", name));
     }
     if path.ends_with(".adr") {
         let mut all = vec![path];
         all.extend(args.iter().cloned());
         return adder(ctx, &all);
     }
-    CmdOutput::err(format!("{}: не скрипт Adder (нужно расширение .adr)", name))
+    CmdOutput::err(trf!("{}: не скрипт Adder (нужно расширение .adr)", "{}: not an Adder script (.adr extension required)", name))
 }
 
 // ---------------------------------------------------------------- окна
@@ -131,8 +131,8 @@ fn open_app(ctx: &mut Ctx<'_>, app: &str, arg: Option<String>) -> CmdOutput {
     ctx.actions.push(UiAction::OpenApp { app: app.to_string(), arg: arg.clone() });
     let mut out = CmdOutput::ok();
     match arg {
-        Some(a) => out.push_kind(format!("открываю {}: {}", app, a), OutKind::Dim),
-        None => out.push_kind(format!("открываю {}", app), OutKind::Dim),
+        Some(a) => out.push_kind(trf!("открываю {}: {}", "opening {}: {}", app, a), OutKind::Dim),
+        None => out.push_kind(trf!("открываю {}", "opening {}", app), OutKind::Dim),
     }
     out
 }
@@ -141,7 +141,7 @@ pub fn edit(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let arg = args.first().map(|f| ctx.path(f));
     if let Some(p) = &arg {
         if ctx.fs().is_dir(p) {
-            return CmdOutput::err(format!("edit: это каталог: {}", p));
+            return CmdOutput::err(trf!("edit: это каталог: {}", "edit: is a directory: {}", p));
         }
     }
     open_app(ctx, "editor", arg)
@@ -150,10 +150,10 @@ pub fn edit(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn open(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let app = match args.first() {
         Some(a) => a.as_str(),
-        None => return CmdOutput::err(format!("open: укажите приложение: {}", APPS.join(", "))),
+        None => return CmdOutput::err(trf!("open: укажите приложение: {}", "open: specify an app: {}", APPS.join(", "))),
     };
     if !APPS.contains(&app) {
-        return CmdOutput::err(format!("open: нет приложения «{}». Есть: {}", app, APPS.join(", ")));
+        return CmdOutput::err(trf!("open: нет приложения «{}». Есть: {}", "open: no app '{}'. Available: {}", app, APPS.join(", ")));
     }
     let arg = args.get(1).map(|a| match app {
         "editor" | "files" => ctx.path(a),
@@ -165,7 +165,7 @@ pub fn open(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn files(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let path = ctx.path(args.first().map(|s| s.as_str()).unwrap_or("."));
     if !ctx.fs().is_dir(&path) {
-        return CmdOutput::err(format!("files: не каталог: {}", path));
+        return CmdOutput::err(trf!("files: не каталог: {}", "files: not a directory: {}", path));
     }
     open_app(ctx, "files", Some(path))
 }
@@ -207,7 +207,7 @@ pub fn mail(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     }
     let mut out = CmdOutput::ok();
     if rows.is_empty() {
-        out.push_kind("писем нет", OutKind::Dim);
+        out.push_kind(tr!("писем нет", "no mail"), OutKind::Dim);
         return out;
     }
     out.push_lines(super::util::table(&rows, &[false, true, false, false, false]));
@@ -219,7 +219,7 @@ pub fn mail(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
 pub fn banner(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let text = if args.is_empty() { ctx.stdin.clone().unwrap_or_default() } else { args.join(" ") };
     if text.trim().is_empty() {
-        return CmdOutput::err("banner: укажите текст");
+        return CmdOutput::err(tr!("banner: укажите текст", "banner: specify text"));
     }
     let mut out = CmdOutput::ok();
     for row in font::render(text.trim()) {
@@ -266,8 +266,27 @@ const FORTUNES: &[&str] = &[
     "Самое тихое вторжение — то, после которого ничего не изменилось.",
 ];
 
+const FORTUNES_EN: &[&str] = &[
+    "The most reliable password is the one written on a note under the keyboard. For whoever finds it.",
+    "Any system is exactly as secure as its administrator is lazy.",
+    "Scan twice, connect once.",
+    "The log remembers everything. The only question is who reads it.",
+    "There are no invulnerable machines — only ones nobody has got around to yet.",
+    "An open port is an invitation. A service banner is a business card.",
+    "While you think you're invisible, someone is reading auth.log.",
+    "The weakest link of any network sits in front of the monitor.",
+    "A good script saves an hour. A bad one wipes your home folder.",
+    "If ping is silent, it doesn't mean nobody's there.",
+    "The longer the ssh chain, the shorter your memory of where you are.",
+    "admin/admin is not a password, it's a tradition.",
+    "Patience is a tool too. So is a two-hundred-word wordlist.",
+    "When you delete a file, don't forget to delete the record that you deleted it.",
+    "There are no distances on the net. Only routes.",
+    "The quietest intrusion is the one after which nothing changed.",
+];
+
 pub fn fortune(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
-    let s = *ctx.world.rng.pick(FORTUNES);
+    let s = *ctx.world.rng.pick(if crate::i18n::is_en() { FORTUNES_EN } else { FORTUNES });
     let mut out = CmdOutput::ok();
     out.push_kind(s, OutKind::Accent);
     out
@@ -282,7 +301,12 @@ pub fn cal(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         _ => (cm, cy),
     };
     let mut out = CmdOutput::ok();
-    let title = format!("{} {}", GameClock::month_name_ru(m), y);
+    const MONTHS_EN: [&str; 12] = [
+        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+        "December",
+    ];
+    let month = if crate::i18n::is_en() { MONTHS_EN[((m.max(1) - 1) % 12) as usize] } else { GameClock::month_name_ru(m) };
+    let title = format!("{} {}", month, y);
     let title = {
         let mut t = title.chars().collect::<Vec<_>>();
         if let Some(c) = t.first_mut() {
@@ -291,7 +315,7 @@ pub fn cal(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
         t.into_iter().collect::<String>()
     };
     out.push_kind(format!("{:^27}", title), OutKind::Heading);
-    out.push_kind(" Пн  Вт  Ср  Чт  Пт  Сб  Вс", OutKind::Dim);
+    out.push_kind(tr!(" Пн  Вт  Ср  Чт  Пт  Сб  Вс", " Mo  Tu  We  Th  Fr  Sa  Su"), OutKind::Dim);
     let first_wd = GameClock::weekday(y, m, 1);
     let days = GameClock::days_in_month(y, m);
     let mut line = "    ".repeat(first_wd as usize);
@@ -360,7 +384,7 @@ impl<'a> Calc<'a> {
                     self.next();
                     let d = self.power()?;
                     if d == 0.0 {
-                        return Err("деление на ноль".to_string());
+                        return Err(tr!("деление на ноль", "division by zero").to_string());
                     }
                     v /= d;
                 }
@@ -368,7 +392,7 @@ impl<'a> Calc<'a> {
                     self.next();
                     let d = self.power()?;
                     if d == 0.0 {
-                        return Err("деление на ноль".to_string());
+                        return Err(tr!("деление на ноль", "division by zero").to_string());
                     }
                     v %= d;
                 }
@@ -401,21 +425,21 @@ impl<'a> Calc<'a> {
     }
     fn atom(&mut self) -> Result<f64, String> {
         match self.next() {
-            None => Err("неожиданный конец выражения".to_string()),
+            None => Err(tr!("неожиданный конец выражения", "unexpected end of expression").to_string()),
             Some("(") => {
                 let v = self.expr()?;
                 if self.next() != Some(")") {
-                    return Err("ожидалась «)»".to_string());
+                    return Err(tr!("ожидалась «)»", "expected ')'").to_string());
                 }
                 Ok(v)
             }
             Some(f) if matches!(f, "sqrt" | "abs" | "floor" | "ceil" | "round" | "ln" | "log") => {
                 if self.next() != Some("(") {
-                    return Err(format!("после {} ожидалась «(»", f));
+                    return Err(trf!("после {} ожидалась «(»", "expected '(' after {}", f));
                 }
                 let v = self.expr()?;
                 if self.next() != Some(")") {
-                    return Err("ожидалась «)»".to_string());
+                    return Err(tr!("ожидалась «)»", "expected ')'").to_string());
                 }
                 Ok(match f {
                     "sqrt" => v.sqrt(),
@@ -431,9 +455,9 @@ impl<'a> Calc<'a> {
             Some("e") => Ok(std::f64::consts::E),
             Some(t) => {
                 if let Some(h) = t.strip_prefix("0x") {
-                    return i64::from_str_radix(h, 16).map(|v| v as f64).map_err(|_| format!("не число: {}", t));
+                    return i64::from_str_radix(h, 16).map(|v| v as f64).map_err(|_| trf!("не число: {}", "not a number: {}", t));
                 }
-                t.parse::<f64>().map_err(|_| format!("не число: {}", t))
+                t.parse::<f64>().map_err(|_| trf!("не число: {}", "not a number: {}", t))
             }
         }
     }
@@ -467,7 +491,7 @@ pub fn calc(expr: &str) -> Result<f64, String> {
     let mut c = Calc { toks: refs, pos: 0 };
     let v = c.expr()?;
     if c.pos < c.toks.len() {
-        return Err(format!("лишнее: {}", c.toks[c.pos..].join(" ")));
+        return Err(trf!("лишнее: {}", "unexpected: {}", c.toks[c.pos..].join(" ")));
     }
     Ok(v)
 }
@@ -475,7 +499,7 @@ pub fn calc(expr: &str) -> Result<f64, String> {
 pub fn bc(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let expr = if args.is_empty() { ctx.stdin.clone().unwrap_or_default() } else { args.join(" ") };
     if expr.trim().is_empty() {
-        return CmdOutput::err("bc: укажите выражение, например bc \"(2 + 3) * 4\"");
+        return CmdOutput::err(tr!("bc: укажите выражение, например bc \"(2 + 3) * 4\"", "bc: specify an expression, e.g. bc \"(2 + 3) * 4\""));
     }
     let mut out = CmdOutput::ok();
     for line in expr.lines().filter(|l| !l.trim().is_empty()) {
@@ -500,7 +524,7 @@ pub fn yes(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     for _ in 0..20 {
         out.push(text.clone());
     }
-    out.push_kind("… (вывод ограничен 20 строками)", OutKind::Dim);
+    out.push_kind(tr!("… (вывод ограничен 20 строками)", "… (output limited to 20 lines)"), OutKind::Dim);
     out
 }
 
@@ -508,7 +532,7 @@ pub fn sleep(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let _ = ctx;
     let secs: f64 = match args.first().and_then(|s| s.parse().ok()) {
         Some(s) => s,
-        None => return CmdOutput::err("sleep: укажите число секунд"),
+        None => return CmdOutput::err(tr!("sleep: укажите число секунд", "sleep: specify a number of seconds")),
     };
     let ms = (secs.clamp(0.0, 10.0) * 1000.0) as u32;
     let mut out = CmdOutput::ok();
@@ -522,7 +546,7 @@ pub fn seq(ctx: &mut Ctx<'_>, args: &[String]) -> CmdOutput {
     let (from, to) = match nums.as_slice() {
         [to] => (1, *to),
         [from, to] => (*from, *to),
-        _ => return CmdOutput::err("seq: использование: seq [от] до"),
+        _ => return CmdOutput::err(tr!("seq: использование: seq [от] до", "seq: usage: seq [from] to")),
     };
     let mut out = CmdOutput::ok();
     let mut n = 0;
@@ -558,15 +582,15 @@ pub fn neofetch(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let info = vec![
         (String::new(), format!("{}@{}", user, m.hostname)),
         (String::new(), "─".repeat(user.len() + m.hostname.len() + 1)),
-        ("ОС".to_string(), m.os.clone()),
-        ("Вид".to_string(), m.device_type.clone().unwrap_or_else(||m.kind.title().to_string())),
-        ("Ядро".to_string(), "6.1.0-bw".to_string()),
-        ("Работает".to_string(), GameClock::format_duration(st.uptime)),
-        ("Оболочка".to_string(), "bwsh 1.0".to_string()),
-        ("Процессор".to_string(), m.cpu.clone()),
-        ("Память".to_string(), format!("{} МБ / {} МБ", st.mem_used, st.mem_total)),
-        ("Адрес".to_string(), m.ip.clone()),
-        ("Процессов".to_string(), st.procs.len().to_string()),
+        (tr!("ОС", "OS").to_string(), m.os.clone()),
+        (tr!("Вид", "Type").to_string(), m.device_type.clone().unwrap_or_else(||m.kind.title().to_string())),
+        (tr!("Ядро", "Kernel").to_string(), "6.1.0-bw".to_string()),
+        (tr!("Работает", "Uptime").to_string(), GameClock::format_duration(st.uptime)),
+        (tr!("Оболочка", "Shell").to_string(), "bwsh 1.0".to_string()),
+        (tr!("Процессор", "CPU").to_string(), m.cpu.clone()),
+        (tr!("Память", "Memory").to_string(), trf!("{} МБ / {} МБ", "{} MB / {} MB", st.mem_used, st.mem_total)),
+        (tr!("Адрес", "Address").to_string(), m.ip.clone()),
+        (tr!("Процессов", "Processes").to_string(), st.procs.len().to_string()),
     ];
     let mut out = CmdOutput::ok();
     let rows = LOGO.len().max(info.len());
@@ -588,9 +612,9 @@ pub fn neofetch(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
 pub fn news(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let feed = crate::life::feed(ctx.world);
     let mut out = CmdOutput::ok();
-    out.push_kind("Городская лента:", OutKind::Heading);
+    out.push_kind(tr!("Городская лента:", "City feed:"), OutKind::Heading);
     if feed.is_empty() {
-        out.push_kind("  Пока тихо.", OutKind::Dim);
+        out.push_kind(tr!("  Пока тихо.", "  All quiet so far."), OutKind::Dim);
         return out;
     }
     for item in feed.iter().take(12) {
@@ -604,13 +628,13 @@ pub fn achievements(ctx: &mut Ctx<'_>, _args: &[String]) -> CmdOutput {
     let rows = crate::achievements::rows(ctx.world);
     let (have, total) = crate::achievements::count(ctx.world);
     let mut out = CmdOutput::ok();
-    out.push_kind(format!("Достижения: {} из {}", have, total), OutKind::Heading);
+    out.push_kind(trf!("Достижения: {} из {}", "Achievements: {} of {}", have, total), OutKind::Heading);
     for (id,a) in crate::plugins::catalog::entries(ctx.world,"achievements"){out.push(format!("[{}] {} — {}",if ctx.world.achievements.unlocked.contains(&id){"x"}else{" "},a.name,a.desc));}
     for (a, unlocked) in rows {
         if unlocked {
-            out.lines.push(OutLine::new(format!("  [x] {} — {}", a.name, a.desc), OutKind::Accent));
+            out.lines.push(OutLine::new(format!("  [x] {} — {}", a.name(), a.desc()), OutKind::Accent));
         } else {
-            out.lines.push(OutLine::new(format!("  [ ] {} — {}", a.name, a.desc), OutKind::Dim));
+            out.lines.push(OutLine::new(format!("  [ ] {} — {}", a.name(), a.desc()), OutKind::Dim));
         }
     }
     out

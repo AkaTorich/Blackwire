@@ -113,7 +113,7 @@ impl Game {
             Some(s) => s,
             None => {
                 return ShellResult {
-                    lines: vec![crate::types::OutLine::error(format!("нет сеанса {}", session))],
+                    lines: vec![crate::types::OutLine::error(trf!("нет сеанса {}", "no session {}", session))],
                     ..ShellResult::default()
                 }
             }
@@ -222,7 +222,7 @@ impl Game {
     /// Открылось новое достижение.
     pub fn poll_achievement(&mut self) -> Option<(String, String)> {
         let ev = crate::achievements::take_pending(&mut self.world)?;
-        Some(("Достижение открыто".to_string(), ev.name))
+        Some((tr!("Достижение открыто", "Achievement unlocked").to_string(), ev.name))
     }
 
     /// Свой сценарий пройден.
@@ -256,7 +256,7 @@ impl Game {
 
     /// Снять процесс (монитор, `sys.kill`). Скрипт только помечается — поток остановится сам.
     pub fn kill(&mut self, pid: u32) -> Result<(), String> {
-        let id = self.script_machine(pid).ok_or_else(|| format!("нет процесса с pid {}", pid))?;
+        let id = self.script_machine(pid).ok_or_else(|| trf!("нет процесса с pid {}", "no process with pid {}", pid))?;
         let m = self.world.machine_mut(id);
         let is_script = m.procs.get(pid).map(|p| matches!(p.kind, ProcKind::Script { .. })).unwrap_or(false);
         if is_script {
@@ -330,7 +330,7 @@ impl Game {
         let (mid, user) = self.target(session);
         let p = self.fs_path(session, path);
         self.world.machine_mut(mid).fs.remove(&p, &user, true).map_err(|e| e.to_string())?;
-        self.world.log(mid, LogKind::FileChange, &format!("{} удалил {}", user, p));
+        self.world.log(mid, LogKind::FileChange, &trf!("{} удалил {}", "{} deleted {}", user, p));
         Ok(())
     }
 
@@ -458,7 +458,7 @@ impl Game {
     }
 
     pub fn mail_read(&mut self, id: u32) -> Result<MailMessage, String> {
-        let m = self.world.machines[0].mail.iter_mut().find(|m| m.id == id).ok_or_else(|| format!("нет письма с номером {}", id))?;
+        let m = self.world.machines[0].mail.iter_mut().find(|m| m.id == id).ok_or_else(|| trf!("нет письма с номером {}", "no mail with number {}", id))?;
         m.read = true;
         Ok(m.clone())
     }
@@ -468,7 +468,7 @@ impl Game {
         let before = mail.len();
         mail.retain(|m| m.id != id);
         if mail.len() == before {
-            Err(format!("нет письма с номером {}", id))
+            Err(trf!("нет письма с номером {}", "no mail with number {}", id))
         } else {
             Ok(())
         }
@@ -481,9 +481,9 @@ impl Game {
 
     /// Машина-получатель письма по адресу `user@domain`.
     fn mail_target(&self, to: &str) -> Result<Option<MachineId>, String> {
-        let (user, domain) = to.split_once('@').ok_or_else(|| format!("адрес не найден: {}", to))?;
+        let (user, domain) = to.split_once('@').ok_or_else(|| trf!("адрес не найден: {}", "address not found: {}", to))?;
         if user.is_empty() || domain.is_empty() {
-            return Err(format!("адрес не найден: {}", to));
+            return Err(trf!("адрес не найден: {}", "address not found: {}", to));
         }
         let domain_l = domain.to_ascii_lowercase();
         if domain_l == "home.net" {
@@ -493,23 +493,23 @@ impl Game {
                 .iter()
                 .find(|m| matches!(m.kind, MachineKind::Player | MachineKind::HomePc) && m.users.exists(user))
                 .map(|m| m.id);
-            return found.map(Some).ok_or_else(|| format!("адрес не найден: {}", to));
+            return found.map(Some).ok_or_else(|| trf!("адрес не найден: {}", "address not found: {}", to));
         }
         if domain_l == "hw" {
             let gate = self.world.machines.iter().find(|m| m.hostname.eq_ignore_ascii_case("gate.hw") || m.domain.as_deref() == Some("hw")).map(|m| m.id);
             if user == "null" {
                 return Ok(gate);
             }
-            return gate.map(Some).ok_or_else(|| format!("адрес не найден: {}", to));
+            return gate.map(Some).ok_or_else(|| trf!("адрес не найден: {}", "address not found: {}", to));
         }
         if let Some(m) = self.world.machines.iter().find(|m| m.domain.as_deref().map(|d| d.eq_ignore_ascii_case(&domain_l)).unwrap_or(false)) {
             return Ok(Some(m.id));
         }
         if let Some(org) = self.world.orgs.iter().find(|o| o.domain.eq_ignore_ascii_case(&domain_l)) {
             let found = org.members.iter().copied().find(|id| self.world.has_machine(*id) && self.world.machine(*id).users.exists(user));
-            return found.map(Some).ok_or_else(|| format!("адрес не найден: {}", to));
+            return found.map(Some).ok_or_else(|| trf!("адрес не найден: {}", "address not found: {}", to));
         }
-        Err(format!("адрес не найден: {}", to))
+        Err(trf!("адрес не найден: {}", "address not found: {}", to))
     }
 
     /// Отправить письмо от игрока: копия в «Отправленные», доставка адресату.
@@ -529,7 +529,7 @@ impl Game {
         };
         if let Some(id) = target {
             self.world.machine_mut(id).push_mail(msg.clone());
-            self.world.log(id, LogKind::Net, &format!("почта: письмо от {} для {}", from, to.trim()));
+            self.world.log(id, LogKind::Net, &trf!("почта: письмо от {} для {}", "mail: message from {} to {}", from, to.trim()));
         }
         let mut sent = msg;
         sent.read = true;

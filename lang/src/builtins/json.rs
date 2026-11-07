@@ -90,7 +90,7 @@ pub fn write(v: &Value, indent: Option<usize>, level: usize, out: &mut String) -
             newline(indent, level, out);
             out.push('}');
         }
-        other => return Err(format!("значение типа {} нельзя записать в JSON", other.type_name())),
+        other => return Err(trf!("значение типа {} нельзя записать в JSON", "value of type {} cannot be written to JSON", other.type_name())),
     }
     Ok(())
 }
@@ -110,7 +110,7 @@ pub fn parse(text: &str) -> Result<Value, String> {
     let v = p.value()?;
     p.skip_ws();
     if p.pos < p.chars.len() {
-        return Err(format!("лишние данные на позиции {}", p.pos));
+        return Err(trf!("лишние данные на позиции {}", "extra data at position {}", p.pos));
     }
     Ok(v)
 }
@@ -136,14 +136,14 @@ impl JsonParser {
             self.pos += 1;
             Ok(())
         } else {
-            Err(format!("ожидался '{}' на позиции {}", c, self.pos))
+            Err(trf!("ожидался '{}' на позиции {}", "expected '{}' at position {}", c, self.pos))
         }
     }
 
     fn literal(&mut self, word: &str, v: Value) -> Result<Value, String> {
         for ch in word.chars() {
             if self.peek() != Some(ch) {
-                return Err(format!("неверное значение на позиции {}", self.pos));
+                return Err(trf!("неверное значение на позиции {}", "invalid value at position {}", self.pos));
             }
             self.pos += 1;
         }
@@ -152,7 +152,7 @@ impl JsonParser {
 
     fn value(&mut self) -> Result<Value, String> {
         match self.peek() {
-            None => Err("неожиданный конец текста".to_string()),
+            None => Err(tr!("неожиданный конец текста", "unexpected end of text").to_string()),
             Some('{') => self.object(),
             Some('[') => self.array(),
             Some('"') => Ok(Value::str(&self.string()?)),
@@ -162,7 +162,7 @@ impl JsonParser {
             Some('N') => self.literal("NaN", Value::Float(f64::NAN)),
             Some('I') => self.literal("Infinity", Value::Float(f64::INFINITY)),
             Some(c) if c == '-' || c.is_ascii_digit() => self.number(),
-            Some(c) => Err(format!("неожиданный символ '{}' на позиции {}", c, self.pos)),
+            Some(c) => Err(trf!("неожиданный символ '{}' на позиции {}", "unexpected character '{}' at position {}", c, self.pos)),
         }
     }
 
@@ -177,7 +177,7 @@ impl JsonParser {
         loop {
             self.skip_ws();
             if self.peek() != Some('"') {
-                return Err(format!("ожидался ключ-строка на позиции {}", self.pos));
+                return Err(trf!("ожидался ключ-строка на позиции {}", "expected a string key at position {}", self.pos));
             }
             let k = self.string()?;
             self.skip_ws();
@@ -192,7 +192,7 @@ impl JsonParser {
                     self.pos += 1;
                     return Ok(Value::dict(d));
                 }
-                _ => return Err(format!("ожидалась ',' или '}}' на позиции {}", self.pos)),
+                _ => return Err(trf!("ожидалась ',' или '}}' на позиции {}", "expected ',' or '}}' at position {}", self.pos)),
             }
         }
     }
@@ -215,7 +215,7 @@ impl JsonParser {
                     self.pos += 1;
                     return Ok(Value::list(items));
                 }
-                _ => return Err(format!("ожидалась ',' или ']' на позиции {}", self.pos)),
+                _ => return Err(trf!("ожидалась ',' или ']' на позиции {}", "expected ',' or ']' at position {}", self.pos)),
             }
         }
     }
@@ -224,12 +224,12 @@ impl JsonParser {
         self.expect('"')?;
         let mut s = String::new();
         loop {
-            let c = self.peek().ok_or_else(|| "незакрытая строка".to_string())?;
+            let c = self.peek().ok_or_else(|| tr!("незакрытая строка", "unterminated string").to_string())?;
             self.pos += 1;
             match c {
                 '"' => return Ok(s),
                 '\\' => {
-                    let e = self.peek().ok_or_else(|| "незакрытая строка".to_string())?;
+                    let e = self.peek().ok_or_else(|| tr!("незакрытая строка", "unterminated string").to_string())?;
                     self.pos += 1;
                     match e {
                         'n' => s.push('\n'),
@@ -253,7 +253,7 @@ impl JsonParser {
                                 s.push(char::from_u32(code).unwrap_or('\u{FFFD}'));
                             }
                         }
-                        other => return Err(format!("неверная экранированная последовательность '\\{}'", other)),
+                        other => return Err(trf!("неверная экранированная последовательность '\\{}'", "invalid escape sequence '\\{}'", other)),
                     }
                 }
                 c => s.push(c),
@@ -264,7 +264,7 @@ impl JsonParser {
     fn hex4(&mut self) -> Result<u32, String> {
         let mut code = 0u32;
         for _ in 0..4 {
-            let d = self.peek().and_then(|c| c.to_digit(16)).ok_or_else(|| "неверный \\u-код".to_string())?;
+            let d = self.peek().and_then(|c| c.to_digit(16)).ok_or_else(|| tr!("неверный \\u-код", "invalid \\u code").to_string())?;
             self.pos += 1;
             code = code * 16 + d;
         }
@@ -294,6 +294,6 @@ impl JsonParser {
                 return Ok(Value::Int(n));
             }
         }
-        text.parse::<f64>().map(Value::Float).map_err(|_| format!("неверное число '{}'", text))
+        text.parse::<f64>().map(Value::Float).map_err(|_| trf!("неверное число '{}'", "invalid number '{}'", text))
     }
 }

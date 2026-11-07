@@ -50,9 +50,9 @@ pub fn take_pending(world: &mut World) -> Option<ScenarioEvent> {
 /// Человекочитаемое условие цели.
 pub fn goal_text(goal: &ScenarioGoal) -> String {
     match goal {
-        ScenarioGoal::OwnHost { host } => format!("получить доступ к {}", host),
-        ScenarioGoal::Deliver { needle } => format!("прислать текст со строкой «{}»", needle),
-        ScenarioGoal::Money { amount } => format!("накопить {} ₵", amount),
+        ScenarioGoal::OwnHost { host } => trf!("получить доступ к {}", "gain access to {}", host),
+        ScenarioGoal::Deliver { needle } => trf!("прислать текст со строкой «{}»", "send a text containing the line \"{}\"", needle),
+        ScenarioGoal::Money { amount } => trf!("накопить {} ₵", "save up {} ₵", amount),
     }
 }
 
@@ -95,8 +95,8 @@ pub fn check(world: &mut World) {
         world.scenarios.done = true;
         world.player.money += s.reward;
         world.scenarios.pending = Some(ScenarioEvent {
-            title: "Сценарий пройден".to_string(),
-            text: format!("«{}» — выполнено (+{} ₵).", s.name, s.reward),
+            title: tr!("Сценарий пройден", "Scenario complete").to_string(),
+            text: trf!("«{}» — выполнено (+{} ₵).", "\"{}\" — done (+{} ₵).", s.name, s.reward),
         });
     }
 }

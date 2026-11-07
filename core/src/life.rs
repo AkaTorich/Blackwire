@@ -37,6 +37,20 @@ const NEWS: &[&str] = &[
     "Центр «Сентинель» расширяет сеть наблюдения за трафиком.",
 ];
 
+/// Те же новости на английском (по тому же индексу).
+const NEWS_EN: &[&str] = &[
+    "The city introduces a single pass: everything on one card — and everything under watch.",
+    "Solvey Finance reports record profits amid a wave of repossessions.",
+    "Hospital network failure: scheduled appointments are delayed.",
+    "Cyber police promise to \"bring order to the network by the end of the quarter\".",
+    "Residents of the outskirts complain about connection outages at night.",
+    "Corporations have signed an agreement to share customer data.",
+    "The university opened a digital security department — enrollment is closed.",
+    "Unknown persons left a single word on the city website. It was quickly erased.",
+    "ISP rates went up again; quality, as usual, is promised later.",
+    "The Sentinel Center is expanding its traffic surveillance network.",
+];
+
 /// Кандидаты для события: включённые машины (не игрок).
 fn up_machines(world: &World) -> Vec<MachineId> {
     world.machines.iter().filter(|m| m.id != 0 && m.up).map(|m| m.id).collect()
@@ -79,7 +93,7 @@ pub fn tick(world: &mut World, dt: u64) {
             if let Some(user) = user {
                 let from = world.machine(id).lan_ip.clone().unwrap_or_else(|| "127.0.0.1".to_string());
                 world.plugins.npc_logins.entry(id).or_default().insert(user.clone(),now+600);
-                world.machine_mut(id).log(now, LogKind::Login, format!("вход сотрудника {} с {}", user, from));
+                world.machine_mut(id).log(now, LogKind::Login, trf!("вход сотрудника {} с {}", "staff login {} from {}", user, from));
                 cap_logs(world, id);
             }
         }
@@ -89,14 +103,15 @@ pub fn tick(world: &mut World, dt: u64) {
         if let Some(&id) = pick(world, &cands) {
             let svc = world.machine(id).services.iter().find(|s| s.running).map(|s| s.name.clone());
             if let Some(svc) = svc {
-                world.machine_mut(id).log(now, LogKind::Service, format!("служба {} перезапущена", svc));
+                world.machine_mut(id).log(now, LogKind::Service, trf!("служба {} перезапущена", "service {} restarted", svc));
                 cap_logs(world, id);
             }
         }
     } else if roll < 93 {
         // городская новость
         let n = world.rng.range(0, NEWS.len() as i64) as usize;
-        add_feed(world, NEWS[n].to_string());
+        let news = if crate::i18n::is_en() { NEWS_EN.get(n).copied().unwrap_or(NEWS[n]) } else { NEWS[n] };
+        add_feed(world, news.to_string());
     } else {
         // перезагрузка узла (не игрок, не шлюз)
         let cands: Vec<MachineId> = world
@@ -109,7 +124,7 @@ pub fn tick(world: &mut World, dt: u64) {
             let host = world.machine(id).hostname.clone();
             let secs = world.rng.range(30, 120) as u64;
             world.shutdown_machine(id, secs);
-            add_feed(world, format!("узел {} ушёл на перезагрузку", host));
+            add_feed(world, trf!("узел {} ушёл на перезагрузку", "host {} went down for a reboot", host));
         }
     }
 }

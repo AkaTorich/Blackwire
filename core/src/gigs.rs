@@ -54,6 +54,8 @@ pub fn take_pending(world: &mut World) -> Option<GigEvent> {
 }
 
 const TITLES: &[&str] = &["Заказ скупщика", "Серый заказ", "Тихое дело", "Мелкая работа", "Заказ без имени"];
+/// Те же названия на английском (по тому же индексу).
+const TITLES_EN: &[&str] = &["Broker's job", "Gray job", "Quiet job", "Small job", "Nameless job"];
 
 fn is_candidate(world: &World, id: MachineId) -> bool {
     let m = world.machine(id);
@@ -108,14 +110,15 @@ fn make_gig(world: &mut World) -> Option<Gig> {
     let ip = world.machine(target).ip.clone();
     let id = world.gigs.next_id + 1;
     world.gigs.next_id = id;
-    let title = TITLES[world.rng.range(0, TITLES.len() as i64) as usize].to_string();
+    let ti = world.rng.range(0, TITLES.len() as i64) as usize;
+    let title = if crate::i18n::is_en() { TITLES_EN.get(ti).copied().unwrap_or(TITLES[ti]) } else { TITLES[ti] }.to_string();
 
     if own_kind {
         let reward = 150 + world.rng.range(0, 80);
         Some(Gig {
             id,
             title,
-            objective: format!("Получить доступ к {} ({}) — {} ₵", host, ip, reward),
+            objective: trf!("Получить доступ к {} ({}) — {} ₵", "Gain access to {} ({}) — {} ₵", host, ip, reward),
             reward,
             goal: GigGoal::Own { target },
         })
@@ -124,7 +127,7 @@ fn make_gig(world: &mut World) -> Option<Gig> {
         Some(Gig {
             id,
             title,
-            objective: format!("Прислать {} с {} ({}) на {} — {} ₵", path, host, ip, BROKER, reward),
+            objective: trf!("Прислать {} с {} ({}) на {} — {} ₵", "Send {} from {} ({}) to {} — {} ₵", path, host, ip, BROKER, reward),
             reward,
             goal: GigGoal::Deliver { target, path, needle },
         })
@@ -134,7 +137,7 @@ fn make_gig(world: &mut World) -> Option<Gig> {
         Some(Gig {
             id,
             title,
-            objective: format!("Получить доступ к {} ({}) — {} ₵", host, ip, reward),
+            objective: trf!("Получить доступ к {} ({}) — {} ₵", "Gain access to {} ({}) — {} ₵", host, ip, reward),
             reward,
             goal: GigGoal::Own { target },
         })
@@ -191,13 +194,13 @@ pub fn check(world: &mut World) {
         id: 0,
         from: BROKER.to_string(),
         to,
-        subject: "Оплата заказа".to_string(),
-        body: format!("Работа принята. Перевод: {} ₵. Новые заказы — на доске (команда gigs).", paid),
+        subject: tr!("Оплата заказа", "Job payment").to_string(),
+        body: trf!("Работа принята. Перевод: {} ₵. Новые заказы — на доске (команда gigs).", "Work accepted. Transfer: {} ₵. New jobs are on the board (gigs command).", paid),
         time: now,
         read: false,
         folder: MailFolder::Inbox,
     });
-    world.gigs.pending = Some(GigEvent { title: "Скупщик".to_string(), text: format!("Заказ «{}» оплачен (+{} ₵).", last_title, paid) });
+    world.gigs.pending = Some(GigEvent { title: tr!("Скупщик", "Broker").to_string(), text: trf!("Заказ «{}» оплачен (+{} ₵).", "Job \"{}\" paid (+{} ₵).", last_title, paid) });
     ensure(world);
 }
 

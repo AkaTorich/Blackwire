@@ -1,7 +1,7 @@
 'use strict';
 /* Экран входа: загрузка системы (журнал, полоса, логотип), затем карточка входа или новой личности. */
 (function () {
-  var BOOT_LINES = [
+  var BOOT_LINES = L([
     'BLACKWIRE firmware 2.4 — проверка памяти .......... ok',
     'ядро загружено: /sys/kernel/bw.img',
     'монтирование корня: /dev/vda1 → /  (rw)',
@@ -16,7 +16,22 @@
     'проверка целостности сохранения ...',
     'графическая подложка: инициализация',
     'готово — переход к входу'
-  ];
+  ], [
+    'BLACKWIRE firmware 2.4 — memory check .......... ok',
+    'kernel loaded: /sys/kernel/bw.img',
+    'mounting root: /dev/vda1 → /  (rw)',
+    'mounting: /home  /tmp  /var/log',
+    'net: eth0 up, requesting address ...',
+    'net: address acquired',
+    'service ssh: listening on port 22',
+    'service cron: started',
+    'service mail: started',
+    'shell: /bin/sh ready',
+    'Adder language: runtime loaded',
+    'checking save integrity ...',
+    'graphical backdrop: initializing',
+    'ready — proceeding to login'
+  ]);
   var HANDLE_RE = /^[A-Za-z][A-Za-z0-9_-]{2,15}$/;
 
   var root = null, els = {}, bootInfo = null, bootDone = false, infoReady = false;
@@ -37,15 +52,19 @@
     var canvas = el('canvas', 'login-fx');
     wrap.appendChild(canvas);
 
-    var controls = Win.windowControls({ close: function () { BW.invoke('quit').catch(function (e) { Win.toast(String(e), 'err'); }); }, closeLabel: 'Выйти из игры' });
+    var controls = Win.windowControls({ close: function () { BW.invoke('quit').catch(function (e) { Win.toast(String(e), 'err'); }); }, closeLabel: L('Выйти из игры', 'Quit game') });
     controls.classList.add('login-window-controls');
     wrap.appendChild(controls);
+
+    var lang = I18N.picker();
+    lang.classList.add('login-lang');
+    wrap.appendChild(lang);
 
     var boot = el('div', 'boot');
     boot.setAttribute('data-tauri-drag-region', '');
     boot.innerHTML =
       '<div class="boot-logo" data-text="BLACKWIRE">BLACKWIRE</div>' +
-      '<div class="boot-sub caption">загрузка системы</div>' +
+      '<div class="boot-sub caption">' + L('загрузка системы', 'system boot') + '</div>' +
       '<pre class="boot-log mono"></pre>' +
       '<div class="boot-bar"><div class="boot-bar-fill"></div></div>';
     wrap.appendChild(boot);
@@ -97,7 +116,7 @@
     var head = el('div', 'login-head');
     head.innerHTML = '<div class="login-logo"></div><div class="login-ver caption"></div>';
     head.querySelector('.login-logo').textContent = os;
-    head.querySelector('.login-ver').textContent = bootInfo && bootInfo.version ? 'версия ' + bootInfo.version : '';
+    head.querySelector('.login-ver').textContent = bootInfo && bootInfo.version ? L('версия ', 'version ') + bootInfo.version : '';
     c.appendChild(head);
 
     if (mode === 'login') renderLogin(c); else renderNew(c);
@@ -120,7 +139,7 @@
     var input = el('input', 'input mono');
     input.type = 'password'; input.placeholder = placeholder; input.autocomplete = 'off'; input.spellcheck = false;
     var eye = el('button', 'btn-icon login-eye', Icons.get('eye', 16));
-    eye.type = 'button'; eye.tabIndex = -1; eye.title = 'Показать';
+    eye.type = 'button'; eye.tabIndex = -1; eye.title = L('Показать', 'Show');
     eye.addEventListener('click', function () {
       var show = input.type === 'password';
       input.type = show ? 'text' : 'password';
@@ -137,21 +156,21 @@
     user.querySelector('.login-handle').textContent = (bootInfo && bootInfo.handle) || 'user';
     c.appendChild(user);
 
-    var pass = passwordField('пароль');
+    var pass = passwordField(L('пароль', 'password'));
     c.appendChild(pass.wrap);
 
     var err = el('div', 'login-err hidden');
     c.appendChild(err);
 
     var btn = el('button', 'btn btn-primary login-btn');
-    btn.innerHTML = Icons.get('lock', 16) + '<span>Войти</span>';
+    btn.innerHTML = Icons.get('lock', 16) + '<span>' + L('Войти', 'Log in') + '</span>';
     c.appendChild(btn);
 
     var links = el('div', 'login-links');
     var fresh = el('button', 'login-link');
-    fresh.textContent = 'Новая личность';
+    fresh.textContent = L('Новая личность', 'New identity');
     fresh.addEventListener('click', function () {
-      Win.confirm('Текущее сохранение будет заменено новым. Продолжить?').then(function (ok) {
+      Win.confirm(L('Текущее сохранение будет заменено новым. Продолжить?', 'The current save will be replaced with a new one. Continue?')).then(function (ok) {
         if (ok) renderCard('new');
       });
     });
@@ -166,11 +185,11 @@
       BW.login(pass.input.value || '').then(function (ok) {
         if (ok) return success();
         busy = false; btn.disabled = false;
-        errorLine(c, 'Неверный пароль');
+        errorLine(c, L('Неверный пароль', 'Wrong password'));
         pass.input.select();
       }, function (e) {
         busy = false; btn.disabled = false;
-        errorLine(c, 'Ошибка входа: ' + (e && e.message ? e.message : e));
+        errorLine(c, L('Ошибка входа: ', 'Login error: ') + (e && e.message ? e.message : e));
       });
     }
     btn.addEventListener('click', submit);
@@ -180,30 +199,30 @@
 
   function renderNew(c) {
     var title = el('div', 'login-title');
-    title.textContent = 'Новая личность';
+    title.textContent = L('Новая личность', 'New identity');
     c.appendChild(title);
 
     var name = el('input', 'input mono login-name');
-    name.type = 'text'; name.placeholder = 'имя в сети'; name.maxLength = 16; name.spellcheck = false; name.autocomplete = 'off';
+    name.type = 'text'; name.placeholder = L('имя в сети', 'handle'); name.maxLength = 16; name.spellcheck = false; name.autocomplete = 'off';
     c.appendChild(name);
     var hint = el('div', 'login-hint');
-    hint.textContent = 'латиница, цифры, _ и -, от 3 до 16 знаков, первая — буква';
+    hint.textContent = L('латиница, цифры, _ и -, от 3 до 16 знаков, первая — буква', 'Latin letters, digits, _ and -, 3 to 16 characters, starting with a letter');
     c.appendChild(hint);
 
-    var pass = passwordField('пароль (можно пустой)');
+    var pass = passwordField(L('пароль (можно пустой)', 'password (may be empty)'));
     c.appendChild(pass.wrap);
 
     var err = el('div', 'login-err hidden');
     c.appendChild(err);
 
     var btn = el('button', 'btn btn-primary login-btn');
-    btn.innerHTML = Icons.get('plus', 16) + '<span>Создать</span>';
+    btn.innerHTML = Icons.get('plus', 16) + '<span>' + L('Создать', 'Create') + '</span>';
     c.appendChild(btn);
 
     if (bootInfo && bootInfo.has_save) {
       var links = el('div', 'login-links');
       var back = el('button', 'login-link');
-      back.textContent = 'Назад ко входу';
+      back.textContent = L('Назад ко входу', 'Back to login');
       back.addEventListener('click', function () { renderCard('login'); });
       links.appendChild(back);
       c.appendChild(links);
@@ -218,20 +237,20 @@
       if (busy) return;
       var handle = name.value.trim();
       if (!HANDLE_RE.test(handle)) {
-        errorLine(c, 'Имя не подходит: нужна латиница, 3–16 знаков');
+        errorLine(c, L('Имя не подходит: нужна латиница, 3–16 знаков', 'Invalid handle: Latin letters, 3–16 characters'));
         name.focus();
         return;
       }
       busy = true; btn.disabled = true;
       errorLine(c, '');
-      btn.querySelector('span').textContent = 'Строим мир…';
+      btn.querySelector('span').textContent = L('Строим мир…', 'Building the world…');
       BW.new_game(handle, undefined, pass.input.value || '').then(function (info) {
         if (info) bootInfo = info;
         return success();
       }, function (e) {
         busy = false; btn.disabled = false;
-        btn.querySelector('span').textContent = 'Создать';
-        errorLine(c, 'Не удалось создать: ' + (e && e.message ? e.message : e));
+        btn.querySelector('span').textContent = L('Создать', 'Create');
+        errorLine(c, L('Не удалось создать: ', 'Failed to create: ') + (e && e.message ? e.message : e));
       });
     }
     btn.addEventListener('click', submit);
@@ -247,7 +266,7 @@
       setTimeout(function () { Win.close(); }, 250);
     }, function (e) {
       els.card.classList.remove('login-ok');
-      Win.toast('Не удалось открыть рабочий стол: ' + (e && e.message ? e.message : e), 'err');
+      Win.toast(L('Не удалось открыть рабочий стол: ', 'Failed to open the desktop: ') + (e && e.message ? e.message : e), 'err');
     });
   }
 
@@ -255,7 +274,7 @@
   function mount(r) {
     root = r;
     build();
-    document.title = 'Blackwire — вход';
+    document.title = L('Blackwire — вход', 'Blackwire — login');
     FX.start(els.canvas, BW.settings);
     BW.onSettings(function (s) { FX.update(s); });
     BW.boot().then(function (b) {
@@ -271,5 +290,5 @@
     runBoot();
   }
 
-  Apps.register('login', { title: 'Вход', icon: 'lock', mount: mount });
+  Apps.register('login', { title: L('Вход', 'Login'), icon: 'lock', mount: mount });
 })();

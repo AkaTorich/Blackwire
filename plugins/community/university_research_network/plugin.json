@@ -1,6 +1,7 @@
 {
   "id": "university_research_network",
   "name": "Сеть университетской кафедры",
+  "name_en": "University Research Network",
   "version": "0.1.1",
   "api": 1,
   "entry": "main.adr",

@@ -26,13 +26,13 @@ pub fn firewall_up(world: &World, id: MachineId) -> bool {
 /// узел открыт навсегда (запоминается).
 pub fn bypass(world: &mut World, session: &Session, id: MachineId) -> Result<bool, String> {
     if !has_firewall(world, id) {
-        return Err("на этом узле нет файрвола".to_string());
+        return Err(tr!("на этом узле нет файрвола", "this host has no firewall").to_string());
     }
     if world.fw_down.contains(&id) {
         return Ok(true);
     }
     let src = tracks::source_ip(world, session);
-    world.log(id, LogKind::Warn, &format!("попытка обхода файрвола с {}", src));
+    world.log(id, LogKind::Warn, &trf!("попытка обхода файрвола с {}", "firewall bypass attempt from {}", src));
     if tracks::is_monitored(world, id) {
         tracks::attack_heat(world, session, id);
     }
@@ -53,5 +53,5 @@ pub fn spring_trap(world: &mut World, id: MachineId) {
     tracks::add_heat(world, 40.0);
     world.investigation.progress = (world.investigation.progress + 30.0).min(100.0);
     world.player.flags.insert("trapped".to_string(), "1".to_string());
-    world.log(id, LogKind::Warn, "сработала ловушка-приманка");
+    world.log(id, LogKind::Warn, tr!("сработала ловушка-приманка", "honeypot trap triggered"));
 }

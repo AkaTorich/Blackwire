@@ -3,11 +3,11 @@
    окна. Оформление — как у остальной игры (панели, кнопки, подписи словами). */
 (function () {
   var PERM_NAMES = {
-    content: 'мир и контент',
-    sys: 'оболочка и терминал',
-    net: 'сеть',
-    fs: 'файлы',
-    mail: 'почта'
+    content: L('мир и контент', 'world and content'),
+    sys: L('оболочка и терминал', 'shell and terminal'),
+    net: L('сеть', 'network'),
+    fs: L('файлы', 'files'),
+    mail: L('почта', 'mail')
   };
 
   function el(tag, cls, html) {
@@ -24,7 +24,7 @@
 
     var head = el('div', 'plug-head');
     head.appendChild(el('span', 'plug-head-ico', Icons.get('plugins', 18)));
-    head.appendChild(el('span', 'plug-head-t', '<b>Плагины</b> — свои окна, команды и устройства из пакетов Adder'));
+    head.appendChild(el('span', 'plug-head-t', L('<b>Плагины</b> — свои окна, команды и устройства из пакетов Adder', '<b>Plugins</b> — custom windows, commands and devices from Adder packages')));
     wrap.appendChild(head);
 
     var tools = el('div', 'plug-tools');
@@ -44,16 +44,16 @@
       b.addEventListener('click', function () {
         BW.sound('click');
         b.disabled = true;
-        Promise.resolve().then(action).catch(function (e) { Win.toast('Не удалось: ' + e, 'err'); }).finally(function () { b.disabled = false; });
+        Promise.resolve().then(action).catch(function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); }).finally(function () { b.disabled = false; });
       });
       tools.appendChild(b);
     }
-    toolBtn('Открыть папку', 'folder-open', function () { return BW.plugins_folder(); });
-    toolBtn('Перечитать', 'reload', function () { return BW.plugins_reload().then(render); }, true);
-    toolBtn('Пример устройств', 'plus', function () { return BW.plugins_example('device_lab').then(render); });
-    toolBtn('Пример района', 'plus', function () { return BW.plugins_example('district').then(render); });
-    toolBtn('Свой тип уязвимости', 'plus', function () { return BW.plugins_example('custom_vuln_type').then(render); });
-    toolBtn('Результаты и условия', 'plus', function () { return BW.plugins_example('access_lab').then(render); });
+    toolBtn(L('Открыть папку', 'Open folder'), 'folder-open', function () { return BW.plugins_folder(); });
+    toolBtn(L('Перечитать', 'Reload'), 'reload', function () { return BW.plugins_reload().then(render); }, true);
+    toolBtn(L('Пример устройств', 'Devices example'), 'plus', function () { return BW.plugins_example('device_lab').then(render); });
+    toolBtn(L('Пример района', 'District example'), 'plus', function () { return BW.plugins_example('district').then(render); });
+    toolBtn(L('Свой тип уязвимости', 'Custom vulnerability type'), 'plus', function () { return BW.plugins_example('custom_vuln_type').then(render); });
+    toolBtn(L('Результаты и условия', 'Results and conditions'), 'plus', function () { return BW.plugins_example('access_lab').then(render); });
 
     function row(p) {
       var card = el('section', 'panel plug-card');
@@ -70,11 +70,11 @@
 
       var meta = el('div', 'plug-meta');
       var state = el('span', 'plug-state' + (p.enabled ? ' on' : '') + (p.error ? ' err' : ''));
-      state.textContent = p.error ? 'Ошибка' : (p.enabled ? 'Включён' : 'Выключен');
+      state.textContent = p.error ? L('Ошибка', 'Error') : (p.enabled ? L('Включён', 'Enabled') : L('Выключен', 'Disabled'));
       meta.appendChild(state);
-      var perms = (p.permissions || []).map(function (code) { return PERM_NAMES[code] || code; }).join(', ') || 'только данные плагина';
+      var perms = (p.permissions || []).map(function (code) { return PERM_NAMES[code] || code; }).join(', ') || L('только данные плагина', 'plugin data only');
       var permSpan = el('span', 'plug-perm');
-      permSpan.textContent = 'Доступ: ' + perms;
+      permSpan.textContent = L('Доступ: ', 'Access: ') + perms;
       meta.appendChild(permSpan);
       card.appendChild(meta);
 
@@ -85,24 +85,24 @@
       }
 
       var actions = el('div', 'plug-actions');
-      var toggle = el('button', 'btn btn-sm', Icons.get(p.enabled ? 'stop' : 'play', 14) + '<span>' + (p.enabled ? 'Выключить' : 'Включить') + '</span>');
+      var toggle = el('button', 'btn btn-sm', Icons.get(p.enabled ? 'stop' : 'play', 14) + '<span>' + (p.enabled ? L('Выключить', 'Disable') : L('Включить', 'Enable')) + '</span>');
       toggle.addEventListener('click', function () {
         BW.sound('click');
-        BW.plugins_enable(p.id, !p.enabled).then(render, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+        BW.plugins_enable(p.id, !p.enabled).then(render, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
       });
       actions.appendChild(toggle);
       if (p.error) {
-        var retry = el('button', 'btn btn-sm', Icons.get('reload', 14) + '<span>Повторить запуск</span>');
+        var retry = el('button', 'btn btn-sm', Icons.get('reload', 14) + '<span>' + L('Повторить запуск', 'Retry start') + '</span>');
         retry.addEventListener('click', function () {
           BW.sound('click');
-          BW.plugins_enable(p.id, true).then(render, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+          BW.plugins_enable(p.id, true).then(render, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
         });
         actions.appendChild(retry);
       }
       (p.windows || []).forEach(function (w) {
         var openB = el('button', 'btn btn-sm btn-primary', Icons.get('max', 14));
         var windowTitle = el('span');
-        windowTitle.textContent = w.title || 'Окно';
+        windowTitle.textContent = w.title || L('Окно', 'Window');
         openB.appendChild(windowTitle);
         openB.addEventListener('click', function () {
           BW.sound('click');
@@ -114,11 +114,11 @@
 
       if (p.commands && p.commands.length) {
         var cmds = el('div', 'plug-cmds');
-        cmds.appendChild(el('div', 'plug-cmds-h', 'Команды'));
+        cmds.appendChild(el('div', 'plug-cmds-h', L('Команды', 'Commands')));
         p.commands.forEach(function (cmd) {
           var cmdRow = el('div', 'plug-cmd');
           var inp = el('input', 'input plug-arg');
-          inp.placeholder = 'аргументы (необязательно)';
+          inp.placeholder = L('аргументы (необязательно)', 'arguments (optional)');
           var runB = el('button', 'btn btn-sm', Icons.get('terminal', 14));
           var commandName = el('span');
           commandName.textContent = cmd;
@@ -130,7 +130,7 @@
             BW.plugins_run(line).then(function (lines) {
               log.textContent = (lines || []).map(function (l) { return l.text; }).join('\n');
               return BW.plugins_list().then(render);
-            }, function (e) { Win.toast('Не удалось: ' + e, 'err'); }).finally(function () { runB.disabled = false; });
+            }, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); }).finally(function () { runB.disabled = false; });
           });
           cmdRow.appendChild(runB);
           cmdRow.appendChild(inp);
@@ -153,15 +153,15 @@
       });
       if (!info.plugins || !info.plugins.length) {
         var empty = el('div', 'plug-empty');
-        empty.textContent = 'Плагинов пока нет. Открой папку и положи туда папку плагина, или установи пример кнопкой выше.';
+        empty.textContent = L('Плагинов пока нет. Открой папку и положи туда папку плагина, или установи пример кнопкой выше.', 'No plugins yet. Open the folder and put a plugin folder in it, or install an example with a button above.');
         list.appendChild(empty);
         return;
       }
       info.plugins.forEach(function (p) { list.appendChild(row(p)); });
     }
 
-    BW.plugins_list().then(render, function (e) { Win.toast('Не удалось: ' + e, 'err'); });
+    BW.plugins_list().then(render, function (e) { Win.toast(L('Не удалось: ', 'Failed: ') + e, 'err'); });
   }
 
-  Apps.register('plugins', { title: 'Плагины', icon: 'plugins', minWidth: 560, minHeight: 420, mount: mount });
+  Apps.register('plugins', { title: L('Плагины', 'Plugins'), icon: 'plugins', minWidth: 560, minHeight: 420, mount: mount });
 })();
