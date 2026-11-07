@@ -25,8 +25,10 @@ function Run($exe, $argList) {
 
 try {
   # Архив из самих файлов (без «.»), чтобы при распаковке не тронуть права корня сайта
-  $items = Get-ChildItem -Force $site | ForEach-Object Name
-  Push-Location $site; & tar.exe -czf $tgz @items; Pop-Location
+  # @(...) обязательно: при одном файле иначе получится строка, и tar получит её по буквам
+  $items = @(Get-ChildItem -Force $site | ForEach-Object Name)
+  Push-Location $site; & tar.exe -czf $tgz @items; $code = $LASTEXITCODE; Pop-Location
+  if ($code -ne 0) { throw "tar: код $code" }
   Run 'scp.exe' ($opt + @($tgz, 'root@199.80.55.10:/var/tmp/blackwire-site.tgz'))
   Run 'scp.exe' ($opt + @((Join-Path $PSScriptRoot 'unpack.sh'), 'root@199.80.55.10:/var/tmp/blackwire-site-unpack.sh'))
   Run 'ssh.exe' ($opt + @('root@199.80.55.10', 'bash /var/tmp/blackwire-site-unpack.sh'))
