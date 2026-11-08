@@ -304,8 +304,7 @@ var BW = (function () {
     return BW.lang_get().then(function (code) {
       if (code !== 'ru' && code !== 'en') return BW.lang_set(I18N.lang).then(null, function () {});
       if (code !== I18N.lang) {
-        I18N.remember(code);
-        location.reload();
+        I18N.reload(code);
         return new Promise(function () {});
       }
     }, function () {});
@@ -321,8 +320,8 @@ var BW = (function () {
   BW.listen('lang_changed', function (p) {
     var code = p && p.lang === 'en' ? 'en' : 'ru';
     if (code === I18N.lang) return;
-    I18N.remember(code);
-    if (!I18N.KEEP_ON_SWITCH[BW.app]) location.reload();
+    if (I18N.KEEP_ON_SWITCH[BW.app]) { I18N.remember(code); return; }
+    I18N.reload(code);
   });
 
   BW.listen('theme_changed', function (p) {

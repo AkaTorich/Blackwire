@@ -26,6 +26,14 @@ var I18N = (function () {
       try { localStorage.setItem('bw_lang', c); } catch (e) { /* без localStorage */ }
       return c;
     },
+    /* Перезагрузить окно на языке code. Язык стоит и в адресе окна (&lang=), его надо заменить —
+       иначе окно снова откроется на старом языке и будет перезагружаться по кругу. */
+    reload: function (code) {
+      code = I18N.remember(code);
+      var q = new URLSearchParams(location.search);
+      q.set('lang', code);
+      location.replace(location.pathname + '?' + q.toString() + location.hash);
+    },
     /* Окна, которые при смене языка не перезагружаются (держат ввод или сеанс). */
     KEEP_ON_SWITCH: { terminal: true, editor: true, duel: true },
     /* Переключатель языка: две кнопки, выбранная подсвечена. Нажатие сохраняет выбор,
@@ -42,8 +50,8 @@ var I18N = (function () {
           if (p[0] === I18N.lang) return;
           if (window.BW && BW.sound) BW.sound('click');
           BW.setLang(p[0]).then(function () {
-            if (I18N.KEEP_ON_SWITCH[BW.app]) location.reload();
-          }, function () { location.reload(); });
+            if (I18N.KEEP_ON_SWITCH[BW.app]) I18N.reload(p[0]);
+          }, function () { I18N.reload(p[0]); });
         });
         box.appendChild(b);
       });

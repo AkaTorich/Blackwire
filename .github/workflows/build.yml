@@ -179,6 +179,8 @@ jobs:
           name: Blackwire ${{ env.RELEASE_TAG }}
           body: |
             **English version / Английская версия**
+            Fix: switching the language no longer leaves windows blank. / Исправлено: после переключения языка окна больше не остаются пустыми.
+
 
             Blackwire is now bilingual: Russian and English. Choose the language on the login screen or in Settings → Language; it switches on the fly.
             - The whole game is translated: terminal and its help, Adder errors, missions, mail, news, shop and market scripts, all windows and the in-game help.
