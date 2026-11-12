@@ -93,6 +93,7 @@ The SDK includes `plugin-check`: it checks plugins on a separate game world with
 | [Hacking mechanics](docs/HACK.md) | Reconnaissance, access, vulnerabilities and countering defences |
 | [Online](docs/en/ONLINE.md) | The shared world on a server: logging in, chat, your own Linux server, how it works inside |
 | [Blackwire.chm](Blackwire.chm) | Compiled game and SDK help for Windows |
+| [Wiki](https://github.com/AkaTorich/Blackwire/wiki) | The same help online, Russian and English; built by `tools/build_wiki.py` |
 
 ## Languages
 
