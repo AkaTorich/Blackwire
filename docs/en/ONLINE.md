@@ -58,6 +58,6 @@ Installing on Linux: build with `bash tools/server/build-server-linux.sh` (a sta
 | The "Online" card on the login screen | `app/ui/js/apps/login.js` |
 | Player chat | `app/ui/js/apps/chat.js`, `app/ui/css/apps/chat.css` |
 | Server installation | `server/deploy/` (service, `install.sh`), build — `tools/server/build-server-linux.sh` |
-| Checks | `core/tests/mmo.rs`; a live server — `tools/online-smoke.ps1`; the game — the `--online "address\|name\|password[\|new]"` option |
+| Checks | `core/tests/mmo.rs`; a live server — `tools/online-smoke.ps1` (unencrypted) and `cargo run -p blackwire-wire --example probe -- address` (TLS like the game, no account); the game — the `--online "address\|name\|password[\|new]"` option |
 
 Why it works this way: all game logic is written for "the player" and their computer `machines[0]`. Before a player's action the server swaps that player's part into the shared world and swaps their computer with a placeholder at index 0; after the action it swaps them back. So the single-player mechanics (hacking, surveillance, missions, money) work online unchanged, and machine ids always match their position in the list.

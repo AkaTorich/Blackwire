@@ -58,6 +58,6 @@ blackwire-server --port 7777 --data ./data --cert fullchain.pem --key privkey.pe
 | Карточка «Онлайн» на экране входа | `app/ui/js/apps/login.js` |
 | Чат игроков | `app/ui/js/apps/chat.js`, `app/ui/css/apps/chat.css` |
 | Установка на сервер | `server/deploy/` (служба, `install.sh`), сборка — `tools/server/build-server-linux.sh` |
-| Проверка | `core/tests/mmo.rs`; живой сервер — `tools/online-smoke.ps1`; игра — ключ `--online "адрес\|имя\|пароль[\|new]"` |
+| Проверка | `core/tests/mmo.rs`; живой сервер — `tools/online-smoke.ps1` (без шифрования) и `cargo run -p blackwire-wire --example probe -- адрес` (TLS, как игра, без учётной записи); игра — ключ `--online "адрес\|имя\|пароль[\|new]"` |
 
 Почему так: вся логика игры написана для «игрока» и его компьютера `machines[0]`. Сервер перед действием игрока подставляет его часть в общий мир и меняет местами его компьютер с заглушкой на месте 0, после действия — возвращает. Поэтому одиночные механики (взлом, слежка, задания, деньги) работают в онлайне без переделки, а номера машин всегда совпадают с их местом в списке.
