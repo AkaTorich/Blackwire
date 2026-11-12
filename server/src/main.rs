@@ -32,7 +32,32 @@ const HELP: &str = "blackwire-server — онлайн-сервер Blackwire
   --max-accounts N  сколько учётных записей принять (по умолчанию 1000)
   --max-scripts N   скриптов одновременно у игрока (по умолчанию 6)
   --version         версия
+
+  --reset-password ИМЯ   задать игроку новый пароль (спросит его) и выйти;
+                         службу на это время остановить, иначе она перезапишет файл
 ";
+
+/// Сброс пароля игрока прямо в players.json (сервер в это время остановлен).
+fn reset_password(data: &std::path::Path, name: &str) -> Result<(), String> {
+    let name = accounts::clean_name(name)?;
+    let path = data.join("players.json");
+    let text = std::fs::read_to_string(&path).map_err(|e| format!("{}: {}", path.display(), e))?;
+    let mut v: serde_json::Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+    if v["accounts"].get(&name).is_none() {
+        return Err(format!("учётной записи «{}» нет", name));
+    }
+    eprint!("новый пароль для {} (от 6 знаков, латиницей): ", name);
+    let mut pass = String::new();
+    std::io::stdin().read_line(&mut pass).map_err(|e| e.to_string())?;
+    // без перевода строки и невидимой метки BOM (её подставляет, например, PowerShell)
+    let pass = pass.trim_matches(|c: char| c == '\u{feff}' || c.is_whitespace());
+    accounts::check_password_rules(pass)?;
+    v["accounts"][&name] = serde_json::to_value(accounts::Account::new(pass)).map_err(|e| e.to_string())?;
+    let tmp = data.join("players.json.tmp");
+    std::fs::write(&tmp, v.to_string()).and_then(|_| std::fs::rename(&tmp, &path)).map_err(|e| e.to_string())?;
+    println!("пароль игрока {} сменён", name);
+    Ok(())
+}
 
 /// Сертификат перечитывается, когда файл обновился (Let's Encrypt продлевает его сам).
 struct Tls {
@@ -71,6 +96,7 @@ fn main() {
     let mut plugins: Option<PathBuf> = None;
     let mut max_accounts = 1000usize;
     let mut max_scripts = 6usize;
+    let mut reset: Option<String> = None;
     let mut i = 0;
     while i < args.len() {
         let next = args.get(i + 1).cloned().unwrap_or_default();
@@ -85,6 +111,7 @@ fn main() {
             "--plugins" => plugins = Some(PathBuf::from(next)),
             "--max-accounts" => max_accounts = next.parse().unwrap_or(max_accounts),
             "--max-scripts" => max_scripts = next.parse().unwrap_or(max_scripts),
+            "--reset-password" => reset = Some(next),
             "--version" | "-V" => {
                 println!("blackwire-server {} (протокол {})", env!("CARGO_PKG_VERSION"), blackwire_wire::PROTOCOL);
                 return;
@@ -99,6 +126,15 @@ fn main() {
             }
         }
         i += if args[i].starts_with("--") && !matches!(args[i].as_str(), "--version" | "--help") { 2 } else { 1 };
+    }
+    if let Some(name) = reset {
+        match reset_password(&data, &name) {
+            Ok(()) => return,
+            Err(e) => {
+                eprintln!("{}", e);
+                std::process::exit(1);
+            }
+        }
     }
     blackwire_core::i18n::set(&lang);
     let seed = seed.unwrap_or_else(accounts::random_u64);

@@ -42,6 +42,7 @@ blackwire-server --port 7777 --data ./data --cert fullchain.pem --key privkey.pe
 | `--lang ru\|en` | language of the shared world |
 | `--plugins DIR` | plugins for the server |
 | `--max-accounts N`, `--max-scripts N` | limits for accounts and scripts per player |
+| `--reset-password NAME` | set a new password for a player (asks for it) and exit; stop the service meanwhile |
 
 Without `--cert/--key` the connection is unencrypted — then write the address in the game as `tcp://192.168.0.5:7777` (for your own LAN).
 
