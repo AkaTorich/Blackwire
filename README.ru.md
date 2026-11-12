@@ -3,7 +3,7 @@
 
 **Хакерский симулятор с собственной операционной системой, живой игровой сетью и языком программирования Adder.**
 
-[Скачать игру](https://github.com/AkaTorich/Blackwire/releases/latest) · [Сайт](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Руководство игрока](docs/GAME.md)
+**[Вики — вся справка](https://github.com/AkaTorich/Blackwire/wiki)** · [Скачать игру](https://github.com/AkaTorich/Blackwire/releases/latest) · [Сайт](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Руководство игрока](docs/GAME.md)
 
 После увольнения из корпорации у тебя остались компьютер, старый маршрутизатор и долг перед банком. В почте появляется приглашение от группы **hello-world**. За ним — скрытая сеть, первые задания и возможность вернуть себе свободу.
 

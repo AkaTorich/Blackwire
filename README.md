@@ -3,7 +3,7 @@
 
 **A hacking simulator with its own operating system, a living game network and the Adder programming language.**
 
-[Download the game](https://github.com/AkaTorich/Blackwire/releases/latest) · [Website](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Player's guide](docs/en/GAME.md)
+**[Wiki — all documentation](https://github.com/AkaTorich/Blackwire/wiki)** · [Download the game](https://github.com/AkaTorich/Blackwire/releases/latest) · [Website](https://game.globthe.top/) · [GitHub Pages](https://akatorich.github.io/Blackwire/) · [Player's guide](docs/en/GAME.md)
 
 After being fired from the corporation, all you have left is a computer, an old router and a debt to the bank. An invitation from the **hello-world** group shows up in your mail. Behind it lie a hidden network, the first missions and a chance to win back your freedom.
 
