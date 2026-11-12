@@ -8,6 +8,7 @@
 //! `--load` — продолжить сохранённую игру; `--open приложение[:аргумент]` — открыть окно (можно несколько);
 //! `--size ШxВ` — размер всех открываемых окон; `--monitor N` — монитор; `--no-desktop` — без подложки;
 //! `--arrange grid|columns|rows|cascade` — разложить открытые окна; `--dump файл` — записать список окон в JSON.
+//! `--online "адрес|имя|пароль[|new]"` — войти в общий мир онлайн-сервера (`new` — завести личность).
 //! Без этих ключей игра стартует как обычно, с экрана входа.
 
 use blackwire_core::world::World;
@@ -33,6 +34,7 @@ pub fn start_from_args(app: &AppHandle) -> Result<bool, Box<dyn std::error::Erro
     let mut arrange: Option<String> = None;
     let mut dump: Option<String> = None;
     let mut duel: Option<String> = None;
+    let mut online: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -87,15 +89,26 @@ pub fn start_from_args(app: &AppHandle) -> Result<bool, Box<dyn std::error::Erro
                 duel = next;
                 i += 1;
             }
+            "--online" => {
+                online = next;
+                i += 1;
+            }
             _ => {}
         }
         i += 1;
     }
 
-    if new_handle.is_none() && !load {
+    if new_handle.is_none() && !load && online.is_none() {
         return Ok(false);
     }
-    if let Some(handle) = new_handle {
+    if let Some(spec) = online {
+        // `--online "адрес|имя|пароль[|new]"` — войти в общий мир сервера (new — регистрация)
+        let p: Vec<&str> = spec.split('|').collect();
+        if p.len() < 3 {
+            return Err("--online \"адрес|имя|пароль[|new]\"".into());
+        }
+        crate::online::login_blocking(app, p[0], p[1], p[2], p.get(3) == Some(&"new"))?;
+    } else if let Some(handle) = new_handle {
         let world = World::new(seed.unwrap_or(7), &handle, "");
         st.set_game(Game::new(world));
         st.save()?;

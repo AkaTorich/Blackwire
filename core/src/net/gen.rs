@@ -18,6 +18,8 @@ pub struct Generated {
     pub machines: Vec<Machine>,
     pub orgs: Vec<Org>,
     pub player_known: Vec<MachineId>,
+    /// Код приглашения hello-world (нужен онлайну для писем новым игрокам).
+    pub invite: String,
 }
 
 /// Запланированная машина организации: адреса и люди известны до сборки,
@@ -316,7 +318,7 @@ pub fn generate(rng: &mut Rng, handle: &str, player_password: &str) -> Generated
         player_known.push(id);
     }
 
-    Generated { machines, orgs, player_known }
+    Generated { machines, orgs, player_known, invite }
 }
 
 /// Центр кучки организации на карте (0..1). Провайдер посередине.

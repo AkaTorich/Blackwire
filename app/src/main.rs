@@ -25,6 +25,7 @@ mod cmd_game;
 mod cmd_shell;
 mod cmd_sys;
 mod netplay;
+mod online;
 mod scripts;
 mod state;
 mod ticker;
@@ -95,6 +96,10 @@ fn main() {
             netplay::net_start,
             netplay::net_status,
             netplay::net_leave,
+            // онлайн: общий мир на сервере
+            online::online_login,
+            online::online_status,
+            online::online_call,
             // окна
             windows::open_app,
             windows::focus_window,

@@ -19,6 +19,7 @@ var Icons = (function () {
     'plugins': '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>',
     'scenario': FILE + '<path d="M8.5 13.5l2 2 4-4"/>',
     'duel': '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.5 12h7M12 4v3M12 17v3"/>',
+    'chat': '<path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
     'mail': MAIL,
     'mail-open': '<path d="M3 10l9-6 9 6v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10l9 6 9-6"/>',
     'send': '<path d="M21 3L3 10.5l8 2.5 2.5 8z"/><path d="M21 3l-10 10"/>',

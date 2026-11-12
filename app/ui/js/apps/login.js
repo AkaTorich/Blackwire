@@ -102,7 +102,7 @@
     els.boot.classList.add('boot-out');
     setTimeout(function () {
       els.boot.classList.add('hidden');
-      renderCard(bootInfo && bootInfo.has_save ? 'login' : 'new');
+      renderCard(store('bw.online.last') === '1' ? 'online' : (bootInfo && bootInfo.has_save ? 'login' : 'new'));
     }, 320);
   }
 
@@ -119,7 +119,7 @@
     head.querySelector('.login-ver').textContent = bootInfo && bootInfo.version ? L('версия ', 'version ') + bootInfo.version : '';
     c.appendChild(head);
 
-    if (mode === 'login') renderLogin(c); else renderNew(c);
+    if (mode === 'online') renderOnline(c); else if (mode === 'login') renderLogin(c); else renderNew(c);
   }
 
   function errorLine(c, text) {
@@ -175,6 +175,7 @@
       });
     });
     links.appendChild(fresh);
+    onlineLink(links);
     c.appendChild(links);
 
     var busy = false;
@@ -219,14 +220,15 @@
     btn.innerHTML = Icons.get('plus', 16) + '<span>' + L('Создать', 'Create') + '</span>';
     c.appendChild(btn);
 
+    var links = el('div', 'login-links');
     if (bootInfo && bootInfo.has_save) {
-      var links = el('div', 'login-links');
       var back = el('button', 'login-link');
       back.textContent = L('Назад ко входу', 'Back to login');
       back.addEventListener('click', function () { renderCard('login'); });
       links.appendChild(back);
-      c.appendChild(links);
     }
+    onlineLink(links);
+    c.appendChild(links);
 
     name.addEventListener('input', function () {
       name.classList.toggle('bad', name.value.length > 0 && !HANDLE_RE.test(name.value));
@@ -257,6 +259,98 @@
     name.addEventListener('keydown', function (e) { if (e.key === 'Enter') pass.input.focus(); });
     pass.input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
     setTimeout(function () { name.focus(); }, 50);
+  }
+
+  /* ---------- онлайн: общий мир на сервере ---------- */
+  var DEFAULT_SERVER = 'game.globthe.top';
+
+  function store(key, value) {
+    try {
+      if (value === undefined) return localStorage.getItem(key);
+      localStorage.setItem(key, value);
+    } catch (e) { /* хранилище недоступно — просто не запоминаем */ }
+    return null;
+  }
+
+  function onlineLink(links) {
+    var a = el('button', 'login-link');
+    a.textContent = L('Играть онлайн', 'Play online');
+    a.addEventListener('click', function () { renderCard('online'); });
+    links.appendChild(a);
+  }
+
+  function renderOnline(c) {
+    var title = el('div', 'login-title');
+    title.textContent = L('Онлайн — общий мир', 'Online — shared world');
+    c.appendChild(title);
+
+    var server = el('input', 'input mono');
+    server.type = 'text'; server.spellcheck = false; server.autocomplete = 'off';
+    server.placeholder = L('адрес сервера', 'server address');
+    server.value = store('bw.online.addr') || DEFAULT_SERVER;
+    c.appendChild(server);
+
+    var name = el('input', 'input mono login-name');
+    name.type = 'text'; name.placeholder = L('имя в сети', 'handle'); name.maxLength = 16; name.spellcheck = false; name.autocomplete = 'off';
+    name.value = store('bw.online.user') || '';
+    c.appendChild(name);
+
+    var pass = passwordField(L('пароль (от 6 знаков)', 'password (6+ characters)'));
+    c.appendChild(pass.wrap);
+
+    var err = el('div', 'login-err hidden');
+    c.appendChild(err);
+
+    var btn = el('button', 'btn btn-primary login-btn');
+    btn.innerHTML = Icons.get('lock', 16) + '<span>' + L('Войти', 'Log in') + '</span>';
+    c.appendChild(btn);
+    var reg = el('button', 'btn login-btn');
+    reg.innerHTML = Icons.get('plus', 16) + '<span>' + L('Новая личность на сервере', 'New identity on the server') + '</span>';
+    c.appendChild(reg);
+
+    var links = el('div', 'login-links');
+    var back = el('button', 'login-link');
+    back.textContent = L('Одиночная игра', 'Single player');
+    back.addEventListener('click', function () {
+      store('bw.online.last', '0');
+      renderCard(bootInfo && bootInfo.has_save ? 'login' : 'new');
+    });
+    links.appendChild(back);
+    c.appendChild(links);
+
+    name.addEventListener('input', function () {
+      name.classList.toggle('bad', name.value.length > 0 && !HANDLE_RE.test(name.value));
+    });
+
+    var busy = false;
+    function submit(register) {
+      if (busy) return;
+      var addr = server.value.trim(), handle = name.value.trim(), pw = pass.input.value || '';
+      if (!addr) { errorLine(c, L('Укажи адрес сервера', 'Enter the server address')); server.focus(); return; }
+      if (!HANDLE_RE.test(handle)) { errorLine(c, L('Имя не подходит: нужна латиница, 3–16 знаков', 'Invalid handle: Latin letters, 3–16 characters')); name.focus(); return; }
+      if (pw.length < 6) { errorLine(c, L('Пароль — от 6 знаков', 'Password: at least 6 characters')); pass.input.focus(); return; }
+      busy = true; btn.disabled = true; reg.disabled = true;
+      errorLine(c, '');
+      var label = (register ? reg : btn).querySelector('span');
+      var was = label.textContent;
+      label.textContent = L('Подключение…', 'Connecting…');
+      BW.online_login(addr, handle, pw, !!register).then(function () {
+        store('bw.online.addr', addr);
+        store('bw.online.user', handle);
+        store('bw.online.last', '1');
+        return success();
+      }, function (e) {
+        busy = false; btn.disabled = false; reg.disabled = false;
+        label.textContent = was;
+        errorLine(c, String(e && e.message ? e.message : e));
+      });
+    }
+    btn.addEventListener('click', function () { submit(false); });
+    reg.addEventListener('click', function () { submit(true); });
+    server.addEventListener('keydown', function (e) { if (e.key === 'Enter') name.focus(); });
+    name.addEventListener('keydown', function (e) { if (e.key === 'Enter') pass.input.focus(); });
+    pass.input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(false); });
+    setTimeout(function () { (name.value ? pass.input : name).focus(); }, 50);
   }
 
   function success() {

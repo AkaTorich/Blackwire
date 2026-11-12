@@ -290,7 +290,7 @@ pub struct World {
     pub rng: Rng,
     /// Игровое время включения своей машины (для uptime).
     pub boot_time: u64,
-    tick_acc_ms: u64,
+    pub(crate) tick_acc_ms: u64,
     /// Условный сетевой трафик своей машины, КБ/с.
     pub net_in: f32,
     pub net_out: f32,
@@ -328,6 +328,9 @@ pub struct World {
     pub achievements: crate::achievements::AchState,
     /// Свой активный сценарий (из редактора сценариев).
     pub scenarios: crate::scenarios::ScenarioState,
+    /// Код приглашения hello-world этого мира (онлайн шлёт его новым игрокам).
+    #[serde(default)]
+    pub invite: String,
 }
 
 impl Default for World {
@@ -363,6 +366,7 @@ impl Default for World {
             base: crate::base::BaseState::default(),
             achievements: crate::achievements::AchState::default(),
             scenarios: crate::scenarios::ScenarioState::default(),
+            invite: String::new(),
         }
     }
 }
@@ -377,6 +381,7 @@ impl World {
             clock: GameClock::new(),
             machines: g.machines,
             orgs: g.orgs,
+            invite: g.invite,
             player: Player {
                 handle: handle.to_string(),
                 money: 0,
@@ -789,7 +794,7 @@ impl World {
 }
 
 /// Запасной компьютер игрока, если генератор ничего не вернул.
-fn fallback_player_machine(handle: &str, password: &str) -> Machine {
+pub(crate) fn fallback_player_machine(handle: &str, password: &str) -> Machine {
     let mut users = crate::users::UserDb::new_root(password);
     users.add(handle, password, true);
     let mut fs = crate::vfs::Vfs::new_unix(handle);

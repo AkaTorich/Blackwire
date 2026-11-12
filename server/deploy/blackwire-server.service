@@ -1,0 +1,21 @@
+[Unit]
+Description=Blackwire online server (shared world)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=blackwire
+Group=blackwire
+WorkingDirectory=/opt/blackwire-server
+ExecStart=/opt/blackwire-server/blackwire-server --port 7777 --data /opt/blackwire-server/data --cert /opt/blackwire-server/tls/fullchain.pem --key /opt/blackwire-server/tls/privkey.pem
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/blackwire-server/data
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

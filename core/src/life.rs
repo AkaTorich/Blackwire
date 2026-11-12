@@ -53,7 +53,7 @@ const NEWS_EN: &[&str] = &[
 
 /// Кандидаты для события: включённые машины (не игрок).
 fn up_machines(world: &World) -> Vec<MachineId> {
-    world.machines.iter().filter(|m| m.id != 0 && m.up).map(|m| m.id).collect()
+    world.machines.iter().filter(|m| m.id != 0 && m.up && m.kind != MachineKind::Player).map(|m| m.id).collect()
 }
 
 fn add_feed(world: &mut World, text: String) {
@@ -117,7 +117,7 @@ pub fn tick(world: &mut World, dt: u64) {
         let cands: Vec<MachineId> = world
             .machines
             .iter()
-            .filter(|m| m.id != 0 && m.up && !matches!(m.kind, MachineKind::Gateway | MachineKind::Router | MachineKind::Dns))
+            .filter(|m| m.id != 0 && m.up && !matches!(m.kind, MachineKind::Gateway | MachineKind::Router | MachineKind::Dns | MachineKind::Player))
             .map(|m| m.id)
             .collect();
         if let Some(&id) = pick(world, &cands) {

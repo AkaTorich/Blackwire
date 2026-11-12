@@ -17,7 +17,8 @@ Blackwire unfolds on a virtual desktop. The terminal, mail, browser, editor and 
 - **Upgrade your computer.** Earn money on jobs, buy hardware and tools, set up your own base.
 - **Create your own exploits.** Research in-game vulnerabilities, build a payload in Adder and test it against the in-game hints. Ready-made editable tools can be bought on the market; this also works with plugin vulnerabilities. 28 vulnerability models are available. The result can be a guest/user/root login, a data leak or partial access to a file, computer or router; the conditions of a hack are visible during research.
 - **Write programs in Adder.** Automate actions, create terminal tools and work with game files and the network. The game has an editor with syntax highlighting and error checking.
-- **Play together.** Create multiplayer games: compete for a target or complete a set of missions together.
+- **Play online in a shared world.** On the login screen choose "Play online": every player lives in one network on the server (`game.globthe.top` by default), each with their own computer and their own hello-world story. Players' computers are part of the network — they can be found and hacked. There is a player chat. Details — [Online](docs/en/ONLINE.md).
+- **Play together on a LAN.** Create multiplayer games: compete for a target or complete a set of missions together.
 - **Extend the world with plugins.** Add devices, their vulnerabilities, organisations, missions, events, shops and your own windows.
 
 The look includes 12 themes and settings for fonts, transparency, effects and window layout. The game is bilingual, Russian and English: choose the language on the login screen or in Settings → Language. Computers, addresses and terminal actions belong to the game's fictional world.
@@ -90,6 +91,7 @@ The SDK includes `plugin-check`: it checks plugins on a separate game world with
 | [Adder](docs/en/ADDER.md) | Language syntax, functions and game modules |
 | [SDK](docs/en/SDK.md) | Creating plugins, API, events and content generation |
 | [Hacking mechanics](docs/HACK.md) | Reconnaissance, access, vulnerabilities and countering defences |
+| [Online](docs/en/ONLINE.md) | The shared world on a server: logging in, chat, your own Linux server, how it works inside |
 | [Blackwire.chm](Blackwire.chm) | Compiled game and SDK help for Windows |
 
 ## Languages
@@ -132,7 +134,7 @@ For a universal macOS build, first install both Rust targets: `rustup target add
 
 The build prepares the SDK automatically and includes it in the installation package. Build settings for all platforms are in [GitHub Actions](.github/workflows/build.yml).
 
-The sources are spread across directories: `lang/` — Adder, `core/` — the game engine, `app/` — the application and interface, `sdk/` — materials for plugin authors, `plugins/` — ready-made plugins, `site/` — the game website (bilingual; GitHub Pages publishes it, `tools/server/update-site.ps1` uploads it to game.globthe.top). Engine and language tests are run from the repository root:
+The sources are spread across directories: `lang/` — Adder, `core/` — the game engine, `app/` — the application and interface, `wire/` — the connection to the online server (JSON lines over TLS), `server/` — the online server `blackwire-server` and its Linux installation (`server/deploy/`), `sdk/` — materials for plugin authors, `plugins/` — ready-made plugins, `site/` — the game website (bilingual; GitHub Pages publishes it, `tools/server/update-site.ps1` uploads it to game.globthe.top). Engine and language tests are run from the repository root:
 
 ```sh
 cargo test --locked -p blackwire-core -p blackwire-lang

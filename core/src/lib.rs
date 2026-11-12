@@ -43,6 +43,7 @@ pub mod session;
 pub mod sysinfo;
 pub mod world;
 pub mod game;
+pub mod mmo;
 pub mod script_host;
 
 pub use world::World;

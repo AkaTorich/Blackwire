@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
-members = ["lang", "core", "app"]
+members = ["lang", "core", "wire", "server", "app"]
 
 [workspace.package]
-version = "0.1.17"
+version = "0.1.18"
 edition = "2021"
 
 [profile.release]

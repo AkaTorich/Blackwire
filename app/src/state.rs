@@ -47,6 +47,8 @@ pub struct AppState {
     pub forced_size: Mutex<Option<(f64, f64)>>,
     /// Сетевая игра: роль, партия, подключения.
     pub net: Mutex<crate::netplay::NetState>,
+    /// Подключение к онлайн-серверу общего мира.
+    pub online: Mutex<Option<std::sync::Arc<crate::online::OnlineConn>>>,
 }
 
 impl AppState {
@@ -96,6 +98,7 @@ impl AppState {
             desktops: Mutex::new(HashMap::new()),
             forced_size: Mutex::new(None),
             net: Mutex::new(crate::netplay::NetState::default()),
+            online: Mutex::new(None),
         })
     }
 
@@ -137,6 +140,10 @@ impl AppState {
     }
 
     pub fn save(&self) -> Result<(), String> {
+        // в онлайне мир хранит сервер; здесь — только настройки вида
+        if ONLINE.load(Ordering::Relaxed) {
+            return crate::online::save_settings(self);
+        }
         let mut g = self.game()?;
         g.plugin_event("on_save",serde_json::json!({}));
         let text = g.world.to_json();
@@ -282,13 +289,16 @@ impl AppState {
 /// Безопасное имя файла слота: оставляем буквы, цифры, пробел, «_» и «-».
 /// Язык уже выбран (prefs.json, ключ --lang или кнопка): тогда окна получают его в адресе.
 pub static LANG_CHOSEN: AtomicBool = AtomicBool::new(false);
+/// Игра подключена к онлайн-серверу: окна получают `online=1`, своё сохранение не пишется.
+pub static ONLINE: AtomicBool = AtomicBool::new(false);
 
 /// Добавка к адресу окна: `&lang=ru|en`, если язык выбран; иначе пусто — окно возьмёт язык системы.
 pub fn lang_param() -> String {
+    let online = if ONLINE.load(Ordering::Relaxed) { "&online=1" } else { "" };
     if LANG_CHOSEN.load(Ordering::Relaxed) {
-        format!("&lang={}", blackwire_core::i18n::code())
+        format!("&lang={}{}", blackwire_core::i18n::code(), online)
     } else {
-        String::new()
+        online.to_string()
     }
 }
 

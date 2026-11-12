@@ -43,7 +43,7 @@ pub struct Game {
     pub plugins: crate::plugins::Runtime,
     pub world: World,
     pub sessions: HashMap<u32, Session>,
-    next_session: u32,
+    pub(crate) next_session: u32,
     /// Действия для интерфейса, накопленные скриптами (sys.open, sys.notify).
     pub pending_ui: Vec<UiAction>,
     /// Заявки на запуск скриптов (команда `adder`).

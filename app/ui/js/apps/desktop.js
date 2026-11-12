@@ -11,7 +11,8 @@
     { id: 'map', label: L('Карта сети', 'Network map') },
     { id: 'plugins', label: L('Плагины', 'Plugins') },
     { id: 'scenario', label: L('Редактор сценариев', 'Scenario editor') },
-    { id: 'duel', label: L('Сетевая игра', 'Multiplayer') },
+    { id: 'duel', label: L('Сетевая игра', 'Multiplayer'), offline: true },
+    { id: 'chat', label: L('Чат игроков', 'Player chat'), online: true },
     { id: 'settings', label: L('Настройки', 'Settings') },
     { id: 'help', label: L('Справка', 'Help') }
   ];
@@ -92,6 +93,8 @@
     var dock = el('div', 'dock');
     var apps = el('div', 'dock-apps');
     DOCK_APPS.forEach(function (a) {
+      if (a.online && !BW.online) return;
+      if (a.offline && BW.online) return;
       var b = el('button', 'dock-btn');
       b.dataset.app = a.id;
       b.dataset.tip = a.label;

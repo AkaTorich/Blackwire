@@ -123,10 +123,55 @@ jobs:
           path: target/sdk/bin/
           if-no-files-found: error
 
+  server:
+    name: online server (linux)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: '. -> target'
+          key: server-musl
+
+      - name: musl
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Server and transport tests
+        run: cargo test --locked -p blackwire-wire -p blackwire-server
+
+      - name: Build static server
+        run: cargo build --locked --release -p blackwire-server --target x86_64-unknown-linux-musl
+
+      - name: Package server
+        run: |
+          version=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          dir="blackwire-server-$version-linux-x86_64"
+          mkdir -p "target/server-pkg/$dir"
+          cp target/x86_64-unknown-linux-musl/release/blackwire-server "target/server-pkg/$dir/"
+          cp server/deploy/install.sh server/deploy/blackwire-server.service docs/ONLINE.md "target/server-pkg/$dir/"
+          cp docs/en/ONLINE.md "target/server-pkg/$dir/ONLINE.en.md"
+          tar -C target/server-pkg -czf "target/server-pkg/$dir.tar.gz" "$dir"
+          "target/server-pkg/$dir/blackwire-server" --version
+
+      - name: Server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blackwire-server
+          path: target/server-pkg/*.tar.gz
+          if-no-files-found: error
+
   release:
     name: Publish release
     if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish)
-    needs: build
+    needs: [build, server]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -156,6 +201,12 @@ jobs:
           path: target/release-installers
           merge-multiple: true
 
+      - name: Download online server
+        uses: actions/download-artifact@v4
+        with:
+          name: blackwire-server
+          path: target/release-server
+
       - name: Download SDK tools
         uses: actions/download-artifact@v4
         with:
@@ -178,21 +229,21 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Blackwire ${{ env.RELEASE_TAG }}
           body: |
-            **English version / Английская версия**
-            Fix: switching the language no longer leaves windows blank. / Исправлено: после переключения языка окна больше не остаются пустыми.
+            **Online — a shared world / Онлайн — общий мир**
 
+            On the login screen choose "Play online": every player lives in one Blackwire network on the server.
+            - Each player has their own computer and router in the shared network — they can be found, scanned and hacked.
+            - Your own hello-world story, debt, gigs, market, base, suspicion, achievements and ending.
+            - Player chat; the server keeps the world, your single-player save is untouched.
+            - Your own server: `blackwire-server-<version>-linux-x86_64.tar.gz` (static Linux binary, systemd service, install.sh). See docs/en/ONLINE.md.
 
-            Blackwire is now bilingual: Russian and English. Choose the language on the login screen or in Settings → Language; it switches on the fly.
-            - The whole game is translated: terminal and its help, Adder errors, missions, mail, news, shop and market scripts, all windows and the in-game help.
-            - A new world is generated in the chosen language (same seed, same network).
-            - All 110 bundled plugins follow the game language and ship START_HERE.en.md guides. Plugin API: `plugin.lang()`, `sys.lang()`, optional `name_en` in plugin.json.
-            - English documentation: README.md and docs/en.
+            На экране входа — «Играть онлайн»: все игроки живут в одной сети Blackwire на сервере.
+            - У каждого свой компьютер и роутер в общей сети — их можно найти, просканировать и взломать.
+            - Свой сюжет hello-world, долг, подработки, маркет, база, подозрение, достижения и концовка.
+            - Чат игроков; мир хранит сервер, одиночное сохранение не трогается.
+            - Свой сервер: `blackwire-server-<версия>-linux-x86_64.tar.gz` (статический бинарник для Linux, служба systemd, install.sh). Подробно — docs/ONLINE.md.
 
-            Игра стала двуязычной — русский и английский. Язык выбирается на экране входа или в «Настройки → Язык» и переключается на лету.
-            - Переведена вся игра: терминал и справка, ошибки Adder, задания, почта, новости, магазин и скрипты маркета, все окна и справка.
-            - Новый мир создаётся на выбранном языке (то же зерно — та же сеть).
-            - Все 110 плагинов следуют языку игры, у каждого есть английская инструкция START_HERE.en.md. В API плагинов: `plugin.lang()`, `sys.lang()`, необязательное `name_en` в plugin.json.
-            - Русское описание проекта — README.ru.md.
+            The game is bilingual — Russian and English. / Игра двуязычная — русский и английский.
 
             Installers for Windows, Linux and macOS include the SDK. / Установщики включают SDK.
 
@@ -204,6 +255,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             target/release-installers/*
+            target/release-server/*.tar.gz
             target/release/Blackwire-SDK-*.zip
             target/release/Blackwire-Plugins-*.zip
             target/release/Blackwire-Vulnerability-Plugins-*.zip

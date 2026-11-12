@@ -1,0 +1,14 @@
+[package]
+name = "blackwire-wire"
+version.workspace = true
+edition.workspace = true
+description = "Blackwire — связь игры с онлайн-сервером: строки JSON поверх TLS или TCP"
+
+[lib]
+name = "blackwire_wire"
+path = "src/lib.rs"
+
+[dependencies]
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+rustls-pki-types = { version = "1", features = ["std"] }
+webpki-roots = "1"

@@ -122,6 +122,15 @@ var BW = (function () {
       case 'net_status': return s.net || { role: 'None', my_name: '', port: 0, error: null, addrs: [],
         snap: { mode: 'duel', phase: 'lobby', seed: 0, targets: [], captured: [], winner: null, peers: [] } };
       case 'net_leave': s.net = null; return null;
+      case 'online_login':
+        if (!args.user || String(args.pass || '').length < 6) throw new Error('неверное имя или пароль');
+        return { handle: String(args.user).toLowerCase(), online: ['neo', String(args.user).toLowerCase()], chat: [{ from: 'neo', text: 'всем привет', time: 0 }] };
+      case 'online_status': return { online: false };
+      case 'chat_history': return [{ from: 'neo', text: 'всем привет', time: 0 }];
+      case 'who': return ['ghost', 'neo'];
+      case 'chat_send':
+        setTimeout(function () { emit('chat', { from: 'ghost', text: args.text, time: Date.now() / 1000 }); }, 50);
+        return null;
       case 'login': return args.password === '' || args.password === 'ghost';
       case 'start_desktop': case 'quit': case 'focus_window': case 'close_window':
       case 'arrange_windows': case 'desktop_on': case 'shell_close': case 'script_input':
@@ -183,8 +192,26 @@ var BW = (function () {
   }
   BW.emit = emit;
 
+  /* Онлайн: команды мира уходят на сервер, своё сохранение и сетевая партия недоступны. */
+  BW.online = params.get('online') === '1';
+  var REMOTE = {};
+  ['shell_open', 'shell_close', 'shell_exec', 'shell_complete', 'shell_prompt', 'shell_history',
+    'script_run', 'script_input', 'script_kill', 'fs_list', 'fs_read', 'fs_write', 'fs_mkdir', 'fs_delete',
+    'fs_rename', 'fs_copy', 'shell_doc', 'sys_status', 'sys_kill', 'net_map', 'web_get',
+    'mail_list', 'mail_read', 'mail_send', 'mail_delete', 'mail_unread_count', 'ending_summary',
+    'scenario_targets', 'scenario_start', 'scenario_stop', 'scenario_active',
+    'plugins_list', 'plugins_panel', 'plugins_ui', 'plugins_run',
+    'chat_send', 'chat_history', 'who'].forEach(function (c) { REMOTE[c] = true; });
+  var LOCAL_ONLY = { save_slots: 1, save_to_slot: 1, load_slot: 1, delete_slot: 1, new_game: 1, load_game: 1,
+    net_host: 1, net_join: 1, net_start: 1, plugins_reload: 1, plugins_enable: 1, plugins_example: 1 };
+
   BW.invoke = function (cmd, args) {
     args = args || {};
+    if (BW.online && tauri && tauri.core && tauri.core.invoke) {
+      if (REMOTE[cmd]) return tauri.core.invoke('online_call', { cmd: cmd, args: args });
+      if (cmd === 'save_game') return Promise.resolve(null);
+      if (LOCAL_ONLY[cmd]) return Promise.reject(L('В онлайне недоступно: мир хранит сервер', 'Not available online: the server keeps the world'));
+    }
     if (tauri && tauri.core && tauri.core.invoke) {
       return tauri.core.invoke(cmd, args);
     }
@@ -233,7 +260,9 @@ var BW = (function () {
     settings_get: [], settings_set: ['settings'],
     lang_get: [], lang_set: ['lang'],
     mail_list: ['folder'], mail_read: ['id'], mail_send: ['to', 'subject', 'body'],
-    mail_delete: ['id'], mail_unread_count: [], ending_summary: []
+    mail_delete: ['id'], mail_unread_count: [], ending_summary: [],
+    online_login: ['addr', 'user', 'pass', 'register'], online_status: [],
+    chat_send: ['text'], chat_history: [], who: []
   };
 
   Object.keys(COMMANDS).forEach(function (name) {

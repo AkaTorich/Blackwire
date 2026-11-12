@@ -18,6 +18,10 @@ pub fn start(app: AppHandle) {
                 seconds += 1;
                 let st = app.state::<AppState>();
                 crate::windows::close_stopped_applications(&app,&st);
+                // в онлайне время мира идёт на сервере, события приходят оттуда
+                if crate::online::is_online() {
+                    continue;
+                }
                 let payload = {
                     let Ok(mut g) = st.game() else { continue };
                     g.tick(1000);
