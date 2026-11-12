@@ -84,13 +84,21 @@ fn monitor_list(app: &AppHandle) -> Vec<MonitorInfo> {
                 .as_ref()
                 .map(|p| p.position() == m.position() && p.size() == m.size())
                 .unwrap_or(i == 0);
+            // рабочая область — экран без панели задач Windows (и без Dock/меню на Mac):
+            // окна игры её не перекрывают
+            let wa = m.work_area();
+            let (x, y, width, height) = if wa.size.width > 0 && wa.size.height > 0 {
+                (wa.position.x, wa.position.y, wa.size.width, wa.size.height)
+            } else {
+                (m.position().x, m.position().y, m.size().width, m.size().height)
+            };
             out.push(MonitorInfo {
                 index: i as u32,
                 name: m.name().cloned().unwrap_or_else(|| trf!("Монитор {}", "Monitor {}", i + 1)),
-                x: m.position().x,
-                y: m.position().y,
-                width: m.size().width,
-                height: m.size().height,
+                x,
+                y,
+                width,
+                height,
                 scale: m.scale_factor(),
                 primary: is_primary,
             });
@@ -322,9 +330,9 @@ pub fn arrange_all(app: &AppHandle, st: &AppState, monitor: Option<u32>, layout:
     if n == 0 {
         return Ok(());
     }
-    // рабочая область монитора: сверху полоса состояния стола, снизу док и панель задач Windows
+    // рабочая область монитора (уже без панели задач): сверху полоса состояния стола, снизу док
     let top = (44.0 * m.scale) as u32;
-    let bottom = (140.0 * m.scale) as u32;
+    let bottom = (92.0 * m.scale) as u32;
     let (ax, ay, aw, ah) = (m.x, m.y + top as i32, m.width, m.height.saturating_sub(top + bottom));
     // проверочный режим `--size`: окна не растягивать, а расставить рядами как есть
     if let Some((fw, fh)) = st.forced_size.lock().ok().and_then(|f| *f) {
