@@ -1,6 +1,6 @@
 # Online — shared world
 
-Online, every player lives in the same Blackwire network. Organizations, banks, hospitals, gateways and `.hw` sites are shared: what one player changes on a machine, the others will see. Everyone has their own computer (`name-pc`) and router (`name-router`) — regular machines of the shared network: they can be found, scanned and hacked, and your own need protecting.
+Online, every player lives in the same Blackwire network. Organizations, banks, hospitals, gateways and `.hw` sites are shared: what one player changes on a machine, the others will see. Everyone has their own computer (`name-pc`) and router (`name-router`) — machines of the shared network like all the others.
 
 Everything you play for stays your own: the hello-world mission chain, the bank debt, gigs, the market, your base, suspicion and the investigation, achievements, the ending.
 

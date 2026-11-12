@@ -232,13 +232,13 @@ jobs:
             **Online — a shared world / Онлайн — общий мир**
 
             On the login screen choose "Play online": every player lives in one Blackwire network on the server.
-            - Each player has their own computer and router in the shared network — they can be found, scanned and hacked.
+            - Each player has their own computer in the shared fictional world.
             - Your own hello-world story, debt, gigs, market, base, suspicion, achievements and ending.
             - Player chat; the server keeps the world, your single-player save is untouched.
             - Your own server: `blackwire-server-<version>-linux-x86_64.tar.gz` (static Linux binary, systemd service, install.sh). See docs/en/ONLINE.md.
 
             На экране входа — «Играть онлайн»: все игроки живут в одной сети Blackwire на сервере.
-            - У каждого свой компьютер и роутер в общей сети — их можно найти, просканировать и взломать.
+            - У каждого свой компьютер в общем вымышленном мире.
             - Свой сюжет hello-world, долг, подработки, маркет, база, подозрение, достижения и концовка.
             - Чат игроков; мир хранит сервер, одиночное сохранение не трогается.
             - Свой сервер: `blackwire-server-<версия>-linux-x86_64.tar.gz` (статический бинарник для Linux, служба systemd, install.sh). Подробно — docs/ONLINE.md.
