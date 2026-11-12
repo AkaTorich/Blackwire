@@ -102,6 +102,8 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
 .lang button:first-child{border-left:0}
 .lang button:hover{color:var(--cyan);background:rgba(0,229,255,.08)}
 .lang button.on{color:#02060c;background:var(--cyan)}
+.snd{width:34px;padding:0;justify-content:center}
+.snd.off svg{opacity:.45}
 .btn-dl{color:var(--green);border-color:rgba(45,255,156,.5);background:rgba(45,255,156,.08);animation:glow 1.7s ease-in-out infinite alternate}
 .btn-dl:hover{background:rgba(45,255,156,.2);box-shadow:inset 0 0 12px rgba(45,255,156,.45)}
 @keyframes glow{to{box-shadow:0 0 14px rgba(45,255,156,.45)}}
@@ -245,6 +247,7 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
       <span class="live"><i></i><em>OPEN SOURCE</em></span>
     </div>
     <div class="actions">
+      <button type="button" class="btn snd" id="snd"><svg viewBox="0 0 24 24"></svg></button>
       <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="ru">RU</button><button type="button" data-lang="en">EN</button></div>
       <a class="btn btn-dl" data-dl href="https://github.com/AkaTorich/Blackwire/releases/latest">
         <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span data-en="Download">Скачать</span>
@@ -373,6 +376,88 @@ h1{margin:0;font:900 22px/1 var(--head);letter-spacing:.18em;color:#e9fdff;
       applyLang();
     });
   });
+
+  // звуки интерфейса — тот же синтез, что в игре (app/ui/js/bridge.js, BW.sound)
+  (function(){
+    var ac = null, unlocked = false, on = true;
+    try { on = localStorage.getItem('bw_site_sound') !== '0'; } catch (e) {}
+    function ctx(){
+      if (ac) return ac;
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { ac = new AC(); } catch (e) { return null; }
+      return ac;
+    }
+    function tone(a, type, freq, freqEnd, start, dur, gain){
+      var o = a.createOscillator(), g = a.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, start);
+      if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, start + dur);
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(gain, start + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      o.connect(g); g.connect(a.destination);
+      o.start(start); o.stop(start + dur + 0.02);
+    }
+    function noise(a, start, dur, gain){
+      var len = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      var src = a.createBufferSource(); src.buffer = buf;
+      var f = a.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 2500;
+      var g = a.createGain(); g.gain.value = gain;
+      src.connect(f); f.connect(g); g.connect(a.destination);
+      src.start(start);
+    }
+    function play(name){
+      if (!on || !unlocked) return;
+      var a = ctx(); if (!a) return;
+      if (a.state === 'suspended') a.resume().catch(function(){});
+      var t = a.currentTime + 0.01;
+      switch (name) {
+        case 'click': tone(a, 'sine', 1400, 900, t, 0.04, 0.035); break;
+        case 'key': noise(a, t, 0.012, 0.03); break;
+        case 'open': tone(a, 'sine', 520, 1040, t, 0.12, 0.04); tone(a, 'sine', 1040, 1560, t + 0.08, 0.1, 0.03); break;
+        case 'close': tone(a, 'sine', 1040, 400, t, 0.14, 0.04); break;
+        case 'notify': tone(a, 'triangle', 880, 880, t, 0.09, 0.04); tone(a, 'triangle', 1320, 1320, t + 0.11, 0.14, 0.035); break;
+        default: tone(a, 'sine', 1000, 1000, t, 0.03, 0.03);
+      }
+    }
+    window.SFX = play;
+    // браузер даёт звук только после первого действия посетителя
+    function unlock(){ unlocked = true; }
+    ['pointerdown', 'keydown'].forEach(function(e){ document.addEventListener(e, unlock, { capture: true, once: true }); });
+
+    var btn = document.getElementById('snd');
+    var ICON_ON = '<path d="M4 10v4h3l4 3V7l-4 3z"/><path d="M15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11"/>';
+    var ICON_OFF = '<path d="M4 10v4h3l4 3V7l-4 3z"/><path d="M15 9.5l5 5M20 9.5l-5 5"/>';
+    function render(){
+      btn.querySelector('svg').innerHTML = on ? ICON_ON : ICON_OFF;
+      btn.classList.toggle('off', !on);
+      btn.title = on ? L('Звук включён', 'Sound on') : L('Звук выключен', 'Sound off');
+      btn.setAttribute('aria-label', btn.title);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function(){
+      unlocked = true;
+      on = !on;
+      try { localStorage.setItem('bw_site_sound', on ? '1' : '0'); } catch (e) {}
+      render();
+      play('notify');
+    });
+    render(); LANG_HOOKS.push(render);
+
+    // кнопки и ссылки звучат, как в игре: обычная кнопка — щелчок, скачать и внешние ссылки — открытие
+    document.addEventListener('click', function(e){
+      var el = e.target.closest && e.target.closest('button, a');
+      if (!el || el === btn) return;
+      unlocked = true;
+      play(el.matches('[data-dl], a[target=_blank]') ? 'open' : 'click');
+    }, true);
+    document.addEventListener('pointerover', function(e){
+      var el = e.target.closest && e.target.closest('.btn, .lang button, .os-opt');
+      if (el && !el.contains(e.relatedTarget)) play('key');
+    });
+  })();
 
   // выбор системы для загрузки: сам определяет ОС посетителя, ручной выбор запоминает
   (function(){
